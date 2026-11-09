@@ -1,0 +1,5 @@
+{
+  "id": "xrk-mobile",
+  "kind": "tools",
+  "entry": "./plugin.mjs"
+}

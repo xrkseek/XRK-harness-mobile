@@ -79,6 +79,21 @@ cd /root/xrk-mobile && setsid nohup env RUNTIME_OUT=/root/xrk-mobile/out \
 ```
 轮询用 `tail + pgrep -fc build-runtime`。**paramiko 读超时经常误报，进程其实还活着，以日志为准。**
 
+**本地未发版 harness-cli（不必 git commit / npm publish）**：本机先跑 harness 仓  
+`.agents/skills/xrk-mobile-apk/scripts/pack-local-engine.ps1` →  
+`.release/mobile-engine/xrkseek-harness-cli-<ver>.tgz`，scp 到 `/root/xrk-mobile/engine/`，再：
+
+```bash
+cd /root/xrk-mobile && setsid nohup env \
+  ENGINE_TGZ=/root/xrk-mobile/engine/xrkseek-harness-cli-<ver>.tgz \
+  ENGINE_VERSION=<ver> \
+  RUNTIME_OUT=/root/xrk-mobile/out \
+  https_proxy=socks5h://127.0.0.1:1080 http_proxy=socks5h://127.0.0.1:1080 \
+  /bin/bash runtime/build-runtime.sh arm64-v8a > /root/xrk-mobile/build.log 2>&1 < /dev/null &
+```
+
+`ENGINE_TGZ` 由 `runtime/build-runtime.sh` 的 `install_engine` 读取；省略时仍从 npmjs 装已发版 `@xrkseek/harness-cli@$ENGINE_VERSION`。
+
 ### 1.4 本地产物
 ```
 XRK-harness-mobile/.tmp/runtime-out/x86_64/     ← 已拉回，162 MB

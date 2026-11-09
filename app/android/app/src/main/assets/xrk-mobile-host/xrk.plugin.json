@@ -1,0 +1,5 @@
+{
+  "id": "xrk-mobile-host",
+  "kind": "host",
+  "entry": "./plugin.mjs"
+}
