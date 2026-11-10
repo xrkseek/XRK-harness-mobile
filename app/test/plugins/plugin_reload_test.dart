@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/plugins/native/native_surface.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugin_reload.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/plugins/native/native_surface.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugin_reload.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -68,7 +68,7 @@ Future<({ProviderContainer container, _Runtime runtime, FakePluginCarrier carrie
   List<Override> extra = const [],
 }) async {
   final carrier = FakePluginCarrier();
-  final client = DshClient.withCarrier(carrier);
+  final client = XrkClient.withCarrier(carrier);
   final runtime = _Runtime();
   final container = ProviderContainer(
     overrides: [
@@ -162,7 +162,7 @@ void main() {
         case 'host':
           (f.container.read(activeHostProvider.notifier) as _Active).use(const HostRef.ssh('other'));
         case 'connection':
-          final other = DshClient.withCarrier(FakePluginCarrier());
+          final other = XrkClient.withCarrier(FakePluginCarrier());
           addTearDown(other.close);
           f.container.read(_host.notifier).use(PluginHost(client: other, label: 'Local again', kind: HostKind.local));
         case 'removed':

@@ -10,10 +10,10 @@ import 'package:dartssh2/dartssh2.dart';
 import 'package:dartssh2/src/message/msg_channel.dart';
 // ignore: implementation_imports
 import 'package:dartssh2/src/ssh_channel.dart';
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/ssh/remote_bootstrap.dart';
-import 'package:dsh_app/remote/ssh/remote_shell.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/ssh/remote_bootstrap.dart';
+import 'package:xrk_app/remote/ssh/remote_shell.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -407,7 +407,7 @@ void main() {
           final bootstrap = RemoteDshBootstrap(
             h.transport,
             launchCommand:
-                "printf '%s\\n' ${shQuote('dsh web: http://127.0.0.1:43123/?token=synthetic-shell-token')} "
+                "printf '%s\\n' ${shQuote('xrkh serve: http://127.0.0.1:43123/?token=synthetic-shell-token')} "
                 r'> "$D/web.log"; :',
             environment: {'HOME': exitCode == 0 ? home.path : badHome.path},
             startTimeout: const Duration(seconds: 5),
@@ -424,7 +424,7 @@ void main() {
           expect(ran.stdout, endsWith('OUTER_EXIT $exitCode\n'));
           expect(ran.stderr, endsWith(h.execution.frame(stderr: true, status: exitCode)));
           if (exitCode == 0) {
-            expect(ran.stdout, contains('DSHAPP url dsh web: http://127.0.0.1:43123/?token=synthetic-shell-token\n'));
+            expect(ran.stdout, contains('DSHAPP url xrkh serve: http://127.0.0.1:43123/?token=synthetic-shell-token\n'));
           } else {
             expect(ran.stdout, contains('DSHAPP nodir\n'));
             expect(ran.stderr, contains('mkdir'));

@@ -9,17 +9,17 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_memory.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/ui/engine_settings/field_row.dart';
-import 'package:dsh_app/ui/engine_settings/schema_documentation.dart';
-import 'package:dsh_app/ui/engine_settings/schema_form.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_entries.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_layout.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_page.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_client/dsh_client.dart' show PluginBundle;
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_memory.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/ui/engine_settings/field_row.dart';
+import 'package:xrk_app/ui/engine_settings/schema_documentation.dart';
+import 'package:xrk_app/ui/engine_settings/schema_form.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_entries.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_layout.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_page.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_client/xrk_client.dart' show PluginBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -196,7 +196,7 @@ MemoryPluginEntry bigEntry() => MemoryPluginEntry(
     'streaming': true,
     'language': 'auto',
     'network': {'keepAlive': true, 'concurrency': 4},
-    'storage': {'dataRoot': '/root/.dsh/assistant'},
+    'storage': {'dataRoot': '/root/.xrk/assistant'},
   },
 );
 

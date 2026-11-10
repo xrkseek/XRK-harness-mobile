@@ -3,7 +3,7 @@
 // problems, the last view's size, the last tap's round trip — that opens the
 // problems with their paths. Plugins without a native part get nothing here.
 
-import 'package:dsh_client/dsh_client.dart' show DshGoPanel, PluginBundle;
+import 'package:xrk_client/xrk_client.dart' show DshGoPanel, PluginBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

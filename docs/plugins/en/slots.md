@@ -1,6 +1,6 @@
 # Slots
 
-Beyond tool cards, a plugin can appear in four native places in dsh-go. The places are declared by the `dshGo` manifest in `package.json`; the content comes from the host half (the plugin's Node code in the engine) through `ctx.dshGo`. Spec: `docs/design/native-plugins-protocol.md`.
+Beyond tool cards, a plugin can appear in four native places in xrk-mobile. The places are declared by the `xrkGo` manifest in `package.json`; the content comes from the host half (the plugin's Node code in the engine) through `ctx.xrkGo`. Spec: `docs/design/native-plugins-protocol.md`.
 
 | Slot (surface) | Native place | Entry fields | Per plugin | Text limit | Tap |
 |---|---|---|---|---|---|
@@ -15,7 +15,7 @@ Tool cards (`presentationMeta`) take no slot and need no manifest: see the [Quic
 
 ```jsonc
 // package.json
-"dshGo": {
+"xrkGo": {
   "v": 1,
   "title": { "zh": "快捷", "en": "Quick" },
   "icon": "bolt",
@@ -45,19 +45,19 @@ Tool cards (`presentationMeta`) take no slot and need no manifest: see the [Quic
 
 - Text fields (`title`, `label`, `text`) take a string or `{ "zh": "…", "en": "…" }`, picked by the app's language: exact tag → language → `en` → `zh` → first.
 - `id`: `^[A-Za-z0-9][A-Za-z0-9_.-]{0,39}$`, **unique across all slots of a plugin**.
-- The whole `dshGo` is ≤ 16 KiB.
+- The whole `xrkGo` is ≤ 16 KiB.
 - A wrong entry drops only that entry; the plugin details page ("Native UI") and `check` list the problems.
 
 Icons (162, the same in the manifest and in views): bolt star sparkle heart flag bookmark pin bell clock alarm calendar todo note document folder search code terminal globe chart lightbulb book puzzle robot chat mail translate image camera mic link summary wrench bug travel school home play refresh archive team wallet palette coin money speaker read copy quote share edit write save paste add remove delete clear fork regenerate reply select-text qr download downloads external info warning check done success error question pending running tip list table panel sidebar menu more expand collapse file folder-open workspace storage pdf zip slides article text diff gallery audio music video video-file play-video pause stop replay generate-image generate-video diagram plugin bot agent skill model tool workflow goal plan job automation command trajectory web web-search browser history time today timezone schedule repeat reminder user account group chats mention invite announcement reaction poll notification send community forum feedback wechat qq telegram discord phone computer cloud server power restart retry theme color text-size pet featured badge favorite settings
 
-## The host half: `ctx.dshGo`
+## The host half: `ctx.xrkGo`
 
 ```js
 export function apply(ctx) {
-  ctx.inject(['dshGo'], (ctx) => {          // runs only on hosts with the dsh-go bridge
-    ctx.dshGo.on('translate', (scope, event) => ({ insert: `Translate into English:\n\n${scope.clipboard}` }))
-    ctx.dshGo.strip('today', (scope, emit, caps) => watch(() => emit({ text: label(caps.locale) })))
-    ctx.dshGo.panel('usage', {
+  ctx.inject(['xrkGo'], (ctx) => {          // runs only on hosts with the xrk-mobile bridge
+    ctx.xrkGo.on('translate', (scope, event) => ({ insert: `Translate into English:\n\n${scope.clipboard}` }))
+    ctx.xrkGo.strip('today', (scope, emit, caps) => watch(() => emit({ text: label(caps.locale) })))
+    ctx.xrkGo.panel('usage', {
       view: (scope, caps) => usageView(scope, caps),
       data: (scope, emit, caps) => watch(() => emit(usageData(scope))),
       actions: { copy: (scope, event) => ({ copy: summary(), toast: 'Copied' }) },
@@ -66,7 +66,7 @@ export function apply(ctx) {
 }
 ```
 
-**Write `['dshGo']`, never `['dshGo?']`**, and keep `dshGo` out of the plugin's top-level `inject`: the first never runs, the second stops the whole plugin on hosts without the bridge.
+**Write `['xrkGo']`, never `['xrkGo?']`**, and keep `xrkGo` out of the plugin's top-level `inject`: the first never runs, the second stops the whole plugin on hosts without the bridge.
 
 | Method | For |
 |---|---|
@@ -134,7 +134,7 @@ These need a newer app. Check with `hasSurface(caps, 'composer.tools')`. Where t
 **Turn notes** come from `turnNote(id, dataFn)` in the host half. There is one subscription per chat, and each push carries every turn to show in it, keyed by turn number:
 
 ```js
-ctx.dshGo.turnNote('cost', (scope, emit) => watchCosts(scope.sessionId, (costs) =>
+ctx.xrkGo.turnNote('cost', (scope, emit) => watchCosts(scope.sessionId, (costs) =>
   emit(Object.fromEntries(costs.map((c) => [c.turn, { text: `¥${c.yuan.toFixed(2)}` }])))))
 ```
 
@@ -142,7 +142,7 @@ ctx.dshGo.turnNote('cost', (scope, emit) => watchCosts(scope.sessionId, (costs) 
 - When the footnote doesn't fit, the note goes first: duration, steps and cost come before it.
 - `tone` sets the color of that note, for each plugin separately; without it the note matches the footnote.
 - A plugin that doesn't declare `turn.note` creates no subscription. A chat follows the first 8 plugins with turn notes switched on; later ones don't show.
-- Older bridges have no `turnNote`, and calling it there stops every registration after it. To stay compatible, check first: `if (typeof ctx.dshGo.turnNote === 'function')`.
+- Older bridges have no `turnNote`, and calling it there stops every registration after it. To stay compatible, check first: `if (typeof ctx.xrkGo.turnNote === 'function')`.
 
 ## Static panels
 

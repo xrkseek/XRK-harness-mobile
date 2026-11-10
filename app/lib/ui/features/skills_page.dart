@@ -3,7 +3,7 @@
 // conversation, from `skills/list`. A skill's sheet puts `/name ` into this
 // conversation's composer or a new one (skill_use.dart).
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -68,7 +68,7 @@ class SkillsPage extends ConsumerWidget {
     context,
     builder: (sheet) {
       final theme = Theme.of(sheet);
-      final colors = DshColors.of(sheet);
+      final colors = XrkColors.of(sheet);
       return SafeArea(
         top: false,
         child: Column(

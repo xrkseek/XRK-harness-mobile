@@ -2,12 +2,12 @@
 // once, also text read through appL10n (no BuildContext dependency), and the
 // choice is stored for the next launch and for the native side.
 
-import 'package:dsh_app/app.dart';
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/appearance_state.dart';
-import 'package:dsh_app/state/locale_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/settings/language_tile.dart';
+import 'package:xrk_app/app.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/appearance_state.dart';
+import 'package:xrk_app/state/locale_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/settings/language_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,7 +56,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const DshApp(home: _Page()),
+        child: const XrkApp(home: _Page()),
       ),
     );
     await tester.pumpAndSettle();

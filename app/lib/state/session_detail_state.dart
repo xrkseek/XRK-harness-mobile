@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'connection_state.dart';
 
-/// The session's goal (`goal` projection of dsh-goal), when one is set.
+/// The session's goal (`goal` projection of xrk-mobileal), when one is set.
 class SessionGoal {
   const SessionGoal({
     required this.objective,
@@ -43,7 +43,7 @@ class SessionGoal {
   final int? maxRounds;
 }
 
-/// Session-level state for the 对话详情 page, from DSH projections:
+/// Session-level state for the 对话详情 page, from XRK projections:
 /// `goal`, `plan` (plan mode) and `todos`.
 class SessionPanels {
   const SessionPanels({this.goal, this.planActive = false, this.planPending = false, this.todos});
@@ -101,7 +101,7 @@ class SessionPanelsController extends Notifier<SessionPanels> {
     return SessionPanels.empty;
   }
 
-  Future<void> _seed(DshClient client) async {
+  Future<void> _seed(XrkClient client) async {
     // Notifier.ref changes when dependencies rebuild; this read belongs to this build.
     final r = ref;
     final ticket = ++_seedTicket;
@@ -120,7 +120,7 @@ class SessionPanelsController extends Notifier<SessionPanels> {
     }
   }
 
-  void _onControl(SessionControlUpdate update, DshClient client) {
+  void _onControl(SessionControlUpdate update, XrkClient client) {
     if (!ref.mounted) return;
     switch (update) {
       case SessionControlBaseline(:final projections):

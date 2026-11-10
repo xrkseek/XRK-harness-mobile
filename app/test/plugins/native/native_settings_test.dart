@@ -2,9 +2,9 @@
 // 「原生界面」 line that opens the problems with their paths. Plugins without
 // a native part get nothing.
 
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/ui/plugins/native/native_plugin_section.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/ui/plugins/native/native_plugin_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,7 +38,7 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   testWidgets('a switch per declared place, then the status line', (tester) async {
-    final container = await pumpSection(tester, FakeBridge(contributions([quickPlugin()])), 'dsh-go-example-quick');
+    final container = await pumpSection(tester, FakeBridge(contributions([quickPlugin()])), 'xrk-example-quick');
     expect(find.text('输入框按钮'), findsOneWidget);
     expect(find.text('消息菜单'), findsOneWidget);
     expect(find.text('状态条'), findsNothing, reason: 'only what the plugin declares');
@@ -67,8 +67,8 @@ void main() {
             {'id': 'a', 'label': 'A'},
           ],
           issues: [
-            {'path': '/dshGo/contributes/composer.actions/2/label', 'code': 'too-long', 'severity': 'warn'},
-            {'path': '/dshGo/contributes/panels/0/view', 'code': 'view-file', 'severity': 'error'},
+            {'path': '/xrkGo/contributes/composer.actions/2/label', 'code': 'too-long', 'severity': 'warn'},
+            {'path': '/xrkGo/contributes/panels/0/view', 'code': 'view-file', 'severity': 'error'},
           ],
         ),
       ]),
@@ -90,7 +90,7 @@ void main() {
     expect(find.text('插件没有及时响应'), findsOneWidget);
     expect(find.text('/runtime/a'), findsOneWidget);
     expect(find.text('文字太长，已截断'), findsOneWidget);
-    expect(find.text('/dshGo/contributes/composer.actions/2/label'), findsOneWidget);
+    expect(find.text('/xrkGo/contributes/composer.actions/2/label'), findsOneWidget);
     expect(find.text('视图文件读不出'), findsOneWidget);
   });
 
@@ -103,7 +103,7 @@ void main() {
             'old',
             state: 'needs-app',
             issues: [
-              {'path': '/dshGo/minApp', 'code': 'needs-app', 'severity': 'error'},
+              {'path': '/xrkGo/minApp', 'code': 'needs-app', 'severity': 'error'},
             ],
           ),
         ]),

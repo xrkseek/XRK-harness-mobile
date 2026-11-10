@@ -3,25 +3,25 @@
 // goldens (light + dark). Regenerate the goldens with
 // `flutter test --update-goldens test/features/features_pages_test.dart`.
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/features_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/settings/search/settings_search_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/features/agent_presets_page.dart';
-import 'package:dsh_app/ui/features/all_features_page.dart';
-import 'package:dsh_app/ui/features/jobs_page.dart';
-import 'package:dsh_app/ui/features/permission_page.dart';
-import 'package:dsh_app/ui/features/schedules_page.dart';
-import 'package:dsh_app/ui/features/skills_page.dart';
-import 'package:dsh_app/ui/terminal/terminal_page.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/features_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/settings/search/settings_search_page.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/ui/features/agent_presets_page.dart';
+import 'package:xrk_app/ui/features/all_features_page.dart';
+import 'package:xrk_app/ui/features/jobs_page.dart';
+import 'package:xrk_app/ui/features/permission_page.dart';
+import 'package:xrk_app/ui/features/schedules_page.dart';
+import 'package:xrk_app/ui/features/skills_page.dart';
+import 'package:xrk_app/ui/terminal/terminal_page.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -336,11 +336,11 @@ void main() {
 
   group('actions call the Host', () {
     late FakePluginCarrier carrier;
-    late DshClient client;
+    late XrkClient client;
 
     setUp(() {
       carrier = FakePluginCarrier();
-      client = DshClient.withCarrier(carrier);
+      client = XrkClient.withCarrier(carrier);
     });
     tearDown(() => client.close());
 
@@ -404,7 +404,7 @@ void main() {
       final delete = tester.widget<FilledButton>(find.widgetWithText(FilledButton, '删除'));
       expect(
         delete.style?.foregroundColor?.resolve({}),
-        DshColors.of(tester.element(find.byType(AlertDialog))).onDanger,
+        XrkColors.of(tester.element(find.byType(AlertDialog))).onDanger,
       );
       expect(find.text('sch-1'), findsNothing);
       await tester.tap(find.widgetWithText(FilledButton, '删除'));

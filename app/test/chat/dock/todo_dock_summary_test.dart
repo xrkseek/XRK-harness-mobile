@@ -2,8 +2,8 @@
 // the session's `todos` projection has items — a finished list stays after
 // its turn ends, until the next turn starts and clears it).
 
-import 'package:dsh_app/ui/chat/dock/todo_bar.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/dock/todo_bar.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _read = TodoItem('读代码', 'completed');

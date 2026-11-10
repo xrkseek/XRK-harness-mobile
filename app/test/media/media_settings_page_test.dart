@@ -3,10 +3,10 @@
 // (one credential per provider), the key written into the credential store,
 // and deleting a service clearing the defaults that named it.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/media_generation.dart';
-import 'package:dsh_app/ui/settings/media_settings_page.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/media_generation.dart';
+import 'package:xrk_app/ui/settings/media_settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -52,7 +52,7 @@ Map<String, Object?> _preset({
 /// app's fallback list then keeps the page usable.
 Map<String, Object?> _catalog({bool presets = true, bool video = true}) => {
   'v': 1,
-  'contract': 'dsh-go/media/catalog',
+  'contract': 'xrk-mobile/media/catalog',
   'capabilities': {'image': true, 'video': video},
   'models': [
     _model('doubao-seedream-5-0-pro', 'Seedream 5.0', 'image', 'ark-image'),
@@ -147,7 +147,7 @@ Map<String, Object?> _schema(Map<String, Object?>? catalog, {bool kindDefaults =
       'type': 'transform',
       'meta': {
         'default': <Object?>[],
-        if (catalog != null) 'extra': {'dsh-go/media/catalog': catalog},
+        if (catalog != null) 'extra': {'xrk-mobile/media/catalog': catalog},
       },
       'inner': {
         'type': 'array',
@@ -196,7 +196,7 @@ Map<String, Object?> _describe({
   required List<Map<String, Object?>> services,
   Map<String, Object?> defaults = const {},
   Map<String, Object?>? catalog,
-  String ns = 'dsh-media',
+  String ns = 'xrk-media',
   bool kindDefaults = true,
 }) {
   final baseDefaults = <String, Object?>{
@@ -304,7 +304,7 @@ void main() {
     await tester.tap(find.text('火山方舟 · 图片'));
     await flush(tester);
 
-    expect(host.mutates().last['ns'], 'dsh-media');
+    expect(host.mutates().last['ns'], 'xrk-media');
     final op = lastOp();
     expect(op['op'], 'set');
     expect(op['path'], ['services']);
@@ -397,7 +397,7 @@ void main() {
     await tester.tap(find.text('火山方舟'));
     await flush(tester);
     expect(find.text(_zh.mediaConfigKeySaved), findsOneWidget);
-    expect(find.textContaining('Shared media (dsh-media/other)'), findsOneWidget);
+    expect(find.textContaining('Shared media (xrk-media/other)'), findsOneWidget);
     final calls = host.calls.length;
     await tester.tap(find.text(_zh.mediaConfigCheck));
     await settle(tester);
@@ -478,7 +478,7 @@ void main() {
     await flush(tester);
     expect(find.text(_zh.commonSaveFailed), findsOneWidget);
     expect(find.byKey(const ValueKey('media-url-input')), findsOneWidget);
-    expect((host.namespaces['dsh-media']!.value['services']! as List).first['baseUrl'], 'https://example.test/v1');
+    expect((host.namespaces['xrk-media']!.value['services']! as List).first['baseUrl'], 'https://example.test/v1');
   });
 
   testWidgets('local checks report missing key and disabled service without claiming verification', (tester) async {
@@ -597,7 +597,7 @@ void main() {
     expect(value['imageModelId'], 'doubao-seedream-5-0-pro');
     expect(value['videoServiceId'], '');
     expect(value['serviceId'], '');
-    expect((host.namespaces['dsh-media']!.value['defaults']! as Map)['imageServiceId'], 'ark_image');
+    expect((host.namespaces['xrk-media']!.value['defaults']! as Map)['imageServiceId'], 'ark_image');
   });
 
   testWidgets('a 0.3.0 legacy pair stays visible and can be cleared', (tester) async {
@@ -747,7 +747,7 @@ void main() {
     await tester.tap(find.text('火山方舟'));
     await flush(tester);
     expect(find.text(_zh.mediaSettingsApiKey), findsOneWidget);
-    host.externalSet('dsh-media', const ['services'], const <Object?>[], notify: false);
+    host.externalSet('xrk-media', const ['services'], const <Object?>[], notify: false);
     final container = ProviderScope.containerOf(tester.element(find.text(_zh.mediaSettingsApiKey)));
     await container.read(engineSettingsProvider.notifier).refresh();
     await flush(tester);

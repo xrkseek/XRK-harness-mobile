@@ -6,4 +6,4 @@
 
 limit>=4保持原分片路径，不增加整段预扫描。合法字符仍按既有codepoint边界分片；不可写、空串和普通encoded buffer/window限制保持原行为。不修改Host协议或配置范围，不增加公开API。
 
-测试从自有loopback HTTP的terminal/environment获取合法预算，经公开DshClient.attachTerminal和实际WebSocket观察发送帧；不是PTY、完整官方终端Host或Android测试。后续retain公开流回复充当同socket的有序观察barrier，无sleep/私有回调。无新增依赖、账户或外部服务。SDK代码不属于runtime构建输入，不改runtimeVersion；Android未编译。
+测试从自有loopback HTTP的terminal/environment获取合法预算，经公开XrkClient.attachTerminal和实际WebSocket观察发送帧；不是PTY、完整官方终端Host或Android测试。后续retain公开流回复充当同socket的有序观察barrier，无sleep/私有回调。无新增依赖、账户或外部服务。SDK代码不属于runtime构建输入，不改runtimeVersion；Android未编译。

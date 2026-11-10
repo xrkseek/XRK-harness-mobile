@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/bots/bot_chat_kit.dart';
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_app/ui/bots/bot_chat_kit.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,7 +16,7 @@ import 'support.dart';
 void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
-  final raw = jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_choice.json').readAsStringSync()) as Map;
+  final raw = jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_choice.json').readAsStringSync()) as Map;
   final card = DsBotViewCard.fromJson(raw['viewState']['value']['views']['writer-now']);
   testWidgets('official choice displays defaults and submits typed values not labels', (t) async {
     Map<String, Object?>? answer;

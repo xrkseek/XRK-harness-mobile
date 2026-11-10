@@ -4,7 +4,7 @@
 //
 //   flutter test test/shell/adaptive/page_frame_wide_test.dart
 
-import 'package:dsh_app/ui/shell/page_frame.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

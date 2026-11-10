@@ -241,7 +241,7 @@ class PackFormat(unittest.TestCase):
                 self.assertTrue(cb['y'] < p['anchor']['baseline'] <= cb['y'] + cb['h'])
 
     def test_metadata(self):
-        """Both pets are DSH-TUI mascots, used with the author's permission."""
+        """Both pets are XRK-TUI mascots, used with the author's permission."""
         want = {
             'deepy-whale': ('Deepy 小鲸鱼', 'DSH-TUI（Clawd on Desk 主题包 v1.0.0）'),
             'whale-girl': ('鲸娘', 'https://dshtui.com/pets/whale-girl-emoji/'),
@@ -251,7 +251,7 @@ class PackFormat(unittest.TestCase):
             with self.subTest(pid):
                 self.assertEqual(p['name'], name)
                 self.assertEqual(p['author'], 'DSH-TUI')
-                self.assertEqual(p['license'], 'DSH-TUI 吉祥物，作者授权 dsh-go 使用')
+                self.assertEqual(p['license'], 'DSH-TUI 吉祥物，作者授权 xrk-mobile 使用')
                 self.assertEqual(p['source'], source)
                 with open(os.path.join(d, 'pack.json'), encoding='utf-8') as fh:
                     self.assertNotIn('非官方', fh.read())

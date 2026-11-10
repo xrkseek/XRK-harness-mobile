@@ -49,7 +49,7 @@ class AppUpdateTiles extends ConsumerWidget {
   }
 
   Widget? _value(BuildContext context, AppUpdateState update) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final l10n = context.l10n;
     if (update.check == UpdateCheckPhase.checking) {
       return const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2));
@@ -89,7 +89,7 @@ class UpdateBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return DecoratedBox(
       decoration: ShapeDecoration(color: scheme.primaryContainer, shape: const StadiumBorder()),
       child: Padding(

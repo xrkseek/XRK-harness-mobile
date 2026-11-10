@@ -3,16 +3,16 @@
 // session before its prompt — and does not send under defaults the person
 // did not choose when applying fails, not even after a restart.
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/models_state.dart' show pendingModelProvider;
-import 'package:dsh_app/state/new_chat_modes.dart';
-import 'package:dsh_app/state/features_state.dart' show PermissionOption, PermissionState, agentPresetsProvider;
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/empty_actions.dart';
-import 'package:dsh_app/ui/chat/model_sheet.dart' show ModelChip;
-import 'package:dsh_app/ui/chat/new_chat_options.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/models_state.dart' show pendingModelProvider;
+import 'package:xrk_app/state/new_chat_modes.dart';
+import 'package:xrk_app/state/features_state.dart' show PermissionOption, PermissionState, agentPresetsProvider;
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/empty_actions.dart';
+import 'package:xrk_app/ui/chat/model_sheet.dart' show ModelChip;
+import 'package:xrk_app/ui/chat/new_chat_options.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,7 +28,7 @@ class _Host {
     : presets = [
         {'id': 'standard', 'isDefault': !companionDefault},
         {'id': 'minimal'},
-        {'id': 'dsh-go-companion-full', 'name': 'Companion', 'isDefault': companionDefault},
+        {'id': 'xrk-mobile-companion-full', 'name': 'Companion', 'isDefault': companionDefault},
       ];
 
   /// What `agentPresets/list` answers (a test may change it).
@@ -51,7 +51,7 @@ class _Host {
       'result': {'kind': failPermission ? 'error' : 'success', 'text': failPermission ? 'refused' : 'ok'},
     },
   });
-  late final connection = HostConnection(client: DshClient.withCarrier(carrier), isLocal: true);
+  late final connection = HostConnection(client: XrkClient.withCarrier(carrier), isLocal: true);
 
   List<Map<String, Object?>> calls(String endpoint) => carrier.argsOf(endpoint);
 }
@@ -279,7 +279,7 @@ void main() {
   test('what a new session gets: the pick while offered, the offered default over a hidden one', () {
     const standard = AgentPresetInfo(id: 'standard', isDefault: true);
     const minimal = AgentPresetInfo(id: 'minimal');
-    const companion = AgentPresetInfo(id: 'dsh-go-companion-full', isDefault: true);
+    const companion = AgentPresetInfo(id: 'xrk-mobile-companion-full', isDefault: true);
     const broken = AgentPresetInfo(id: 'broken', broken: 'missing');
     expect(newChatPresetToApply([standard, minimal], null), isNull);
     expect(newChatPresetToApply([standard, minimal], 'minimal'), 'minimal');
@@ -304,7 +304,7 @@ void main() {
     expect(defaultPreset([a, b])?.id, 'b');
     expect(defaultPreset([a])?.id, 'a');
     expect(defaultPreset(const []), isNull);
-    expect(newChatPresets([a, const AgentPresetInfo(id: 'dsh-go-companion-full')]).map((p) => p.id), ['a']);
+    expect(newChatPresets([a, const AgentPresetInfo(id: 'xrk-mobile-companion-full')]).map((p) => p.id), ['a']);
 
     const state = PermissionState(options: [], hostDefault: 'workspace-write');
     String effective({bool local = true, bool autoApprove = true, bool safeMode = false}) =>

@@ -1,4 +1,4 @@
-import 'package:dsh_app/ui/web/web_navigation.dart';
+import 'package:xrk_app/ui/web/web_navigation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

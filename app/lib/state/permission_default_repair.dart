@@ -1,11 +1,11 @@
 // Older app versions could save the session-only Auto preset as the default
 // for new chats (`permission.defaultPreset: auto`; #26 stopped offering it).
-// DSH 0.2.1 resolves that default when its permission presets start, before
+// XRK 0.2.1 resolves that default when its permission presets start, before
 // Auto is registered, so the plugin fails on every launch: no
 // `permissionPresets` service, and no settings write either (`settings/mutate`
 // and the plugin-config bridge only edit active plugins). The on-device
 // engine's settings layer is a file the app can reach, so the app takes the
-// value out of it and restarts DSH, which then starts the presets with its own
+// value out of it and restarts XRK, which then starts the presets with its own
 // default. A remote host offers no method that could, and is left alone.
 
 import 'dart:io';
@@ -18,11 +18,11 @@ import '../runtime/runtime_state.dart';
 import '../share_code/guest_fs.dart';
 import 'engine_control.dart';
 
-/// The main profile's settings layer, where DSH's settings forms write.
+/// The main profile's settings layer, where XRK's settings forms write.
 const mainProfilePatch = '${GuestFs.dshHome}/profiles/web/cordis.patch.yml';
 
 /// Takes a stored Auto default out of the on-device engine's main profile and
-/// restarts DSH so its permission presets load. Nothing to take out: nothing
+/// restarts XRK so its permission presets load. Nothing to take out: nothing
 /// happens, so this runs on every local connect and acts once.
 Future<void> clearAutoDefaultPreset(ProviderContainer container) async {
   try {
@@ -30,7 +30,7 @@ Future<void> clearAutoDefaultPreset(ProviderContainer container) async {
     if (file == null || !file.existsSync()) return;
     final fixed = withoutAutoDefaultPreset(file.readAsStringSync());
     if (fixed == null) return;
-    final tmp = File('${file.path}.dsh-go-tmp')..writeAsStringSync(fixed, flush: true);
+    final tmp = File('${file.path}.xrk-mobile-tmp')..writeAsStringSync(fixed, flush: true);
     tmp.renameSync(file.path);
     debugPrint('Permissions: cleared the stored Auto default for new chats');
     // Safe mode runs its own profile; leaving it starts the fixed one.
@@ -43,7 +43,7 @@ Future<void> clearAutoDefaultPreset(ProviderContainer container) async {
 
 /// [patch] without `defaultPreset: auto` in its `permission` rows (the whole
 /// `config` when that is all it holds), or null when there is none or it is
-/// not laid out one field per line, as DSH writes it.
+/// not laid out one field per line, as XRK writes it.
 String? withoutAutoDefaultPreset(String patch) {
   final Object? rows;
   try {

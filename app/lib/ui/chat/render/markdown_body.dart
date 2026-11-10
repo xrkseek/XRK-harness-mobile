@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show DshRemoteException;
+import 'package:xrk_client/xrk_client.dart' show XrkRemoteException;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
@@ -19,7 +19,7 @@ import '../../theme/app_icons.dart';
 import '../../plugins/native/native_taps.dart' show openConfirmedLink;
 import '../../theme/theme.dart';
 import '../artifact_preview.dart';
-import '../dsh_ui/dsh_ui.dart';
+import '../xrk_ui/xrk_ui.dart';
 import 'code_block.dart';
 import 'markdown_blocks.dart';
 import 'markdown_image.dart';
@@ -76,7 +76,7 @@ class MarkdownBody extends StatefulWidget {
   final bool secondary;
 
   /// 助手回复:模型把 `dsh-ui` 的 JSON 裸着写进正文时,也当成视图画
-  /// (见 [fenceBareDshUiViews])。别的 Markdown(文档、说明页)不开。
+  /// (见 [fenceBareXrkUiViews])。别的 Markdown(文档、说明页)不开。
   final bool repairBareViews;
 
   /// 表格单列最宽多少;更长的单元格在列内换行,而不是把整表拉得很长。
@@ -104,7 +104,7 @@ class MarkdownBody extends StatefulWidget {
     TableTint tint = TableTint.follow,
   }) {
     final colors = theme.colorScheme;
-    final dsh = theme.extension<DshColors>()!;
+    final dsh = theme.extension<XrkColors>()!;
     // 表格底色三档只在两个填充上不同;隔行比表头再淡一档,能看出条带又不
     // 抢文字。
     final tableFills = tableTintFills(
@@ -224,7 +224,7 @@ class MarkdownBody extends StatefulWidget {
   // onLinkTap identity; its cached spans may retain this context-only callback.
   static void _onLinkTap(BuildContext context, String url, String title) {
     if (!context.mounted) return;
-    // `dshgo://open/<page>`: the guide's links to the app's own pages.
+    // `xrkharness://open/<page>`: the guide's links to the app's own pages.
     if (openReplyPageLink(context, url)) return;
     final uri = linkToOpen(url);
     if (uri != null) {
@@ -272,7 +272,7 @@ class MarkdownBody extends StatefulWidget {
       try {
         await source.stat(path);
         file = true;
-      } on DshRemoteException catch (e) {
+      } on XrkRemoteException catch (e) {
         file = e.code == 'workspace-file/not-regular-file';
       } catch (_) {
         // Offline or the Host failed: the site is what the link most likely meant.
@@ -444,7 +444,7 @@ class MarkdownBody extends StatefulWidget {
     // A visual reply (dsh-ui): drawn as native cards. The cursor sentinel inside an open fence means it is still
     // streaming; open without it means the reply was cut short.
     if (language == 'dsh-ui') {
-      return DshUiBlock(
+      return XrkUiBlock(
         source: code.replaceAll(_cursorSentinel, ''),
         streaming: !closed && (code.contains(_cursorSentinel) || _RevealStreaming.of(context)),
         closed: closed,
@@ -506,7 +506,7 @@ class MarkdownBody extends StatefulWidget {
   /// tables separated from the paragraph above and their headers bold and,
   /// while [streaming], the unfinished tail repaired and the cursor sentinel
   /// placed. With [repairBareViews] a bare `dsh-ui` JSON block gets its fence
-  /// back first (see [fenceBareDshUiViews]).
+  /// back first (see [fenceBareXrkUiViews]).
   @visibleForTesting
   static String prepareSource(String text, {bool streaming = false, bool repairBareViews = false}) =>
       _prepareSource(text, streaming: streaming, repairBareViews: repairBareViews);
@@ -524,7 +524,7 @@ class MarkdownBody extends StatefulWidget {
   /// as its delimiter row arrives, right at the end and for good, so its columns don't
   /// change when the reply finishes. Formulas are left to the library's own hold.
   static String _prepareRevealed(String text, {required bool repairBareViews}) {
-    final repaired = repairBareViews ? fenceBareDshUiViews(text) : text;
+    final repaired = repairBareViews ? fenceBareXrkUiViews(text) : text;
     return boldTableHeaders(blankLineBeforeTables(normalizeMath(repaired)));
   }
 
@@ -534,7 +534,7 @@ class MarkdownBody extends StatefulWidget {
     bool repairBareViews = false,
     StreamingMarkdownRepair? repair,
   }) {
-    final repaired = repairBareViews ? fenceBareDshUiViews(text) : text;
+    final repaired = repairBareViews ? fenceBareXrkUiViews(text) : text;
     final source = boldTableHeaders(blankLineBeforeTables(normalizeMath(repaired, streaming: streaming)));
     if (!streaming) return source;
     return _withCursor(repair?.repair(source) ?? repairStreamingMarkdown(source));

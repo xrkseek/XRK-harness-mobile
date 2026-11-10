@@ -1,11 +1,11 @@
-// Every user-facing surface of the official DSH Web client (0.2.1-rc.2) and
+// Every user-facing surface of the official XRK Web client (0.2.1-rc.2) and
 // where it lives in the app: a native page, the official page inside the app
-// (DSH Web with a deep link), or both. The parity table behind it is
+// (XRK Web with a deep link), or both. The parity table behind it is
 // `docs/official-parity.md`.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show PluginBundle;
+import 'package:xrk_client/xrk_client.dart' show PluginBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,24 +21,25 @@ import '../community/community_page.dart';
 import '../cordis/cordis_page.dart';
 import '../files/files_page.dart';
 import '../forum/forum_home_page.dart';
+import '../engine/engine_screen.dart';
 import '../phone/phone_control_screen.dart';
 import '../plugins/plugin_detail_sheet.dart';
 import '../plugins/plugins_screen.dart';
 import '../plugins/seats/plugin_seat_page.dart';
 import '../plugins/seats/seat_links.dart';
-import '../providers/providers_page.dart';
-import '../remote/remote_screen.dart';
 import '../session/session_artifacts.dart';
 import '../session/session_detail_page.dart';
 import '../share_code/profile_share_sheet.dart';
 import '../shell/session_search_page.dart';
+import '../settings/appearance/appearance_page.dart';
+import '../settings/index/spots.dart';
+import '../settings/notification_settings.dart';
 import '../terminal/terminal_page.dart';
 import '../theme/app_icons.dart';
 import '../web/web_target.dart';
 import '../workspace/workspaces_page.dart';
 import 'feature_widgets.dart' show openSessionInChat;
 import 'jobs_page.dart';
-import 'permission_page.dart';
 import 'schedules_page.dart';
 import 'session_export_page.dart';
 import 'skills_page.dart';
@@ -176,8 +177,8 @@ Future<void> _bundleSheet(BuildContext context, WidgetRef ref, String name) asyn
   await showBundleSheet(context, bundle);
 }
 
-/// DSH's optional reasoning-translation bundle.
-const cotTranslationBundle = '@deepseek-ai/dsh-experimental-cot-translation-bundle';
+/// XRK's optional reasoning-translation bundle.
+const cotTranslationBundle = '@xrkseek/harness-cli-experimental-cot-translation-bundle';
 
 /// The last section: shortcuts to settings pages (the same pages, by the same
 /// names), followed by 全部设置.
@@ -316,7 +317,7 @@ final featureSections = <FeatureSection>[
       summary: (l10n) => l10n.catalogVoiceInputSummary,
       icon: AppIcons.voice,
       action: _backToChat,
-      // l10n:keep DSH Web plugin title aliases used for deep-link matching
+      // l10n:keep XRK Web plugin title aliases used for deep-link matching
       web: const DshWebTarget(pluginItem: ['语音输入', 'Voice input']),
     ),
   ]),
@@ -380,24 +381,10 @@ final featureSections = <FeatureSection>[
       web: const DshWebTarget(),
     ),
   ]),
-  // The same pages as in 设置 (one home, one name), for people who look
-  // here first; 全部设置 follows them (AllFeaturesPage).
+  // Phone-shell settings only (same homes as the Settings hub). Models /
+  // permission / remote / plugins live in in-guest Web Settings — do not
+  // surface native Host dead pages from 全部功能.
   FeatureSection.localized((l10n) => l10n.commonSettings, [
-    FeatureItem.localized(
-      id: 'models',
-      title: (l10n) => l10n.catalogModels,
-      summary: (l10n) => l10n.catalogModelsSummary,
-      icon: AppIcons.providers,
-      tile: FeatureKind.models,
-      native: (_) => const ProvidersPage(),
-    ),
-    FeatureItem.localized(
-      id: 'permission',
-      title: (l10n) => l10n.catalogPermission,
-      summary: (l10n) => l10n.catalogPermissionSummary,
-      icon: AppIcons.permissions,
-      native: (id) => PermissionPage(sessionId: id),
-    ),
     FeatureItem.localized(
       id: 'phone',
       title: (l10n) => l10n.catalogPhoneControl,
@@ -410,11 +397,25 @@ final featureSections = <FeatureSection>[
       web: const DshWebTarget(settings: DshWebSettings.phone),
     ),
     FeatureItem.localized(
-      id: 'remote',
-      title: (l10n) => l10n.commonRemoteHost,
-      summary: (l10n) => l10n.catalogRemoteSummary,
-      icon: AppIcons.remoteHosts,
-      native: (_) => const RemoteScreen(),
+      id: 'appearance',
+      title: (l10n) => SettingsIndex.page(SettingsPageId.appearance).title(l10n),
+      summary: (l10n) => l10n.searchKwTheme,
+      icon: AppIcons.theme,
+      native: (_) => const AppearancePage(),
+    ),
+    FeatureItem.localized(
+      id: 'notifications',
+      title: (l10n) => SettingsIndex.page(SettingsPageId.notifications).title(l10n),
+      summary: (l10n) => l10n.searchKwNotifications,
+      icon: AppIcons.notifications,
+      native: (_) => const NotificationSettingsPage(),
+    ),
+    FeatureItem.localized(
+      id: 'engine',
+      title: (l10n) => SettingsIndex.page(SettingsPageId.engine).title(l10n),
+      summary: (l10n) => l10n.searchKwEngine,
+      icon: AppIcons.engine,
+      native: (_) => const EngineScreen(),
     ),
   ], id: settingsFeatureSection),
 ];
@@ -453,7 +454,7 @@ final featureSectionsProvider = Provider.autoDispose<List<FeatureSection>>((ref)
   ];
 });
 
-/// One plugin panel as an entry: its native or island page, or DSH Web (the
+/// One plugin panel as an entry: its native or island page, or XRK Web (the
 /// card then says 「网页版」) when neither can come up. [owner] is the
 /// plugin's name for people (its declared title); a package name is never
 /// shown: then the card just says 「插件面板」.

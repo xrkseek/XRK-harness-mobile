@@ -9,7 +9,7 @@ import '../theme/theme.dart';
 enum PhoneDisclosureAnswer { agree, notNow }
 
 /// The 显著披露 before 「手机操控」 is first turned on: what is read, when, who
-/// gets it, and what DSH never does. Resolves true on 「同意并开启」.
+/// gets it, and what XRK never does. Resolves true on 「同意并开启」.
 Future<bool> showPhoneDisclosure(BuildContext context) async {
   final answer = await showAppSheet<PhoneDisclosureAnswer>(
     context,
@@ -34,7 +34,7 @@ class PhoneDisclosureSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return SafeArea(
       top: false,
       child: Column(

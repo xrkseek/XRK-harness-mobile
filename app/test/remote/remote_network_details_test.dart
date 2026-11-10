@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/remote/network_details_sheet.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/remote/network_details_sheet.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,11 +46,11 @@ class _InspectableLink extends HostLink implements NetworkInspectableHostLink {
   @override
   Stream<HostLinkStatus> get statuses => changes.stream;
   @override
-  DshClient? get currentClient => null;
+  XrkClient? get currentClient => null;
   @override
-  Stream<DshClient> get clients => const Stream.empty();
+  Stream<XrkClient> get clients => const Stream.empty();
   @override
-  Future<DshClient> open() => throw UnimplementedError();
+  Future<XrkClient> open() => throw UnimplementedError();
   @override
   void kick() {}
   @override
@@ -127,7 +127,7 @@ void main() {
       final sheet = find.byType(RemoteNetworkDetailsSheet);
       expect(sheet, findsOneWidget);
       expect(find.descendant(of: sheet, matching: find.text('Workstation')), findsOneWidget);
-      expect(find.descendant(of: sheet, matching: find.text('DSH Remote')), findsOneWidget);
+      expect(find.descendant(of: sheet, matching: find.text('XRK Remote')), findsOneWidget);
       expect(find.text(path.label), findsWidgets);
       expect(find.text('未测量'), findsNWidgets(2));
       expect(link.inspections, 0, reason: 'opening details does not continuously probe the connection');

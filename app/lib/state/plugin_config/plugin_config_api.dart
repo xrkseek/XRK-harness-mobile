@@ -4,15 +4,15 @@
 // reloads the plugin for the rest, and the credential store for secrets bound
 // to a reference.
 //
-// Two Hosts implement it: the dsh-go bridge's `/dsh-go/v1/plugin-config`
+// Two Hosts implement it: the xrk-mobile bridge's `/xrk-mobile/v1/plugin-config`
 // routes (BridgePluginConfigApi, PLUGIN-CONFIG-CONTRACT R1), and where those
-// are missing DSH 0.2.1's own `settings/describe` + `settings/mutate`, which
+// are missing XRK 0.2.1's own `settings/describe` + `settings/mutate`, which
 // serve `.volatile()` fields only (EngineSettingsPluginConfigApi).
 // MemoryPluginConfigApi holds the complete interface in memory for tests.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../l10n/l10n.dart';
@@ -159,7 +159,7 @@ class PluginConfigEntry {
   final String? source;
 
   /// Bridge R7: a write would be taken. Null where the Host does not say
-  /// in its list (an older bridge, DSH's own `settings/describe`).
+  /// in its list (an older bridge, XRK's own `settings/describe`).
   final bool? writable;
 
   /// Can be read here but not changed: the Host's list says so up front
@@ -296,7 +296,7 @@ abstract interface class PluginConfigApi {
 /// carry the input).
 PluginConfigFailure pluginConfigFailureOf(Object error) {
   if (error is PluginConfigFailure) return error;
-  if (error is DshRemoteException && error.code.startsWith('plugin-config/')) {
+  if (error is XrkRemoteException && error.code.startsWith('plugin-config/')) {
     final path = switch (error.details['path']) {
       final List<Object?> p when p.isNotEmpty => [for (final s in p) '$s'],
       _ => null,
@@ -315,11 +315,11 @@ PluginConfigFailure pluginConfigFailureOf(Object error) {
       _ => failure(PluginConfigFailureKind.rejected, appL10n.stateSettingsRejected),
     };
   }
-  if (error is DshTransportException || error is TimeoutException) {
+  if (error is XrkTransportException || error is TimeoutException) {
     return PluginConfigFailure(PluginConfigFailureKind.unknown, appL10n.pluginConfigUnknown);
   }
   final message = describeSettingsError(error);
-  if (error is DshRemoteException) {
+  if (error is XrkRemoteException) {
     if (error.code == 'settings/conflict') return PluginConfigFailure(PluginConfigFailureKind.conflict, message);
     if (error.code == 'settings/apply-failed') {
       return PluginConfigFailure(

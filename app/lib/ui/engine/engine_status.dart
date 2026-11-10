@@ -98,7 +98,7 @@ String? humanizeRuntimeError(String? raw) {
   if (text.contains('No space left') || text.contains('ENOSPC')) {
     return appL10n.commonStorageFull;
   }
-  if (text.startsWith('DSH exited unexpectedly')) {
+  if (text.startsWith('XRK exited unexpectedly')) {
     return appL10n.phoneEngineExited;
   }
   if (text == 'runtime not installed') return appL10n.phoneEngineRuntimeMissing;
@@ -154,7 +154,7 @@ class EngineStatusChip extends StatelessWidget {
 }
 
 /// The engine page's status ring: a thin ring around the
-/// DSH mark. Running: the primary colour, breathing slowly; starting / stopping:
+/// XRK mark. Running: the primary colour, breathing slowly; starting / stopping:
 /// a short arc going round; safe mode: amber; failed: red; stopped: a quiet
 /// grey track. Colours glide between states; reduced motion holds still.
 class EngineRing extends StatefulWidget {
@@ -170,7 +170,7 @@ class EngineRing extends StatefulWidget {
   static const stroke = 2.5;
 
   static Color colorFor(BuildContext context, StatusTone tone) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = Theme.of(context).colorScheme;
     return switch (tone) {
       StatusTone.ok || StatusTone.busy => scheme.primary,
@@ -254,7 +254,7 @@ class _EngineRingState extends State<EngineRing> with SingleTickerProviderStateM
                   Icon(
                     AppIcons.engine,
                     size: widget.size * 0.43,
-                    color: tone == StatusTone.idle ? DshColors.of(context).textTertiary : color,
+                    color: tone == StatusTone.idle ? XrkColors.of(context).textTertiary : color,
                   ),
             ),
           ),

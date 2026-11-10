@@ -2,7 +2,7 @@
 // name; the admin is DS Bot's default (a Main Bot among them). The admin
 // greets the new group and asks what it is for.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -100,7 +100,7 @@ class _NewRoomSheetState extends ConsumerState<NewRoomSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final status = ref.watch(dsBotProvider);
     final team = status.team;
     _scope ??= BotCreationScope.capture(ref);

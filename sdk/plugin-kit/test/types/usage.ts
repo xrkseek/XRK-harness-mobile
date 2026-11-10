@@ -37,10 +37,10 @@ const manifest: Manifest = {
 
 const handler: InvokeHandler = (scope, event) => (scope.clipboard ? { insert: scope.clipboard } : [effects.toast(event.locale)])
 
-declare const dshGo: DshGoService
-dshGo.on('translate', handler)
-dshGo.panel('usage', { view: (scope, caps) => adaptView(view as any, caps)!, data: (_scope, emit) => { emit({ a: 1 }); return () => {} } })
-dshGo.strip('today', (_scope, emit) => emit({ text: '今日 12k', tone: 'muted' }))
+declare const xrkGo: DshGoService
+xrkGo.on('translate', handler)
+xrkGo.panel('usage', { view: (scope, caps) => adaptView(view as any, caps)!, data: (_scope, emit) => { emit({ a: 1 }); return () => {} } })
+xrkGo.strip('today', (_scope, emit) => emit({ text: '今日 12k', tone: 'muted' }))
 
 const host = createTestHost({ dir: '.' })
 void host.invoke('translate', { context: { clipboard: 'x' } }).then((r) => r.effects.map((e) => e.type))

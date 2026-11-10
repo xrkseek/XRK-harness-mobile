@@ -10,12 +10,12 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/plugin_config/plugin_config_memory.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_hub.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_page.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_client/dsh_client.dart' show PluginBundle;
+import 'package:xrk_app/state/plugin_config/plugin_config_memory.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_hub.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_page.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_client/xrk_client.dart' show PluginBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

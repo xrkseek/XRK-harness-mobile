@@ -3,27 +3,27 @@
 // conversation of test/chat/support/run_info_fixture.dart as 's1', a list of
 // conversations for the sidebar, the layout choices fixed.
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/adaptive_layout_state.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/balance_state.dart';
-import 'package:dsh_app/state/bots_state.dart' show dsBotApiFactoryProvider;
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/commands_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart' show drawerClockProvider;
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_app/state/session_detail_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/usage_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart' show chatClock;
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart' show runClock;
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/adaptive_layout_state.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/balance_state.dart';
+import 'package:xrk_app/state/bots_state.dart' show dsBotApiFactoryProvider;
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/commands_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart' show drawerClockProvider;
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_app/state/session_detail_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/usage_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart' show chatClock;
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart' show runClock;
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;

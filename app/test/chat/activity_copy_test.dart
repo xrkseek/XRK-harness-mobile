@@ -3,9 +3,9 @@
 // and every easter egg's trigger (after-tool, milestones, holidays, weekend,
 // night, rare, long turns), plus the live activity derived from chat state.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/activity_copy.dart';
-import 'package:dsh_app/ui/chat/run_info.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/activity_copy.dart';
+import 'package:xrk_app/ui/chat/run_info.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/run_info_fixture.dart';

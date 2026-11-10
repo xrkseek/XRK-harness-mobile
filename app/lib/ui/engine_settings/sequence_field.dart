@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/l10n.dart';
 import '../../state/engine_settings_state.dart';
 import '../theme/app_icons.dart';
-import '../web/dsh_web_launcher.dart';
+import '../web/xrk_web_launcher.dart';
 import '../web/web_target.dart';
 import 'field_sheets.dart';
 import 'schema_fields.dart';

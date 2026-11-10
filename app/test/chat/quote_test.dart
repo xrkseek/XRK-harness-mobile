@@ -7,13 +7,13 @@
 
 import 'dart:typed_data';
 
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/composer_quote.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/widgets/attachments.dart';
-import 'package:dsh_app/ui/chat/widgets/quote_chip.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/composer_quote.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart';
+import 'package:xrk_app/ui/chat/widgets/quote_chip.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

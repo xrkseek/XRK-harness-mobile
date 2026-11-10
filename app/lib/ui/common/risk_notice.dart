@@ -193,7 +193,7 @@ class _RiskNoticeSheetState extends State<RiskNoticeSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final notice = widget.notice;
     final high = notice.level == RiskLevel.high;
     return SafeArea(
@@ -277,7 +277,7 @@ class SilenceToggle extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  context.l10n.riskSilence,
+                  context.l10n.riskDontShowAgain,
                   style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ),

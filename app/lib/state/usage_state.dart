@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'connection_state.dart';
 
-/// Token use and context pressure of one session, from DSH projections
+/// Token use and context pressure of one session, from XRK projections
 /// (`tokenUsage`, `contextPressure`, `contextBreakdown`, `sessionStats`).
 class SessionUsage {
   const SessionUsage({
@@ -59,7 +59,7 @@ class SessionUsage {
 
   static const empty = SessionUsage();
 
-  /// Session totals. DSH reports uncached input separately; billed input is
+  /// Session totals. XRK reports uncached input separately; billed input is
   /// uncached + cache reads + cache writes.
   final int uncachedInput;
   final int output;
@@ -114,7 +114,7 @@ class TokenPricing {
   final double outputPerMillion;
 }
 
-/// Prices by `provider/model`. Deliberately empty: neither DSH's catalog nor
+/// Prices by `provider/model`. Deliberately empty: neither XRK's catalog nor
 /// any API the app can reach states what `deepseek-flash` / `deepseek-v4-pro`
 /// cost, and a guessed number on a bill is worse than none. The usage sheet
 /// shows a cost line only for routes listed here.
@@ -161,7 +161,7 @@ class SessionUsageController extends Notifier<SessionUsage> {
     return SessionUsage.empty;
   }
 
-  Future<void> _seed(DshClient client) async {
+  Future<void> _seed(XrkClient client) async {
     // Notifier.ref changes when dependencies rebuild; this read belongs to this build.
     final r = ref;
     final ticket = ++_seedTicket;
@@ -183,7 +183,7 @@ class SessionUsageController extends Notifier<SessionUsage> {
     }
   }
 
-  void _onControl(SessionControlUpdate update, DshClient client) {
+  void _onControl(SessionControlUpdate update, XrkClient client) {
     if (!ref.mounted) return;
     switch (update) {
       case SessionControlBaseline(:final projections):

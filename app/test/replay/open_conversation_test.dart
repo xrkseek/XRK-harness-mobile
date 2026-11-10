@@ -1,13 +1,13 @@
-// A conversation file opened with dsh-go (「打开方式」, system share, a
-// dshgo:// link) goes to its replay; anything else still to the importer.
+// A conversation file opened with xrk-mobile (「打开方式」, system share, a
+// xrkharness:// link) goes to its replay; anything else still to the importer.
 //
 //   flutter test test/replay/open_conversation_test.dart
 
 import 'dart:io';
 
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/replay/replay_page.dart';
-import 'package:dsh_app/ui/share_code/share_code_host.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/replay/replay_page.dart';
+import 'package:xrk_app/ui/share_code/share_code_host.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

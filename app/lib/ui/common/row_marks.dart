@@ -63,7 +63,7 @@ class RowExpandArrow extends StatelessWidget {
         turns: open ? 0.5 : 0,
         duration: AppMotion.of(context, AppMotion.standard),
         curve: AppMotion.std,
-        child: Icon(AppIcons.expand, size: size, color: DshColors.of(context).textTertiary),
+        child: Icon(AppIcons.expand, size: size, color: XrkColors.of(context).textTertiary),
       ),
     ),
   );

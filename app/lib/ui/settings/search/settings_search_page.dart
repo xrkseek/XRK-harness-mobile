@@ -11,21 +11,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../../performance/performance_state.dart';
-import '../../../state/engine_settings_state.dart';
 import '../../../state/hosts_state.dart';
 import '../../../state/phone_state.dart';
-import '../../../state/plugin_config/plugin_config_state.dart';
-import '../../../state/plugins_state.dart';
 import '../../../state/sessions_state.dart';
 import '../../common/app_sheet.dart' show groupTitleStyle;
 import '../../common/capsule_chip.dart';
 import '../../common/list_page_row.dart';
 import '../../common/search_capsule.dart';
-import '../../features/all_features_page.dart' show dshWebOpenerProvider;
-import '../../features/feature_catalog.dart';
-import '../../engine_settings/engine_settings_page.dart' show isPluginForm, namespaceTitle;
 import '../../features/feature_widgets.dart' show FeatureMessage;
-import '../../plugins/config/plugin_config_entries.dart';
 import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
 import '../index/settings_pages.dart';
@@ -138,33 +131,20 @@ class _SettingsSearchPageState extends ConsumerState<SettingsSearchPage> {
     );
   }
 
-  void _openFeature(FeatureItem item) {
-    _remember();
-    final session = ref.read(currentSessionProvider);
-    if (item.native case final page?) {
-      unawaited(Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page(session))));
-    } else if (item.action case final action?) {
-      unawaited(Future.sync(() => action(context, ref, session)));
-    } else if (item.webFor(session) case final target?) {
-      ref.read(dshWebOpenerProvider)(context, ref, target);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final query = _field.text;
-    final extra = ref.watch(_pluginSpotsProvider);
     final hits = query.trim().isEmpty
         ? const <SearchHit>[]
         : searchSettings(
             query,
-            spots: [...SettingsIndex.spots, ...extra],
-            features: ref.watch(featureSectionsProvider),
+            // Phone shell: SettingsIndex.spots already filters shell:false pages.
+            spots: SettingsIndex.spots,
+            features: const [],
             zh: _zh,
             en: _en,
           );
-    final session = ref.watch(currentSessionProvider);
     return AppPage(
       title: l10n.searchSettingsHint,
       hero: Padding(
@@ -186,32 +166,17 @@ class _SettingsSearchPageState extends ConsumerState<SettingsSearchPage> {
               ..._idle(context)
             else if (hits.isEmpty)
               _NoResults(query: query.trim())
-            else ...[
-              for (final (title, group) in [
-                (l10n.commonSettings, hits.where((h) => !h.isFeature).toList()),
-                (l10n.searchFeatures, hits.where((h) => h.isFeature).toList()),
-              ])
-                if (group.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    child: ListPageCard(
-                      title: title,
-                      children: [
-                        for (final hit in group)
-                          if (hit.spot case final spot?)
-                            _SpotResult(hit: hit, spot: spot, onOpen: _openSpot)
-                          else
-                            ListPageRow(
-                              title: hit.feature!.title,
-                              subtitle: [l10n.hubSettingsAllFeatures, hit.section!.title].join(' › '),
-                              onTap: hit.feature!.needsSession && session == null
-                                  ? null
-                                  : () => _openFeature(hit.feature!),
-                            ),
-                      ],
-                    ),
-                  ),
-            ],
+            else
+              Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: ListPageCard(
+                  title: l10n.commonSettings,
+                  children: [
+                    for (final hit in hits)
+                      if (hit.spot case final spot?) _SpotResult(hit: hit, spot: spot, onOpen: _openSpot),
+                  ],
+                ),
+              ),
           ],
         ),
       ],
@@ -248,32 +213,6 @@ class _SettingsSearchPageState extends ConsumerState<SettingsSearchPage> {
     ];
   }
 }
-
-/// A plugin's own settings form, found once the host has said it has one,
-/// under the name 设置 › 引擎参数 › 插件 lists it by (in both languages).
-/// Only when the host's settings were read already: opening search doesn't
-/// ask the host for them.
-final _pluginSpotsProvider = Provider.autoDispose<List<SettingSpot>>((ref) {
-  if (ref.exists(pluginConfigProvider)) {
-    if (ref.watch(pluginConfigProvider).value case final config?) {
-      final bundles = ref.watch(installedPluginsProvider.select((s) => s.value));
-      return [
-        for (final ns in pluginConfigEntries(config))
-          pluginFormSpot(ns, (l) => pluginConfigTitle(ns, bundles, state: config, l10n: l)),
-      ];
-    }
-  }
-  if (!ref.exists(engineSettingsProvider)) return const [];
-  final settings = ref.watch(engineSettingsProvider).value;
-  if (settings == null) return const [];
-  // Plugins only (PluginConfigScope), so only once the plugin list was read.
-  if (!ref.exists(installedPluginsProvider)) return const [];
-  final scope = ref.watch(pluginConfigScopeProvider);
-  return [
-    for (final view in settings.namespaces.values)
-      if (isPluginForm(view) && scope.allows(view.ns)) pluginFormSpot(view.ns, (_) => namespaceTitle(view.ns)),
-  ];
-});
 
 class _SpotResult extends ConsumerWidget {
   const _SpotResult({required this.hit, required this.spot, required this.onOpen});

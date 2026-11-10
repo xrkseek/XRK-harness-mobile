@@ -7,15 +7,15 @@
 // `flutter test --dart-define=PERF_REPORT=true test/plugin_config/plugin_config_perf_test.dart`
 // prints the numbers as well.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_memory.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/ui/engine_settings/schema_documentation.dart';
-import 'package:dsh_app/ui/engine_settings/schema_form.dart';
-import 'package:dsh_app/ui/features/feature_widgets.dart' show FeatureLoading;
-import 'package:dsh_app/ui/plugins/config/plugin_config_layout.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_page.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_memory.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/ui/engine_settings/schema_documentation.dart';
+import 'package:xrk_app/ui/engine_settings/schema_form.dart';
+import 'package:xrk_app/ui/features/feature_widgets.dart' show FeatureLoading;
+import 'package:xrk_app/ui/plugins/config/plugin_config_layout.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

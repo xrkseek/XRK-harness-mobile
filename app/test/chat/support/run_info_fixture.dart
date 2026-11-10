@@ -1,4 +1,4 @@
-// A synthetic two-turn session with realistic timing, in DSH 0.2 follow-frame
+// A synthetic two-turn session with realistic timing, in XRK 0.2 follow-frame
 // shape (test/chat/fixtures/follow_run_info.jsonl): step markers, timed
 // assistant streams (time to first token), a 48 s approval wait, todo writes,
 // usage per request; turn 1 finished (seq 4–39), turn 2 still running a
@@ -7,8 +7,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 const runInfoFixture = 'test/chat/fixtures/follow_run_info.jsonl';
 

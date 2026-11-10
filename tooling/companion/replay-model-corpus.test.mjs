@@ -29,7 +29,7 @@ test('the complete historical corpus keeps all 24 raw hashes and 18 source famil
 test('current c76 rules replay all measured parameters without granting effects or claiming pixels', () => {
   const before = readFileSync(stagePath);
   const report = replayCorpus();
-  assert.equal(report.format, 'dsh-go/current-stage-metadata-replay-v1');
+  assert.equal(report.format, 'xrk-mobile/current-stage-metadata-replay-v1');
   assert.equal(report.summary.mapped, 356);
   assert.equal(report.summary.possibleBindings, 432);
   assert.equal(report.summary.unknownMappedIds, 0);

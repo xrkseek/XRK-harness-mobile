@@ -1,18 +1,18 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/update_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/widgets/notice_row.dart';
-import 'package:dsh_app/ui/chat/widgets/stream_row.dart';
-import 'package:dsh_app/ui/onboarding/api_key_page.dart';
-import 'package:dsh_app/ui/providers/providers_page.dart';
-import 'package:dsh_app/update/version.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/update_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/widgets/notice_row.dart';
+import 'package:xrk_app/ui/chat/widgets/stream_row.dart';
+import 'package:xrk_app/ui/onboarding/api_key_page.dart';
+import 'package:xrk_app/ui/providers/providers_page.dart';
+import 'package:xrk_app/update/version.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -190,11 +190,11 @@ void main() {
       expect(find.widgetWithText(TextButton, '继续'), findsNothing);
     });
   }
-  group('the engine refuses the model (DSH 0.2.1-rc.4 listed catalog)', () {
+  group('the engine refuses the model (XRK 0.2.1-rc.4 listed catalog)', () {
     const unsupported =
-        'DeepSeek model "deepseek-x" is not supported by DeepSeek Harness; current version is 0.2.1-rc.4';
+        'DeepSeek model "deepseek-x" is not supported by XRK-Harness; current version is 0.2.1-rc.4';
     const upgrade =
-        'DeepSeek model "deepseek-v5" requires DeepSeek Harness 0.3.0 or later; current version is 0.2.1-rc.4';
+        'DeepSeek model "deepseek-v5" requires XRK-Harness 0.3.0 or later; current version is 0.2.1-rc.4';
 
     Future<ChatHarness> refused(
       WidgetTester tester,
@@ -372,7 +372,7 @@ class _UpToDate extends AppUpdateController {
   }
 }
 
-/// A DSH Remote host is the active one.
+/// A XRK Remote host is the active one.
 class _RelayHost extends ActiveHostController {
   @override
   HostRef build() => const HostRef.relay('r1', name: 'Mac');

@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/voice_settings.dart';
-import 'package:dsh_app/ui/chat/voice/voice_bridge.dart';
-import 'package:dsh_app/ui/chat/voice/voice_controller.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/voice_settings.dart';
+import 'package:xrk_app/ui/chat/voice/voice_bridge.dart';
+import 'package:xrk_app/ui/chat/voice/voice_controller.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -47,7 +47,7 @@ class _Bridge extends FakeVoiceBridge {
 
 class _Rig {
   _Rig(VoiceMode mode, {Future<VoiceMode> Function()? choose}) {
-    client = DshClient.withCarrier(carrier, muxOptions: const MuxOptions(autoReconnect: false));
+    client = XrkClient.withCarrier(carrier, muxOptions: const MuxOptions(autoReconnect: false));
     selected = client;
     voice = VoiceInputController(
       input: input,
@@ -66,9 +66,9 @@ class _Rig {
   final carrier = _Carrier();
   final bridge = _Bridge();
   final input = TextEditingController(text: 'draft ');
-  late final DshClient client;
+  late final XrkClient client;
   late final VoiceInputController voice;
-  DshClient? selected;
+  XrkClient? selected;
 
   Future<void> start() async {
     await client.mux.start();
@@ -127,7 +127,7 @@ void main() {
     await rig.start();
     rig.bridge.emit(const VoicePartial('old host words'));
     await tester.pump();
-    final replacement = DshClient.withCarrier(_Carrier());
+    final replacement = XrkClient.withCarrier(_Carrier());
     addTearDown(replacement.close);
     rig.selected = replacement;
     rig.voice.ensureFresh();
@@ -199,7 +199,7 @@ void main() {
       expect(rig.voice.engine, VoiceEngine.system);
       expect(rig.voice.phase, VoicePhase.starting);
       if (replaceClient) {
-        final replacement = DshClient.withCarrier(_Carrier());
+        final replacement = XrkClient.withCarrier(_Carrier());
         addTearDown(replacement.close);
         rig.selected = replacement;
         rig.voice.ensureFresh();

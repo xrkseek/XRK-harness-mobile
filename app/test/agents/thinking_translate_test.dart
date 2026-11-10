@@ -3,12 +3,12 @@
 // in place with a toggle back; failures keep the original with a retry.
 // Goldens: `flutter test --update-goldens test/agents/thinking_translate_test.dart`.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/cot_translation_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/widgets/thinking_pill.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/cot_translation_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/widgets/thinking_pill.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

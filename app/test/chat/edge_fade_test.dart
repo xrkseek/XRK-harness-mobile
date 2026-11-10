@@ -1,7 +1,7 @@
-import 'package:dsh_app/ui/chat/render/code_block.dart';
-import 'package:dsh_app/ui/chat/render/diff_view.dart';
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/common/edge_fade.dart';
+import 'package:xrk_app/ui/chat/render/code_block.dart';
+import 'package:xrk_app/ui/chat/render/diff_view.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/common/edge_fade.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -28,7 +28,7 @@ Future<void> main() async {
   );
   runApp(
     const ProviderScope(
-      child: DshApp(home: RootGate(home: LocalHostShell())),
+      child: XrkApp(home: RootGate(home: LocalHostShell())),
     ),
   );
 }

@@ -1,6 +1,6 @@
 # Inputs, forms and local state (view v2)
 
-Set `v: 2` on the root to use these 24 components. The manifest still uses `dshGo.v: 1`; the view format and bridge protocol evolve separately. See the complete [workbench example](../../../examples/plugins/dsh-go-example-workbench/) and [design rules](design-rules.md).
+Set `v: 2` on the root to use these 24 components. The manifest still uses `xrkGo.v: 1`; the view format and bridge protocol evolve separately. See the complete [workbench example](../../../examples/plugins/xrk-example-workbench/) and [design rules](design-rules.md).
 
 ## A small form
 

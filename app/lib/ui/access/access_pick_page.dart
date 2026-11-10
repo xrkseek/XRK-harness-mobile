@@ -1,4 +1,4 @@
-// First run, 「想让 DSH Go 帮你做哪些事」: what DSH Go should do, by feature
+// First run, 「想让 XRK Go 帮你做哪些事」: what XRK Go should do, by feature
 // (docs: lib/state/access_state.dart). Nothing is picked to begin with; 跳过
 // leaves everything as it is.
 
@@ -15,12 +15,11 @@ import '../onboarding/onboarding_scaffold.dart';
 import '../phone/phone_disclosure_sheet.dart';
 import '../settings/settings_widgets.dart';
 import '../theme/app_icons.dart';
-import '../theme/theme.dart';
 import 'access_widgets.dart';
 import 'phone_mode_sheet.dart';
 
 /// ```
-///   ▣  想让 DSH Go 帮你做哪些事
+///   ▣  想让 XRK Go 帮你做哪些事
 ///      选好后逐项开启
 ///   ╭──────────────────────────────────╮
 ///   │ ▢ 读写手机里的文件            ☐  │
@@ -28,9 +27,6 @@ import 'phone_mode_sheet.dart';
 ///   │ ▢ 桌宠与悬浮窗               ☐  │
 ///   │ ▢ 手机操控                   ☐  │
 ///   │ ▢ 后台持续运行               ☐  │
-///   │ ▢ 语音输入                   ☐  │
-///   │   需要麦克风权限                  │
-///   │   离线识别，需下载约 241 MB 语音模型 │
 ///   ╰──────────────────────────────────╯
 ///   (             开启所选             )
 ///                 跳过
@@ -123,8 +119,6 @@ class _AccessPickPageState extends ConsumerState<AccessPickPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
-    final metered = ref.watch(accessReadingsProvider.select((r) => r.value?.metered == true));
     return OnboardingScaffold(
       children: [
         const Spacer(),
@@ -139,13 +133,6 @@ class _AccessPickPageState extends ConsumerState<AccessPickPage> {
                 feature: feature,
                 selected: _picked.contains(feature),
                 onTap: () => unawaited(_toggle(feature)),
-                lines: feature == AccessFeature.voice
-                    ? [
-                        (text: l10n.accessFeatureVoiceNeeds, color: null),
-                        (text: l10n.accessVoiceModel(voiceModelApproxMb), color: null),
-                        if (metered) (text: l10n.accessVoiceMetered, color: colors.warning),
-                      ]
-                    : const [],
               ),
           ],
         ),

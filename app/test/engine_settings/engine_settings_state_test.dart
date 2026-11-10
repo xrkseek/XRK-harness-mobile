@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -9,7 +9,7 @@ import 'support.dart';
 
 void main() {
   late FakeSettingsHost host;
-  late DshClient client;
+  late XrkClient client;
   late ProviderContainer container;
 
   Future<EngineSettings> start({FakeSettingsHost? fake}) async {
@@ -253,7 +253,7 @@ void main() {
     });
 
     test('settings errors in words', () {
-      String words(String code, String message) => describeSettingsError(DshRemoteException(code, message));
+      String words(String code, String message) => describeSettingsError(XrkRemoteException(code, message));
       expect(words('settings/rejected', r'invalid config:  - $.maxDepth expected number >= 0 but got -1'), '不能小于 0');
       expect(words('settings/rejected', r'- $.indexes[0] expect string to match regexp /x/'), '格式不对');
       expect(words('settings/rejected', 'Configuration for "x" is overridden by a home patch'), '由配置文件固定');
@@ -269,7 +269,7 @@ void main() {
       final items = inventoryItems(inventory, bundles);
       final loop = items.global.firstWhere((i) => i.entryId == 'include:agent-loop');
       expect(loop.title, isNot(contains('@deepseek-ai')));
-      expect(loop.source, 'DSH 内置');
+      expect(loop.source, 'XRK 内置');
       expect(loop.version, '0.2.1-rc.2');
       expect(loop.status, InventoryStatus.running);
       expect(loop.rowId, 'agent-loop');
@@ -302,7 +302,7 @@ void main() {
       expect(inventoryStatus(enabled: true, fiberPhase: 'pending'), InventoryStatus.waiting);
       expect(inventoryStatus(enabled: true, fiberPhase: 'loading'), InventoryStatus.loading);
       expect(inventoryStatus(enabled: false, conditional: true), InventoryStatus.conditional);
-      expect(shortModuleName('@deepseek-ai/dsh-web-app'), 'web-app');
+      expect(shortModuleName('@xrkseek/harness-cli-web-app'), 'web-app');
       expect(shortModuleName('@deepseek-ai/cordis-plugin-timer'), 'timer');
       expect(shortModuleName('cordis:include'), 'include');
       expect(shortModuleName('my-plugin'), 'my-plugin');

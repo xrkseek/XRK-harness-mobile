@@ -1,6 +1,6 @@
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/chat_list.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/chat_list.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';

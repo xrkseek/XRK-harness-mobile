@@ -6,18 +6,18 @@
 
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../l10n/l10n.dart';
 import '../../share_code/conversation_redact.dart' show redactText;
 import '../../state/chat_state.dart';
 import '../../update/update_config.dart' show updateRepo;
-import '../chat/dsh_ui/dsh_ui.dart';
+import '../chat/xrk_ui/xrk_ui.dart';
 import '../chat/run_info.dart' show formatSpan;
 
 /// The project page every card's QR code and footer point at.
-const dshGoProjectUrl = 'https://github.com/$updateRepo';
+const xrkGoProjectUrl = 'https://github.com/$updateRepo';
 
 /// One piece of a share card's body.
 @immutable
@@ -221,7 +221,7 @@ class ShareContent {
     this.model,
     this.stats,
     this.process = const [],
-    this.link = dshGoProjectUrl,
+    this.link = xrkGoProjectUrl,
     this.sessionId,
   });
 
@@ -316,7 +316,7 @@ bool _closes(String line, String fence) {
 /// shown, so they are kept as written); without, each becomes its alt text,
 /// for Markdown drawn where no picture can load.
 String shareMarkdown(String markdown, {bool images = false}) {
-  final plain = dshUiPlainText(markdown);
+  final plain = xrkUiPlainText(markdown);
   // Pictures are set aside while the text is masked: a long `data:` payload
   // must not be taken for a key.
   final kept = <String>[];
@@ -803,7 +803,7 @@ TurnTrace? turnOf(List<TurnTrace> turns, int? seq) {
 bool _isPrompt(ChatItem item) =>
     item is UserChatItem &&
     (item.text.trim().isNotEmpty || item.images.isNotEmpty) &&
-    dshUiReplyChip(item.text) == null;
+    xrkUiReplyChip(item.text) == null;
 
 /// The prompt a reply answers: the nearest person-typed message above it
 /// (answers to visual replies are skipped, they are a tap, not a question).

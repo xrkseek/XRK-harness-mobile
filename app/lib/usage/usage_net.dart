@@ -1,6 +1,6 @@
 // Where usage statistics go and how: one JSON POST, no cookies, no
 // redirects, ten seconds at most. And the native facts the body carries
-// (MethodChannel `dsh/usage`, usage/UsagePlugin.kt).
+// (MethodChannel `xrk/usage`, usage/UsagePlugin.kt).
 
 import 'dart:async';
 import 'dart:convert';
@@ -12,16 +12,12 @@ import 'package:flutter/services.dart';
 import '../state/app_info.dart';
 import 'usage_ledger.dart';
 
-/// `--dart-define=DSH_USAGE_ENDPOINT=https://…` points a build elsewhere
-/// (HTTPS, or plain HTTP on loopback for a test server). It also turns the
-/// statistics on in a debug or profile build.
-const _endpointOverride = String.fromEnvironment('DSH_USAGE_ENDPOINT');
+/// `--dart-define=XRK_USAGE_ENDPOINT=` turns reporting on (HTTPS, or HTTP on
+/// loopback for tests). Off by default.
+const _endpointOverride = String.fromEnvironment('XRK_USAGE_ENDPOINT');
 
-/// The share host's endpoint (services/share-worker), contract v1.
-final defaultUsageEndpoint = Uri.parse('https://go.dshtui.com/api/usage/v1');
-
-/// [defaultUsageEndpoint], or the build's override when it is usable.
-Uri get usageEndpoint => usageEndpointFrom(_endpointOverride) ?? defaultUsageEndpoint;
+/// Active endpoint when [UsageBuild.active]; otherwise unused.
+Uri get usageEndpoint => usageEndpointFrom(_endpointOverride) ?? Uri.parse('http://127.0.0.1/');
 
 /// [text] as an endpoint: HTTPS, or HTTP to loopback. Null otherwise.
 Uri? usageEndpointFrom(String text) {
@@ -31,11 +27,9 @@ Uri? usageEndpointFrom(String text) {
   return uri.scheme == 'https' || (uri.scheme == 'http' && loopback) ? uri : null;
 }
 
-/// Whether this build counts and reports at all: release builds, and builds
-/// pointed at a test endpoint. Debug runs and tests stay out of the numbers
-/// (tests switch it on where they check it).
+/// Whether this build counts and reports: only when an endpoint define is set.
 abstract final class UsageBuild {
-  static bool active = kReleaseMode || usageEndpointFrom(_endpointOverride) != null;
+  static bool active = usageEndpointFrom(_endpointOverride) != null;
 }
 
 /// One POST; a seam so tests never touch the network.
@@ -53,7 +47,7 @@ class IoUsageHttp implements UsageHttp {
     final client = HttpClient()
       ..connectionTimeout = timeout
       ..idleTimeout = const Duration(seconds: 1)
-      ..userAgent = 'dsh-go';
+      ..userAgent = 'xrk-harness';
     try {
       return await () async {
         final request = await client.postUrl(url);
@@ -76,7 +70,7 @@ class IoUsageHttp implements UsageHttp {
 /// The phone's facts for the body. Without the native side (tests, other
 /// platforms) the version from [AppInfo] and nothing else.
 class UsageDeviceChannel {
-  const UsageDeviceChannel([this.channel = const MethodChannel('dsh/usage')]);
+  const UsageDeviceChannel([this.channel = const MethodChannel('xrk/usage')]);
 
   final MethodChannel channel;
 

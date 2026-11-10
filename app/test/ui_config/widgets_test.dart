@@ -2,9 +2,9 @@
 // row and its sheet, the remote skill install entry. Goldens in light and
 // dark for the row pair and both sheets.
 
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -173,7 +173,7 @@ void main() {
       extra: [
         uiSkillRemoteInstallerProvider.overrideWithValue(installer),
         uiSkillBundleLoaderProvider.overrideWithValue(
-          () async => UiSkillBundle({'SKILL.md': '---\nname: dsh-go-ui\n---\n'}),
+          () async => UiSkillBundle({'SKILL.md': '---\nname: xrk-ui\n---\n'}),
         ),
       ],
     );

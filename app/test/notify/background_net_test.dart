@@ -6,15 +6,15 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/runtime/background_net.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/chat/chat_header.dart';
-import 'package:dsh_app/ui/notify/background_net_host.dart';
-import 'package:dsh_app/ui/settings/background_guide_page.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/background_net.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/chat/chat_header.dart';
+import 'package:xrk_app/ui/notify/background_net_host.dart';
+import 'package:xrk_app/ui/settings/background_guide_page.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,7 +42,7 @@ class _Runtime extends LocalRuntimeController {
   LocalRuntimeState build() =>
       const LocalRuntimeState(loaded: true, status: RuntimeStatus(phase: RuntimePhase.running));
 
-  /// What DshService reports once Android blocks the app's network.
+  /// What XrkService reports once Android blocks the app's network.
   void block() => state = state.copyWith(
     status: RuntimeStatus(phase: RuntimePhase.running, networkBlocked: true, networkBlockedAt: DateTime.now()),
   );

@@ -1,19 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/ui/bots/bot_chat_kit.dart';
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
-import 'package:dsh_app/ui/bots/bot_details_page.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_app/ui/bots/room_details_page.dart';
-import 'package:dsh_app/ui/bots/room_relay_limit_sheet.dart';
-import 'package:dsh_app/ui/bots/working_folder_sheet.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/ui/bots/bot_chat_kit.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_app/ui/bots/bot_details_page.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/bots/room_details_page.dart';
+import 'package:xrk_app/ui/bots/room_relay_limit_sheet.dart';
+import 'package:xrk_app/ui/bots/working_folder_sheet.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,7 +33,7 @@ void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final longPost =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_long_post.json').readAsStringSync()) as Map;
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_long_post.json').readAsStringSync()) as Map;
 
   for (final entry in ['bot folder', 'room folder', 'relay limit', 'model', 'chat model', 'duplicate', 'full text']) {
     for (final transition in ['host', 'HTTP boot', 'unchanged']) {

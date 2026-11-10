@@ -1,10 +1,10 @@
 {
-  "//": "Derived from the dsh-media M0 candidate R1 (src/config.js, data/models.json 2026-10-28.m0.2), not recorded from a live host: the volatile settings form as settings/describe serves it, the catalogue on the services field's meta.extra. Swap for a recording once the plugin runs on a real host.",
+  "//": "Derived from the xrk-media M0 candidate R1 (src/config.js, data/models.json 2026-10-28.m0.2), not recorded from a live host: the volatile settings form as settings/describe serves it, the catalogue on the services field's meta.extra. Swap for a recording once the plugin runs on a real host.",
   "writable": true,
   "hasDocument": true,
   "namespaces": [
     {
-      "ns": "dsh-media",
+      "ns": "xrk-media",
       "autoGenerate": true,
       "schema": {
         "uid": 7043,
@@ -145,11 +145,11 @@
             "meta": {
               "default": [],
               "extra": {
-                "dsh-go/media/catalog": {
+                "xrk-mobile/media/catalog": {
                   "v": 1,
                   "revision": "2026-10-28.m0.2",
                   "asOf": "2026-10-28",
-                  "contract": "dsh-go/media/catalog",
+                  "contract": "xrk-mobile/media/catalog",
                   "capabilities": {
                     "tools": [
                       "generate_image"

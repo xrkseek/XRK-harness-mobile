@@ -1,5 +1,5 @@
-// The plugin configuration through the dsh-go bridge (PLUGIN-CONFIG-CONTRACT
-// R1 §4–§6): the profile's entries from `GET /dsh-go/v1/plugin-config`, one
+// The plugin configuration through the xrk-mobile bridge (PLUGIN-CONFIG-CONTRACT
+// R1 §4–§6): the profile's entries from `GET /xrk-mobile/v1/plugin-config`, one
 // entry's complete form from `GET …/<entryId>`, writes as `{revision, ops}`
 // to `POST …/<entryId>`, secrets bound to a credential through
 // `credentials/*` (a bare secret is not written here).
@@ -10,7 +10,7 @@
 // once the Host restarts.
 //
 // Scope: only a plugin's entry is read or written ([PluginConfigScope]). The
-// Host lists DSH's whole profile, core included; bridge R7 refuses what is
+// Host lists XRK's whole profile, core included; bridge R7 refuses what is
 // not a plugin's itself, an older one would take a write to any of it. An
 // entry out of scope — by the confirmed plugin list or by the Host's own
 // `owner` — fails here, before a request goes out, whatever the list or the
@@ -19,7 +19,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../engine_settings_state.dart' show FieldRef;
 import 'plugin_config_api.dart';
@@ -34,7 +34,7 @@ class BridgePluginConfigApi implements PluginConfigApi {
     this.writeTimeout = const Duration(seconds: 60),
   });
 
-  final DshClient client;
+  final XrkClient client;
 
   /// The plugins as the plugin manager lists them now (asked at each call).
   final PluginConfigScope Function() scope;
@@ -112,7 +112,7 @@ class BridgePluginConfigApi implements PluginConfigApi {
     if (!_bridge) return fallback.read(ns);
     try {
       return _form(await client.readPluginConfig(ns, timeout: readTimeout));
-    } on DshRemoteException catch (error) {
+    } on XrkRemoteException catch (error) {
       if (error.code == 'plugin-config/entry-unavailable') {
         _credentialRefs.remove(ns);
         return null;

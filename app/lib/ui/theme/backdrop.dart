@@ -21,8 +21,7 @@ import 'surfaces.dart';
 /// 内部自带一个透明 `Material`:子树里的 `InkWell` 水波画在背景**之上**。
 /// (若水波宿主是背景下面的 Scaffold,不透明的渐变会把水波整个盖住。)
 ///
-/// 给了 [picture](自定义壁纸,lib/ui/wallpaper/wallpaper_backdrop.dart)就画那张
-/// 预先烘好的图,不画渐变;子树里的 [BackdropVeil] 跟着画同一张图。
+/// Optional [picture] replaces the gradient; [BackdropVeil] follows the same picture.
 class AppBackdrop extends StatelessWidget {
   const AppBackdrop({super.key, required this.child, this.glow = true, this.picture});
 
@@ -36,7 +35,7 @@ class AppBackdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = DshSurfaces.of(context);
+    final s = XrkSurfaces.of(context);
     return _BackdropScope(
       picture: picture,
       child: Stack(
@@ -64,10 +63,7 @@ class AppBackdrop extends StatelessWidget {
   }
 }
 
-/// What [AppBackdrop] paints instead of its gradient: [image], baked to the screen's size (the
-/// custom wallpaper), faded in at [fade] over [from] (the picture it replaces; null: the
-/// gradient). [image] null fades back to the gradient. The images belong to whoever made this;
-/// they must outlive it.
+/// Optional picture layer for [AppBackdrop]: fades [image] over [from] (null = gradient).
 @immutable
 class BackdropPicture {
   const BackdropPicture({required this.image, this.from, this.fade = kAlwaysCompleteAnimation});
@@ -130,7 +126,7 @@ class BackdropVeil extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = DshSurfaces.of(context);
+    final s = XrkSurfaces.of(context);
     final frame = BackdropFrame.maybeOf(context);
     return IgnorePointer(
       child: CustomPaint(

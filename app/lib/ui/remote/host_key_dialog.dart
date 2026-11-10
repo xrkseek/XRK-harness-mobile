@@ -30,7 +30,7 @@ class HostKeyDialog extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final key = prompt.key;
     final pubFile = switch (key.shortType) {
       'RSA' => 'ssh_host_rsa_key.pub',
@@ -160,7 +160,7 @@ Future<bool> activateHost(BuildContext context, WidgetRef ref, HostRef host) asy
   return true;
 }
 
-/// First connect to a DSH Remote host (compare the identity fingerprint with
+/// First connect to a XRK Remote host (compare the identity fingerprint with
 /// the one the computer's remote plugin shows), or re-trust after its key
 /// changed.
 class RelayTrustDialog extends StatelessWidget {
@@ -174,7 +174,7 @@ class RelayTrustDialog extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return AlertDialog(
       title: Text(
         keyChanged ? l10n.remoteHostKeyChangedTitle : l10n.remoteHostKeyTrustTitle,

@@ -1,8 +1,8 @@
 // Task lists in replies render as read-only boxes without a Material ancestor
 // (the package's default Checkbox threw "No Material widget found").
 
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

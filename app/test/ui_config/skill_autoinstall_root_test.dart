@@ -1,14 +1,14 @@
 // The app root keeps the skill auto-install alive: once the on-device engine
-// runs, both bundled skills (dsh-go-ui, dsh-go-plugin) land in its skills
+// runs, both bundled skills (xrk-ui, xrk-plugin) land in its skills
 // folder, without any page having to ask for them.
 
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/shell/root_gate.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/shell/root_gate.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,7 +33,7 @@ void main() {
     if (root.existsSync()) root.deleteSync(recursive: true);
   });
 
-  File skillMd(String name) => File('${root.path}/root/.dsh/skills/$name/SKILL.md');
+  File skillMd(String name) => File('${root.path}/root/.xrk/skills/$name/SKILL.md');
 
   LocalRuntimeState state(RuntimePhase phase) => LocalRuntimeState(
     loaded: true,
@@ -91,7 +91,7 @@ void main() {
     await settleInstall(tester);
     expect(skillMd(uiSkillName).readAsStringSync(), ui.skillMd);
     expect(skillMd(pluginSkillName).readAsStringSync(), plugin.skillMd);
-    expect(File('${root.path}/root/.dsh/skills/$pluginSkillName/kit/bin/check.mjs').existsSync(), isTrue);
+    expect(File('${root.path}/root/.xrk/skills/$pluginSkillName/kit/bin/check.mjs').existsSync(), isTrue);
   });
 
   testWidgets('an engine already running at launch gets them too, and a folder the person took over is left alone', (
@@ -100,7 +100,7 @@ void main() {
     await installUiSkill(root, plugin);
     final mine = skillMd(pluginSkillName)
         .readAsStringSync()
-        .replaceFirst(RegExp(r'^# dsh-go:managed.*\n', multiLine: true), '');
+        .replaceFirst(RegExp(r'^# xrk-mobile:managed.*\n', multiLine: true), '');
     skillMd(pluginSkillName).writeAsStringSync('$mine\n我的补充\n');
 
     await pumpRoot(tester, RuntimePhase.running);

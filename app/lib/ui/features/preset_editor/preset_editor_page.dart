@@ -11,7 +11,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart' hide SettingsSection;
+import 'package:xrk_client/xrk_client.dart' hide SettingsSection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -250,7 +250,7 @@ class _PresetEditorPageState extends ConsumerState<PresetEditorPage> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final connected = ref.watch(readListLiveConnectionProvider) != null;
     final presets = ref.watch(agentPresetsProvider).value ?? const <AgentPresetInfo>[];
     final taken = {for (final p in presets) p.id};
@@ -410,7 +410,7 @@ class _PresetEditorPageState extends ConsumerState<PresetEditorPage> {
 
   List<Widget> _compositionSections(PresetComposition composition, bool enabled) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     Widget switches(String title, PresetRowKind kind) {
       final rows = [
         for (final r in composition.switchable)

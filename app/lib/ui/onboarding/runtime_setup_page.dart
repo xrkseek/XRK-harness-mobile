@@ -31,7 +31,7 @@ enum _SetupView { choose, waiting, installing, done, failed }
 /// colour and the page offers retry, logs and a diagnostics export.
 ///
 /// With [choose], a runtime that is not there yet is not installed at once:
-/// the page first asks where DSH runs, on this phone or on a remote host
+/// the page first asks where XRK runs, on this phone or on a remote host
 /// ([RuntimeChoiceView]).
 ///
 /// With [waiting], it is first run's last stop: everything else is set and
@@ -81,7 +81,7 @@ class _RuntimeSetupPageState extends ConsumerState<RuntimeSetupPage> {
   /// The person picked 「本机」 (or nothing was asked): leaves the choice.
   bool _installRequested = false;
 
-  /// Asks where DSH runs before installing.
+  /// Asks where XRK runs before installing.
   bool get _asks => widget.choose && widget.onRemote != null;
 
   @override
@@ -173,7 +173,7 @@ class _RuntimeSetupPageState extends ConsumerState<RuntimeSetupPage> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final progress = state.progress;
     final fraction = switch (view) {
       _SetupView.done => 1.0,

@@ -2,10 +2,10 @@
 // 读取失败（首读失败、刷新失败、目录里这个渠道报错）是错误态加重试；没连上引擎
 // 是离线态。Started from the 023 counterexample (subscription_error_counterexample_test).
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/ui/providers/subscription_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/ui/providers/subscription_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

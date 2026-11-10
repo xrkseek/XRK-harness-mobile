@@ -45,7 +45,7 @@ class UserBubble extends StatelessWidget {
   /// 附件不塞进气泡里)。
   final Widget? attachments;
 
-  /// 非空 = 乐观气泡(还没被 DSH 回显),显示在气泡下方("发送中" / "排队中")。
+  /// 非空 = 乐观气泡(还没被 XRK 回显),显示在气泡下方("发送中" / "排队中")。
   final String? pendingLabel;
   final IconData pendingIcon;
 
@@ -84,7 +84,7 @@ class UserBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final style = AppType.chatBody(context, color: surfaces.onUserBubble);
     // A generation request (generation mode's parameter header on the first
     // line): the description is the bubble, the parameters a small line under
@@ -225,7 +225,7 @@ class _PendingMeta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final muted = DshColors.of(context).textTertiary;
+    final muted = XrkColors.of(context).textTertiary;
     final style = theme.textTheme.labelSmall?.copyWith(color: muted);
     return Padding(
       padding: EdgeInsets.only(top: actions.isEmpty ? 4 : 0, right: actions.isEmpty ? 8 : 0),
@@ -272,7 +272,7 @@ class GenerateParamsLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final muted = DshColors.of(context).textTertiary;
+    final muted = XrkColors.of(context).textTertiary;
     final video = header.kind == GenerateKind.video;
     return Row(
       mainAxisSize: MainAxisSize.min,

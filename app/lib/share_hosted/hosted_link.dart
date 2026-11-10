@@ -41,7 +41,7 @@ class HostedLink {
     required this.createdAt,
     required this.ttl,
     this.expiresAt,
-    this.origin = shareHostOrigin,
+    this.origin = '',
     this.deleting = false,
   });
 
@@ -65,7 +65,10 @@ class HostedLink {
   final bool deleting;
 
   /// `https://<host>/c/<id>#k=<key>`.
-  String get url => '$origin/c/$id#k=$key';
+  String get url {
+    final host = origin.isEmpty ? shareHostOrigin : origin;
+    return '$host/c/$id#k=$key';
+  }
 
   bool isExpired(DateTime now) => expiresAt != null && !now.isBefore(expiresAt!);
 
@@ -121,11 +124,11 @@ class HostedLink {
 
 /// Share hosts whose links the app opens itself (a link names where its
 /// ciphertext is, so only our own hosts are fetched from).
-const hostedOrigins = [shareHostOrigin];
+// hostedOrigins lives in hosted_config.dart (empty when share host is unset).
 
 /// The id and key in a hosted link: `https://<host>/c/<id>#k=<key>`, or the
-/// same as an app link, `dshgo://<host>/c/<id>#k=<key>` (what the web viewer's
-/// 「用 dsh-go 打开」 hands over). Null for anything else; [origin] limits it to
+/// same as an app link, `xrkharness://<host>/c/<id>#k=<key>` (what the web viewer's
+/// 「用 xrk-mobile 打开」 hands over). Null for anything else; [origin] limits it to
 /// one host.
 ({String origin, String id, String key})? parseHostedUrl(String text, {String? origin}) {
   final uri = Uri.tryParse(text.trim());
@@ -149,6 +152,7 @@ bool isHostedLink(Uri uri) {
 /// The first hosted link on one of [hostedOrigins] in [text] (a shared or
 /// pasted message), as its https URL.
 Uri? findHostedUrl(String text) {
+  if (hostedOrigins.isEmpty) return null;
   final hosts = hostedOrigins.map((o) => RegExp.escape(Uri.parse(o).host)).join('|');
   // The key is exactly 43 base64url characters, so punctuation right after a
   // link (「…#k=…。」) isn't taken for part of it.

@@ -3,12 +3,12 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_chart.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_controls.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_row.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_styles.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_chart.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_controls.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_row.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_styles.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -234,8 +234,8 @@ void main() {
         }),
       );
       await tester.pump();
-      final row = find.byType(DshUiEqualRow);
-      final cells = find.descendant(of: row, matching: find.byType(DshUiCellFill));
+      final row = find.byType(XrkUiEqualRow);
+      final cells = find.descendant(of: row, matching: find.byType(XrkUiCellFill));
       expect(cells, findsNWidgets(2));
       final before = tester.getRect(cells.at(0)).height;
       expect(tester.getRect(cells.at(1)).height, before);
@@ -288,12 +288,12 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text('Bravo'));
         await tester.pumpAndSettle();
-        final initial = tester.state(find.byType(DshUiChartView));
+        final initial = tester.state(find.byType(XrkUiChartView));
         expect(find.text('Bravo'), findsNWidgets(2));
         for (final width in [320.0, 760.0]) {
           tester.view.physicalSize = Size(width, 1800);
           await tester.pumpAndSettle();
-          expect(identical(tester.state(find.byType(DshUiChartView)), initial), isTrue, reason: 'width $width');
+          expect(identical(tester.state(find.byType(XrkUiChartView)), initial), isTrue, reason: 'width $width');
           expect(find.text('Bravo'), findsNWidgets(2));
           expect(tester.takeException(), isNull);
         }
@@ -639,7 +639,7 @@ void main() {
           }, brightness: brightness),
         );
         await tester.pump();
-        final buttons = find.byType(DshUiV2ActionButton);
+        final buttons = find.byType(XrkUiV2ActionButton);
         expect(buttons, findsNWidgets(2));
         Material material(int i) =>
             tester.widget<Material>(find.descendant(of: buttons.at(i), matching: find.byType(Material)).first);
@@ -1184,7 +1184,7 @@ void main() {
           expect(style(label).color, reference.color, reason: label);
           expect(tester.getRect(find.text(label)).left, closeTo(left, .5), reason: label);
         }
-        final inputs = find.byType(DshUiInputView);
+        final inputs = find.byType(XrkUiInputView);
         for (var i = 1; i < inputs.evaluate().length; i++) {
           expect(tester.getRect(inputs.at(i)).top - tester.getRect(inputs.at(i - 1)).bottom, closeTo(16, .01));
         }

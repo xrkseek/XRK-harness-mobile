@@ -1,8 +1,8 @@
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/diagnostics/diagnostics_publish.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/state/settings_state.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/diagnostics/diagnostics_publish.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/state/settings_state.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -11,7 +11,7 @@ DiagnosticsSnapshot snapshot() => DiagnosticsSnapshot(
   status: const RuntimeStatus(
     phase: RuntimePhase.running,
     abi: 'arm64-v8a',
-    dshVersion: '0.2.1-rc.4',
+    engineVersionAlias: '0.2.1-rc.4',
     nodeVersion: '24.22.1',
   ),
   settings: const AppSettings(),
@@ -27,7 +27,7 @@ void main() {
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(DiagnosticsPublisher.channel, (call) async {
       calls.add(call);
-      return {'bytes': 42, 'path': '/data/rootfs/root/.dsh/dsh-app/diagnostics.md'};
+      return {'bytes': 42, 'path': '/data/rootfs/root/.xrk/dsh-app/diagnostics.md'};
     });
     addTearDown(() => messenger.setMockMethodCallHandler(DiagnosticsPublisher.channel, null));
 

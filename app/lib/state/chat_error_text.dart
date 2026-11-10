@@ -1,4 +1,4 @@
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 
 import '../l10n/l10n.dart';
@@ -9,7 +9,7 @@ import 'engine_error_text.dart';
 String chatErrorText(Object error, {required String action}) {
   debugPrint('$action: $error');
   final reason = switch (error) {
-    DshRemoteException(:final code) => switch (code) {
+    XrkRemoteException(:final code) => switch (code) {
       'session/agent-busy' => appL10n.stateChatAgentBusy,
       'session/writer-held' => appL10n.stateChatWriterHeld,
       'session/model-unavailable' || 'session/provider-models-unavailable' => appL10n.stateChatModelUnavailable,

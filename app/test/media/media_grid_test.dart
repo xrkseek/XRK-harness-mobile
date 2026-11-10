@@ -2,7 +2,7 @@
 // 288 (320dp phone), 358 (390dp) and the 688 reading column; n = 1–4; square,
 // portrait and wide batches; the height cap H = min(480, 0.6 × window).
 
-import 'package:dsh_app/ui/chat/media/media_grid.dart';
+import 'package:xrk_app/ui/chat/media/media_grid.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 

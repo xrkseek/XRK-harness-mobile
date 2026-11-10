@@ -1,9 +1,9 @@
 // Settings search finds 壁纸 by its name and the words people use for it, in Chinese and English.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/features/feature_catalog.dart';
-import 'package:dsh_app/ui/settings/index/spots.dart';
-import 'package:dsh_app/ui/settings/search/settings_search.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/features/feature_catalog.dart';
+import 'package:xrk_app/ui/settings/index/spots.dart';
+import 'package:xrk_app/ui/settings/search/settings_search.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

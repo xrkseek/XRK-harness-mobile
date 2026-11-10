@@ -14,7 +14,7 @@ import '../../theme/theme.dart';
 /// ( ☑  3/7 · 正在：跑测试                ▰▰▱  ˄ )   待办
 /// ( ⚑  目标  把登录迁到新接口…                ⋯ )   目标
 /// ( 🐋 跑  flutter test test/auth          0:19 )   思考胶囊
-/// [ ＋  给 DSH 发消息…                      🎤 ]    输入条
+/// [ ＋  给 XRK 发消息…                      🎤 ]    输入条
 /// ```
 ///
 /// 胶囊两端的图形都放在 [glyph] 见方的格子里,格子离胶囊边 [edge]:
@@ -134,7 +134,7 @@ class DockProgressLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final target = fraction.clamp(0.0, 1.0);
     return TweenAnimationBuilder<double>(
       tween: Tween(end: target),

@@ -8,7 +8,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show MediaCost;
+import 'package:xrk_client/xrk_client.dart' show MediaCost;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -235,7 +235,7 @@ class _CostLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = AppType.tabular(
-      Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13, color: DshColors.of(context).textTertiary),
+      Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13, color: XrkColors.of(context).textTertiary),
     );
     final text = this.text;
     if (text == null) return const SizedBox.shrink();

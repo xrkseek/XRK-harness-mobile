@@ -4,8 +4,8 @@ import 'dart:math' as math;
 /// [SecretStore] under [SshSecrets] keys, never in this config.
 enum SshAuthMethod { password, privateKey }
 
-/// The remote `dsh web` launch command used when none is configured.
-const defaultDshLaunchCommand = 'dsh web';
+/// The remote `xrkh serve` launch command used when none is configured.
+const defaultDshLaunchCommand = 'xrkh serve';
 
 /// One saved SSH host. Persisted as JSON in SharedPreferences (no secrets).
 class SshHostConfig {
@@ -32,12 +32,12 @@ class SshHostConfig {
   final String user;
   final SshAuthMethod auth;
 
-  /// Shell command that starts DSH's web server on the remote. dsh-app appends
+  /// Shell command that starts XRK's web server on the remote. dsh-app appends
   /// `--host 127.0.0.1 --port 0 --no-open`.
   final String launchCommand;
 
-  /// Default cwd for new conversations on this host (and where `dsh web`
-  /// starts). `~/…` is expanded on the remote. Null: DSH's own default.
+  /// Default cwd for new conversations on this host (and where `xrkh serve`
+  /// starts). `~/…` is expanded on the remote. Null: XRK's own default.
   final String? workingDirectory;
 
   /// Pinned host key (trust on first use), e.g. `ssh-ed25519` and the

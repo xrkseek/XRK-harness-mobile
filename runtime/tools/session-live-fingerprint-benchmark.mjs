@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { resolve, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-const prefix = resolve(process.env.DSH_PREFIX);
+const prefix = resolve(process.env.XRK_PREFIX);
 const load = name => import(pathToFileURL(join(prefix, 'node_modules/@deepseek-ai', name, 'lib/index.js')));
 const { Context } = await load('cordis');
 const { SessionStore } = await load('dsh-session');

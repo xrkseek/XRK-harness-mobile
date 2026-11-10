@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_page.dart';
-import 'package:dsh_app/ui/engine_settings/field_sheets.dart';
-import 'package:dsh_app/ui/engine_settings/schema_collapsed_groups.dart' show SchemaCollapsedGroup;
-import 'package:dsh_app/ui/engine_settings/schema_form.dart';
-import 'package:dsh_app/ui/plugins/plugin_inventory_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_page.dart';
+import 'package:xrk_app/ui/engine_settings/field_sheets.dart';
+import 'package:xrk_app/ui/engine_settings/schema_collapsed_groups.dart' show SchemaCollapsedGroup;
+import 'package:xrk_app/ui/engine_settings/schema_form.dart';
+import 'package:xrk_app/ui/plugins/plugin_inventory_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -74,7 +74,7 @@ void main() {
           await tester.pumpWidget(
             goldenApp(
               brightness: brightness,
-              overrides: engineOverrides(DshClient.withCarrier(host)),
+              overrides: engineOverrides(XrkClient.withCarrier(host)),
               home: Scaffold(
                 body: ListView(children: [InventoryRow(item: item)]),
               ),
@@ -116,7 +116,7 @@ void main() {
             await tester.pump();
             await tester.tap(displayName);
             await settle(tester);
-            host.beforeMutate = (_) => throw const DshRemoteException('settings/rejected', 'injected failure');
+            host.beforeMutate = (_) => throw const XrkRemoteException('settings/rejected', 'injected failure');
             await tester.enterText(find.byKey(const ValueKey('text-input')), 'Voice preference');
             await tester.tap(find.text(appL10n.commonDone));
             await flush(tester);

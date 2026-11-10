@@ -1,6 +1,6 @@
 // The app's mark in a round glass key — [WebMarkButton] — and the handle of
 // 网页模式: the same key, seated where a web page has its back button
-// (WebViewPage.leading): inside DSH Web's header row beside the drawer button,
+// (WebViewPage.leading): inside XRK Web's header row beside the drawer button,
 // above the sidebar on a tablet. So it never sits on the page's own title,
 // actions, composer or scroll-to-bottom key; the geometry tests
 // (test/web/web_mode_test.dart) hold it to that in every layout.
@@ -31,7 +31,7 @@ import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 
 /// The app's mark in a round glass key: the handle's face, and — on a page
-/// with no handle (网页版) — the marker in DSH Web's leading seat doing the
+/// with no handle (网页版) — the marker in XRK Web's leading seat doing the
 /// page's way back. [size] matches the button whose seat it takes.
 class WebMarkButton extends StatelessWidget {
   const WebMarkButton({super.key, required this.size, required this.tooltip, required this.label, required this.onTap});

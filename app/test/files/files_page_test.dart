@@ -2,12 +2,12 @@
 // capsules and back, search across the workspace, long-press actions, live
 // updates from the Host's change feed, pull to refresh.
 
-import 'package:dsh_app/ui/chat/artifact_preview.dart';
-import 'package:dsh_app/ui/common/breadcrumb_row.dart';
-import 'package:dsh_app/ui/files/files_page.dart';
-import 'package:dsh_app/ui/files/workspace_browser.dart';
-import 'package:dsh_app/ui/session/workspace_files.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/artifact_preview.dart';
+import 'package:xrk_app/ui/common/breadcrumb_row.dart';
+import 'package:xrk_app/ui/files/files_page.dart';
+import 'package:xrk_app/ui/files/workspace_browser.dart';
+import 'package:xrk_app/ui/session/workspace_files.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -98,7 +98,7 @@ void main() {
 
   testWidgets('a folder that went away offers the way up', (tester) async {
     final ws = await _pump(tester);
-    ws.failures['list out'] = const DshRemoteException('workspace-file/not-found', 'gone');
+    ws.failures['list out'] = const XrkRemoteException('workspace-file/not-found', 'gone');
     await tester.tap(find.text('out'));
     await pumpFrames(tester, 8);
     expect(find.text('这个文件夹已经不在了'), findsOneWidget);

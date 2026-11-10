@@ -4,8 +4,8 @@
 //
 //   flutter test --update-goldens test/wallpaper/wallpaper_editor_test.dart
 
-import 'package:dsh_app/ui/wallpaper/wallpaper_editor_page.dart';
-import 'package:dsh_app/wallpaper/custom_wallpaper.dart';
+import 'package:xrk_app/ui/wallpaper/wallpaper_editor_page.dart';
+import 'package:xrk_app/wallpaper/custom_wallpaper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

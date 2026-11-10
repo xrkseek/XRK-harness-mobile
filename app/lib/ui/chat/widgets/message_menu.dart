@@ -1,4 +1,4 @@
-// One menu for every message, after DSH Web's `MessageIconActions` (copy,
+// One menu for every message, after XRK Web's `MessageIconActions` (copy,
 // branch) with a Claude-style long-press sheet. Long-press a bubble or a reply,
 // or tap ⋯ at the end of a reply's action row: the same sheet. A preview, then
 // what you do with this message, then what opens a new conversation (DSH

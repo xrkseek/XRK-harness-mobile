@@ -1,12 +1,12 @@
 // A scripted terminal Host for the terminal page tests: real
 // TerminalAttachment protocol handling over in-memory pipes, frames shaped like
-// DSH 0.2.1-rc.2's (recorded from a throwaway `dsh web`).
+// XRK 0.2.1-rc.2's (recorded from a throwaway `xrkh serve`).
 
 import 'dart:async';
 
-import 'package:dsh_app/state/terminal_state.dart';
-import 'package:dsh_app/ui/terminal/terminal_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/terminal_state.dart';
+import 'package:xrk_app/ui/terminal/terminal_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -173,7 +173,7 @@ class FakeTerminalBackend implements TerminalBackend {
   Stream<void> retain(String id) {
     calls.add('retain:$id');
     if (!host.containsKey(id)) {
-      return Stream.error(const DshRemoteException('terminal/unavailable', 'Terminal is closing or unavailable'));
+      return Stream.error(const XrkRemoteException('terminal/unavailable', 'Terminal is closing or unavailable'));
     }
     final controller = StreamController<void>();
     controller.onListen = () => controller.add(null);
@@ -193,7 +193,7 @@ class FakeTerminalBackend implements TerminalBackend {
     );
     final info = host[id];
     if (info == null) {
-      fake.down.addError(const DshRemoteException('terminal/unavailable', 'Terminal no longer exists in this Session'));
+      fake.down.addError(const XrkRemoteException('terminal/unavailable', 'Terminal no longer exists in this Session'));
     } else if (autoSnapshot) {
       fake.snapshot(info, screen: screens[id] ?? '', writable: info['state'] == 'running');
     }

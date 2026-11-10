@@ -1,6 +1,6 @@
 // New baselines are generated locally by the maintainer. Existing v1 golden
 // files and tests are unchanged; compare them with the same fonts/toolchain.
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

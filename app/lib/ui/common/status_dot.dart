@@ -34,7 +34,7 @@ class StatusDot extends StatefulWidget {
   final double size;
 
   static Color colorFor(BuildContext context, StatusTone tone) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return switch (tone) {
       StatusTone.ok => colors.success,
       StatusTone.busy => Theme.of(context).colorScheme.primary,

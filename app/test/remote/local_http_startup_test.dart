@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/runtime/background_net.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/provider_keys.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/background_net.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/provider_keys.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 
 class _Runtime extends LocalRuntimeController {
   _Runtime(this.url);
@@ -47,7 +47,7 @@ class _Mux extends DshMux {
     return shortTimeout
         ? result.future.timeout(
             const Duration(milliseconds: 20),
-            onTimeout: () => throw const DshTransportException('controlled ready deadline'),
+            onTimeout: () => throw const XrkTransportException('controlled ready deadline'),
           )
         : result.future;
   }
@@ -56,7 +56,7 @@ class _Mux extends DshMux {
   Future<void> close() async {}
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   final _readyMux = _Mux();
   @override
@@ -184,12 +184,12 @@ void main() {
           await release.future;
         }
       };
-      late DshClient client;
+      late XrkClient client;
       final refused = Completer<void>();
       final c = container(
         key: 'fake-key',
         connector: ({required baseUri, required token}) async {
-          client = await DshClient.connect(baseUri: host.baseUri, token: FakeDsh.token, startMux: false);
+          client = await XrkClient.connect(baseUri: host.baseUri, token: FakeDsh.token, startMux: false);
           unawaited(
             client.mux.states
                 .firstWhere((s) => s == DshConnectionState.unauthorized)
@@ -225,11 +225,11 @@ void main() {
     final sub = c.listen(localConnectionProvider, (_, next) {
       if (next is AsyncData<HostConnection?> && next.value != null) {
         publications++;
-        client.mux.result.completeError(const DshTransportException('publication'));
+        client.mux.result.completeError(const XrkTransportException('publication'));
       }
     });
     try {
-      expect(await failed(c), isA<DshTransportException>());
+      expect(await failed(c), isA<XrkTransportException>());
       expect(publications, 1);
       expect(client.closed, isTrue);
     } finally {
@@ -243,8 +243,8 @@ void main() {
     try {
       expect((await connected(c)).client, same(client));
       final error = failed(c);
-      client.mux.result.completeError(const DshTransportException('after publication'));
-      expect(await error, isA<DshTransportException>());
+      client.mux.result.completeError(const XrkTransportException('after publication'));
+      expect(await error, isA<XrkTransportException>());
       expect(client.closed, isTrue);
     } finally {
       c.dispose();
@@ -255,7 +255,7 @@ void main() {
     final c = container(key: 'fake-key', connector: ({required baseUri, required token}) async => client);
     final sub = c.listen(localConnectionProvider, (_, _) {});
     var completed = false;
-    final failure = const DshTransportException('ready failed before key');
+    final failure = const XrkTransportException('ready failed before key');
     final result = c.read(localConnectionProvider.future);
     final observed = result.then<Object?>(
       (value) {
@@ -293,7 +293,7 @@ void main() {
       await connected(c);
       expect(events.read(), isNotNull);
       expect(account.read(), isA<DshAccountApi>());
-      client.mux.result.completeError(const DshTransportException('ready failed'));
+      client.mux.result.completeError(const XrkTransportException('ready failed'));
       await failed(c);
       await c.pump();
       expect(client.closed, isTrue);
@@ -324,7 +324,7 @@ void main() {
     try {
       await connected(c);
       final retrying = nextState(c, (s) => s, (s) => s.hasError && s.isLoading);
-      first.mux.result.completeError(const DshTransportException('temporary ready failure'));
+      first.mux.result.completeError(const XrkTransportException('temporary ready failure'));
       final afterFailure = await retrying;
       final failedAccount = account.read();
       await entered.future.timeout(const Duration(seconds: 3));
@@ -361,7 +361,7 @@ void main() {
       await connected(c);
       (c.read(localRuntimeProvider.notifier) as _Runtime).replace();
       final fresh = await nextState(c, (s) => s.requireValue!, (s) => identical(s.asData?.value?.client, current));
-      old.mux.result.completeError(const DshTransportException('old'));
+      old.mux.result.completeError(const XrkTransportException('old'));
       await c.pump();
       expect(c.read(localConnectionProvider).requireValue, same(fresh));
       expect(old.closed, isTrue);
@@ -379,7 +379,7 @@ void main() {
     try {
       await connected(c);
       expect(client.mux.requestedTimeout, const Duration(seconds: 20));
-      expect(await failed(c), isA<DshTransportException>());
+      expect(await failed(c), isA<XrkTransportException>());
       expect(client.closed, isTrue);
     } finally {
       c.dispose();
@@ -439,7 +439,7 @@ void main() {
     );
     try {
       await connected(c);
-      first.mux.result.completeError(const DshTransportException('retryable ready failure'));
+      first.mux.result.completeError(const XrkTransportException('retryable ready failure'));
       final next = await nextState(c, (s) => s.requireValue!, (s) => identical(s.asData?.value?.client, second));
       expect(next.client, same(second));
       expect(calls, 2);
@@ -484,9 +484,9 @@ void main() {
     );
     try {
       await connected(c);
-      clients.first.mux.result.completeError(const DshTransportException('first'));
+      clients.first.mux.result.completeError(const XrkTransportException('first'));
       await nextState(c, (s) => s.requireValue!, (s) => identical(s.asData?.value?.client, clients.last));
-      clients.last.mux.result.completeError(const DshTransportException('second'));
+      clients.last.mux.result.completeError(const XrkTransportException('second'));
       await failed(c);
       expect(counts, [0, 1]);
       expect(connects, 2);

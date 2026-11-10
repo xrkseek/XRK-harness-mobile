@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/notify/notify_channel.dart';
-import 'package:dsh_app/state/hosts_state.dart';
+import 'package:xrk_app/notify/notify_channel.dart';
+import 'package:xrk_app/state/hosts_state.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -9,13 +9,13 @@ import '../notify/support.dart' show settle;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  const methods = MethodChannel('dsh/notify');
+  const methods = MethodChannel('xrk/notify');
   final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   const post = NotifyPost(
     group: 'local|s1',
     key: 'phone-1',
     attention: true,
-    title: 'DSH Go',
+    title: 'XRK Go',
     text: 'Task complete',
     publicText: 'Task ended',
     sessionId: 's1',

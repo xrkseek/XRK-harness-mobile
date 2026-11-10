@@ -1,5 +1,5 @@
-import 'package:dsh_app/ui/common/pressable.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/common/pressable.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';

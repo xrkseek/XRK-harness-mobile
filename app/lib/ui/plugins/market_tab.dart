@@ -19,7 +19,7 @@ import 'plugin_widgets.dart';
 import 'plugins_screen.dart';
 
 /// 「插件市场」: search, then three sections (docs/design/plugin-market.md
-/// §2) — 官方 and 适配 DSH Go from the official index, 全部 (dshfind's
+/// §2) — 官方 and 适配 XRK Go from the official index, 全部 (dshfind's
 /// catalogue with the official entries in place, category chips) as cards —
 /// and 提交插件 at the bottom.
 class MarketSliver extends ConsumerStatefulWidget {
@@ -57,7 +57,7 @@ class _MarketSliverState extends ConsumerState<MarketSliver> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final filter = ref.watch(marketFilterProvider);
     final catalog = ref.watch(marketAllProvider);
     final official = ref.watch(officialMarketProvider);
@@ -68,7 +68,7 @@ class _MarketSliverState extends ConsumerState<MarketSliver> {
       child: SearchCapsule(controller: _search, hint: l10n.pluginsSearch, onChanged: _onQuery, onClear: _clear),
     );
 
-    // 官方 and 适配 DSH Go: the official index. Searching hides a section with
+    // 官方 and 适配 XRK Go: the official index. Searching hides a section with
     // nothing to show; otherwise it says 暂无, or that it didn't load.
     List<Widget> section(MarketSection which, String title) {
       final entries = official.whenOrNull(data: (c) => marketSection(c, which, filter));
@@ -205,7 +205,7 @@ class _MarketSliverState extends ConsumerState<MarketSliver> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Material(
-            color: DshSurfaces.of(context).card.fill,
+            color: XrkSurfaces.of(context).card.fill,
             clipBehavior: Clip.antiAlias,
             shape: RoundedSuperellipseBorder(
               borderRadius: BorderRadius.vertical(
@@ -250,7 +250,7 @@ class _SectionNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 16, 0),
       child: ConstrainedBox(
@@ -278,7 +278,7 @@ class _SectionNote extends StatelessWidget {
 }
 
 /// The market repository's submission guide (GitHub), at the bottom.
-const marketSubmitUrl = 'https://github.com/ccch1mneyyy/dsh-go-market#提交插件';
+const marketSubmitUrl = 'https://github.com/xrkseek/XRK-harness-mobile-market#提交插件';
 
 class _SubmitPlugin extends StatelessWidget {
   const _SubmitPlugin();
@@ -336,7 +336,7 @@ class MarketCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final locale = Localizations.localeOf(context).languageCode;
     final plugin = entry.plugin;
     final bundles = ref.watch(installedPluginsProvider.select((s) => s.value));

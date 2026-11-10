@@ -1,4 +1,4 @@
-// Feeds the out-of-app overlay (`dsh/pet_overlay`) every new [PetState].
+// Feeds the out-of-app overlay (`xrk/pet_overlay`) every new [PetState].
 
 import 'dart:async';
 
@@ -13,7 +13,7 @@ import 'pet_signals.dart';
 import 'pet_state.dart';
 import 'pet_voice_dialog.dart';
 
-/// Where states go: the overlay's channel (`dsh/pet_overlay`).
+/// Where states go: the overlay's channel (`xrk/pet_overlay`).
 final petOverlayPushProvider = Provider<Future<void> Function(PetState state)>(
   (ref) => ref.watch(petOverlayChannelProvider).push,
 );

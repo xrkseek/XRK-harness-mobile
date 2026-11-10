@@ -1,7 +1,7 @@
 // The two keys that fold and unfold 对话详情 beside the
 // chat. They take turns on one spot — the window's top-right corner — so the
 // key stays under the finger: the panel's own key while it shows, the chat
-// header's corner key once it is folded (DSH Web's expand button lives in
+// header's corner key once it is folded (XRK Web's expand button lives in
 // the conversation header's corner the same way).
 
 import 'package:flutter/material.dart';

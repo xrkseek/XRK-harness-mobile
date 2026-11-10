@@ -276,7 +276,7 @@ class _ProviderFormPageState extends ConsumerState<ProviderFormPage> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final backend = ref.watch(providerBackendProvider);
     // Keeps the read-back alive: its revision guards the edit, its ids the create.
     final snapshot = ref.watch(customProvidersProvider).value;
@@ -473,7 +473,7 @@ class _ModelsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return SettingsSection(
       title: models.isEmpty ? l10n.engineModelTitle : l10n.engineProviderModelCount(models.length),
       margin: EdgeInsets.zero,
@@ -525,7 +525,7 @@ class _ModelRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final subtitle = modelSummary(context, model, defaults: defaults);
     return SettingsTile(
       icon: AppIcons.modelItem,
@@ -653,7 +653,7 @@ class _ModelPickerSheetState extends State<ModelPickerSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     const inset = SheetTitleBar.inset;
     final visible = _visible;
     final selectable = [
@@ -760,7 +760,7 @@ class _CandidateRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final subtitle = [
       if (model.name != null && model.name != model.id) model.name!,
       if (model.contextWindow case final c?) l10n.engineProviderContext(formatTokens(c)),

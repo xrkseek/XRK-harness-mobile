@@ -1,8 +1,8 @@
-// The "open in DSH Web" end of the plugin seats (docs/design/plugin-seams.md
-// §2): where an occupant lands in DSH Web, what it is called, and the entry a
+// The "open in XRK Web" end of the plugin seats (docs/design/plugin-seams.md
+// §2): where an occupant lands in XRK Web, what it is called, and the entry a
 // seat draws for it when it can't be a native form or an island in place.
 
-import 'package:dsh_client/dsh_client.dart' show PluginBundle;
+import 'package:xrk_client/xrk_client.dart' show PluginBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,11 +14,11 @@ import '../../common/list_page_row.dart';
 import '../../engine_settings/engine_settings_page.dart' show namespaceTitle;
 import '../../engine_settings/schema_form.dart' show SchemaUnsupportedField;
 import '../../theme/app_icons.dart';
-import '../../web/dsh_web_launcher.dart';
+import '../../web/xrk_web_launcher.dart';
 import '../../web/web_target.dart';
 import 'plugin_seat_page.dart';
 
-/// Opens DSH Web on a target (in 网页模式 the web home itself goes there);
+/// Opens XRK Web on a target (in 网页模式 the web home itself goes there);
 /// tests swap it for a recorder.
 final seatWebOpenerProvider = Provider<void Function(BuildContext context, WidgetRef ref, DshWebTarget target)>(
   (ref) =>
@@ -38,7 +38,7 @@ String seatOccupantTitle(SlotOccupant o, {PluginBundle? bundle}) {
 }
 
 /// What to call [o] where the app lists it: its label, else the label of
-/// the entry that names it in DSH Web (a panel's sidebar entry, a tab's
+/// the entry that names it in XRK Web (a panel's sidebar entry, a tab's
 /// title; the `main` or tab body itself is registered without one), else
 /// its bundle's title, else the package name.
 String seatEntryTitle(SlotOccupant o, {SeatInventory? inventory, PluginBundle? bundle}) {
@@ -68,7 +68,7 @@ String seatConfigTitle(SlotOccupant o, {PluginBundle? bundle}) {
   return bundle?.rows.where((r) => r.rowId == row).firstOrNull?.meta?.title?.resolve() ?? appL10n.commonSettings;
 }
 
-/// Where [o] lands in DSH Web. The open bridge (`assets/web/dsh_web_open.js`)
+/// Where [o] lands in XRK Web. The open bridge (`assets/web/xrk_web_open.js`)
 /// has no ids for a third-party settings section, panel or tab, so those land
 /// one step short: the settings dialog, the sidebar with its panel list, the
 /// conversation.
@@ -97,13 +97,13 @@ DshWebTarget seatWebTarget(SlotOccupant o, {String? sessionId, PluginBundle? bun
 class SeatRowEntry {
   const SeatRowEntry({required this.web, required this.open});
 
-  /// It leaves for DSH Web (the row says 「网页版」).
+  /// It leaves for XRK Web (the row says 「网页版」).
   final bool web;
   final void Function(BuildContext context) open;
 }
 
 /// A row's way into [item] (from a [SeatPlacement.row] seat): the occupant's
-/// own page when it can be a native form or an island at page size, DSH Web
+/// own page when it can be a native form or an island at page size, XRK Web
 /// otherwise. Call from a build: it watches the page's plan.
 SeatRowEntry seatRowEntry(WidgetRef ref, SeatContext seat, SeatItem item, {required String title}) {
   final o = item.occupant;
@@ -129,7 +129,7 @@ SeatRowEntry seatRowEntry(WidgetRef ref, SeatContext seat, SeatItem item, {requi
   return SeatRowEntry(web: true, open: (context) => ref.read(seatWebOpenerProvider)(context, ref, target));
 }
 
-/// The seats' "open in DSH Web" entry (`SeatRenderers.webLink`).
+/// The seats' "open in XRK Web" entry (`SeatRenderers.webLink`).
 ///
 /// - In a list ([SeatPlacement.row], [SeatPlacement.panel]): a row named for
 ///   the occupant, 「网页版」 at its end. When an island fits at page size the

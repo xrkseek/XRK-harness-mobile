@@ -4,29 +4,29 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/runtime/local_footprint.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/onboarding_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart';
-import 'package:dsh_app/ui/engine/engine_screen.dart';
-import 'package:dsh_app/ui/onboarding/connect_page.dart';
-import 'package:dsh_app/ui/onboarding/local_install.dart';
-import 'package:dsh_app/ui/onboarding/onboarding_flow.dart';
-import 'package:dsh_app/ui/onboarding/runtime_choice.dart';
-import 'package:dsh_app/ui/onboarding/runtime_setup_page.dart';
-import 'package:dsh_app/ui/remote/host_switcher.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/shell/root_gate.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/web/local_web_screen.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/runtime/local_footprint.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/onboarding_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart';
+import 'package:xrk_app/ui/engine/engine_screen.dart';
+import 'package:xrk_app/ui/onboarding/connect_page.dart';
+import 'package:xrk_app/ui/onboarding/local_install.dart';
+import 'package:xrk_app/ui/onboarding/onboarding_flow.dart';
+import 'package:xrk_app/ui/onboarding/runtime_choice.dart';
+import 'package:xrk_app/ui/onboarding/runtime_setup_page.dart';
+import 'package:xrk_app/ui/remote/host_switcher.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/shell/root_gate.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/web/local_web_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -140,7 +140,7 @@ void main() {
     testWidgets('asks first; 本机 installs, with what it costs', (tester) async {
       var remote = 0;
       final (runtime, _) = await pump(tester, onRemote: () => remote++);
-      expect(find.text('DSH 在哪里运行？'), findsOneWidget);
+      expect(find.text('XRK 在哪里运行？'), findsOneWidget);
       expect(find.text('存储约 750 MB · 内存约 300 MB'), findsOneWidget);
       expect(find.text('推荐'), findsNothing);
       expect(tester.getSemantics(find.byKey(_local)), isSemantics(isSelected: true));
@@ -152,7 +152,7 @@ void main() {
       expect(runtime.calls, ['install']);
       expect(remote, 0);
       await tester.pump(const Duration(milliseconds: 600));
-      expect(find.text('DSH 在哪里运行？'), findsNothing);
+      expect(find.text('XRK 在哪里运行？'), findsNothing);
       expect(find.text('正在准备运行环境'), findsOneWidget);
     });
 
@@ -230,7 +230,7 @@ void main() {
 
     testWidgets('resume, upgrade and reset install at once', (tester) async {
       final (runtime, _) = await pump(tester, choose: false, onRemote: () {});
-      expect(find.text('DSH 在哪里运行？'), findsNothing);
+      expect(find.text('XRK 在哪里运行？'), findsNothing);
       expect(runtime.calls, ['install']);
     });
 
@@ -310,7 +310,7 @@ void main() {
 
     testWidgets('远程主机 → pick a host → home, nothing installed', (tester) async {
       final (runtime, container) = await pumpGate(tester);
-      expect(find.text('DSH 在哪里运行？'), findsOneWidget);
+      expect(find.text('XRK 在哪里运行？'), findsOneWidget);
       await chooseRemote(tester);
       expect(find.byType(RemoteScreen), findsOneWidget);
 
@@ -329,7 +329,7 @@ void main() {
       await tester.binding.handlePopRoute();
       await _frames(tester);
       expect(find.byType(RemoteScreen), findsNothing);
-      expect(find.text('DSH 在哪里运行？'), findsOneWidget);
+      expect(find.text('XRK 在哪里运行？'), findsOneWidget);
       expect(container.read(onboardingPrefsProvider).localDeclined, isFalse);
       expect(runtime.calls, isEmpty);
     });
@@ -381,7 +381,7 @@ void main() {
       runtime.emit(missingStatus);
       await _frames(tester);
       expect(find.byType(RuntimeSetupPage), findsOneWidget);
-      expect(find.text('DSH 在哪里运行？'), findsNothing);
+      expect(find.text('XRK 在哪里运行？'), findsNothing);
       expect(runtime.calls, ['install']);
     });
   });
@@ -574,7 +574,7 @@ void main() {
       await tester.tap(find.text('open'));
       await _frames(tester, 6);
       expect(find.text('未安装'), findsOneWidget);
-      await tester.tap(find.text('这台手机上的 DSH'));
+      await tester.tap(find.text('这台手机上的 XRK'));
       await _frames(tester, 8);
       expect(find.byType(HostSheet), findsNothing);
       expect(find.byType(LocalInstallPage), findsOneWidget);

@@ -2,25 +2,25 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' show SemanticsAction;
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/chat_header.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/empty_actions.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart';
-import 'package:dsh_app/ui/chat/widgets/activity_strip.dart';
-import 'package:dsh_app/ui/chat/widgets/attachments.dart';
-import 'package:dsh_app/ui/chat/dock/dock_stack.dart' show DockStackMetrics;
-import 'package:dsh_app/ui/chat/widgets/auto_approve_pill.dart';
-import 'package:dsh_app/ui/chat/widgets/permission_pill.dart' show StripRiskChip;
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/chat_header.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/empty_actions.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart';
+import 'package:xrk_app/ui/chat/widgets/activity_strip.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart';
+import 'package:xrk_app/ui/chat/dock/dock_stack.dart' show DockStackMetrics;
+import 'package:xrk_app/ui/chat/widgets/auto_approve_pill.dart';
+import 'package:xrk_app/ui/chat/widgets/permission_pill.dart' show StripRiskChip;
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -522,7 +522,7 @@ void main() {
       final field = tester.widget<TextField>(
         find.descendant(of: find.byType(Composer), matching: find.byType(TextField)),
       );
-      expect(field.controller!.text, '/dsh-go-guide 「本对话都允许」会放行哪些操作？怎么关掉？');
+      expect(field.controller!.text, '/xrk-guide 「本对话都允许」会放行哪些操作？怎么关掉？');
       // Waits for the person to send it.
       expect(harness.sessions.creates, 0);
     });
@@ -567,7 +567,7 @@ void main() {
       await tester.pump();
       expect(harness.controllers['s2']!.cancels, 1);
 
-      // With text in the field the same button sends (DSH queues it).
+      // With text in the field the same button sends (XRK queues it).
       await tester.enterText(find.byType(TextField), '再补充一句');
       await pumpFrames(tester, 3);
       expect(find.byIcon(AppIcons.stopGenerating), findsNothing);
@@ -714,9 +714,9 @@ void main() {
       expect(find.textContaining('第 11 条消息'), findsOneWidget);
     });
 
-    testWidgets('a captured DSH turn renders through the transcript', (tester) async {
+    testWidgets('a captured XRK turn renders through the transcript', (tester) async {
       final transcript = ChatTranscript();
-      final file = File('../packages/dsh_client/test/fixtures/follow_approval_with_resync.jsonl');
+      final file = File('../packages/xrk_client/test/fixtures/follow_approval_with_resync.jsonl');
       for (final line in file.readAsLinesSync()) {
         if (line.trim().isEmpty) continue;
         transcript.apply(parseFollowFrame('s5', jsonDecode(line)));

@@ -3,7 +3,7 @@
   "petActionTargetChanged": "Host changed. Reopen Quick ask; your text is kept.",
   "petActionSendFailed": "Couldn’t send. Your text is kept; try again.",
   "petActionBusy": "This chat is busy. Choose New chat.",
-  "petActionVoiceMissing": "Download the offline voice model in the app first.",
+  "petActionVoiceMissing": "Voice input isn’t available on mobile — type instead.",
   "petActionVoiceTitle": "Voice for Quick ask",
   "petActionVoiceReturn": "Back to pet",
   "petActionVoiceStop": "Finish recording",

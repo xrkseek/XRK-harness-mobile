@@ -6,9 +6,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/plugin_config/plugin_config_api.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_layout.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_api.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_layout.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';

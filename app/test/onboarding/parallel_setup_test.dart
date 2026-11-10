@@ -1,14 +1,14 @@
 // First run on this phone sets up while the runtime unpacks: welcome then
 // the access walk beside the unpack; no Remote / DeepSeek connect.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/onboarding_state.dart';
-import 'package:dsh_app/ui/onboarding/access_step.dart';
-import 'package:dsh_app/ui/onboarding/onboarding_flow.dart';
-import 'package:dsh_app/ui/onboarding/runtime_setup_page.dart';
-import 'package:dsh_app/ui/onboarding/setup_progress.dart';
-import 'package:dsh_app/ui/shell/root_gate.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/onboarding_state.dart';
+import 'package:xrk_app/ui/onboarding/access_step.dart';
+import 'package:xrk_app/ui/onboarding/onboarding_flow.dart';
+import 'package:xrk_app/ui/onboarding/runtime_setup_page.dart';
+import 'package:xrk_app/ui/onboarding/setup_progress.dart';
+import 'package:xrk_app/ui/shell/root_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

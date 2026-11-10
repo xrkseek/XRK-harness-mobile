@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Android versionCode for dsh-go builds: the build minute, readable.
+"""Android versionCode for xrk-mobile builds: the build minute, readable.
 
     code = (year - 2026) * 10^8 + MMDDhhmm        clock at UTC+8
 

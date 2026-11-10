@@ -103,7 +103,7 @@ class FeatureNote extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
     child: Text(
       text,
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
     ),
   );
 }

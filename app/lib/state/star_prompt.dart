@@ -3,7 +3,7 @@
 // the person is idle in the chat; 「下次再说」 asks once more five hours of use
 // later, and that is all.
 //
-// Off unless the build says `--dart-define=DSH_STAR_PROMPT=true`: off, nothing
+// Off unless the build says `--dart-define=XRK_STAR_PROMPT=true`: off, nothing
 // here runs (no counting, no preferences). What is kept on the phone, in one
 // SharedPreferences entry, is only what the rules need; whether the person did
 // star the project is never known nor asked.
@@ -25,8 +25,8 @@ import 'phone_state.dart' show phoneChannelProvider;
 import 'sessions_state.dart' show currentSessionProvider;
 import 'voice_state.dart';
 
-/// The release switch: `--dart-define=DSH_STAR_PROMPT=true` on the public build.
-const starPromptEnabled = bool.fromEnvironment('DSH_STAR_PROMPT');
+/// The release switch: `--dart-define=XRK_STAR_PROMPT=true` on the public build.
+const starPromptEnabled = bool.fromEnvironment('XRK_STAR_PROMPT');
 
 /// The switch as the app reads it (tests turn it on).
 final starPromptGateProvider = Provider<bool>((ref) => starPromptEnabled);

@@ -1,8 +1,8 @@
-import 'package:dsh_app/companion/companion_keeper.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/companion/companion_keeper.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 /// Light mode's keeper for widget tests, in memory: real file I/O doesn't run
-/// on the test clock (the file store has its own tests in dsh_client). With no
+/// on the test clock (the file store has its own tests in xrk_client). With no
 /// [state] it keeps nothing, as a phone that can't keep her state would.
 class FakePhoneKeeper implements CompanionKeeper {
   FakePhoneKeeper({this.state, this.closenessAfter, this.remembered});

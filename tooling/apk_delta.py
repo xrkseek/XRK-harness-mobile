@@ -127,7 +127,7 @@ def apply(base, patch, out=None):
         with open(base, "rb") as b, open(patch, "rb") as p, open(tmp, "wb") as sink:
             head = read(p, HEADER)
             if head[:8] != MAGIC:
-                raise DeltaError(f"{patch}: not a DSHDLT01 patch")
+                raise DeltaError(f"{patch}: not a XRKDLT01 patch")
             if head[8:40] != sha256(base):
                 raise DeltaError(f"{patch} is for another base APK")
             want, (size,) = head[40:72], struct.unpack(">Q", head[72:])

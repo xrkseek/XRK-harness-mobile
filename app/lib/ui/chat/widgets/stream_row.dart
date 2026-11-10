@@ -40,7 +40,7 @@ abstract final class StreamRow {
   /// 行内细节(命令、路径、预览):三级色 13 号。
   static TextStyle? detail(BuildContext context) =>
       Theme.of(context).textTheme.bodySmall
-          ?.copyWith(fontSize: 13, color: DshColors.of(context).textTertiary, height: 1.3);
+          ?.copyWith(fontSize: 13, color: XrkColors.of(context).textTertiary, height: 1.3);
 }
 
 /// 一行过程行的外壳:最小 32 高、上下 4、点按高亮向两侧溢出 8。
@@ -93,7 +93,7 @@ class StreamChevron extends StatelessWidget {
     turns: open ? 0.5 : 0,
     duration: AppMotion.of(context, AppMotion.collapse),
     curve: AppMotion.collapseCurve,
-    child: Icon(AppIcons.expand, size: 16, color: DshColors.of(context).textTertiary),
+    child: Icon(AppIcons.expand, size: 16, color: XrkColors.of(context).textTertiary),
   );
 }
 
@@ -151,7 +151,7 @@ class StreamDot extends StatelessWidget {
     child: SizedBox.square(
       dimension: 3,
       child: DecoratedBox(
-        decoration: BoxDecoration(color: DshColors.of(context).textTertiary, shape: BoxShape.circle),
+        decoration: BoxDecoration(color: XrkColors.of(context).textTertiary, shape: BoxShape.circle),
       ),
     ),
   );

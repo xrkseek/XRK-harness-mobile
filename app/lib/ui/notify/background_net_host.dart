@@ -146,7 +146,7 @@ class BackgroundNetPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final style = theme.textTheme.bodyMedium?.copyWith(height: 1.3);
     return Semantics(
       container: true,

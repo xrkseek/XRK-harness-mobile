@@ -1,9 +1,9 @@
 // The 「图像与视频」 page's pure edits (media-generation §5.8): service rows,
 // provider presets, one credential per provider group, per-kind defaults.
 
-import 'package:dsh_app/state/media_catalog.dart';
-import 'package:dsh_app/state/media_generation.dart' show GenerateKind;
-import 'package:dsh_app/state/media_settings.dart';
+import 'package:xrk_app/state/media_catalog.dart';
+import 'package:xrk_app/state/media_generation.dart' show GenerateKind;
+import 'package:xrk_app/state/media_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 MediaPreset _preset({

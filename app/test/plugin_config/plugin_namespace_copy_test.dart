@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/ui/engine_settings/namespace_copy.dart';
-import 'package:dsh_app/ui/engine_settings/plugin_namespace_copy_zh.dart';
-import 'package:dsh_app/ui/engine_settings/schema_fields.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/ui/engine_settings/namespace_copy.dart';
+import 'package:xrk_app/ui/engine_settings/plugin_namespace_copy_zh.dart';
+import 'package:xrk_app/ui/engine_settings/schema_fields.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -20,7 +20,7 @@ void main() {
     'agent-teams': 'schemas/nanmicoder-dsh-agent-teams-0.1.27.json',
     'mobile-access': 'schemas/dsh-mobile-0.7.0.json',
     'anime-find': 'schemas/cocofhu-anime-find-0.1.12.json',
-    'dsh-media': 'schemas/ccch1mneyyy-dsh-media-0.2.1.json',
+    'xrk-media': 'schemas/xrkseek-xrk-media-0.2.1.json',
     'speech-to-text-sensevoice': 'bridge_entry_r14_sensevoice.json',
   };
 

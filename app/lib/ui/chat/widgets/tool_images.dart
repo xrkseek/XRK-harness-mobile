@@ -86,7 +86,7 @@ class _Thumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     Widget placeholder() => Center(child: Icon(AppIcons.image, size: 24, color: dsh.textTertiary));
     final provider = image;
     return Semantics(

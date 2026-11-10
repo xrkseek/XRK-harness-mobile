@@ -1,17 +1,17 @@
 // The remote-command layer: probe/start scripts and their parsing.
 //
-// The scripts run for real against the local /bin/sh with a fake `dsh` that
+// The scripts run for real against the local /bin/sh with a fake `xrkh` that
 // prints the launch line, in a temp HOME. The SSH transport itself is covered
 // by live_ssh_test.dart (opt-in).
 
 import 'dart:io';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/ssh/remote_bootstrap.dart';
-import 'package:dsh_app/remote/ssh/remote_shell.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/ssh/remote_bootstrap.dart';
+import 'package:xrk_app/remote/ssh/remote_shell.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// A stand-in `dsh`: records its args and normally delays the launch line.
+/// A stand-in `xrkh`: records its args and normally delays the launch line.
 /// Only setup without an old log opts into immediate URL publication.
 /// then idles like a server (as a shell, so `ps` still shows "dsh").
 const _fakeDsh = r'''#!/bin/sh
@@ -22,7 +22,7 @@ case "$FAKE_DSH_MODE" in
   fast) ;;
   *) sleep 1 ;;
 esac
-echo "dsh web: http://127.0.0.1:4${FAKE_DSH_PORT:-1234}/?token=tok-$$"
+echo "xrkh serve: http://127.0.0.1:4${FAKE_DSH_PORT:-1234}/?token=tok-$$"
 i=0; while [ $i -lt 30 ]; do sleep 1; i=$((i+1)); done
 ''';
 
@@ -38,7 +38,7 @@ Welcome to Ubuntu!
 DSHAPP home /home/me
 DSHAPP alive 4242
 DSHAPP samecmd
-DSHAPP url dsh web: http://127.0.0.1:38211/?token=AbC.d_e~f-9
+DSHAPP url xrkh serve: http://127.0.0.1:38211/?token=AbC.d_e~f-9
 ''');
       expect(probe.home, '/home/me');
       expect(probe.pid, 4242);
@@ -49,7 +49,7 @@ DSHAPP url dsh web: http://127.0.0.1:38211/?token=AbC.d_e~f-9
     test('probe output: nothing running, or a different command, is not reusable', () {
       expect(RemoteDshBootstrap.parseProbe('DSHAPP home /root\n').reusable, isFalse);
       expect(
-        RemoteDshBootstrap.parseProbe('DSHAPP alive 1\nDSHAPP url dsh web: http://127.0.0.1:1/?token=x\n').reusable,
+        RemoteDshBootstrap.parseProbe('DSHAPP alive 1\nDSHAPP url xrkh serve: http://127.0.0.1:1/?token=x\n').reusable,
         isFalse,
       );
       // Alive but its log has no launch line yet.
@@ -62,7 +62,7 @@ DSHAPP url dsh web: http://127.0.0.1:38211/?token=AbC.d_e~f-9
 DSHAPP home /Users/me
 DSHAPP dsh /opt/homebrew/bin/dsh
 DSHAPP started 777
-DSHAPP url dsh web: http://127.0.0.1:51234/?token=launch-tok
+DSHAPP url xrkh serve: http://127.0.0.1:51234/?token=launch-tok
 ''', ''),
       );
       expect(endpoint.port, 51234);
@@ -80,7 +80,7 @@ DSHAPP url dsh web: http://127.0.0.1:51234/?token=launch-tok
           isA<HostLinkError>()
               .having((e) => e.kind, 'kind', HostLinkErrorKind.dshNotFound)
               .having((e) => e.retryable, 'retryable', isFalse)
-              .having((e) => e.detail, 'detail', contains('npm install -g @deepseek-ai/dsh')),
+              .having((e) => e.detail, 'detail', contains('npm install -g @xrkseek/harness-cli')),
         ),
       );
     });
@@ -90,12 +90,12 @@ DSHAPP url dsh web: http://127.0.0.1:51234/?token=launch-tok
         () => RemoteDshBootstrap.parseStart(
           const RemoteExecResult(1, 'DSHAPP started 5\nDSHAPP exited\nDSHAPP log sh: 1: mydsh: not found\n', ''),
           customCommand: true,
-          command: 'mydsh web',
+          command: 'myxrkh serve',
         ),
         throwsA(
           isA<HostLinkError>()
               .having((e) => e.kind, 'kind', HostLinkErrorKind.dshNotFound)
-              .having((e) => e.message, 'message', contains('mydsh web')),
+              .having((e) => e.message, 'message', contains('myxrkh serve')),
         ),
       );
     });
@@ -141,7 +141,7 @@ DSHAPP url dsh web: http://127.0.0.1:51234/?token=launch-tok
 
     test('start script always binds loopback with an OS-picked port', () {
       final script = RemoteDshBootstrap(LocalProcessShell()).startScript();
-      expect(script, contains('dsh web --host 127.0.0.1 --port 0 --no-open'));
+      expect(script, contains('xrkh serve --host 127.0.0.1 --port 0 --no-open'));
       expect(script, contains('nohup'));
       expect(script, contains(r'$HOME/.dsh-app-remote'));
     });
@@ -175,7 +175,7 @@ DSHAPP url dsh web: http://127.0.0.1:51234/?token=launch-tok
       home.deleteSync(recursive: true);
     });
 
-    RemoteDshBootstrap bootstrap({Map<String, String> extra = const {}, String command = 'dsh web', String? cwd}) =>
+    RemoteDshBootstrap bootstrap({Map<String, String> extra = const {}, String command = 'xrkh serve', String? cwd}) =>
         RemoteDshBootstrap(
           LocalProcessShell(environment: {...env, ...extra}),
           launchCommand: command,
@@ -209,7 +209,7 @@ DSHAPP url dsh web: http://127.0.0.1:51234/?token=launch-tok
       // Only initial empty-state setup is fast. The replacement still delays
       // its URL, so returning a stale old log entry remains observable.
       final first = await bootstrap(extra: {'FAKE_DSH_MODE': 'fast'}).ensureRunning();
-      final second = await bootstrap(command: '${bin.path}/dsh web').ensureRunning();
+      final second = await bootstrap(command: '${bin.path}/xrkh serve').ensureRunning();
       expect(second.reused, isFalse);
       expect(second.token, isNot(first.token));
       // The old process was stopped.
@@ -264,8 +264,8 @@ DSHAPP url dsh web: http://127.0.0.1:51234/?token=launch-tok
       addTearDown(other.kill);
       final dir = Directory('${home.path}/.dsh-app-remote')..createSync();
       File('${dir.path}/web.pid').writeAsStringSync('${other.pid}\n');
-      File('${dir.path}/web.cmd').writeAsStringSync('dsh web');
-      File('${dir.path}/web.log').writeAsStringSync('dsh web: http://127.0.0.1:1/?token=old\n');
+      File('${dir.path}/web.cmd').writeAsStringSync('xrkh serve');
+      File('${dir.path}/web.log').writeAsStringSync('xrkh serve: http://127.0.0.1:1/?token=old\n');
 
       final probe = await bootstrap().probe();
       expect(probe.pid, isNull);
@@ -286,8 +286,8 @@ DSHAPP url dsh web: http://127.0.0.1:51234/?token=launch-tok
         }
         final dir = Directory('${home.path}/.dsh-app-remote')..createSync();
         File('${dir.path}/web.pid').writeAsStringSync('${other.pid}\n');
-        File('${dir.path}/web.cmd').writeAsStringSync('dsh web');
-        File('${dir.path}/web.log').writeAsStringSync('dsh web: http://127.0.0.1:1/?token=old\n');
+        File('${dir.path}/web.cmd').writeAsStringSync('xrkh serve');
+        File('${dir.path}/web.log').writeAsStringSync('xrkh serve: http://127.0.0.1:1/?token=old\n');
         expect(File('${dir.path}/web.st').existsSync(), isFalse);
         final started = await bootstrap().ensureRunning();
         expect(started.reused, isFalse);

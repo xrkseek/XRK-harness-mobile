@@ -12,7 +12,7 @@ import '../../state/hosts_state.dart';
 import '../common/app_dialog.dart';
 import '../settings/settings_widgets.dart';
 
-/// Local, native-only recovery: available even when DSH's workspace RPC is down.
+/// Local, native-only recovery: available even when XRK's workspace RPC is down.
 class WorkspaceRecoverySettings extends ConsumerStatefulWidget {
   const WorkspaceRecoverySettings({super.key});
 

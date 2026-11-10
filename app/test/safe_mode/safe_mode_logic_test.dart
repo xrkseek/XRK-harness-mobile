@@ -1,16 +1,16 @@
 // Safe mode, Dart side: parsing the native status, the failure card's decision table,
 // the repair prompt, and the platform-channel calls.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/engine_control.dart';
-import 'package:dsh_app/state/safe_mode_state.dart';
-import 'package:dsh_app/ui/common/status_dot.dart';
-import 'package:dsh_app/ui/engine/engine_status.dart';
-import 'package:dsh_app/ui/safe_mode/engine_failure_card.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_actions.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_banner.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_card.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/engine_control.dart';
+import 'package:xrk_app/state/safe_mode_state.dart';
+import 'package:xrk_app/ui/common/status_dot.dart';
+import 'package:xrk_app/ui/engine/engine_status.dart';
+import 'package:xrk_app/ui/safe_mode/engine_failure_card.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_actions.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_banner.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_card.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -96,7 +96,7 @@ void main() {
   group('failure card', () {
     test('LKG first when it would change something, safe mode next', () {
       final m = FailureCardModel.of(startupFailure(), lkgUseful: true);
-      expect(m.title, 'DSH 启动失败');
+      expect(m.title, 'XRK 启动失败');
       expect(m.primary, FailureAction.restoreLkg);
       expect(m.secondary, [FailureAction.enterSafe, FailureAction.showLog, FailureAction.retry]);
       expect(m.body, contains('break-required'));
@@ -176,7 +176,7 @@ void main() {
   group('repair prompt', () {
     test('names the failure and points at the briefing; never sent by itself', () {
       final prompt = repairPrompt(safeStatus());
-      expect(prompt, startsWith('我的 DSH 正常模式出了问题（启动失败，可疑插件：break-required）'));
+      expect(prompt, startsWith('我的 XRK 正常模式出了问题（启动失败，可疑插件：break-required）'));
       expect(prompt, contains('「安全模式」说明'));
       expect(prompt, contains('trial'));
       expect(repairPrompt(const RuntimeStatus(phase: RuntimePhase.running)), contains('我手动进入了安全模式'));
@@ -207,7 +207,7 @@ void main() {
   });
 
   group('platform channel', () {
-    const channel = MethodChannel('dsh/runtime');
+    const channel = MethodChannel('xrk/runtime');
     final calls = <MethodCall>[];
 
     setUp(() {
@@ -229,10 +229,10 @@ void main() {
             'empty': false,
           },
           'safePreflight' => [
-            {'path': '/root/.dsh/.env', 'kind': 'homeEnv', 'detail': '设置了 NODE_OPTIONS'},
+            {'path': '/root/.xrk/.env', 'kind': 'homeEnv', 'detail': '设置了 NODE_OPTIONS'},
           ],
           'moveAside' => [
-            {'from': '/root/.dsh/.env', 'to': '/root/.dsh/.env.off-20261023-153000'},
+            {'from': '/root/.xrk/.env', 'to': '/root/.xrk/.env.off-20261023-153000'},
           ],
           'failureLog' => ['a', 'b'],
           _ => null,
@@ -262,10 +262,10 @@ void main() {
       expect((await bridge.lastKnownGood()).disable, ['x']);
       expect((await bridge.restoreLastKnownGood()).useful, isTrue);
       final hazards = await bridge.safePreflight();
-      expect(hazards.single.path, '/root/.dsh/.env');
-      expect(await bridge.moveAside(['/root/.dsh/.env']), ['/root/.dsh/.env.off-20261023-153000']);
+      expect(hazards.single.path, '/root/.xrk/.env');
+      expect(await bridge.moveAside(['/root/.xrk/.env']), ['/root/.xrk/.env.off-20261023-153000']);
       expect(calls.last.arguments, {
-        'paths': ['/root/.dsh/.env'],
+        'paths': ['/root/.xrk/.env'],
       });
       expect(await bridge.failureLog(), ['a', 'b']);
       await bridge.setAutoSafe(false);

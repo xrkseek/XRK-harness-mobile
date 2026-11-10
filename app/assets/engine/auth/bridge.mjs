@@ -2,11 +2,11 @@
 //
 // dsh-app auth bridge: the state machine behind the `appAuth` Remote service.
 //
-// DSH 0.2.1 already ships subscription sign-in. The built-in `llm-pi-ai` adapter
+// XRK 0.2.1 already ships subscription sign-in. The built-in `llm-pi-ai` adapter
 // registers one `ctx.authorization` flow per pi-ai provider that has a login
 // (`llm-pi-ai/openai-codex` for ChatGPT, `llm-pi-ai/anthropic` for Claude), and
 // the flow stores pi-ai's OAuth grant through `ctx.credentials` (credentials-local
-// writes it to `$DSH_HOME/.credentials.yaml` as `{kind: grant, payload}`). What
+// writes it to `$XRK_HOME/.credentials.yaml` as `{kind: grant, payload}`). What
 // 0.2.1 lacks is a client-facing way to start one, so this module does what the
 // DeepSeek account platform does internally (`ctx.authorization.begin`) and turns
 // the flow's notices and prompts into a small polled state machine:
@@ -18,7 +18,7 @@
 // (`llm-pi-ai.providers.<id>`) so the provider's models show up; sign-out removes
 // the route and deletes the grant. Token refresh stays with pi-ai, per request.
 //
-// This file has no imports from DSH: `index.mjs` wires it into the host, and the
+// This file has no imports from XRK: `index.mjs` wires it into the host, and the
 // tests drive it with a fake context.
 
 import { randomUUID } from 'node:crypto'
@@ -297,7 +297,7 @@ export class AuthBridge {
   async begin(provider) {
     const spec = this.#spec(provider)
     this.#prune()
-    // Tapping "sign in" again replaces the attempt in flight (DSH runs one per key).
+    // Tapping "sign in" again replaces the attempt in flight (XRK runs one per key).
     const previous = this.#liveByProvider.get(provider)
     if (previous !== undefined) {
       previous.cancelRequested = true

@@ -28,7 +28,7 @@ FAKE_GH = """#!{python}
 import json, os, shutil, sys
 args = sys.argv[1:]
 open(os.environ["FAKE_LOG"], "a").write(" ".join(args) + "\\n")
-assert args[:1] == ["release"] and args[args.index("--repo") + 1] == "ccch1mneyyy/dsh-go", args
+assert args[:1] == ["release"] and args[args.index("--repo") + 1] == "xrkseek/XRK-harness-mobile", args
 if args[1] == "list":
     print(os.environ["FAKE_RELEASES"])
 elif args[1] == "download":
@@ -99,7 +99,7 @@ class ReleaseBuildTest(unittest.TestCase):
             check_abis("arm64", ["lib/arm64-v8a/"])
 
     def test_badging_line(self):
-        line = ("package: name='io.github.ccch1mneyyy.dsh_app' versionCode='10251234' versionName='1.2.0-beta.1' "
+        line = ("package: name='com.xrkseek.harness' versionCode='10251234' versionName='1.2.0-beta.1' "
                 "platformBuildVersionName='16'\nminSdkVersion:'26'\n")
         m = BADGING_RE.search(line)
         self.assertEqual((m.group(1), m.group(2)), ("10251234", "1.2.0-beta.1"))
@@ -115,7 +115,7 @@ class DeltaTest(unittest.TestCase):
         old, new = apk(self.dir / "old.apk", 1), apk(self.dir / "new.apk", 2, libapp_seed=1)
         with contextlib.redirect_stdout(io.StringIO()):
             patch = patch_from(old, "1.0.7+10311844", new, "1.0.8", self.dir / "out")
-        name = "dsh-go-1.0.8-from-1.0.7-arm64.dshdelta"
+        name = "xrk-harness-1.0.8-from-1.0.7-arm64.dshdelta"
         path = self.dir / "out" / name
         self.assertEqual(patch, {"from": sha(old), "fromVersion": "1.0.7+10311844", "name": name, "size": path.stat().st_size, "sha256": sha(path)})
         self.assertLess(patch["size"], 0.1 * new.stat().st_size)
@@ -162,7 +162,7 @@ class PublishedTest(unittest.TestCase):
     def release(self, tag, sums_for=None):
         folder = self.assets / tag
         folder.mkdir(parents=True)
-        name = f"dsh-go-{tag[1:]}-arm64.apk"
+        name = f"xrk-harness-{tag[1:]}-arm64.apk"
         path = apk(folder / name, 7)
         (folder / "SHA256SUMS").write_text(f"{sums_for or sha(path)}  {name}\n")
         return path
@@ -177,7 +177,7 @@ class PublishedTest(unittest.TestCase):
         original = self.release("v1.0.7")
         cache = self.dir / "cache"
         got = published_apk("v1.0.7", cache)
-        self.assertEqual(got, cache / "v1.0.7" / "dsh-go-1.0.7-arm64.apk")
+        self.assertEqual(got, cache / "v1.0.7" / "xrk-harness-1.0.7-arm64.apk")
         self.assertEqual(got.read_bytes(), original.read_bytes())
         self.assertEqual(published_apk("v1.0.7", cache), got)
         self.assertEqual(self.log.read_text().count("release download v1.0.7"), 1)

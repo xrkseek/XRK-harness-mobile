@@ -2,7 +2,7 @@
 // The source is theirs to pick (companion_voice_source.dart): the phone's own
 // text-to-speech, or an external speech API whose audio the app fetches
 // sentence by sentence and plays in order. Both play through the native side
-// (android CompanionVoicePlugin.kt, channel `dsh/companion_voice`); the app
+// (android CompanionVoicePlugin.kt, channel `xrk/companion_voice`); the app
 // keeps no audio once a sentence has played.
 
 import 'dart:async';
@@ -45,7 +45,7 @@ class CompanionVoiceEvent {
 
 /// The native side, as it is.
 class CompanionVoice {
-  CompanionVoice([MethodChannel? channel]) : _channel = channel ?? const MethodChannel('dsh/companion_voice') {
+  CompanionVoice([MethodChannel? channel]) : _channel = channel ?? const MethodChannel('xrk/companion_voice') {
     _channel.setMethodCallHandler(_heard);
   }
 

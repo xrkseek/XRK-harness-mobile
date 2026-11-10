@@ -96,10 +96,10 @@ class GlassStyle {
 
 /// 页面材质扩展:背景渐变、光晕、用户气泡、四种玻璃。
 ///
-/// 与 `DshColors` 不同,这里**随 accent 变**(光晕与气泡带主色调),
+/// 与 `XrkColors` 不同,这里**随 accent 变**(光晕与气泡带主色调),
 /// 也随"是否允许模糊"变。
-class DshSurfaces extends ThemeExtension<DshSurfaces> {
-  const DshSurfaces({
+class XrkSurfaces extends ThemeExtension<XrkSurfaces> {
+  const XrkSurfaces({
     required this.backdropTop,
     required this.backdropBottom,
     required this.glowPrimary,
@@ -145,7 +145,7 @@ class DshSurfaces extends ThemeExtension<DshSurfaces> {
   /// `BackdropFilter`。由设置里的"减少透明效果"或性能探测决定。
   final bool blurEnabled;
 
-  static DshSurfaces of(BuildContext context) => Theme.of(context).extension<DshSurfaces>()!;
+  static XrkSurfaces of(BuildContext context) => Theme.of(context).extension<XrkSurfaces>()!;
 
   GlassStyle glass(GlassTier tier) => switch (tier) {
     GlassTier.chrome => chrome,
@@ -156,11 +156,11 @@ class DshSurfaces extends ThemeExtension<DshSurfaces> {
 
   /// 浅色:晨雾渐变 + 白玻璃。渐变、阴影、实色兜底跟配色的中性色走;
   /// 玻璃本身是白的,高光也是白的 —— 换了配色,玻璃还是玻璃。
-  factory DshSurfaces.light(AppAccent accent, {bool blurEnabled = true}) {
+  factory XrkSurfaces.light(AppAccent accent, {bool blurEnabled = true}) {
     final n = NeutralTones.forAccent(accent);
     final ink = n.shadowInk;
     const white = Color(0xFFFFFFFF);
-    return DshSurfaces(
+    return XrkSurfaces(
       backdropTop: n.mistTop,
       backdropBottom: n.mistBottom,
       glowPrimary: accent.glow.withValues(alpha: 0.42),
@@ -207,13 +207,13 @@ class DshSurfaces extends ThemeExtension<DshSurfaces> {
   }
 
   /// 深色:深海石板渐变 + 烟灰玻璃(石板与烟灰跟配色的中性色走)。
-  factory DshSurfaces.dark(AppAccent accent, {bool blurEnabled = true}) {
+  factory XrkSurfaces.dark(AppAccent accent, {bool blurEnabled = true}) {
     final n = NeutralTones.forAccent(accent);
     const white = Color(0xFFFFFFFF);
     const black = Color(0xFF000000);
     // 雾蓝里是 OKLCH(0.30, 0.022, 266):比页面高一档的石板灰。
     final smoke = n.smoke;
-    return DshSurfaces(
+    return XrkSurfaces(
       backdropTop: n.nightTop,
       backdropBottom: n.nightBottom,
       glowPrimary: accent.glowDark.withValues(alpha: 0.28),
@@ -260,7 +260,7 @@ class DshSurfaces extends ThemeExtension<DshSurfaces> {
   }
 
   @override
-  DshSurfaces copyWith({
+  XrkSurfaces copyWith({
     Color? backdropTop,
     Color? backdropBottom,
     Color? glowPrimary,
@@ -275,7 +275,7 @@ class DshSurfaces extends ThemeExtension<DshSurfaces> {
     AppAccent? accent,
     bool? blurEnabled,
   }) {
-    return DshSurfaces(
+    return XrkSurfaces(
       backdropTop: backdropTop ?? this.backdropTop,
       backdropBottom: backdropBottom ?? this.backdropBottom,
       glowPrimary: glowPrimary ?? this.glowPrimary,
@@ -293,10 +293,10 @@ class DshSurfaces extends ThemeExtension<DshSurfaces> {
   }
 
   @override
-  DshSurfaces lerp(DshSurfaces? other, double t) {
-    if (other is! DshSurfaces) return this;
+  XrkSurfaces lerp(XrkSurfaces? other, double t) {
+    if (other is! XrkSurfaces) return this;
     Color mix(Color a, Color b) => Color.lerp(a, b, t)!;
-    return DshSurfaces(
+    return XrkSurfaces(
       backdropTop: mix(backdropTop, other.backdropTop),
       backdropBottom: mix(backdropBottom, other.backdropBottom),
       glowPrimary: mix(glowPrimary, other.glowPrimary),

@@ -7,18 +7,18 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/share_code/conversation_share.dart';
-import 'package:dsh_app/state/artifacts.dart' show FilesChannel;
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/common/segmented_pill.dart';
-import 'package:dsh_app/ui/replay/conversation_out.dart';
-import 'package:dsh_app/ui/replay/replay_page.dart';
-import 'package:dsh_app/ui/share/share_card.dart';
-import 'package:dsh_app/ui/share/share_content.dart';
-import 'package:dsh_app/ui/share/share_image_page.dart';
-import 'package:dsh_app/ui/share/share_panel.dart';
-import 'package:dsh_app/ui/share/share_panel_pages.dart';
+import 'package:xrk_app/share_code/conversation_share.dart';
+import 'package:xrk_app/state/artifacts.dart' show FilesChannel;
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/common/segmented_pill.dart';
+import 'package:xrk_app/ui/replay/conversation_out.dart';
+import 'package:xrk_app/ui/replay/replay_page.dart';
+import 'package:xrk_app/ui/share/share_card.dart';
+import 'package:xrk_app/ui/share/share_content.dart';
+import 'package:xrk_app/ui/share/share_image_page.dart';
+import 'package:xrk_app/ui/share/share_panel.dart';
+import 'package:xrk_app/ui/share/share_panel_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

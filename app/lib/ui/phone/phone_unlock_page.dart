@@ -12,7 +12,7 @@
 //   │ ⚙ 系统设置                   ( ●) │
 //   │   含权限页、安装器、安全中心、通知栏 │
 //   │ ⚿ 密码和验证码               ( ●) │
-//   │ ▭ DSH Go 自身                ( ●) │
+//   │ ▭ XRK Go 自身                ( ●) │
 //   ╰──────────────────────────────────╯
 //   ╭──────────────────────────────────╮
 //   │ ☰ 银行、支付类 App               › │
@@ -215,7 +215,7 @@ class _UnlockRow extends StatelessWidget {
         key: ValueKey('unlock-${unlock.name}'),
         icon: unlock.icon,
         // Lifted: the glyph takes the warning colour, like the page's tag.
-        iconColor: on ? DshColors.of(context).warning : null,
+        iconColor: on ? XrkColors.of(context).warning : null,
         title: unlock.label(l10n),
         subtitle: unlock.hint(l10n),
         subtitleMaxLines: 2,
@@ -314,7 +314,7 @@ class _PhoneUnlockConfirmPageState extends ConsumerState<PhoneUnlockConfirmPage>
                     textAlign: TextAlign.center,
                     style: Theme.of(
                       context,
-                    ).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+                    ).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
                   ),
                 ),
               ],
@@ -335,7 +335,7 @@ class _Disclaimer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final ink = colors.onDangerContainer;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -412,7 +412,7 @@ class UnlockedTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final ink = colors.onWarningContainer;
     return Pressable(
       onTap: onTap,

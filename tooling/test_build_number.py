@@ -103,14 +103,14 @@ class BuildApkDryRunTest(unittest.TestCase):
         self.assertIn("--flavor arm64 --target-platform android-arm64", commands[0])
         self.assertIn("--flavor x64 --target-platform android-x64", commands[1])
         for c in commands:
-            self.assertRegex(c, rf"--build-name (\S+) --build-number {code} --dart-define=DSH_APP_VERSION=\1\+{code}")
+            self.assertRegex(c, rf"--build-name (\S+) --build-number {code} --dart-define=XRK_APP_VERSION=\1\+{code}")
         self.assertIn("gradlew --stop", out)
 
     def test_options(self):
         out = self.run_script("--debug", "-f", "x64", "-t", "lib/dev/runtime_probe_main.dart", "-n", "10251234",
                               "--build-name", "0.9.0", "--keep-daemon").stdout
         self.assertIn("flutter build apk --debug --flavor x64 --target-platform android-x64 --build-name 0.9.0 "
-                      "--build-number 10251234 --dart-define=DSH_APP_VERSION=0.9.0+10251234 "
+                      "--build-number 10251234 --dart-define=XRK_APP_VERSION=0.9.0+10251234 "
                       "-t lib/dev/runtime_probe_main.dart", out)
         self.assertNotIn("gradlew --stop", out)
 

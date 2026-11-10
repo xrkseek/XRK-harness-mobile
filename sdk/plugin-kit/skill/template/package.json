@@ -12,7 +12,7 @@
   "engines": {
     "dsh": ">=0.2.1-rc.2 <0.3.0-0"
   },
-  "dshGo": {
+  "xrkGo": {
     "v": 1,
     "title": { "zh": "我的插件", "en": "My plugin" },
     "icon": "bolt",

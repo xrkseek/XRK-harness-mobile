@@ -1,10 +1,10 @@
 // Exercise the real app entry point: accepting theme.mode in the parser is
 // insufficient unless MaterialApp also consumes the merged active-host mode.
-import 'package:dsh_app/app.dart';
-import 'package:dsh_app/state/appearance_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/app.dart';
+import 'package:xrk_app/state/appearance_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,7 +37,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const DshApp(home: Scaffold(body: Text('theme target'))),
+        child: const XrkApp(home: Scaffold(body: Text('theme target'))),
       ),
     );
     await tester.pumpAndSettle();

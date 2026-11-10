@@ -99,7 +99,7 @@ def main():
     DART.write_text(generated, encoding='utf-8')
     out = args.out
     out.mkdir(parents=True, exist_ok=True)
-    (out / 'c.html').write_text(page(src, connect="'self'", title='dsh-go 对话', data=''), encoding='utf-8')
+    (out / 'c.html').write_text(page(src, connect="'self'", title='xrk-mobile 对话', data=''), encoding='utf-8')
     for name in LANDING:
         shutil.copyfile(SITE / name, out / name)
     print(f'wrote {DART.relative_to(ROOT)} and {out}')

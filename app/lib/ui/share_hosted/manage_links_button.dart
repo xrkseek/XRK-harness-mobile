@@ -17,7 +17,7 @@ class ManageLinksButton extends StatelessWidget {
     final l10n = context.l10n;
     return TextButton(
       style: TextButton.styleFrom(
-        foregroundColor: DshColors.of(context).textTertiary,
+        foregroundColor: XrkColors.of(context).textTertiary,
         minimumSize: const Size(0, 40),
         padding: const EdgeInsets.symmetric(horizontal: 16),
       ),

@@ -1,27 +1,27 @@
 #!/usr/bin/env bash
 # Records real bridge traffic and validates it against schema/*.schema.json:
-#   1. the protocol integration test (runtime/tests/native-bridge.mjs) against `dsh web` with the
+#   1. the protocol integration test (runtime/tests/native-bridge.mjs) against `xrkh serve` with the
 #      runtime/tests/fixtures plugins, then its --empty run without them;
 #   2. the example plugins' end-to-end (examples/plugins/e2e/host-e2e.sh --capture).
-# Every request and frame passes through scripts/wire-capture.mjs. Never touches ~/.dsh.
+# Every request and frame passes through scripts/wire-capture.mjs. Never touches ~/.xrk.
 #
-#   sdk/plugin-kit/scripts/wire-check.sh [--dsh-prefix DIR] [--keep]
+#   sdk/plugin-kit/scripts/wire-check.sh [--engine-prefix DIR] [--keep]
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 KIT="$(dirname "$HERE")"
 REPO="$(cd "$KIT/../.." && pwd)"
-PREFIX="$REPO/runtime/.work/x86_64/dsh-prefix"
+PREFIX="$REPO/runtime/.work/x86_64/engine-prefix"
 KEEP=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --dsh-prefix) PREFIX="$(cd "$2" && pwd)"; shift 2 ;;
+    --engine-prefix) PREFIX="$(cd "$2" && pwd)"; shift 2 ;;
     --keep) KEEP=1; shift ;;
     *) echo "unknown option $1" >&2; exit 2 ;;
   esac
 done
 NODE="$(command -v node)"
 TESTS="$REPO/runtime/tests"
-TMP="$(mktemp -d "${TMPDIR:-/tmp}/dsh-go-wire.XXXXXX")"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/xrk-mobile-wire.XXXXXX")"
 PORT=38261; PROXY=38262
 PIDS=()
 cleanup() {
@@ -34,8 +34,8 @@ trap 'exit 130' INT TERM
 
 cat > "$TMP/bridge.patch.yml" <<YML
 - insert:
-    - id: dsh-go-bridge
-      name: $REPO/runtime/bridge/dsh-go-bridge/lib/index.js
+    - id: xrk-bridge
+      name: $REPO/runtime/bridge/xrk-bridge/lib/index.js
       config:
         native:
           heartbeatSeconds: 1
@@ -52,22 +52,22 @@ cat > "$TMP/fixtures.patch.yml" <<YML
       name: $TESTS/fixtures/native-static/index.js
 YML
 
-boot() {  # boot <label> <patch files…>: dsh web on $PORT + recording proxy on $PROXY; sets TOKEN
+boot() {  # boot <label> <patch files…>: xrkh serve on $PORT + recording proxy on $PROXY; sets TOKEN
   local label="$1"; shift
   local -a patches=()
   for p in "$@"; do patches+=(--patch "$p"); done
   rm -rf "$TMP/home"; mkdir -p "$TMP/home/.dsh" "$TMP/work"
-  (cd "$TMP/work" && exec env -i PATH="$(dirname "$NODE"):/usr/bin:/bin" HOME="$TMP/home" DSH_HOME="$TMP/home/.dsh" LANG=C.UTF-8 \
+  (cd "$TMP/work" && exec env -i PATH="$(dirname "$NODE"):/usr/bin:/bin" HOME="$TMP/home" XRK_HOME="$TMP/home/.dsh" LANG=C.UTF-8 \
     DEEPSEEK_API_KEY=sk-dsh-app-native-test-not-a-real-key UV_USE_IO_URING=0 \
-    "$NODE" "$PREFIX/node_modules/@deepseek-ai/dsh/lib/bin.js" web "${patches[@]}" --host 127.0.0.1 --port "$PORT" --no-open) > "$TMP/dsh-web-$label.log" 2>&1 &
+    "$NODE" "$PREFIX/node_modules/@xrkseek/harness-cli/lib/bin.js" web "${patches[@]}" --host 127.0.0.1 --port "$PORT" --no-open) > "$TMP/dsh-web-$label.log" 2>&1 &
   PIDS+=($!)
   TOKEN=""
   for _ in $(seq 1 240); do
-    TOKEN="$(sed -n 's#^dsh web: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$TMP/dsh-web-$label.log" | head -1)"
+    TOKEN="$(sed -n 's#^xrkh serve: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$TMP/dsh-web-$label.log" | head -1)"
     [[ -n "$TOKEN" ]] && break
     sleep 0.5
   done
-  [[ -n "$TOKEN" ]] || { echo "dsh web ($label) did not start" >&2; tail -30 "$TMP/dsh-web-$label.log" >&2; exit 1; }
+  [[ -n "$TOKEN" ]] || { echo "xrkh serve ($label) did not start" >&2; tail -30 "$TMP/dsh-web-$label.log" >&2; exit 1; }
   "$NODE" "$HERE/wire-capture.mjs" "$PROXY" "$PORT" "$TMP/wire-$label.jsonl" > "$TMP/proxy-$label.log" 2>&1 &
   PIDS+=($!)
   sleep 0.5

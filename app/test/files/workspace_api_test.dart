@@ -1,12 +1,12 @@
-// dsh_client's workspace API (workspace_api.dart): wire arguments, parsing,
+// xrk_client's workspace API (workspace_api.dart): wire arguments, parsing,
 // and the change feed that opens on each link generation without starting a
 // connection itself.
 
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/state/workspace_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/workspace_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -130,11 +130,11 @@ Future<void> _settle() => Future<void>.delayed(const Duration(milliseconds: 20))
 
 void main() {
   late _Carrier carrier;
-  late DshClient client;
+  late XrkClient client;
 
   setUp(() {
     carrier = _Carrier();
-    client = DshClient.withCarrier(carrier, muxOptions: const MuxOptions(retryCaps: [Duration(milliseconds: 1)]));
+    client = XrkClient.withCarrier(carrier, muxOptions: const MuxOptions(retryCaps: [Duration(milliseconds: 1)]));
   });
 
   tearDown(() => client.close());
@@ -262,7 +262,7 @@ void main() {
     final link = carrier.links.single;
     link.error(link.idOf('workspaceFiles/changes'), 'workspace-file/watch-unsupported');
     await done.future.timeout(const Duration(seconds: 2));
-    expect(errors.single, isA<DshRemoteException>().having((e) => e.code, 'code', 'workspace-file/watch-unsupported'));
+    expect(errors.single, isA<XrkRemoteException>().having((e) => e.code, 'code', 'workspace-file/watch-unsupported'));
   });
 
   group('directory timestamp ownership', () {

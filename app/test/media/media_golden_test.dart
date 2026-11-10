@@ -3,15 +3,15 @@
 // generation request in the chat;
 // light and dark, and 320dp at 1.3× text.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/features_state.dart' show jobsProvider;
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/media/media_card.dart';
-import 'package:dsh_app/ui/chat/media/media_viewer.dart';
-import 'package:dsh_app/ui/chat/render/markdown_image.dart';
-import 'package:dsh_app/ui/chat/tool_view.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/features_state.dart' show jobsProvider;
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/media/media_card.dart';
+import 'package:xrk_app/ui/chat/media/media_viewer.dart';
+import 'package:xrk_app/ui/chat/render/markdown_image.dart';
+import 'package:xrk_app/ui/chat/tool_view.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

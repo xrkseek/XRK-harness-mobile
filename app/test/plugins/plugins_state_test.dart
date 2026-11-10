@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -56,7 +56,7 @@ void main() {
         of(installResult(application: 'failed', error: {'code': 'already-installed'})).kind,
         PluginFailureKind.alreadyInstalled,
       );
-      expect(of(installResult(application: 'failed', error: {'code': 'not-bundle'})).title, '这不是 DSH 插件');
+      expect(of(installResult(application: 'failed', error: {'code': 'not-bundle'})).title, '这不是 XRK 插件');
 
       final now = DateTime.utc(2026, 10, 23, 12);
       final fresh = of(
@@ -90,7 +90,7 @@ void main() {
         ),
       );
       expect(incompatible.kind, PluginFailureKind.incompatible);
-      expect(incompatible.message, '这个插件要求 DSH >=0.3.0，当前是 0.2.1-rc.2。');
+      expect(incompatible.message, '这个插件要求 XRK >=0.3.0，当前是 0.2.1-rc.2。');
 
       final blocked = of(installResult(application: 'failed', kind: 'build-blocked', pendingBuilds: ['esbuild']));
       expect(blocked.canApproveBuilds, isTrue);
@@ -110,11 +110,11 @@ void main() {
 
     test('exceptions', () {
       expect(
-        describePluginError(const DshRemoteException('METHOD_NOT_ALLOWED', 'x')).kind,
+        describePluginError(const XrkRemoteException('METHOD_NOT_ALLOWED', 'x')).kind,
         PluginFailureKind.unsupported,
       );
-      expect(describePluginError(const DshRemoteException('gateway/method-not-found', 'x')).title, '主机不支持插件管理');
-      expect(describePluginError(const DshTransportException('down')).kind, PluginFailureKind.connection);
+      expect(describePluginError(const XrkRemoteException('gateway/method-not-found', 'x')).title, '主机不支持插件管理');
+      expect(describePluginError(const XrkTransportException('down')).kind, PluginFailureKind.connection);
     });
   });
 
@@ -207,20 +207,20 @@ void main() {
     test('bundle groups', () {
       final groups = {for (final b in sampleBundles.map(PluginBundle.fromJson)) b.name: bundleGroup(b)};
       expect(groups, {
-        '@deepseek-ai/dsh-base': BundleGroup.hidden,
+        '@xrkseek/harness-cli-base': BundleGroup.hidden,
         'dsh-approval-gate': BundleGroup.installed,
         'broken-thing': BundleGroup.installed,
-        '@deepseek-ai/dsh-experimental-session-search': BundleGroup.official,
+        '@xrkseek/harness-cli-experimental-session-search': BundleGroup.official,
       });
       final onDemand = PluginBundle.fromJson(
         bundleJson(
-          '@deepseek-ai/dsh-subagent-codex',
+          '@xrkseek/harness-cli-subagent-codex',
           official: true,
           installed: false,
           enabled: false,
           removable: false,
           availability: 'missing',
-          installTarget: {'spec': '@deepseek-ai/dsh-subagent-codex@0.2.1-rc.2', 'version': '0.2.1-rc.2'},
+          installTarget: {'spec': '@xrkseek/harness-cli-subagent-codex@0.2.1-rc.2', 'version': '0.2.1-rc.2'},
         ),
       );
       expect(bundleGroup(onDemand), BundleGroup.onDemand);
@@ -229,12 +229,12 @@ void main() {
 
   group('install queue', () {
     late FakePluginCarrier carrier;
-    late DshClient client;
+    late XrkClient client;
     late ProviderContainer container;
 
     setUp(() async {
       carrier = FakePluginCarrier();
-      client = DshClient.withCarrier(carrier);
+      client = XrkClient.withCarrier(carrier);
       carrier.handlers['pluginManager/listBundles'] = (_) => sampleBundles;
       container = ProviderContainer(overrides: pluginOverrides(fakeHost(client)));
       await client.mux.ready(timeout: const Duration(seconds: 2));
@@ -374,7 +374,7 @@ void main() {
     });
 
     test('lost response: recovered with waitForInstall', () async {
-      carrier.handlers['pluginManager/installBundle'] = (_) => throw const DshTransportException('socket closed');
+      carrier.handlers['pluginManager/installBundle'] = (_) => throw const XrkTransportException('socket closed');
       carrier.handlers['pluginManager/waitForInstall'] = (_) => installResult();
       final job = await container.read(pluginInstallsProvider.notifier).install(request);
       expect(job.phase, PluginInstallPhase.succeeded);
@@ -382,7 +382,7 @@ void main() {
     });
 
     test('lost response and no active install: falls back to the list', () async {
-      carrier.handlers['pluginManager/installBundle'] = (_) => throw const DshTransportException('socket closed');
+      carrier.handlers['pluginManager/installBundle'] = (_) => throw const XrkTransportException('socket closed');
       carrier.handlers['pluginManager/waitForInstall'] = (_) => null;
       final job = await container.read(pluginInstallsProvider.notifier).install(request);
       expect(job.phase, PluginInstallPhase.failed);
@@ -457,7 +457,7 @@ void main() {
 
     test('relay hosts cannot install', () async {
       final relayCarrier = FakePluginCarrier(allowInstall: false);
-      final relayClient = DshClient.withCarrier(relayCarrier);
+      final relayClient = XrkClient.withCarrier(relayCarrier);
       addTearDown(relayClient.close);
       final relay = ProviderContainer(
         overrides: pluginOverrides(fakeHost(relayClient, kind: HostKind.relay, label: '家里的 Mac · 远程')),

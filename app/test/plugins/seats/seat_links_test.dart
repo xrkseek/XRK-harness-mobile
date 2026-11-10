@@ -1,14 +1,14 @@
-// The seats' pure parts: where an occupant lands in DSH Web, the names an island
+// The seats' pure parts: where an occupant lands in XRK Web, the names an island
 // looks for, what a row calls an occupant, and the route-guard report the
 // islands' security gate reads from the inventory.
 
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/plugins/islands/island_gate.dart';
-import 'package:dsh_app/ui/plugins/seats/seat_island.dart';
-import 'package:dsh_app/ui/plugins/seats/seat_links.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/plugins/islands/island_gate.dart';
+import 'package:xrk_app/ui/plugins/seats/seat_island.dart';
+import 'package:xrk_app/ui/plugins/seats/seat_links.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

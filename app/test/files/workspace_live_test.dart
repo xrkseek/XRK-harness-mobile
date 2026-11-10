@@ -1,31 +1,31 @@
-// Live check of the 文件 page's Host calls against a running `dsh web`.
+// Live check of the 文件 page's Host calls against a running `xrkh serve`.
 //
-// Skipped unless DSH_LIVE_URL (the `dsh web:` launch URL with `?token=`) and
-// DSH_LIVE_CWD (a throwaway folder this test may write into) are set:
+// Skipped unless XRK_LIVE_URL (the `xrkh serve:` launch URL with `?token=`) and
+// XRK_LIVE_CWD (a throwaway folder this test may write into) are set:
 //
-//   DSH_LIVE_URL='http://127.0.0.1:3080/?token=…' DSH_LIVE_CWD=/tmp/ws \
+//   XRK_LIVE_URL='http://127.0.0.1:3080/?token=…' XRK_LIVE_CWD=/tmp/ws \
 //     flutter test test/files/workspace_live_test.dart
 library;
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/workspace_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/workspace_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   final url = Platform.environment['DSH_LIVE_URL'];
   final cwd = Platform.environment['DSH_LIVE_CWD'];
-  final skip = url == null || cwd == null ? 'set DSH_LIVE_URL and DSH_LIVE_CWD' : null;
+  final skip = url == null || cwd == null ? 'set XRK_LIVE_URL and XRK_LIVE_CWD' : null;
 
   group('live workspace', skip: skip, () {
-    late DshClient client;
+    late XrkClient client;
     late String sessionId;
     late WorkspaceSource source;
 
     setUpAll(() async {
-      client = await DshClient.connect(launchUrl: url);
+      client = await XrkClient.connect(launchUrl: url);
       final created = asMapOrNull(
         await client.rpc.call('session/create', {
           'request': {'cwd': cwd},

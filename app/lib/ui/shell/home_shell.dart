@@ -24,7 +24,6 @@ import '../features/all_features_page.dart';
 import '../forum/forum_link_host.dart';
 import '../notify/background_net_host.dart';
 import '../notify/chat_alert_host.dart';
-import '../notify/voice_model_host.dart';
 import '../plugins/plugins_screen.dart';
 import '../pets/pet_settings_page.dart';
 import '../phone/phone_stop_watcher.dart';
@@ -38,7 +37,6 @@ import '../share_code/share_code_host.dart';
 import '../star/star_prompt_host.dart';
 import '../theme/theme.dart';
 import '../update/update_launch_check.dart';
-import '../wallpaper/wallpaper_backdrop.dart';
 import '../web/local_web_screen.dart';
 import 'adaptive/adaptive_layout.dart';
 import 'adaptive/adaptive_rail.dart';
@@ -321,8 +319,7 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
           },
           child: AnnotatedRegion<SystemUiOverlayStyle>(
             value: dshSystemOverlay(Theme.of(context).brightness),
-            // 首页 / 对话 and the drawer: the custom wallpaper when one is in use.
-            child: WallpaperBackdrop(
+            child: AppBackdrop(
               child: _DrawerNoticeTheme(
                 drawer: _drawer,
                 identityBar: _identityBar,
@@ -340,8 +337,6 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
                       const BackgroundNetHost(),
                       // Daily update check + install resume (draws nothing).
                       const UpdateLaunchCheck(),
-                      // The voice model chosen during setup: download, resume, ready / failed notices (draws nothing).
-                      const VoiceModelHost(),
                       // 公测版: once in a while, an invitation to star the project (draws nothing).
                       StarPromptHost(drawer: _drawer, quickPanel: _quickPanel),
                       // App links / shared files: routes them to their feature (draws nothing).
@@ -542,7 +537,7 @@ class _DrawerOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scrim = DshSurfaces.of(context).scrim;
+    final scrim = XrkSurfaces.of(context).scrim;
     return AnimatedBuilder(
       animation: animation,
       child: RepaintBoundary(child: drawer),

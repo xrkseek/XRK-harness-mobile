@@ -2,9 +2,9 @@
 //
 //   flutter test --update-goldens test/search/session_search_golden_test.dart
 
-import 'package:dsh_app/state/session_search.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/shell/session_search_page.dart';
+import 'package:xrk_app/state/session_search.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/shell/session_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

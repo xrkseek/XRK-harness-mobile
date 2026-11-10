@@ -1,4 +1,4 @@
-// 「重新回答」. DSH keeps an append-only log and has no regenerate call, and
+// 「重新回答」. XRK keeps an append-only log and has no regenerate call, and
 // the official web client offers none. It is done the way 「编辑后重发」 is —
 // `session/fork` just before the prompt (`forkPointBeforePrompt`) — and then
 // the same prompt, text and images, is sent again in the fork. The source
@@ -6,7 +6,7 @@
 
 import 'dart:typed_data';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'attachments.dart';
@@ -17,7 +17,7 @@ import 'chat_state.dart';
 /// * [reply] is not the conversation's last word (only notices may follow
 ///   it), or it is still streaming;
 /// * a turn is running or messages wait to be sent;
-/// * the prompt carried files: DSH serves image bytes back
+/// * the prompt carried files: XRK serves image bytes back
 ///   (`session/attachment`), not file contents, so only text and images can
 ///   be sent again.
 ///

@@ -2,21 +2,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dsh_app/diagnostics/app_error_log.dart';
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/voice_settings.dart';
-import 'package:dsh_app/usage/usage_stats.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/diagnostics/app_error_log.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/voice_settings.dart';
+import 'package:xrk_app/usage/usage_stats.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,12 +27,12 @@ const _session = 'SYNTHETIC_SESSION_PRIVATE';
 const _text = 'SYNTHETIC_PROMPT_PRIVATE';
 const _ssh = HostRef.ssh('SYNTHETIC_HOST_SSH_PRIVATE');
 const _relay = HostRef.relay('SYNTHETIC_HOST_RELAY_PRIVATE', name: 'SYNTHETIC_RELAY_NAME_PRIVATE');
-const _writerHeld = DshRemoteException(
+const _writerHeld = XrkRemoteException(
   'session/writer-held',
   'SYNTHETIC_MESSAGE_PRIVATE token=SYNTHETIC_TOKEN_PRIVATE',
   {'owner': 'SYNTHETIC_OWNER_PRIVATE', 'path': '/SYNTHETIC_PATH_PRIVATE'},
 );
-const _imagesRefused = DshRemoteException('session/attachment-invalid', 'SYNTHETIC_IMAGE_REFUSAL_PRIVATE', {
+const _imagesRefused = XrkRemoteException('session/attachment-invalid', 'SYNTHETIC_IMAGE_REFUSAL_PRIVATE', {
   'reason': 'MODEL_DOES_NOT_SUPPORT_IMAGES',
 });
 
@@ -46,7 +46,7 @@ class _PeerTable extends Notifier<Map<HostRef, _Peer>> {
 
 final _peers = NotifierProvider<_PeerTable, Map<HostRef, _Peer>>(() => _PeerTable(const {}));
 
-// The transport supplies RPC results and mux frames. DshClient, its real
+// The transport supplies RPC results and mux frames. XrkClient, its real
 // watch/follow epochs, ChatController and the diagnostic collector are real.
 class _Carrier extends DshCarrier {
   final calls = <(String, Map<String, Object?>)>[];
@@ -83,13 +83,13 @@ class _Carrier extends DshCarrier {
         }
         if (promptGate case final gate?) return gate.future;
         if (promptError case final error?) {
-          if (error is DshRemoteException) return RpcError(error);
+          if (error is XrkRemoteException) return RpcError(error);
           throw error;
         }
         return const RpcOk(null);
       case 'fileUploads/upload':
         if (uploadError case final error?) {
-          if (error is DshRemoteException) return RpcError(error);
+          if (error is XrkRemoteException) return RpcError(error);
           throw error;
         }
         return const RpcOk({
@@ -191,11 +191,11 @@ class _Link implements DshMuxLink {
 
 class _Peer {
   _Peer(this.host) {
-    client = DshClient.withCarrier(carrier, muxOptions: const MuxOptions(autoReconnect: false));
+    client = XrkClient.withCarrier(carrier, muxOptions: const MuxOptions(autoReconnect: false));
   }
   final HostRef host;
   final carrier = _Carrier();
-  late final DshClient client;
+  late final XrkClient client;
   HostConnection get connection => HostConnection(
     client: client,
     label: 'SYNTHETIC_LABEL_PRIVATE',
@@ -415,7 +415,7 @@ void main() {
 
   testWidgets('arbitrary remote code, message and nested details are not copied into the log', (tester) async {
     final h = await _Harness.start(tester);
-    h.peer.carrier.promptError = const DshRemoteException('SYNTHETIC_CODE_PRIVATE', 'SYNTHETIC_MESSAGE_PRIVATE', {
+    h.peer.carrier.promptError = const XrkRemoteException('SYNTHETIC_CODE_PRIVATE', 'SYNTHETIC_MESSAGE_PRIVATE', {
       'nested': {'prompt': _text, 'path': '/SYNTHETIC_PATH_PRIVATE'},
     });
     final before = _before();
@@ -456,7 +456,7 @@ void main() {
   }
 
   for (final sample in <(Object, String)>[
-    (const DshTransportException('SYNTHETIC_TRANSPORT_PRIVATE'), 'transport'),
+    (const XrkTransportException('SYNTHETIC_TRANSPORT_PRIVATE'), 'transport'),
     (const DshCarrierLostException('SYNTHETIC_CARRIER_PRIVATE'), 'carrier_lost'),
   ]) {
     testWidgets('${sample.$2} outcome stays unknown and explicit retry keeps the request ID', (tester) async {
@@ -480,7 +480,7 @@ void main() {
 
   testWidgets('initial attachment upload failure is not a prompt failure', (tester) async {
     final h = await _Harness.start(tester);
-    h.peer.carrier.uploadError = const DshRemoteException('UPLOAD_LIMIT', 'SYNTHETIC_UPLOAD_PRIVATE');
+    h.peer.carrier.uploadError = const XrkRemoteException('UPLOAD_LIMIT', 'SYNTHETIC_UPLOAD_PRIVATE');
     final before = _before();
     expect(await h.chat.send(_text, attachments: [_file()]), isFalse);
     expect(h.peer.carrier.argsOf('fileUploads/upload'), hasLength(1));
@@ -496,7 +496,7 @@ void main() {
   testWidgets('failed image fallback upload reports its own unknown stage', (tester) async {
     final h = await _Harness.start(tester);
     h.peer.carrier.rejectImages = true;
-    h.peer.carrier.uploadError = const DshTransportException('SYNTHETIC_FALLBACK_PRIVATE');
+    h.peer.carrier.uploadError = const XrkTransportException('SYNTHETIC_FALLBACK_PRIVATE');
     final before = _before();
     expect(await h.chat.send(_text, attachments: [_image()]), isFalse);
     expect(h.peer.carrier.prompts, hasLength(1));

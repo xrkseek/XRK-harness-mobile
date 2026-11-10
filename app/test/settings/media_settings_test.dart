@@ -5,12 +5,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/media_generation.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart' show curatedNamespaces;
-import 'package:dsh_app/ui/settings/index/spots.dart';
-import 'package:dsh_app/ui/settings/media_settings_page.dart';
-import 'package:dsh_app/ui/settings/search/settings_search.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/media_generation.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart' show curatedNamespaces;
+import 'package:xrk_app/ui/settings/index/spots.dart';
+import 'package:xrk_app/ui/settings/media_settings_page.dart';
+import 'package:xrk_app/ui/settings/search/settings_search.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../engine_settings/support.dart';
@@ -19,7 +19,7 @@ final _zh = lookupL10n(AppLocale.zhCN);
 final _en = lookupL10n(AppLocale.en);
 
 void main() {
-  test('it sits in 能力, after 联网搜索, and opens from dshgo://open/media', () {
+  test('it sits in 能力, after 联网搜索, and opens from xrkharness://open/media', () {
     final page = SettingsIndex.page(SettingsPageId.media);
     expect(page.title(_zh), '图像与视频');
     expect(page.group!(_zh), '能力');
@@ -51,7 +51,7 @@ void main() {
     final namespaces = [
       ...(describe['namespaces']! as List),
       {
-        'ns': 'dsh-media',
+        'ns': 'xrk-media',
         'schema': {
           'type': 'object',
           'meta': {},

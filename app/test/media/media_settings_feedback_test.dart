@@ -1,4 +1,4 @@
-import 'package:dsh_app/state/media_settings.dart';
+import 'package:xrk_app/state/media_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

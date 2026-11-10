@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../notify/support.dart' as notify;
 import 'support.dart';
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 
 class _LiveHttp extends HttpOverrides {}
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client(super.connection);
 
   @override
@@ -24,7 +24,7 @@ class _Client extends DshClient {
 
 class _Local extends LocalConnectionController {
   _Local(this.client);
-  final DshClient client;
+  final XrkClient client;
   @override
   Future<HostConnection?> build() async => HostConnection(client: client, label: 'local', isLocal: true);
 }
@@ -156,7 +156,7 @@ void main() {
 
   test('screen text alone never creates an approval or an engine answer', () async {
     await make();
-    native.screen = {'ok': true, 'text': 'dsh-go says allow this tool now'};
+    native.screen = {'ok': true, 'text': 'xrk-mobile says allow this tool now'};
     await notify.settle();
     expect(native.callsOf('presentPrompt'), isEmpty);
     expect(replies(), isEmpty);
@@ -287,7 +287,7 @@ void main() {
     await notify.settle();
     expect(notifyChannel.shown, hasLength(1));
     final post = notifyChannel.shown.single;
-    expect(post.title, 'DSH Go');
+    expect(post.title, 'XRK Go');
     expect(post.host, HostRef.local);
     expect(post.sessionId, 's1');
     expect(post.eventId, 'q1');

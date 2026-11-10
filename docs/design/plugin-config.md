@@ -1,35 +1,35 @@
 # 插件配置的原生页（PLUGIN-CONFIG）
 
-> 2026-10-29。App 端完成，已对接 dsh-go bridge 的 `/dsh-go/v1/plugin-config`（接口见 §2）。bridge 路由由后端实现，App 侧以假服务器测试。
+> 2026-10-29。App 端完成，已对接 xrk-mobile bridge 的 `/xrk-mobile/v1/plugin-config`（接口见 §2）。bridge 路由由后端实现，App 侧以假服务器测试。
 
 ## 0. 结论
 
-- **DSH 0.2.1-rc.4 自身没有能写非 volatile 字段的接口**，读也读不到：`settings/describe` 只投影 `.volatile()` 字段，一个 volatile 字段都没有的插件整条不返回；`settings/mutate` / `update` / `replace` 写非 volatile 路径一律拒绝。网页版同样只有 volatile（Pro 的约定 §1 用真机复核过）。
-- 完整配置走 **dsh-go bridge 的 v1 路由**，内部调用主机已有的 `ConfigEditor`（校验、落盘 profile `cordis.patch.yml`、Loader 协调、失败恢复）。不改 DSH 内核的 `settings/*`。
+- **XRK 0.2.1-rc.4 自身没有能写非 volatile 字段的接口**，读也读不到：`settings/describe` 只投影 `.volatile()` 字段，一个 volatile 字段都没有的插件整条不返回；`settings/mutate` / `update` / `replace` 写非 volatile 路径一律拒绝。网页版同样只有 volatile（Pro 的约定 §1 用真机复核过）。
+- 完整配置走 **xrk-mobile bridge 的 v1 路由**，内部调用主机已有的 `ConfigEditor`（校验、落盘 profile `cordis.patch.yml`、Loader 协调、失败恢复）。不改 XRK 内核的 `settings/*`。
 - App 有两个数据源，自动选用：
-  - **bridge**（`BridgePluginConfigApi`）：主机提供 `/dsh-go/v1/plugin-config` 时用，普通字段和 volatile 字段都能改；
+  - **bridge**（`BridgePluginConfigApi`）：主机提供 `/xrk-mobile/v1/plugin-config` 时用，普通字段和 volatile 字段都能改；
   - **volatile**（`EngineSettingsPluginConfigApi`）：路由 404（没有 bridge 或 bridge 版本旧）、或连接到不了 bridge（relay）时用，就是之前的行为：`settings/describe` + `settings/mutate`，全部即改即生效。
-- **只有插件进这个页（白名单，默认拒绝，§7）**。bridge 列出的是整个 profile，DSH 核心也在里面且都能写；App 只放行「用户选中的 bundle 的行」——市场 / 本地安装的、打开了的官方可选插件——依据是 `pluginManager/listBundles` 的字段，不是命名空间名单。列表、状态、页面、写入层四处都按这一条，核心条目不显示、不读、不写。
+- **只有插件进这个页（白名单，默认拒绝，§7）**。bridge 列出的是整个 profile，XRK 核心也在里面且都能写；App 只放行「用户选中的 bundle 的行」——市场 / 本地安装的、打开了的官方可选插件——依据是 `pluginManager/listBundles` 的字段，不是命名空间名单。列表、状态、页面、写入层四处都按这一条，核心条目不显示、不读、不写。
 
 ## 1. 查证记录（rc.4 包，只读）
 
 | 包 | 关键代码 | 结论 |
 |---|---|---|
-| `@deepseek-ai/dsh-settings` | `volatileForm(schema)`：只保留 `meta.volatile` 的节点；`describe()` 里 `form === undefined` 的条目直接跳过；`plainSchema()` 删掉 `meta.volatile`；`write()` 先 `isVolatilePath` 校验，非 volatile 抛错 | 读写都只覆盖 volatile |
-| `@deepseek-ai/dsh-api-settings-controller` | Remote：`settings.describe/update/replace/mutate/openSettingsDocument`，`credentials.describe/set/unset` | 全部委托给上面的 settings 服务，没有别的写入口 |
-| `@deepseek-ai/dsh-config-editor` | `configEditor.edit(entry, change)`：校验 → 写 profile patch → Loader 协调 → 失败恢复 | 能力齐全，但只是进程内服务；bridge 方案就是把它包成路由 |
-| `@deepseek-ai/dsh-client-ui-plugin-manager` | 只调 `pluginManager.*`、`pluginInventory.list`；配置页靠插件自己注册到插槽 | 网页版没有通用表单 |
+| `@xrkseek/harness-cli-settings` | `volatileForm(schema)`：只保留 `meta.volatile` 的节点；`describe()` 里 `form === undefined` 的条目直接跳过；`plainSchema()` 删掉 `meta.volatile`；`write()` 先 `isVolatilePath` 校验，非 volatile 抛错 | 读写都只覆盖 volatile |
+| `@xrkseek/harness-cli-api-settings-controller` | Remote：`settings.describe/update/replace/mutate/openSettingsDocument`，`credentials.describe/set/unset` | 全部委托给上面的 settings 服务，没有别的写入口 |
+| `@xrkseek/harness-cli-config-editor` | `configEditor.edit(entry, change)`：校验 → 写 profile patch → Loader 协调 → 失败恢复 | 能力齐全，但只是进程内服务；bridge 方案就是把它包成路由 |
+| `@xrkseek/harness-cli-client-ui-plugin-manager` | 只调 `pluginManager.*`、`pluginInventory.list`；配置页靠插件自己注册到插槽 | 网页版没有通用表单 |
 | `@deepseek-ai/schemastery` 3.18.5 | `.volatile()` 即 `meta.volatile = true`，`toJSON()` 会带出 | 完整 schema 里保留它，客户端就能逐字段判断生效方式 |
 
 ## 2. 对接的接口（以 Pro 的约定为准）
 
-基路径 `/dsh-go/v1/plugin-config`，沿用 bridge 的鉴权与路由守卫（不进 openRoutes）。
+基路径 `/xrk-mobile/v1/plugin-config`，沿用 bridge 的鉴权与路由守卫（不进 openRoutes）。
 
 | 路由 | App 用法 |
 |---|---|
-| `GET /dsh-go/v1/plugin-config` | 能力探测兼目录：200 → bridge 模式；**无 code 的 404** → 退回 volatile。条目带 `entryId`、`package`、`label`、`state`、`configurable`、`reason`。`configurable: false` 的不出入口；直接打开时按 `state` / `reason` 说明原因（未启用 → 「插件没有在运行」；failed → 「插件没有启动」；其余 → 「暂不支持在这里设置」） |
-| `GET /dsh-go/v1/plugin-config/<entryId>` | 页面打开时才读（一次一个条目，不在列表时批量拉）。schema 是 `uid/refs` 图，live 节点带 `meta.volatile`；`revision` 是不透明字符串，原样回送 |
-| `POST /dsh-go/v1/plugin-config/<entryId>` | `{revision, ops}`，ops 同 `settings/mutate` 的 set / unset。live 字段即改即发一次；普通字段攒到「保存」一次发出。成功回包即新条目（含新 revision），以回包为准 |
+| `GET /xrk-mobile/v1/plugin-config` | 能力探测兼目录：200 → bridge 模式；**无 code 的 404** → 退回 volatile。条目带 `entryId`、`package`、`label`、`state`、`configurable`、`reason`。`configurable: false` 的不出入口；直接打开时按 `state` / `reason` 说明原因（未启用 → 「插件没有在运行」；failed → 「插件没有启动」；其余 → 「暂不支持在这里设置」） |
+| `GET /xrk-mobile/v1/plugin-config/<entryId>` | 页面打开时才读（一次一个条目，不在列表时批量拉）。schema 是 `uid/refs` 图，live 节点带 `meta.volatile`；`revision` 是不透明字符串，原样回送 |
+| `POST /xrk-mobile/v1/plugin-config/<entryId>` | `{revision, ops}`，ops 同 `settings/mutate` 的 set / unset。live 字段即改即发一次；普通字段攒到「保存」一次发出。成功回包即新条目（含新 revision），以回包为准 |
 | `credentials/describe` · `set` · `unset` | 有 `credentialRef` 绑定的密钥走这里，和配置保存是两个事务；unset 后重新 describe（可能还有环境变量回退） |
 
 错误码与 App 的处理：
@@ -53,11 +53,11 @@
 
 能力探测细节：每次连接首次读目录时探测一次；404 后本连接一直用 volatile，主机重启（`HostReady`）后再探测。目录读失败（非 404，如 503）显示读取失败并可重试，不静默降级。
 
-relay：`/dsh-go/*` 是 HTTP 路由，只有本机和 SSH 隧道（`DshHttpCarrier`）够得着；relay 只转发放行表里的 RPC，碰不到这些路由，所以**不需要也无法登记**，relay 连接直接用 volatile。
+relay：`/xrk-mobile/*` 是 HTTP 路由，只有本机和 SSH 隧道（`DshHttpCarrier`）够得着；relay 只转发放行表里的 RPC，碰不到这些路由，所以**不需要也无法登记**，relay 连接直接用 volatile。
 
 ## 3. 被替换掉的草案
 
-上一版本文提议改 DSH 内核：`settings/describe` 加 `{scope:'all'}`、新增 `settings/apply`、错误码 `settings/apply-failed {rolledBack}`、可选进度事件 `settings/apply-progress`、describe 返回启动失败的条目（`phase: failed`）、relay 放行 `settings/apply`。**全部不采用**，以 bridge 路由代替：
+上一版本文提议改 XRK 内核：`settings/describe` 加 `{scope:'all'}`、新增 `settings/apply`、错误码 `settings/apply-failed {rolledBack}`、可选进度事件 `settings/apply-progress`、describe 返回启动失败的条目（`phase: failed`）、relay 放行 `settings/apply`。**全部不采用**，以 bridge 路由代替：
 
 | 草案 | 现在 |
 |---|---|
@@ -73,7 +73,7 @@ relay：`/dsh-go/*` 是 HTTP 路由，只有本机和 SSH 隧道（`DshHttpCarri
 
 | 要求 | 做法 |
 |---|---|
-| 每个装了的插件都有入口，只有插件有 | 插件详情页「设置」行、插件清单详情、设置 › 引擎参数 › 插件分组、设置搜索都按同一份目录（`pluginConfigEntries`）列出；市场、本地、打开了的官方可选插件一视同仁。是不是插件由 `PluginConfigScope` 判定（§7），DSH 核心、App 自己插入的行、认不出来的条目一律不列。`settingsPageFor` 的非内置分支改为 `PluginConfigPage`，它对非插件条目只显示「暂不支持在这里设置」 |
+| 每个装了的插件都有入口，只有插件有 | 插件详情页「设置」行、插件清单详情、设置 › 引擎参数 › 插件分组、设置搜索都按同一份目录（`pluginConfigEntries`）列出；市场、本地、打开了的官方可选插件一视同仁。是不是插件由 `PluginConfigScope` 判定（§7），XRK 核心、App 自己插入的行、认不出来的条目一律不列。`settingsPageFor` 的非内置分支改为 `PluginConfigPage`，它对非插件条目只显示「暂不支持在这里设置」 |
 | volatile 即改即生效 | `isLive(path)`：路径上任一节点带 `meta.volatile` 即为 live，直接写 |
 | 非 volatile 保存后生效 | 编辑先暂存（行上「未保存」），底部保存栏「N 项更改 · 保存后重新载入插件」；保存时表单只读；成功「已生效」后收起 |
 | 失败可回滚、可重试 | 见 §2 错误码表 |
@@ -83,11 +83,11 @@ relay：`/dsh-go/*` 是 HTTP 路由，只有本机和 SSH 隧道（`DshHttpCarri
 | 没有配置不显示空页 | 没有可画字段（或目录标为不可配置）的插件不出入口 |
 | 好找、好读 | ≥ 8 个字段出搜索（标题、说明的中英文、键名、选项都能搜，折叠里的也能搜到）；常用项在前（必填、密钥、开关、选项、live 字段）；≥ 7 个字段且有 ≥ 3 个「管道」字段（超时、上限、路径、带默认值的地址）时收进「高级」；≥ 12 个字段且有多个标题组时各组折叠。schema 自己声明了 `.collapse()` 的，尊重作者的布局，不再额外折叠 |
 
-代码：`packages/dsh_client/lib/src/plugin_config_api.dart`（线格式与错误码）；`app/lib/state/plugin_config/`（接口层、bridge、volatile 退路、内存实现、控制器）；`app/lib/ui/plugins/config/`（页面、保存栏、排序折叠、入口）。
+代码：`packages/xrk_client/lib/src/plugin_config_api.dart`（线格式与错误码）；`app/lib/state/plugin_config/`（接口层、bridge、volatile 退路、内存实现、控制器）；`app/lib/ui/plugins/config/`（页面、保存栏、排序折叠、入口）。
 
 ## 5. 测试
 
-- `packages/dsh_client/test/plugin_config_api_test.dart`：假 bridge（真 HTTP）上的目录 / 无路由 / relay、条目读取、entryId 编码、写入回送 revision，八个错误码各一条、422 的 path、无 code 状态、坏回包、写超时。
+- `packages/xrk_client/test/plugin_config_api_test.dart`：假 bridge（真 HTTP）上的目录 / 无路由 / relay、条目读取、entryId 编码、写入回送 revision，八个错误码各一条、422 的 path、无 code 状态、坏回包、写超时。
 - `app/test/plugin_config/plugin_config_bridge_test.dart`：同一假服务器上跑控制器：404 退回 volatile 且不重复探测、relay 不探测、按条目读取、live 即发、保存一次发出；apply-failed 重试用新 revision、recovery-failed 恢复原设置、conflict 重读后重试、overridden / invalid-operation / host-unavailable 不写入且不显示主机原文、invalid-config 标到字段、entry-unavailable 条目消失、断线后已落地不重发 / 未落地才重发；绑定密钥走凭据、裸密钥不可写。
 - 页面、排序、几何、golden 见 `app/test/plugin_config/`。
 - `app/test/plugin_config/plugin_config_scope_test.dart`：r13 真机夹具（§7.1）上，「插件」分组只有语音输入套件的三项和本地插件；7 个敏感条目和其余 79 + 1 个可配置条目都不出现；没读到插件清单、bundle 没打开 / 有错误 / 不是可选也不是用户安装、行 id 撞核心但包名不符、同一 id 两个 bundle 都声明，全都拒绝；写入层对夹具里每个核心条目的 `read` / `apply` 都在发请求前拒绝（假服务器上零 POST、零 GET）。`plugin_config_bridge_test.dart` 的 `scope` 组：核心条目混进列表时控制器和 bridge 都不发请求、bundle 关掉后其行出范围、volatile 退路下同样不写核心命名空间。
@@ -103,16 +103,16 @@ relay：`/dsh-go/*` 是 HTTP 路由，只有本机和 SSH 隧道（`DshHttpCarri
 
 ## 7. 范围：只有插件（PLUGIN-CONFIG-ALLOW）
 
-> 2026-10-28。r13 联调发现旧的黑名单（排除 `curatedNamespaces` + `internalNamespaces`）把 DSH 核心条目放进了「设置 › 引擎参数 › 插件」且可写。改为白名单。
+> 2026-10-28。r13 联调发现旧的黑名单（排除 `curatedNamespaces` + `internalNamespaces`）把 XRK 核心条目放进了「设置 › 引擎参数 › 插件」且可写。改为白名单。
 
 ### 7.1 实测
 
-r13 运行时（DSH 0.2.1-rc.4 + dsh-go-bridge 0.4.0，取自 r13 的 x86_64 rootfs），按 App 的方式启动 `dsh web`：r13 自己的 `dsh-web.patch.yml`，加上语音、登录（`dsh-app-auth`）、消息搜索、手机操控四个 `--patch`。经 `pluginManager` 打开官方的语音输入套件、从本地路径装一个第三方插件（`local-notes`，包名 `dsh-go-fixture-local-notes`）后，只读 GET：
+r13 运行时（XRK 0.2.1-rc.4 + xrk-bridge 0.4.0，取自 r13 的 x86_64 rootfs），按 App 的方式启动 `xrkh serve`：r13 自己的 `dsh-web.patch.yml`，加上语音、登录（`dsh-app-auth`）、消息搜索、手机操控四个 `--patch`。经 `pluginManager` 打开官方的语音输入套件、从本地路径装一个第三方插件（`local-notes`，包名 `xrk-mobile-fixture-local-notes`）后，只读 GET：
 
 | | 条目 | 可配置 |
 |---|---|---|
 | 全部 | 202 | 84 |
-| DSH 核心（`dsh-base`、`dsh-web-app` 两层的行） | — | 79 |
+| XRK 核心（`dsh-base`、`dsh-web-app` 两层的行） | — | 79 |
 | App 自己插入的（`dsh-app-phone`，手机操控开着时才有） | — | 1 |
 | 用户的插件 | 5（语音套件 4 行 + 本地 1 行） | 4 |
 
@@ -124,7 +124,7 @@ r13 运行时（DSH 0.2.1-rc.4 + dsh-go-bridge 0.4.0，取自 r13 的 x86_64 roo
 
 | 来源 | 字段 | 能不能区分插件和核心 |
 |---|---|---|
-| `GET /dsh-go/v1/plugin-config` | `entryId`、`package`、`label`（就是 `entryId`）、`state`、`configurable`、`reason` | **不能**。`package` 只说模块来自哪个包：核心、官方可选插件、App 的 `dsh-app-phone`（`@deepseek-ai/dsh-mcp-client`）都是 `@deepseek-ai/*`；按路径加载的（bridge 自己、`dsh-app-auth`）是 `null`。没有来源、owner、bundle 字段 |
+| `GET /xrk-mobile/v1/plugin-config` | `entryId`、`package`、`label`（就是 `entryId`）、`state`、`configurable`、`reason` | **不能**。`package` 只说模块来自哪个包：核心、官方可选插件、App 的 `dsh-app-phone`（`@xrkseek/harness-cli-mcp-client`）都是 `@deepseek-ai/*`；按路径加载的（bridge 自己、`dsh-app-auth`）是 `null`。没有来源、owner、bundle 字段 |
 | `pluginManager/listPlugins` | `entryId`（`include:<id>`）、`moduleName`、`enabled`、`fiberPhase`、`patchId`、`readOnlyReason` | **不能**。`readOnlyReason: management-required` 只标了部分核心（`webserver`、`connection` 有，`sandbox-policy` 没有） |
 | `pluginManager/listBundles` | `name`、`official`、`optional`、`installed`、`availability`、`source`、`enabled`、`error`、`readOnlyReason`、`rows[]`（`rowId`、`moduleName`、`entryId`）、`overrides` | **能**。核心 = 安装自带的层（`dsh-base`、`dsh-web-app`：`official` / `optional` / `installed` 都是 false，`availability: installation`，`management-required`）；官方可选 = `official && optional`；用户安装（市场、本地、按需安装的官方包）= `installed` 且有 `source`（「安装本身不提供的 profile 依赖」） |
 
@@ -166,11 +166,11 @@ bundle 被停用、出错后，一旦主机确认，新清单里它的行立即�
 
 r13 夹具上的结果：显示 `speech-to-text`、`speech-to-text-sensevoice`、`api-speech-to-text`（语音输入套件和它的 provider、接口）、`local-notes`（本地插件）；`ui-voice-input` 是插件行但没有配置，不出入口。其余 80 个可配置条目都不显示。
 
-不受影响：精选页（子智能体、智能体循环、命令执行、联网搜索……）直接走引擎设置，不经这里。DSH Web 设置插槽的原生座位（`SchemaConfigSeat`）内嵌时只画 `settings/describe` 的 volatile 字段，和 DSH Web 自己能改的一样；它以「行」出现时打开 `PluginConfigPage`，核心命名空间现在会显示「暂不支持在这里设置」。
+不受影响：精选页（子智能体、智能体循环、命令执行、联网搜索……）直接走引擎设置，不经这里。XRK Web 设置插槽的原生座位（`SchemaConfigSeat`）内嵌时只画 `settings/describe` 的 volatile 字段，和 XRK Web 自己能改的一样；它以「行」出现时打开 `PluginConfigPage`，核心命名空间现在会显示「暂不支持在这里设置」。
 
 ### 7.4 建议 bridge 补的
 
-1. **服务端也做白名单（最要紧）**。现在 App 只是客户端防线：任何拿得到 `/api` 凭据的客户端（DSH Web 页面里的脚本、别的插件页）都能直接 `POST /dsh-go/v1/plugin-config/webserver` 改核心配置、放宽 `sandbox-policy`、改 `dsh-app-phone` 的 `command`。建议 bridge 对不属于「已选中的官方可选 bundle 或 profile 自装 bundle」的条目一律 `configurable: false`（新 reason，如 `core`），GET 详情和 POST 都回 404 `entry-unavailable`（或新 code `not-a-plugin`）。判定可直接复用 plugin manager 的 `listBundles` 数据，和 App 的规则一致。
+1. **服务端也做白名单（最要紧）**。现在 App 只是客户端防线：任何拿得到 `/api` 凭据的客户端（XRK Web 页面里的脚本、别的插件页）都能直接 `POST /xrk-mobile/v1/plugin-config/webserver` 改核心配置、放宽 `sandbox-policy`、改 `dsh-app-phone` 的 `command`。建议 bridge 对不属于「已选中的官方可选 bundle 或 profile 自装 bundle」的条目一律 `configurable: false`（新 reason，如 `core`），GET 详情和 POST 都回 404 `entry-unavailable`（或新 code `not-a-plugin`）。判定可直接复用 plugin manager 的 `listBundles` 数据，和 App 的规则一致。
 2. **列表直接带来源**：每项加 `owner`（`core` / `optional` / `installed` / `overlay` / `unknown`）和所属 `bundle` 名。`overlay` 指 `--patch` 插入的行（App 的 `dsh-app-*`、bridge 自己）。有了它 App 不必再交叉对照 `listBundles`。
 3. **`label` 给真名**：现在 `label` 恒等于 `entryId`；`listBundles` 的 `rows[].meta.title` 已有中英文标题，建议直接带上。
 4. **统一 id**：`listBundles` / `listPlugins` 的 `entryId` 是 `include:<id>`，plugin-config 的 `entryId` 是 `<id>`，两边只能靠 `rowId` 对照，建议在约定里写明或统一。

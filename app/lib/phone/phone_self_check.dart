@@ -63,7 +63,10 @@ String phoneSelfCheckReasonGroup(String? reason) => switch (reason) {
   'mainSamplesUnchanged' => 'main_unchanged',
   'mainSamplesIncomplete' => 'main_incomplete',
   'notInstalled' => 'not_installed',
-  'unavailable' || 'channelUnavailable' || 'deviceUnavailable' => 'unavailable',
+  // Keep channel vs device distinct so the panel can send Xiaomi / Shizuku users
+  // to 不打扰模式 instead of a vague "unavailable".
+  'channelUnavailable' => 'channel',
+  'unavailable' || 'deviceUnavailable' => 'unavailable',
   _ => 'other',
 };
 
@@ -180,7 +183,7 @@ class PhoneSelfCheckSnapshot {
 }
 
 class PhoneSelfCheckChannel {
-  const PhoneSelfCheckChannel([this.channel = const MethodChannel('dsh/phone')]);
+  const PhoneSelfCheckChannel([this.channel = const MethodChannel('xrk/phone')]);
   final MethodChannel channel;
   Future<PhoneSelfCheckSnapshot> status() async {
     // Omit arguments entirely — do not pass an empty map (Kotlin treats only

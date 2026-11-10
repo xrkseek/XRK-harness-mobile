@@ -1,16 +1,16 @@
-// The terminal workspace against a real `dsh web` (no model calls).
+// The terminal workspace against a real `xrkh serve` (no model calls).
 //
-// Skipped unless DSH_LIVE_URL holds the launch URL (with `?token=`) of a
-// throwaway engine and DSH_LIVE_CWD a directory it may use:
+// Skipped unless XRK_LIVE_URL holds the launch URL (with `?token=`) of a
+// throwaway engine and XRK_LIVE_CWD a directory it may use:
 //
-//   DSH_LIVE_URL='http://127.0.0.1:3297/?token=…' DSH_LIVE_CWD=/tmp/x \
+//   XRK_LIVE_URL='http://127.0.0.1:3297/?token=…' XRK_LIVE_CWD=/tmp/x \
 //     flutter test test/terminal/terminal_live_test.dart
 library;
 
 import 'dart:io';
 
-import 'package:dsh_app/state/terminal_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/terminal_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +24,7 @@ void main() {
     TerminalWorkspace.viewSizeWait = Duration.zero;
     TerminalWorkspace.resizeSettle = Duration.zero;
     final launch = DshLaunchUrl.tryParse(url!)!;
-    final client = await DshClient.connect(baseUri: launch.baseUri, token: launch.token);
+    final client = await XrkClient.connect(baseUri: launch.baseUri, token: launch.token);
     addTearDown(client.close);
     final session = (await client.createSession(cwd: cwd)).sessionId;
 
@@ -87,5 +87,5 @@ void main() {
     }
     expect([for (final t in left) '${t.title} ${t.state}'], isEmpty);
     container.dispose();
-  }, skip: url == null || cwd == null ? 'set DSH_LIVE_URL and DSH_LIVE_CWD to run' : null);
+  }, skip: url == null || cwd == null ? 'set XRK_LIVE_URL and XRK_LIVE_CWD to run' : null);
 }

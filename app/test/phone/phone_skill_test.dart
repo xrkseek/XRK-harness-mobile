@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/phone/phone_channel.dart';
-import 'package:dsh_app/ui/phone/phone_skill_section.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/phone/phone_channel.dart';
+import 'package:xrk_app/ui/phone/phone_skill_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 const _id = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 const _name = 'phone-task-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
 const _candidate = PhoneSkillCandidate(taskId: 7, generation: 3, steps: 1);
-const _methods = MethodChannel('dsh/phone');
+const _methods = MethodChannel('xrk/phone');
 
 Map<String, Object?> _view({int revision = 1, int taskId = 7, String id = _id}) => {
   'kind': 'shown',

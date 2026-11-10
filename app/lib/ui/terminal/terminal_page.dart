@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show TerminalShell;
+import 'package:xrk_client/xrk_client.dart' show TerminalShell;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -136,8 +136,8 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
             TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(appL10n.commonCancel)),
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: DshColors.of(dialog).danger,
-                foregroundColor: DshColors.of(dialog).onDanger,
+                backgroundColor: XrkColors.of(dialog).danger,
+                foregroundColor: XrkColors.of(dialog).onDanger,
               ),
               onPressed: () => Navigator.pop(dialog, true),
               child: Text(appL10n.commonClose),
@@ -290,7 +290,7 @@ class _TopBar extends StatelessWidget {
                         subtitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppType.monoLabel(color: DshColors.of(context).textTertiary),
+                        style: AppType.monoLabel(color: XrkColors.of(context).textTertiary),
                       ),
                   ],
                 ),
@@ -480,7 +480,7 @@ class _ShellPickerState extends State<_ShellPicker> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return SafeArea(
       top: false,
       child: SingleChildScrollView(

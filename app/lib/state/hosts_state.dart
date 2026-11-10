@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/l10n.dart';
 import '../remote/link_status.dart';
-import '../remote/relay/dsh_remote_backend.dart';
+import '../remote/relay/xrk_remote_backend.dart';
 import 'app_info.dart';
 import '../remote/relay/relay_backend.dart';
 import '../remote/relay/webrtc_peer.dart';
@@ -22,11 +22,11 @@ export '../remote/ssh/ssh_transport.dart' show PresentedHostKey;
 export '../remote/relay/relay_backend.dart' show RelayHost, RelayTrust, RelayUser;
 export '../remote/ssh/ssh_host_config.dart';
 
-/// The three kinds of DSH host the app can talk to.
+/// The three kinds of XRK host the app can talk to.
 enum HostKind { local, ssh, relay }
 
 /// Identifies a host: the on-device engine, a saved SSH host, or a relay
-/// (ds-harness-remote) device. Equality is by kind + id; [name] is only a
+/// (xrk-remote) device. Equality is by kind + id; [name] is only a
 /// cached display name for relay hosts (their list lives on the server).
 class HostRef {
   const HostRef._(this.kind, this.id, [this.name]);
@@ -364,9 +364,9 @@ class ActiveHostController extends Notifier<HostRef> {
 
 final activeHostProvider = NotifierProvider<ActiveHostController, HostRef>(ActiveHostController.new);
 
-// ── DSH Remote (relay) account ───────────────────────────────────────────────
+// ── XRK Remote (relay) account ───────────────────────────────────────────────
 
-/// The DSH Remote server: null for the hosted dsh.r2049.cn, else a
+/// The XRK Remote server: null for the hosted dsh.r2049.cn, else a
 /// self-hosted origin (an advanced option; it signs in with email + password).
 class RelayServerController extends Notifier<String?> {
   static const prefsKey = 'remote_relay_server';
@@ -431,7 +431,7 @@ class _RelayServerActions {
   }
 
   Future<void> useServer(String server) async {
-    final origin = DshRemoteRelayBackend.normalizeServer(server);
+    final origin = XrkRemoteRelayBackend.normalizeServer(server);
     final selection = origin == defaultRelayServer ? null : origin;
     final operation = ++_operation;
     await ref.read(relayServerProvider.notifier)._set(selection);
@@ -440,7 +440,7 @@ class _RelayServerActions {
 
   Future<void> loginWithPassword({required String server, required String email, required String password}) async {
     ref.read(readListCredentialEpochProvider.notifier).advance();
-    final origin = DshRemoteRelayBackend.normalizeServer(server);
+    final origin = XrkRemoteRelayBackend.normalizeServer(server);
     final selection = origin == defaultRelayServer ? null : origin;
     final operation = ++_operation;
     await ref.read(relayServerProvider.notifier)._set(selection);
@@ -463,11 +463,11 @@ const defaultRelayServer = 'https://dsh.r2049.cn';
 
 final relayServerProvider = NotifierProvider<RelayServerController, String?>(RelayServerController.new);
 
-/// The relay client (`packages/dsh_remote`) for the chosen server. Tests
+/// The relay client (`packages/xrk_remote`) for the chosen server. Tests
 /// override with a fake; [UnavailableRelayBackend] turns the native relay off.
 final relayBackendProvider = Provider<RelayBackend>((ref) {
   final history = ref.read(remoteCompactHistoryProvider.notifier);
-  final backend = DshRemoteRelayBackend(
+  final backend = XrkRemoteRelayBackend(
     secrets: ref.watch(secretStoreProvider),
     serverUrl: ref.watch(relayServerProvider),
     clientVersion: AppInfo.version.split('+').first,
@@ -569,7 +569,7 @@ class RelayAccountState {
   );
 }
 
-/// DSH Remote account: login via browser + polling, host list with presence.
+/// XRK Remote account: login via browser + polling, host list with presence.
 class RelayAccountController extends AsyncNotifier<RelayAccountState> {
   RelayLoginSession? _login;
   int _epoch = 0;

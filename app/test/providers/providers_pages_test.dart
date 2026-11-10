@@ -1,19 +1,19 @@
 // 模型渠道 list and 渠道详情: what each state shows, where taps go, delete
 // with confirmation, the connection test, and measured row geometry.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/providers_state.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/page_hero.dart';
-import 'package:dsh_app/ui/common/status_chip.dart';
-import 'package:dsh_app/ui/providers/provider_detail_page.dart';
-import 'package:dsh_app/ui/providers/provider_form_page.dart';
-import 'package:dsh_app/ui/providers/provider_widgets.dart' show Monogram;
-import 'package:dsh_app/ui/providers/providers_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/providers_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/page_hero.dart';
+import 'package:xrk_app/ui/common/status_chip.dart';
+import 'package:xrk_app/ui/providers/provider_detail_page.dart';
+import 'package:xrk_app/ui/providers/provider_form_page.dart';
+import 'package:xrk_app/ui/providers/provider_widgets.dart' show Monogram;
+import 'package:xrk_app/ui/providers/providers_page.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -161,7 +161,7 @@ void main() {
       await settle(tester);
       expect(find.text('连接正常 · 列出 3 个模型'), findsOneWidget);
 
-      backend.discoverError = DshRemoteException(
+      backend.discoverError = XrkRemoteException(
         'gateway/internal',
         'could not reach https://gw.example.com/v1/models',
       );
@@ -264,7 +264,7 @@ void main() {
       await settle(tester);
       final finder = find.widgetWithText(FilledButton, '删除');
       final button = tester.widget<FilledButton>(finder);
-      final colors = DshColors.of(tester.element(finder));
+      final colors = XrkColors.of(tester.element(finder));
       expect(button.style!.backgroundColor!.resolve({}), colors.danger);
       expect(button.style!.foregroundColor!.resolve({}), colors.onDanger);
     });

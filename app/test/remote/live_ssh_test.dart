@@ -1,10 +1,10 @@
-// Live end-to-end: real dartssh2 → real sshd → real `dsh web`, through the
-// local forward, logged in with DshClient. Opt-in:
+// Live end-to-end: real dartssh2 → real sshd → real `xrkh serve`, through the
+// local forward, logged in with XrkClient. Opt-in:
 //
-//   DSH_APP_LIVE_SSH=1 \
-//   DSH_APP_LIVE_SSH_PORT=22422 DSH_APP_LIVE_SSH_USER=$USER \
-//   DSH_APP_LIVE_SSH_KEY=/path/to/throwaway_ed25519 \
-//   DSH_APP_LIVE_SSH_HOST_PUB=/path/to/host_ed25519.pub \
+//   XRK_APP_LIVE_SSH=1 \
+//   XRK_APP_LIVE_SSH_PORT=22422 XRK_APP_LIVE_SSH_USER=$USER \
+//   XRK_APP_LIVE_SSH_KEY=/path/to/throwaway_ed25519 \
+//   XRK_APP_LIVE_SSH_HOST_PUB=/path/to/host_ed25519.pub \
 //   flutter test test/remote/live_ssh_test.dart
 //
 // Any sshd works. Without a system one, an unprivileged sshd on loopback is
@@ -12,21 +12,21 @@
 // `StrictModes no`, `ListenAddress 127.0.0.1`, `Port 22422`, run with
 // `/usr/bin/sshd -D -e -f <config>` (nothing in ~/.ssh is touched).
 //
-// The remote side gets an isolated temp HOME and DSH_HOME (exported by the
-// bootstrap), so the account's real ~/.dsh and ~/.dsh-app-remote are never
+// The remote side gets an isolated temp HOME and XRK_HOME (exported by the
+// bootstrap), so the account's real ~/.xrk and ~/.xrk-app-remote are never
 // touched. No model prompts are sent.
 
 import 'dart:io';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/remote/ssh/remote_bootstrap.dart';
-import 'package:dsh_app/remote/ssh/remote_shell.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/remote/ssh/remote_bootstrap.dart';
+import 'package:xrk_app/remote/ssh/remote_shell.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +34,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   final env = Platform.environment;
   final enabled = env['DSH_APP_LIVE_SSH'] == '1';
-  final skip = enabled ? false : 'set DSH_APP_LIVE_SSH=1 (see file header)';
+  final skip = enabled ? false : 'set XRK_APP_LIVE_SSH=1 (see file header)';
 
   late Directory home;
   late SshHostConfig config;
@@ -45,7 +45,7 @@ void main() {
   setUpAll(() {
     if (!enabled) return;
     home = Directory.systemTemp.createTempSync('dsh-app-live-home-');
-    remoteEnv = {'HOME': home.path, 'DSH_HOME': '${home.path}/.dsh'};
+    remoteEnv = {'HOME': home.path, 'XRK_HOME': '${home.path}/.dsh'};
     config = SshHostConfig(
       id: 'ssh-live',
       name: '本机 SSH',
@@ -64,7 +64,7 @@ void main() {
     for (final link in links) {
       await link.close();
     }
-    // Stop the dsh web the tests started (same machine, same isolated HOME).
+    // Stop the xrkh serve the tests started (same machine, same isolated HOME).
     await RemoteDshBootstrap(LocalProcessShell(), environment: remoteEnv).stop();
     home.deleteSync(recursive: true);
   });

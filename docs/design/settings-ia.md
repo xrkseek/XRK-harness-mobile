@@ -168,7 +168,7 @@ App 里**没有**单独设「新对话默认模型」的地方：引擎把最后
 | 准备：无障碍、通知、读一下当前屏幕 | 4 | 系统 | 中 | 系统 |
 | 应用名单 › 某个 App 的规则 / 添加 App | 4 进页，6 改 | 原生 `setPolicies` | 低 | 本机 |
 | 确认方式：每次都询问 / 本任务免确认 / 始终免确认 | 5（选「始终免确认」还要多 1 下确认） | 原生 `setPolicies.confirmMode` | 中 | 本机 |
-| 悬浮条：闲置时不透明度、闲置时自动收起、完成后返回 dsh-go | 4 | 原生 `setOverlayPrefs`；`phone_return_after_done` | 低 | 本机 |
+| 悬浮条：闲置时不透明度、闲置时自动收起、完成后返回 xrk-mobile | 4 | 原生 `setOverlayPrefs`；`phone_return_after_done` | 低 | 本机 |
 | 全部记录 | 4 | 只读 | 低 | — |
 | 进阶 › 不打扰模式（Shizuku / 自连 ADB） | 4 进页，5–6 改 | 原生 `setBackgroundMode` | 低 | 本机 |
 | 进阶 › 后台保活 | 4 | 和引擎页那一行是同一页 | — | — |
@@ -184,7 +184,7 @@ App 里**没有**单独设「新对话默认模型」的地方：引擎把最后
 |---|---|---|---|---|---|
 | 添加 / 编辑 SSH 主机：名称、地址、用户、端口、登录方式、密码 / 私钥、启动命令、工作目录、测试、指纹重置、删除 | 4 进页，5 改 | `ui/remote/ssh_host_form.dart` | `remote_ssh_hosts` + 安全存储 | 低 | App |
 | 连接上次使用的主机 | 4 | `remote_screen.dart:131` | `remote_auto_connect_on_startup` | 低 | App |
-| DSH Remote：浏览器登录、自建服务器登录、退出 | 4–5 | `relay_login_sheet.dart` | `remote_relay_server` | 低 | App |
+| XRK Remote：浏览器登录、自建服务器登录、退出 | 4–5 | `relay_login_sheet.dart` | `remote_relay_server` | 低 | App |
 | 切换主机 | 3 | `host_switcher.dart` | `active_host` | 中 | App |
 
 ### 1.10 插件（3 下）
@@ -327,7 +327,7 @@ App 里**没有**单独设「新对话默认模型」的地方：引擎把最后
 
 只取原则，不照搬界面。
 
-| 共性做法 | 谁这么做 | 取舍 | dsh-go 怎么用 |
+| 共性做法 | 谁这么做 | 取舍 | xrk-mobile 怎么用 |
 |---|---|---|---|
 | **身份卡放在最上面**：账号、订阅、状态 | iOS（Apple 账户）、Telegram、微信「我」 | 占一屏的四分之一，但用户最常从这里进 | 保留概览卡 |
 | **搜索在顶部**：结果带路径，点进去高亮目标行 | iOS、Android | 索引要维护。Android 的做法是每一页声明自己可被索引的项，再用测试防遗漏 | 照 Android 的机制做（§4.5） |
@@ -372,7 +372,7 @@ App 里**没有**单独设「新对话默认模型」的地方：引擎把最后
 │  │ (头像)  小明                         │  │
 │  │         余额 ¥12.30                  │  │
 │  │ ──────────────────────────────────── │  │
-│  │ ● 本机 · 运行中 · DSH 0.2.1        › │  │
+│  │ ● 本机 · 运行中 · XRK 0.2.1        › │  │
 │  ╰──────────────────────────────────────╯  │
 │   AI                                       │
 │  ╭──────────────────────────────────────╮  │
@@ -414,7 +414,7 @@ App 里**没有**单独设「新对话默认模型」的地方：引擎把最后
 │  │ ◉ 使用帮助                  问 AI  › │  │
 │  │ ◉ 社区                             › │  │
 │  │ ◉ 诊断                             › │  │
-│  │ ◉ 关于 dsh-go               0.9.5  › │  │
+│  │ ◉ 关于 xrk-mobile               0.9.5  › │  │
 │  ╰──────────────────────────────────────╯  │
 │                 ≈ 品牌形 ≈                 │
 └────────────────────────────────────────────┘
@@ -448,7 +448,7 @@ App 里**没有**单独设「新对话默认模型」的地方：引擎把最后
 | **帮助与关于**（7 湖青） | 使用帮助 | 动作 | 问 AI | 风险提醒方案 §4 | 新增（另一个代理的方案） |
 | | 社区 | 子页 | — | 不变 | 关于 |
 | | 诊断 | 子页 | — | 不变 | 引擎 › 诊断 |
-| | 关于 dsh-go | 子页 | 版本号；有新版本时显示「有新版本」（主色） | 关于（新） | 关于里的四行 |
+| | 关于 xrk-mobile | 子页 | 版本号；有新版本时显示「有新版本」（主色） | 关于（新） | 关于里的四行 |
 
 **改动后**：6 组 24 行（原来 29 行），每组不超过 7 行。从首页起，每一项最多 3 层。
 
@@ -584,7 +584,7 @@ App 里**没有**单独设「新对话默认模型」的地方：引擎把最后
 │  ╭──────────────────────────────────────╮  │
 │  │ ◉ 原生                               │  │
 │  │ ○ 网页                               │  │
-│  │   DSH 官方网页版                     │  │
+│  │   XRK 官方网页版                     │  │
 │  ╰──────────────────────────────────────╯  │
 │   网页版                                   │
 │  ╭──────────────────────────────────────╮  │
@@ -665,12 +665,12 @@ App 里**没有**单独设「新对话默认模型」的地方：引擎把最后
 - 「后台运行」和「诊断」变成入口行，它们的固定位置在首页的「通用」和「帮助与关于」两组里。
 - 重置和卸载单独成一张卡，放在页底，用红字。
 
-#### 关于 dsh-go（新）
+#### 关于 xrk-mobile（新）
 
 ```text
 ┌────────────────────────────────────────────┐
 │ (‹)                                        │
-│   关于 dsh-go                              │
+│   关于 xrk-mobile                              │
 │  ╭──────────────────────────────────────╮  │
 │  │ 版本                0.9.5 (10271234) │  │
 │  │ 检查更新                 有新版本  › │  │
@@ -1151,7 +1151,7 @@ class SettingSpot {
 | **S1** 索引和目的地 | `SettingsPageSpec`、`SettingSpot`，先按**现有**结构登记全部设置；`page_links.dart` 改成从索引取页面；新增 ARB 分片 `search_{zh,en}`。界面没有变化 | 新增 `ui/settings/index/`；`links/page_links.dart`；`l10n/parts/search_*.arb` | 低 | `spots_test`；改写 `page_links_test` | — |
 | **S2** 行锚点和高亮 | 行组件加 `spot:`；`AppPage.list` 支持滚到锚点并高亮；所有设置页的行都挂上 spot（机械改动，涉及面广） | `ui/settings/settings_widgets.dart`、`ui/shell/page_frame.dart`；`ui/settings/**`、`ui/engine/**`、`ui/phone/**`、`ui/remote/**`、`ui/providers/**`、`ui/account/**`、`ui/pets/**`、`ui/features/permission_page.dart` 等 | 中：碰到每一个设置页，但不改布局 | `index_sync_test`、`spot_highlight_test`（滚动、高亮、几何不变）；`settings_geometry_test` 原样通过 | S1 |
 | **S3** 设置搜索 | 搜索页、匹配和排序；首页加搜索胶囊；长按 ⚙ 进搜索；把全部功能的卡也编进索引；没有结果时给出「问 AI」（等 `askAi` 合入后再接，先隐藏） | 新增 `ui/settings/search/`；`settings_screen.dart`；`ui/shell/sessions_drawer.dart` | 低到中：首页 golden 要重出 | `settings_search_test`、`settings_search_golden_test`；重出首页 golden | S2 |
-| **S4** 首页重组和新子页 | 改成六组；新增个性化、界面、隐私与分享、关于；权限页加「手机」一节；模型页加「新对话默认」（看 D7）；本机引擎页加安全模式和危险区；引擎参数页去掉两行；改名；使用说明和技能文件；对照表 | `settings_screen.dart`；新增 `ui/settings/{personalization,interface,privacy,about}_page.dart`；`ui/features/permission_page.dart`；`ui/providers/providers_page.dart`；`ui/engine/engine_screen.dart`；`ui/engine_settings/engine_settings_hub.dart`、`general_settings_page.dart`；`ui/settings/appearance/appearance_page.dart`；`l10n/parts/hub_*.arb`；`docs/guide/**`；`app/assets/skills/dsh-go-guide/**`；`docs/official-parity.md`；`docs/design/plugin-seams.md` | **高**：老用户的记忆、一批 golden、使用说明 | `guide_nav_test`；首页和新页的浅色 / 深色 golden；首页几何（各组图标列对齐、左右 16）；改写 `reply_prefs_entry_test`、`settings_overview_remote_test`、`issue26_permission_defaults_test`、`providers_pages_test`、`seats_pages_test`；`guide_sync.py --check` | S3 |
+| **S4** 首页重组和新子页 | 改成六组；新增个性化、界面、隐私与分享、关于；权限页加「手机」一节；模型页加「新对话默认」（看 D7）；本机引擎页加安全模式和危险区；引擎参数页去掉两行；改名；使用说明和技能文件；对照表 | `settings_screen.dart`；新增 `ui/settings/{personalization,interface,privacy,about}_page.dart`；`ui/features/permission_page.dart`；`ui/providers/providers_page.dart`；`ui/engine/engine_screen.dart`；`ui/engine_settings/engine_settings_hub.dart`、`general_settings_page.dart`；`ui/settings/appearance/appearance_page.dart`；`l10n/parts/hub_*.arb`；`docs/guide/**`；`app/assets/skills/xrk-guide/**`；`docs/official-parity.md`；`docs/design/plugin-seams.md` | **高**：老用户的记忆、一批 golden、使用说明 | `guide_nav_test`；首页和新页的浅色 / 深色 golden；首页几何（各组图标列对齐、左右 16）；改写 `reply_prefs_entry_test`、`settings_overview_remote_test`、`issue26_permission_defaults_test`、`providers_pages_test`、`seats_pages_test`；`guide_sync.py --check` | S3 |
 | **S5** 全部功能和抽屉 | 全部功能重新分组，末尾加「设置」快捷卡；抽屉身份栏改成全部功能 + 设置；首页去掉全部功能一行 | `ui/features/feature_catalog.dart`、`all_features_page.dart`；`ui/shell/sessions_drawer.dart`；`docs/design/page-design.md` §2 | 中 | `reach_catalog_test`、`features_pages_test`、`page_links_test`；身份栏几何（两个圆键等大，间距相同，和胶囊同高）；抽屉、横屏 golden | S4 |
 | **S6** 就近设置 | ＋ 面板加「本对话」和「手机操控」两节；权限胶囊；选择模型底部的「管理模型」；语音报错提示加「更换」；思考翻译长按 | `ui/chat/widgets/attachments.dart`；`ui/chat/chat_screen.dart`；`auto_approve_pill.dart` 扩展为 `permission_pill.dart`；`ui/chat/model_sheet.dart`；`ui/chat/voice/voice_controller.dart`；`ui/chat/widgets/thinking_pill.dart`；`state/features_state.dart` | **中高**：改的是对话页这个核心界面 | ＋ 面板组件测试（权限调用 `setPermissionPreset`，计划模式发出 `/plan`，确认方式写 `setPolicies`）；权限胶囊的显示规则；`composer_geometry_test` 加 ＋ 面板对称；对话页 golden；远程主机（SSH、Relay）各跑一遍 | S1；可以和 S4 并行 |
 | **S7** 开发者选项 | 关于页连点版本号解锁；开发者选项页；把「直接启动本机引擎」从诊断页挪过来 | `ui/settings/about_page.dart`；新增 `developer_page.dart`；`ui/settings/diagnostics_page.dart` | 低 | 解锁手势、`developer.unlocked` 持久化、「有开过就显示」、关闭后恢复默认 | S4，以及直连引擎分支合入 |
@@ -1160,7 +1160,7 @@ class SettingSpot {
 - 机器内存有限，每一步的 golden 和测试要依次跑，不能和模拟器、Gradle 同时开。
 - 每一步合入前，按 polish-guide §5 看完浅色和深色的 golden。对称处写成几何测试，不靠目测。
 - S2 改动面最宽，但只是机械地挂 spot。可以按目录拆成几次提交，每次跑 `index_sync_test` 的对应部分。
-- S4 之后，`docs/guide` 和 `app/assets/skills/dsh-go-guide/` 必须在同一个提交里更新，否则 AI 回答里的路径会指错地方。
+- S4 之后，`docs/guide` 和 `app/assets/skills/xrk-guide/` 必须在同一个提交里更新，否则 AI 回答里的路径会指错地方。
 
 ---
 

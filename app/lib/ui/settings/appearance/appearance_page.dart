@@ -1,9 +1,4 @@
-// 设置 › 主题: light / dark, the palette (six presets,
-// a custom hue, the wallpaper), the feature tile style, the launcher icon (and a
-// picture shortcut) and the launch screen.
-//
-// Every picker on the page shares one grid: previews start 16 from the card's
-// edges and sit 12 apart, labels 8 under them (TileStylePicker, AppIconPicker).
+// 设置 › 主题: light/dark, palette, launch screen, performance.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -12,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/l10n.dart';
+import '../../../performance/performance_state.dart';
 import '../../../state/appearance_state.dart';
 import '../../../state/settings_state.dart';
 import '../../common/expand_reveal.dart';
@@ -19,12 +15,9 @@ import '../../common/pressable.dart';
 import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
+import '../performance_page.dart';
 import '../settings_widgets.dart';
-import 'app_icon_picker.dart';
-import 'icon_shortcut_sheet.dart';
 import 'launch_screen_section.dart';
-import 'tile_style_picker.dart';
-import 'wallpaper_section.dart';
 
 /// 设置首页「外观」组的第一行:当前配色的色点 + 名字 · 明暗,点开 [AppearancePage]。
 class AppearanceEntryTile extends ConsumerWidget {
@@ -60,11 +53,11 @@ class AppearanceEntryTile extends ConsumerWidget {
   }
 }
 
-/// 设置 › 主题:明暗、配色(预设 / 自定义 / 跟随壁纸)、功能图标、桌面图标。宠物在
-/// 设置首页自成一行。
+/// 设置 › 主题：壳明暗、配色、启动画面与性能。
 ///
-/// 选什么都即时生效:整个 App 的主题随之交叉淡变(`AppMotion.standard`),
-/// 这一页本身就是预览。
+/// 对话在 WebView 里自有主题；这里只影响手机壳。
+/// 已撤：桌面图标（多数机型 activity-alias 换图标失败）、图片快捷方式、
+/// 功能磁贴风格、壁纸跟随 —— 不进本页也不进搜索索引。启动画面保留可自定义。
 class AppearancePage extends ConsumerWidget {
   const AppearancePage({super.key});
 
@@ -72,7 +65,6 @@ class AppearancePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final appearance = ref.watch(appearanceProvider);
-    final wallpaper = ref.watch(wallpaperAccentProvider).value;
     return AppPage.list(
       title: l10n.pluginsTheme,
       children: [
@@ -85,18 +77,6 @@ class AppearancePage extends ConsumerWidget {
           children: [
             SpotAnchor(spot: Spots.accent, child: const PalettePicker()),
             ExpandReveal(open: appearance.source == AccentSource.custom, child: const CustomAccentPanel()),
-            if (wallpaper != null) _WallpaperRow(wallpaper: wallpaper, on: appearance.source == AccentSource.wallpaper),
-          ],
-        ),
-        SettingsSection(
-          title: l10n.pluginsFeatureIcons,
-          children: [SpotAnchor(spot: Spots.tileStyle, child: const TileStylePicker())],
-        ),
-        SettingsSection(
-          title: l10n.pluginsAppIcon,
-          children: [
-            SpotAnchor(spot: Spots.appIcon, child: const AppIconPicker()),
-            const IconShortcutTile(),
           ],
         ),
         SettingsSection(
@@ -105,18 +85,36 @@ class AppearancePage extends ConsumerWidget {
           children: [SpotAnchor(spot: Spots.launchScreen, child: const LaunchScreenSection())],
         ),
         SettingsSection(
-          title: l10n.wallpaperTitle,
-          footer: Text(l10n.wallpaperFooter),
-          children: [SpotAnchor(spot: Spots.wallpaper, child: const WallpaperSection())],
+          title: l10n.performanceTitle,
+          children: [
+            const _AppearancePerformanceTile(),
+          ],
         ),
       ],
     );
   }
 }
 
-/// The grid every picker on this page shares, with [TileStylePicker] and
-/// [AppIconPicker]: content 16 from the card's edges, columns 12 apart, the
-/// name 8 under its preview (or under its ring).
+/// Theme → 性能 row: opens [PerformancePage] and shows the live mode label.
+class _AppearancePerformanceTile extends ConsumerWidget {
+  const _AppearancePerformanceTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(performancePrefsProvider.select((p) => p.mode));
+    return SettingsTile(
+      key: const ValueKey('appearance-performance'),
+      icon: AppIcons.configure,
+      spot: SettingsIndex.entry(SettingsPageId.performance),
+      value: Text(performanceModeLabel(context.l10n, mode)),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const PerformancePage()),
+      ),
+    );
+  }
+}
+
+/// Shared picker grid: 16 inset, 12 column gap, 8 under labels.
 abstract final class PickerGrid {
   static const inset = 16.0;
   static const gap = 12.0;
@@ -330,7 +328,7 @@ class _PhonePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final s = theme.extension<DshSurfaces>()!;
+    final s = theme.extension<XrkSurfaces>()!;
     final scheme = theme.colorScheme;
     final w = size.width;
     final h = size.height;
@@ -545,7 +543,7 @@ class _Swatch extends StatelessWidget {
 
 /// What a card looks like on the page (the glass over the backdrop).
 Color _cardColor(BuildContext context) {
-  final s = DshSurfaces.of(context);
+  final s = XrkSurfaces.of(context);
   return Color.alphaBlend(s.card.fill, Color.lerp(s.backdropTop, s.backdropBottom, 0.5)!);
 }
 
@@ -874,31 +872,3 @@ class _HuePainter extends CustomPainter {
       old.hue != hue || old.current != current || old.knob != knob || old.colors != colors || old.shadow != shadow;
 }
 
-// ── 跟随壁纸 ─────────────────────────────────────────────────────────────
-
-class _WallpaperRow extends ConsumerWidget {
-  const _WallpaperRow({required this.wallpaper, required this.on});
-
-  final Color wallpaper;
-  final bool on;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final notifier = ref.read(appearanceProvider.notifier);
-    final seed = AppAccent.derive(
-      wallpaper,
-      id: AppAccent.wallpaperId,
-      label: l10n.pluginsWallpaper,
-    ).seedFor(Theme.of(context).brightness);
-    void set(bool v) => unawaited(v ? notifier.selectWallpaper() : notifier.leaveWallpaper());
-    return MergeSemantics(
-      child: SettingsTile(
-        title: l10n.pluginsFollowWallpaper,
-        value: AccentDot(color: seed),
-        onTap: () => set(!on),
-        trailing: Switch(value: on, onChanged: set),
-      ),
-    );
-  }
-}

@@ -8,7 +8,7 @@
 - **活人感优先靠规则层，不靠模型。** 眨眼、视线、呼吸、闲置小动作、触摸反应、昼夜和问候都不花 token。模型只在用户开口时才调用。
 - **Live2D 的东西不进 APK 和仓库。** Core 是 Live2D 的专有代码，框架和模型各有条款。它们打成素材包，用时才放进手机。App 里只有我们自己的舞台代码。
 - **角色素材是数据，运行库是代码。** 运行库按写死的摘要校验，角色目录只收数据文件。所以以后用户自己导入角色时，别人的包不能在 WebView 里跑脚本。
-- **两种对话方式，用户自己选（§6.3）。** 轻量：手机直接调模型，只聊天，不用启动引擎、不连主机。完整：当前主机上的一个普通会话，用 `dsh-go-companion-full` 预设，有主机的全部工具，开了手机操控时还有手机工具。
+- **两种对话方式，用户自己选（§6.3）。** 轻量：手机直接调模型，只聊天，不用启动引擎、不连主机。完整：当前主机上的一个普通会话，用 `xrk-mobile-companion-full` 预设，有主机的全部工具，开了手机操控时还有手机工具。
 
 ## 1. 第一版做了什么
 
@@ -24,8 +24,8 @@
 | 对话 | 文本和语音输入，流式字幕，标记驱动表情和动作，文本节奏带动口型 | `companion_page.dart`、`companion_reply.dart` |
 | 问候 | 按时间和离开多久选一句，不责备 | `companionGreeting` |
 | 素材 | 导入 zip，路径和类型检查，运行库摘要校验，可删除 | `app/lib/companion/companion_pack.dart` |
-| 预设 | `dsh-go-companion-full`（完整模式，人设 + 标准预设的全部插件，Pro C410/C411）；只有人设的 `dsh-go-companion` 留着不用。桥接随引擎带上；旧主机退回「默认预设 + 人设放进第一条消息」 | `runtime/bridge/dsh-go-bridge/cordis.patch.yml` |
-| 状态（第 1 期） | 主机上的心情、精力、亲近度：进门记一次到访，摸头记一次事件；心情好时带一点笑，精力影响动作幅度，越熟越常看着你。问候用主机记下的上次到访时间 | `runtime/bridge/dsh-go-bridge/lib/companion/`、`companion_api.dart` |
+| 预设 | `xrk-mobile-companion-full`（完整模式，人设 + 标准预设的全部插件，Pro C410/C411）；只有人设的 `xrk-mobile-companion` 留着不用。桥接随引擎带上；旧主机退回「默认预设 + 人设放进第一条消息」 | `runtime/bridge/xrk-bridge/cordis.patch.yml` |
+| 状态（第 1 期） | 主机上的心情、精力、亲近度：进门记一次到访，摸头记一次事件；心情好时带一点笑，精力影响动作幅度，越熟越常看着你。问候用主机记下的上次到访时间 | `runtime/bridge/xrk-bridge/lib/companion/`、`companion_api.dart` |
 | 记忆（第 1 期） | 「她记得的事」：用户写下、修改、删除，只存在当前主机；页面如实写明她还不会自己想起 | `companion_memory_page.dart` |
 | 生活细节 | 夜里更容易困、会打哈欠，清晨伸懒腰，心情好时哼歌冒音符，说到句末轻轻点头 | `stage.js` |
 | 小房子（第 1 期） | 海底的一角：贝壳点心盘、泡泡球、海草软垫，点了各有一段表演，主机记下活动和剩余时间。见 §6.1 | `index.html`、`stage.js`、`companion_page.dart` |
@@ -42,7 +42,7 @@ Flutter CompanionPage
   │     ▲ JS channel DshCompanion: ready / error / touch / wake / mood / object / activity
   │     └─ http://127.0.0.1:<随机端口>/<随机令牌>/{app,pack}/...  CompanionServer
   ├─ 名牌、字幕、输入条（companion_chrome.dart）
-  └─ chatProvider(sessionId) ── 普通会话 ── 当前主机上的 DSH
+  └─ chatProvider(sessionId) ── 普通会话 ── 当前主机上的 XRK
 ```
 
 - **回环服务**：WebView 要 `fetch` 着色器和模型文件，`file://` 做不到。手机上任何 App 都能连回环端口，所以每条路径都以每次启动随机生成的令牌开头，没有令牌只有 404。页面关闭时服务也关闭。`app/` 只有固定的几个文件，`pack/` 只读且不出目录。
@@ -88,7 +88,7 @@ pack.zip
 
 ## 4. 预设和人设
 
-`cordis.patch.yml` 里 `--- shared rows ---` 以下的行，`rtbuild.py` 也会放进本机运行时的 overlay，所以本机和 `dsh plugin add dsh-go-bridge` 的远程主机都有这个预设。人设用 `prefix` + `complete: true` + `includeRuntimeContext: false`，只留人设，再带上压缩组。人设写了不声称是真人、不写色情内容、不发展恋爱情节、遇到自伤信号要放下角色认真回应。
+`cordis.patch.yml` 里 `--- shared rows ---` 以下的行，`rtbuild.py` 也会放进本机运行时的 overlay，所以本机和 `dsh plugin add xrk-bridge` 的远程主机都有这个预设。人设用 `prefix` + `complete: true` + `includeRuntimeContext: false`，只留人设，再带上压缩组。人设写了不声称是真人、不写色情内容、不发展恋爱情节、遇到自伤信号要放下角色认真回应。
 
 **没有预设的主机**（旧运行时、没更新桥接的远程主机）：`CompanionSessions` 查不到预设就退回默认预设，人设放进第一条消息。这时她有工具，请求审批时页面上出现「有件事要你确认」，点了进普通对话。批准只能是真实点按，她说的话和语音都不算。
 
@@ -127,11 +127,11 @@ owner 的决定：「轻量的模式就只做对话，甚至连 dsh 内核都不
 
 | | 轻量 | 完整 |
 |---|---|---|
-| 大脑 | 手机直接调 DeepSeek 官方 Messages 接口：`https://api.deepseek.com/anthropic/v1/messages`，`x-api-key` + `anthropic-version: 2023-06-01`，模型 `deepseek-flash`，`thinking: disabled`，流式。和引擎的 `@deepseek-ai/dsh-llm-deepseek` 同一个接口 | 当前主机上的 DSH 会话，`dsh-go-companion` 预设 |
+| 大脑 | 手机直接调 DeepSeek 官方 Messages 接口：`https://api.deepseek.com/anthropic/v1/messages`，`x-api-key` + `anthropic-version: 2023-06-01`，模型 `deepseek-flash`，`thinking: disabled`，流式。和引擎的 `@xrkseek/harness-cli-llm-deepseek` 同一个接口 | 当前主机上的 XRK 会话，`xrk-mobile-companion` 预设 |
 | 要什么 | App 里存的 DeepSeek API Key（设置里填的那个，安全存储）。只用 DeepSeek 账号登录、没有 Key 时不能用 | 一台连着的主机 |
 | 人设 | `companionPersonaCore` 做 system，和预设里的同一份 | 预设里的人设 |
 | 对话记录 | 这台手机上的 `<伙伴目录>/light-chat.json`，存最近 80 行，每次带最近 24 行（同一方连续的行合并，开头是用户）。移除素材包不删它，「重新认识」删它 | 主机上的会话，菜单能打开 |
-| 状态和记忆 | 这台手机上的 `<伙伴目录>/light-state.json`：`CompanionLocalStore`（packages/dsh_client，Pro C434/C436）跑和主机桥接同一套规则（C303），storeId、revision、冲突错误都一样，有和桥接 store 对拍的夹具。页面经 `CompanionKeeper` 两边通用 | 主机上的状态和「她记得的事」 |
+| 状态和记忆 | 这台手机上的 `<伙伴目录>/light-state.json`：`CompanionLocalStore`（packages/xrk_client，Pro C434/C436）跑和主机桥接同一套规则（C303），storeId、revision、冲突错误都一样，有和桥接 store 对拍的夹具。页面经 `CompanionKeeper` 两边通用 | 主机上的状态和「她记得的事」 |
 | 工具 | 没有 | 主机的全部工具（0.2.2-rc.1 是 31 个），开了手机操控再加 13 个手机工具。权限用主机的默认设置，不受「自动批准命令」影响；要批准时页面出现「有件事要你确认」，点了到普通对话里处理。小屋里直接审批按 Pro C420/C422 做。以前那个只有人设、只读的会话不再复用，留在主机上，下次说话时开新的 |
 
 - **出错时**：没有 Key、Key 被拒（401/403）、太忙（429 或 `overloaded_error`）各有一句；一个字都没回就失败的话，这句话放回输入框，记录里也不留。停止时她已经说出的部分留下。
@@ -187,6 +187,6 @@ Pro 的长期设计（C2xx）到了之后再细化这张表。
 
 ## 7. 待确认
 
-- **素材授权。** ☑️ owner 2026-11-08 已获模型作者授权，署名标 B 站账号「Mao绒绒家园」。随包那份的 `character.json` 写 `author`: `Mao绒绒家园`、`source`: `哔哩哔哩`，`license` 写明经作者授权随 DSH Go 分发，菜单底部照此显示。
+- **素材授权。** ☑️ owner 2026-11-08 已获模型作者授权，署名标 B 站账号「Mao绒绒家园」。随包那份的 `character.json` 写 `author`: `Mao绒绒家园`、`source`: `哔哩哔哩`，`license` 写明经作者授权随 XRK Go 分发，菜单底部照此显示。
 - **Live2D 条款。** 个人和年销售额低于 1000 万日元的小企业通常不用签发布授权，但用户可加载任意模型的应用属于 Expandable Application，要过审，官方写明完全免费的应用原则上不批。第 4 阶段前要问 Live2D。
 - **《人工智能拟人化互动服务管理暂行办法》**（2026-07-15 施行）对开源、自带 key 的客户端要求到哪一步，需要懂的人确认。

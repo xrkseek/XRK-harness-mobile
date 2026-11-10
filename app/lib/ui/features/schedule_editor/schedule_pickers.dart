@@ -304,7 +304,7 @@ class _ZoneSheetState extends State<_ZoneSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final pinned = <String>{widget.device, if (widget.selected != widget.device) widget.selected};
     final searching = _query.trim().isNotEmpty;
     // Rows: a section label (String) or a zone.

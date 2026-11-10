@@ -82,7 +82,7 @@ final class CookedImage extends CookedBlock {
   double? get aspectRatio => width != null && height != null && width! > 0 && height! > 0 ? width! / height! : null;
 }
 
-/// A dsh-go share link: drawn as an install card.
+/// A xrk-mobile share link: drawn as an install card.
 final class CookedShare extends CookedBlock {
   const CookedShare(this.link, {this.label});
 

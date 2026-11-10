@@ -1,6 +1,6 @@
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_client/dsh_client.dart' show ClientInventoryTier;
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_client/xrk_client.dart' show ClientInventoryTier;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -89,9 +89,9 @@ void main() {
       final items = plan(
         Slots.settingsSection,
         [
-          _o(Slots.settingsSection, '@deepseek-ai/dsh-client-ui-settings-general', cell: 'general'),
+          _o(Slots.settingsSection, '@xrkseek/harness-cli-client-ui-settings-general', cell: 'general'),
           _o(Slots.settingsSection, 'official-by-flag', cell: 'x', official: true),
-          _o(Slots.settingsSection, 'dsh-go-bridge', cell: 'general'),
+          _o(Slots.settingsSection, 'xrk-bridge', cell: 'general'),
           _o(Slots.bundleConfig, 'dsh-pet', cell: 'dsh-pet'),
           _o(Slots.settingsSection, 'dsh-pet', cell: 'pet'),
           _o(Slots.settingsSection, 'dsh-pet', cell: 'pet', order: 9),
@@ -127,7 +127,7 @@ void main() {
       }
     });
 
-    test('an unknown slot (newer DSH) gets a web entry only', () {
+    test('an unknown slot (newer XRK) gets a web entry only', () {
       expect(modes(plan('conversation.brand.new', [_o('conversation.brand.new', 'p', cell: 'x')])), [
         (SeatMode.webLink, 'p'),
       ]);

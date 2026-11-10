@@ -1,4 +1,4 @@
-// Development entry point (DSH Remote's direct path end to end): signs in to a
+// Development entry point (XRK Remote's direct path end to end): signs in to a
 // Server with email + password, connects the first online Host with 直连优先
 // on (flutter_webrtc), and pushes traffic both ways through the tunnel. It
 // prints `[p2p-probe] …` lines to logcat and ends with the path the tunnel
@@ -12,7 +12,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_remote/dsh_remote.dart';
+import 'package:xrk_remote/xrk_remote.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -45,7 +45,7 @@ Future<void> _probe() async {
   final account = RemoteAccount(
     secrets: _Secrets(),
     serverUrl: config['server'],
-    deviceName: 'DSH Go P2P probe',
+    deviceName: 'XRK Go P2P probe',
     peerConnector: config['direct'] == false ? null : flutterPeerConnector,
     onDirectFallback: (reason) => _log('automatic fallback: $reason'),
     controlTracer: (direction, frame) {
@@ -64,7 +64,7 @@ Future<void> _probe() async {
     final state = client.remoteCarrier!.state!;
     _log('connected via ${state.transport} in ${DateTime.now().difference(started).inMilliseconds} ms');
     _log('sessions: ${(await client.listSessions()).length}');
-    // Phone → Host above 8 KiB (RTCH chunks, DSHF fragments above 48 KiB).
+    // Phone → Host above 8 KiB (RTCH chunks, XRKF fragments above 48 KiB).
     final query = 'p2p-probe-${'x' * (120 * 1024)}';
     // The host intentionally rejects searches above 500 UTF-16 units. Receiving
     // that typed validation error proves the entire chunked JSON arrived; the
@@ -72,7 +72,7 @@ Future<void> _probe() async {
     try {
       await client.searchSessions(query);
       throw StateError('oversized query unexpectedly accepted');
-    } on DshRemoteException catch (error) {
+    } on XrkRemoteException catch (error) {
       if (error.code != 'gateway/bad-request' || !error.message.contains('500')) rethrow;
       _log('120 KiB request reassembled; expected host validation returned');
     }

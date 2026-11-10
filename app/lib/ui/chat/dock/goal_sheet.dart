@@ -1,5 +1,5 @@
 // The goal bar's actions: a sheet with the whole goal and 编辑 / 暂停 / 恢复 /
-// 清除 (DSH GoalBar's icon actions), the multi-line editor, and the 清除
+// 清除 (XRK GoalBar's icon actions), the multi-line editor, and the 清除
 // confirmation.
 
 import 'package:flutter/material.dart';
@@ -39,7 +39,7 @@ class GoalSheet extends ConsumerWidget {
     if (goal == null) return const SizedBox(height: 120);
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final look = GoalLook.of(goal, colors: colors, dsh: dsh);
     final rounds = goal.projection.roundsStarted;
     final max = goal.goal.maxGoalRounds;
@@ -204,8 +204,8 @@ Future<bool> confirmClearGoal(BuildContext context, String objective) async {
         TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
         FilledButton(
           style: FilledButton.styleFrom(
-            backgroundColor: DshColors.of(dialog).danger,
-            foregroundColor: DshColors.of(dialog).onDanger,
+            backgroundColor: XrkColors.of(dialog).danger,
+            foregroundColor: XrkColors.of(dialog).onDanger,
           ),
           onPressed: () => Navigator.pop(dialog, true),
           child: Text(l10n.commonClear),

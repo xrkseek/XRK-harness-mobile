@@ -12,7 +12,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,7 +22,7 @@ import 'engine_error_text.dart';
 import 'media_catalog.dart' show mediaKeyRefsOf;
 import 'plugins_state.dart';
 
-export 'package:dsh_client/dsh_client.dart'
+export 'package:xrk_client/xrk_client.dart'
     show
         CredentialStatus,
         PluginInventory,
@@ -197,7 +197,7 @@ class EngineSettings {
   /// take effect on a reload).
   final Set<String> staged;
 
-  /// Secret positions whose binding the Host described (the dsh-go bridge),
+  /// Secret positions whose binding the Host described (the xrk-mobile bridge),
   /// by [FieldRef.key]: the credential each is bound to, or null for a bare
   /// secret that is not written here.
   final Map<String, String?> secretBindings;
@@ -398,7 +398,7 @@ String? _bound(String raw) {
 /// One short Chinese sentence for a failed settings or credentials call.
 String describeSettingsError(Object error) {
   if (error is EngineSettingsFailure) return error.message;
-  if (error is DshRemoteException) {
+  if (error is XrkRemoteException) {
     final message = error.message;
     switch (error.code) {
       case 'settings/conflict':
@@ -536,7 +536,7 @@ String get _staleEditorMessage => appL10n.engineSettingsHostChanged;
 /// The active engine's settings; null while not connected. Re-read when the
 /// engine says a namespace or a credential changed.
 class EngineSettingsController extends AsyncNotifier<EngineSettings?> {
-  DshClient? _client;
+  XrkClient? _client;
   MuxGeneration? _generation;
   Object _origin = Object();
   final Map<String, _CredentialRead> _credentialReads = {};
@@ -628,7 +628,7 @@ class EngineSettingsController extends AsyncNotifier<EngineSettings?> {
     );
   }
 
-  static Future<Map<String, CredentialStatus>?> _readCredentials(DshClient client, Set<String> refs) async {
+  static Future<Map<String, CredentialStatus>?> _readCredentials(XrkClient client, Set<String> refs) async {
     if (refs.isEmpty) return const {};
     try {
       return await client.describeCredentials(refs.toList());
@@ -637,7 +637,7 @@ class EngineSettingsController extends AsyncNotifier<EngineSettings?> {
     }
   }
 
-  _CredentialRead _startCredentialRead(DshClient client, Map<String, SettingsNamespaceView> namespaces) {
+  _CredentialRead _startCredentialRead(XrkClient client, Map<String, SettingsNamespaceView> namespaces) {
     final refs = credentialRefsOf(namespaces);
     final read = _CredentialRead(refs, _readCredentials(client, refs));
     for (final ref in refs) {
@@ -801,7 +801,7 @@ class EngineSettingsController extends AsyncNotifier<EngineSettings?> {
     return completer.future;
   }
 
-  Future<bool> _send(DshClient client, String ns, _Write write, Object origin) async {
+  Future<bool> _send(XrkClient client, String ns, _Write write, Object origin) async {
     if (!_accepts(origin)) return false;
     var errors = <String, String>{};
     var locked = <String>{};
@@ -828,7 +828,7 @@ class EngineSettingsController extends AsyncNotifier<EngineSettings?> {
           _confirmed = {..._confirmed, ns: view};
         }
         ok = true;
-      } on DshRemoteException catch (error) {
+      } on XrkRemoteException catch (error) {
         if (error.code == 'settings/conflict' && !write.retried) {
           write.retried = true;
           final retry = await _resolveConflict(client, ns, write, origin);
@@ -856,7 +856,7 @@ class EngineSettingsController extends AsyncNotifier<EngineSettings?> {
   /// Re-reads [ns] after a stale revision. True when the fields this write
   /// touches still hold what the user saw (someone changed something else):
   /// then the write goes again on the new revision.
-  Future<bool> _resolveConflict(DshClient client, String ns, _Write write, Object origin) async {
+  Future<bool> _resolveConflict(XrkClient client, String ns, _Write write, Object origin) async {
     if (!_accepts(origin)) return false;
     try {
       final described = await client.describeSettings();
@@ -928,7 +928,7 @@ class EngineSettingsController extends AsyncNotifier<EngineSettings?> {
 
   /// Stores a credential the page names itself, not one a schema field
   /// declares. The media settings page gives every service its own
-  /// environment-style reference (`DSH_MEDIA_<SERVICE>_API_KEY`), so its key
+  /// environment-style reference (`XRK_MEDIA_<SERVICE>_API_KEY`), so its key
   /// rows write here instead of through a fixed secret slot. Throws
   /// [EngineSettingsFailure]; the host decides whether [ref] may be written.
   Future<void> setCredential(String ref, String value) => setCredentialFor(_origin, ref, value);
@@ -1007,7 +1007,7 @@ InventoryStatus inventoryStatus({required bool enabled, String? fiberPhase, bool
   };
 }
 
-/// `@deepseek-ai/dsh-web-app` → `web-app`; `cordis-plugin-timer` → `timer`.
+/// `@xrkseek/harness-cli-web-app` → `web-app`; `cordis-plugin-timer` → `timer`.
 String shortModuleName(String name) {
   var short = name;
   final slash = short.lastIndexOf('/');
@@ -1023,12 +1023,12 @@ String shortModuleName(String name) {
 
 /// The bundles the app's own pages name in words.
 Map<String, String> get _bundleNames => {
-  '@deepseek-ai/dsh-base': appL10n.stateBundleBuiltIn,
-  '@deepseek-ai/dsh-web-app': appL10n.commonWeb,
-  '@deepseek-ai/dsh-sdk-minimal': 'SDK',
-  '@deepseek-ai/dsh-sdk-app': 'SDK',
-  '@deepseek-ai/dsh-headless': appL10n.stateBundleHeadless,
-  '@deepseek-ai/dsh-acp-app': 'ACP',
+  '@xrkseek/harness-cli-base': appL10n.stateBundleBuiltIn,
+  '@xrkseek/harness-cli-web-app': appL10n.commonWeb,
+  '@xrkseek/harness-cli-sdk-minimal': 'SDK',
+  '@xrkseek/harness-cli-sdk-app': 'SDK',
+  '@xrkseek/harness-cli-headless': appL10n.stateBundleHeadless,
+  '@xrkseek/harness-cli-acp-app': 'ACP',
 };
 
 /// One inventory row with where it came from.
@@ -1057,7 +1057,7 @@ class InventoryItem {
   final String? icon;
   final InventoryStatus status;
 
-  /// The bundle that brings it, in words (「DSH 内置」, 「智能体团队」).
+  /// The bundle that brings it, in words (「XRK 内置」, 「智能体团队」).
   final String? source;
 
   /// Package name of that bundle.
@@ -1212,7 +1212,7 @@ final pluginInventoryProvider = FutureProvider.autoDispose<InventorySnapshot?>((
   PluginInventory inventory;
   try {
     inventory = await client.pluginInventory();
-  } on DshRemoteException catch (error, stack) {
+  } on XrkRemoteException catch (error, stack) {
     // The relay's allow-list (or an older Host) has no inventory Remote.
     try {
       inventory = PluginInventory.fromEntries(await client.listPlugins());

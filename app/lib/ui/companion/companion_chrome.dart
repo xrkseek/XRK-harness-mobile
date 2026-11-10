@@ -27,7 +27,7 @@ const _barHeight = 44.0;
 /// Deep water behind her words and the input: reply text has to stay readable
 /// over a white apron and a bright midday sky alike.
 GlassStyle companionDeepGlass(BuildContext context) =>
-    DshSurfaces.of(context)
+    XrkSurfaces.of(context)
         .glass(GlassTier.sheet)
         .copyWith(fill: const Color(0xC40E2740), fallbackFill: const Color(0xF20E2740), blurSigma: 22, saturation: 1.3);
 
@@ -67,7 +67,7 @@ class CompanionNamePlate extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final status = switch (activity) {
       CompanionActivity.idle => l10n.companionStatusIdle,
       CompanionActivity.listening => l10n.companionStatusListening,
@@ -385,7 +385,7 @@ class CompanionBondMeter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Semantics(
       label: label,
       child: ExcludeSemantics(
@@ -638,7 +638,7 @@ class CompanionComposer extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final hasText = input.text.trim().isNotEmpty;
 
     final Widget key;
@@ -841,7 +841,7 @@ class CompanionWelcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return CompanionWater(
       child: SafeArea(
         child: Center(

@@ -39,7 +39,7 @@ class PermissionPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final fg = dsh.onWarningContainer;
     final name = permissionName(preset);
     const side = PermissionPillMetrics.inset;
@@ -176,7 +176,7 @@ class _StripRiskChipState extends State<StripRiskChip> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final fg = dsh.onWarningContainer;
     return Semantics(
       button: true,

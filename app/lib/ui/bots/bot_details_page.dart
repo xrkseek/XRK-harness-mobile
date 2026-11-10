@@ -1,7 +1,7 @@
 // Bot 详情: who the Bot is, its model, its
 // memory, its token use, and the full record of its current part.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -286,7 +286,7 @@ class BotDetailsPage extends ConsumerWidget {
               gap,
               Center(
                 child: TextButton.icon(
-                  style: TextButton.styleFrom(foregroundColor: DshColors.of(context).danger),
+                  style: TextButton.styleFrom(foregroundColor: XrkColors.of(context).danger),
                   onPressed: () => _delete(context, ref, bot),
                   icon: const Icon(AppIcons.delete, size: 19),
                   label: Text(l10n.botsDeleteBot),

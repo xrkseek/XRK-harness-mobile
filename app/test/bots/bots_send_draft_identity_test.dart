@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,7 +27,7 @@ void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final fixture =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_send_draft.json').readAsStringSync()) as Map;
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_send_draft.json').readAsStringSync()) as Map;
   for (final room in [false, true]) {
     for (final mode in [
       'reconnect',
@@ -97,7 +97,7 @@ void main() {
           pending.complete(fixture['success']['value']);
         } else {
           final error = fixture[room ? 'roomFailure' : 'botFailure']['error'] as Map;
-          pending.completeError(DshRemoteException(error['code'] as String, error['message'] as String));
+          pending.completeError(XrkRemoteException(error['code'] as String, error['message'] as String));
         }
         await frames(t);
         expect(
@@ -140,7 +140,7 @@ void main() {
         await c.read(dsBotProvider.notifier).refresh();
       }
       final error = fixture['botFailure']['error'] as Map;
-      pending.completeError(DshRemoteException(error['code'] as String, error['message'] as String));
+      pending.completeError(XrkRemoteException(error['code'] as String, error['message'] as String));
       await frames(t);
       expect(t.widget<Composer>(find.byType(Composer)).controller.text, isEmpty);
       expect(t.takeException(), isNull);

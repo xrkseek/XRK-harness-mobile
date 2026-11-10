@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:dsh_app/pets/pet_mood.dart';
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/pets/pet_mood.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 import 'support.dart';
 
 class _Local extends LocalConnectionController {
@@ -49,7 +49,7 @@ class _HoldCarrier extends DshCarrier {
 
 void main() {
   late FakeDsh host;
-  late DshClient client;
+  late XrkClient client;
   late _HoldCarrier wire;
   late FakeAlertSource source;
   late FakeNotifyChannel channel;
@@ -84,7 +84,7 @@ void main() {
     final connection = DshConnection(host.baseUri);
     await connection.login(FakeDsh.token);
     wire = _HoldCarrier(DshHttpCarrier(connection));
-    client = await DshClient.connectCarrier(wire);
+    client = await XrkClient.connectCarrier(wire);
     host.handlers[r'$events/result'] = (_) => {'ok': true};
     source = FakeAlertSource()
       ..sessions = [session('s1')]

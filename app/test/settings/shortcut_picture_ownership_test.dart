@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/settings/appearance/icon_shortcut_sheet.dart';
+import 'package:xrk_app/ui/settings/appearance/icon_shortcut_sheet.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

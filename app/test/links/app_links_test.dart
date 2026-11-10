@@ -1,10 +1,10 @@
-import 'package:dsh_app/links/app_links.dart';
+import 'package:xrk_app/links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const _channel = MethodChannel('dsh/links');
+const _channel = MethodChannel('xrk/links');
 
 /// The native side pushing one arrival, as LinksPlugin.kt does.
 Future<void> _nativeSends(WidgetTester tester, Map<String, Object?> args) async {
@@ -52,17 +52,17 @@ void main() {
       await tester.pump();
       expect(calls, ['ready']);
 
-      await _nativeSends(tester, {'uri': 'dshgo://share/plugin?p=abc'});
+      await _nativeSends(tester, {'uri': 'xrkharness://share/plugin?p=abc'});
       final first = <Uri>[];
       final second = <Uri>[];
       links.links.listen(first.add);
       await tester.pump();
       links.links.listen(second.add);
       await tester.pump();
-      expect(first, [Uri.parse('dshgo://share/plugin?p=abc')]);
+      expect(first, [Uri.parse('xrkharness://share/plugin?p=abc')]);
       expect(second, isEmpty);
 
-      await _nativeSends(tester, {'uri': 'dshgo://forum/auth?payload=x'});
+      await _nativeSends(tester, {'uri': 'xrkharness://forum/auth?payload=x'});
       await tester.pump();
       expect(first.last.host, 'forum');
       expect(second.single.path, '/auth');
@@ -109,10 +109,10 @@ void main() {
         seen.add('web ${uri.fragment}');
         return true;
       });
-      h.links.add(Uri.parse('dshgo://forum/auth?payload=p1'));
-      h.links.add(Uri.parse('dshgo://forum/t/42'));
+      h.links.add(Uri.parse('xrkharness://forum/auth?payload=p1'));
+      h.links.add(Uri.parse('xrkharness://forum/t/42'));
       h.links.add(Uri.parse('https://example.com/s#abc'));
-      h.links.add(Uri.parse('dshgo://forum/authors'));
+      h.links.add(Uri.parse('xrkharness://forum/authors'));
       await tester.pump();
       expect(seen, isEmpty, reason: 'nothing before LinkHost attaches');
 
@@ -126,7 +126,7 @@ void main() {
     testWidgets('a cold-start link waits for a handler registered after attach', (tester) async {
       final h = _Harness(tester);
       addTearDown(h.dispose);
-      h.links.add(Uri.parse('dshgo://forum/auth?payload=late'));
+      h.links.add(Uri.parse('xrkharness://forum/auth?payload=late'));
       await h.attach();
       await tester.pump(const Duration(seconds: 2));
       expect(h.toasts, isEmpty);
@@ -144,14 +144,14 @@ void main() {
     testWidgets('unhandled links get the toast after the grace window, then right away', (tester) async {
       final h = _Harness(tester);
       addTearDown(h.dispose);
-      h.links.add(Uri.parse('dshgo://nobody/here'));
+      h.links.add(Uri.parse('xrkharness://nobody/here'));
       await h.attach();
       await tester.pump(const Duration(seconds: 3));
       expect(h.toasts, isEmpty);
       await tester.pump(const Duration(seconds: 2));
       expect(h.toasts, ['无法打开这个链接']);
 
-      h.links.add(Uri.parse('dshgo://nobody/again'));
+      h.links.add(Uri.parse('xrkharness://nobody/again'));
       h.links.add(Uri.parse('mailto:a@b.c'));
       await tester.pump();
       expect(h.toasts, hasLength(3));
@@ -173,8 +173,8 @@ void main() {
       h.links.add(Uri.parse('file:///c/links/k/Team.dshgo'));
       h.links.add(Uri(scheme: AppLinks.unreadableScheme, path: 'big.dshgo'));
       h.links.add(Uri.parse('file:///c/links/k/photo.png'));
-      h.links.add(Uri.parse('dshgo://share/refuse'));
-      h.links.add(Uri.parse('dshgo://share/boom'));
+      h.links.add(Uri.parse('xrkharness://share/refuse'));
+      h.links.add(Uri.parse('xrkharness://share/boom'));
       // The unknown file type waits out the grace window (real time since attach is ~0 here).
       await tester.pump(const Duration(seconds: 5));
       expect(files, ['Team.dshgo']);
@@ -182,7 +182,7 @@ void main() {
 
       off();
       h.toasts.clear();
-      expect(await h.router.open(Uri.parse('dshgo://share/boom')), isTrue);
+      expect(await h.router.open(Uri.parse('xrkharness://share/boom')), isTrue);
       expect(h.toasts, isEmpty);
     });
   });
@@ -202,7 +202,7 @@ void main() {
     );
     await tester.pump();
     expect(router.context, isNotNull);
-    links.add(Uri.parse('dshgo://unknown'));
+    links.add(Uri.parse('xrkharness://unknown'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('无法打开这个链接'), findsOneWidget);

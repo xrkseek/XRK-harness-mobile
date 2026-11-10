@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'island_recipes.dart';
 
 /// The scripts and styles an island injects, read once per app run:
-/// `assets/web/dsh_web_open.js` (the 网页版's open bridge, read only),
+/// `assets/web/xrk_web_open.js` (the 网页版's open bridge, read only),
 /// `assets/islands/island.js`, `island.css` with the App's code font, and
 /// `recipes.json`.
 class IslandAssets {
@@ -23,11 +23,11 @@ class IslandAssets {
 
   Future<String> _text(String path) => _bundle.loadString('assets/$path', cache: false);
 
-  Future<String> get openBridge => _open ??= _text('web/dsh_web_open.js');
+  Future<String> get openBridge => _open ??= _text('web/xrk_web_open.js');
 
   Future<String> get runtime => _runtime ??= _text('islands/island.js');
 
-  /// island.css plus JetBrains Mono: DSH's code font stack finds nothing on
+  /// island.css plus JetBrains Mono: XRK's code font stack finds nothing on
   /// Android before `Courier` (same as the 网页版's phone layout).
   Future<String> get css => _css ??= () async {
     final font = await _bundle.load('assets/fonts/JetBrainsMono-Regular.ttf');

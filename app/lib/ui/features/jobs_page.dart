@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -100,7 +100,7 @@ class _JobRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return ListPageRow(
       leading: StatusDot(tone: _tone(job)),
       title: job.label,
@@ -179,8 +179,8 @@ class _JobOutputPageState extends ConsumerState<JobOutputPage> {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(l10n.commonStop),
@@ -213,7 +213,7 @@ class _JobOutputPageState extends ConsumerState<JobOutputPage> {
       title: l10n.featuresJobOutput,
       subtitle: Text(jobSummary(_job)),
       actions: [
-        // The DSH Remote relay doesn't forward `job/kill`.
+        // The XRK Remote relay doesn't forward `job/kill`.
         if (_job.live &&
             (ref.watch(activeConnectionProvider).value?.client.carrier.allowsEndpoint('job/kill') ?? false))
           GlassIconButton(

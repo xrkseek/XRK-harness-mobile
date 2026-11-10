@@ -2,7 +2,7 @@
 // slim bar while the session has a todo list, expanding in place into the
 // whole checklist.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -104,7 +104,7 @@ class _TodoBarState extends State<TodoBar> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final s = widget.summary;
     final header = Semantics(
       button: true,
@@ -212,7 +212,7 @@ class TodoDockRow extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final (IconData icon, Color color, String state) = switch (todo.status) {
       _completed => (AppIcons.success, dsh.success, l10n.commonCompleted),
       _inProgress => (AppIcons.inProgress, colors.primary, l10n.commonInProgress),

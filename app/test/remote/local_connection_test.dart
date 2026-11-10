@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +29,7 @@ class _Settings extends SettingsController {
   AppSettings build() => const AppSettings(loaded: true);
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   final _readyMux = ReadyMux();
   @override
@@ -48,14 +48,14 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   test('a replaced build closes its late client', () async {
-    final pending = <Completer<DshClient>>[];
+    final pending = <Completer<XrkClient>>[];
     final c = ProviderContainer(
       overrides: [
         settingsProvider.overrideWith(_Settings.new),
         localRuntimeProvider.overrideWith(_Runtime.new),
         networkKicksProvider.overrideWithValue(const Stream.empty()),
         localClientConnectorProvider.overrideWithValue(({required baseUri, required token}) {
-          final done = Completer<DshClient>();
+          final done = Completer<XrkClient>();
           pending.add(done);
           return done.future;
         }),
@@ -91,7 +91,7 @@ void main() {
         networkKicksProvider.overrideWithValue(kicks.stream),
         localClientConnectorProvider.overrideWithValue(({required baseUri, required token}) async {
           attempts++;
-          if (attempts == 1) throw const DshTransportException('offline');
+          if (attempts == 1) throw const XrkTransportException('offline');
           return _Client();
         }),
       ],

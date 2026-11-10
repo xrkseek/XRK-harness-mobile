@@ -1,6 +1,6 @@
-// A stand-in for DSH + the dsh-go bridge, for unit tests of a plugin's host
+// A stand-in for XRK + the xrk-mobile bridge, for unit tests of a plugin's host
 // half and for `check --load`. It runs your `apply(ctx)` against a fake
-// cordis context, records what you register through `ctx.dshGo`, and answers
+// cordis context, records what you register through `ctx.xrkGo`, and answers
 // like the bridge: the same manifest parse, the same `ready` / `no-handler` /
 // `undeclared` issues and the same effect normalization (lib/bridge/ is the
 // bridge's own code). Zero dependencies.
@@ -67,7 +67,7 @@ class HostError extends Error {
  * @param {{ dir?: string, pkg?: object, services?: Record<string, unknown>, caps?: object, bridge?: boolean, config?: unknown }} [options]
  *   dir: plugin directory (package.json is read from it); pkg: package.json object instead;
  *   services: other cordis services by name (e.g. { sessions }); bridge: false simulates a host
- *   without dsh-go-bridge (the dshGo service never appears).
+ *   without xrk-bridge (the xrkGo service never appears).
  */
 export function createTestHost(options = {}) {
   const dir = resolve(options.dir ?? '.')
@@ -89,7 +89,7 @@ export function createTestHost(options = {}) {
     const ok = kind === 'media' || kind === 'micro' ? declared === kind : kind === 'handlers' ? declared !== undefined : kind === 'panels' ? declared === 'panels' : kind === 'notes' ? declared === 'turn.note' : declared === 'composer.strip'
     if (!ok) {
       const name = { panels: 'panel', strips: 'strip', notes: 'turnNote', handlers: 'on' }[kind]
-      runtimeIssues.set(`undeclared:${kind}:${id}`, { path: `/runtime/${id}`, code: 'undeclared', severity: 'warn', message: `${name}("${id}") is not declared in dshGo.contributes; ignored` })
+      runtimeIssues.set(`undeclared:${kind}:${id}`, { path: `/runtime/${id}`, code: 'undeclared', severity: 'warn', message: `${name}("${id}") is not declared in xrkGo.contributes; ignored` })
     }
   }
 
@@ -113,30 +113,30 @@ export function createTestHost(options = {}) {
     }
   }
 
-  const dshGo = {
+  const xrkGo = {
     v: PROTOCOL,
     bridge: 'test-host',
     panel(id, def) {
-      if (typeof id !== 'string' || !ID.test(id)) throw new TypeError(`dshGo.panels: id must match ${ID}`)
-      if (!isPlainObject(def) || !(isPlainObject(def.view) || typeof def.view === 'function')) throw new TypeError('dshGo.panel: { view } is required (an object or a function)')
-      if (def.data !== undefined && typeof def.data !== 'function') throw new TypeError('dshGo.panel: data must be a function (scope, emit) => cancel')
-      if (def.actions !== undefined && (!isPlainObject(def.actions) || Object.values(def.actions).some((f) => typeof f !== 'function'))) throw new TypeError('dshGo.panel: actions must map names to functions')
+      if (typeof id !== 'string' || !ID.test(id)) throw new TypeError(`xrkGo.panels: id must match ${ID}`)
+      if (!isPlainObject(def) || !(isPlainObject(def.view) || typeof def.view === 'function')) throw new TypeError('xrkGo.panel: { view } is required (an object or a function)')
+      if (def.data !== undefined && typeof def.data !== 'function') throw new TypeError('xrkGo.panel: data must be a function (scope, emit) => cancel')
+      if (def.actions !== undefined && (!isPlainObject(def.actions) || Object.values(def.actions).some((f) => typeof f !== 'function'))) throw new TypeError('xrkGo.panel: actions must map names to functions')
       const dispose = addFeedSource(regs.panels, id, { view: def.view, data: def.data, actions: def.actions })
       undeclared('panels', id)
       return dispose
     },
     turnNote(id, def) {
-      if (typeof id !== 'string' || !ID.test(id)) throw new TypeError(`dshGo.turnNote: id must match ${ID}`)
+      if (typeof id !== 'string' || !ID.test(id)) throw new TypeError(`xrkGo.turnNote: id must match ${ID}`)
       const data = typeof def === 'function' ? def : def?.data
-      if (typeof data !== 'function') throw new TypeError('dshGo.turnNote: pass (scope, emit) => cancel or { data }')
+      if (typeof data !== 'function') throw new TypeError('xrkGo.turnNote: pass (scope, emit) => cancel or { data }')
       const dispose = addFeedSource(regs.notes, id, { data })
       undeclared('notes', id)
       return dispose
     },
     strip(id, def) {
-      if (typeof id !== 'string' || !ID.test(id)) throw new TypeError(`dshGo.strips: id must match ${ID}`)
+      if (typeof id !== 'string' || !ID.test(id)) throw new TypeError(`xrkGo.strips: id must match ${ID}`)
       const data = typeof def === 'function' ? def : def?.data
-      if (typeof data !== 'function') throw new TypeError('dshGo.strip: pass (scope, emit) => cancel or { data }')
+      if (typeof data !== 'function') throw new TypeError('xrkGo.strip: pass (scope, emit) => cancel or { data }')
       const dispose = addFeedSource(regs.strips, id, { data })
       undeclared('strips', id)
       return dispose
@@ -159,8 +159,8 @@ export function createTestHost(options = {}) {
       return () => regs.capability.delete('events')
     },
     on(id, handler) {
-      if (typeof id !== 'string' || !ID.test(id)) throw new TypeError(`dshGo.handlers: id must match ${ID}`)
-      if (typeof handler !== 'function') throw new TypeError('dshGo.on: handler must be a function')
+      if (typeof id !== 'string' || !ID.test(id)) throw new TypeError(`xrkGo.handlers: id must match ${ID}`)
+      if (typeof handler !== 'function') throw new TypeError('xrkGo.on: handler must be a function')
       regs.handlers.set(id, handler)
       undeclared('handlers', id)
       return () => regs.handlers.delete(id)
@@ -173,14 +173,14 @@ export function createTestHost(options = {}) {
     },
   }
 
-  const has = (name) => (name === 'dshGo' ? options.bridge !== false : name in services)
+  const has = (name) => (name === 'xrkGo' ? options.bridge !== false : name in services)
 
   /** A minimal cordis-like context. */
   function makeCtx(extra = {}) {
     const ctx = {
       ...services,
       ...extra,
-      get: (name) => (name === 'dshGo' && options.bridge !== false ? dshGo : services[name]),
+      get: (name) => (name === 'xrkGo' && options.bridge !== false ? xrkGo : services[name]),
       inject(deps, callback) {
         const names = Array.isArray(deps) ? deps : Object.keys(deps ?? {})
         const missing = names.filter((n) => !has(n))
@@ -188,7 +188,7 @@ export function createTestHost(options = {}) {
           pending.push({ missing, callback })
           return () => {}
         }
-        const child = makeCtx(names.includes('dshGo') ? { dshGo } : {})
+        const child = makeCtx(names.includes('xrkGo') ? { xrkGo } : {})
         callback(child)
         return () => {}
       },
@@ -296,7 +296,7 @@ export function createTestHost(options = {}) {
 
   return {
     ctx,
-    dshGo,
+    xrkGo,
     parsed,
     caps,
     logs,
@@ -313,13 +313,13 @@ export function createTestHost(options = {}) {
         dataPanels: [...regs.panels].filter(([, r]) => typeof r.data === 'function').map(([id]) => id),
       }
     },
-    /** The plugin's row in GET /dsh-go/v1/contributions for `caps`. */
+    /** The plugin's row in GET /xrk-mobile/v1/contributions for `caps`. */
     contributions(capsOverride = {}) {
       const c = { ...caps, ...capsOverride }
       return renderPlugin(parsed, { versions: [c.protocol ?? PROTOCOL], app: c.app, locale: c.locale, surfaces: c.surfaces, features: c.features }, live())
     },
     /**
-     * POST /dsh-go/v1/invoke. Resolves { effects, issues } like the bridge; rejects with
+     * POST /xrk-mobile/v1/invoke. Resolves { effects, issues } like the bridge; rejects with
      * { status, code } where the bridge would answer an error.
      */
     async invoke(id, request = {}) {
@@ -386,7 +386,7 @@ export function createTestHost(options = {}) {
     },
     /** Deferred results still running (each settles once: done, timeout, cancelled or error). */
     pendings,
-    /** GET /dsh-go/v1/views/<pkg>/<id>: the view your panel(id) returns for `scope`, with stats. */
+    /** GET /xrk-mobile/v1/views/<pkg>/<id>: the view your panel(id) returns for `scope`, with stats. */
     async view(id, scope = {}, capsOverride = {}) {
       const item = parsed.items.panels.find((p) => p.id === id)
       if (item === undefined) throw new HostError(404, 'not-found', `${parsed.pkg} declares no panel ${id}`)

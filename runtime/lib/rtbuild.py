@@ -23,13 +23,13 @@ import tarfile
 EM_NAMES = {3: "i386", 40: "arm", 62: "x86-64", 183: "aarch64"}
 NPMMIRROR = "https://registry.npmmirror.com/"
 NPMJS = "https://registry.npmjs.org/"
-# `dsh web` overlay (passed with --patch by the launch command): plugin-install registries and
-# the dsh-go-bridge plugin row.
+# `xrkh serve` overlay (passed with --patch by the launch command): plugin-install registries and
+# the xrk-bridge plugin row.
 DSH_WEB_PATCH = "/etc/dsh-app/dsh-web.patch.yml"
-# Where runtime/bridge/dsh-go-bridge lands in the rootfs (loaded by absolute path from the overlay).
-DSH_GO_BRIDGE = "/opt/dsh-go/dsh-go-bridge"
-# runtime/boot/boot-cache.mjs: path cache for `dsh web` while it boots, preloaded by the dsh shim.
-BOOT_CACHE = "/opt/dsh-go/boot-cache.mjs"
+# Where runtime/bridge/xrk-bridge lands in the rootfs (loaded by absolute path from the overlay).
+DSH_GO_BRIDGE = "/opt/xrk-mobile/xrk-bridge"
+# runtime/boot/boot-cache.mjs: path cache for `xrkh serve` while it boots, preloaded by the dsh shim.
+BOOT_CACHE = "/opt/xrk-mobile/boot-cache.mjs"
 BOOT_CACHE_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "boot", "boot-cache.mjs")
 DIRECT_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "direct")
 PNPM_BINS = {"pnpm": "pnpm.mjs", "pnpx": "pnpx.mjs", "pn": "pnpm.mjs", "pnx": "pnpx.mjs"}
@@ -255,7 +255,7 @@ def cmd_patch_dynstr(args):
 
 
 # ---------------------------------------------------------------------------
-# DSH source patches (runtime/patches): strict unified diffs, pinned per DSH version
+# XRK source patches (runtime/patches): strict unified diffs, pinned per XRK version
 # ---------------------------------------------------------------------------
 def parse_unified_diff(text):
     """[(relpath, [(old_lines, new_lines)])] for a plain unified diff (a/ b/ prefixes, no fuzz)."""
@@ -326,12 +326,12 @@ def apply_hunks(data, hunks, label):
 
 
 def cmd_patch_dsh(args):
-    """Apply runtime/patches/*.diff to a DSH npm prefix, refusing anything not pinned for this DSH version.
+    """Apply runtime/patches/*.diff to a XRK npm prefix, refusing anything not pinned for this XRK version.
 
-    pins.json maps patch -> DSH version -> file -> {before, after} sha256. Without --record the
+    pins.json maps patch -> XRK version -> file -> {before, after} sha256. Without --record the
     original must match `before` and the result `after`; files are replaced (write + rename), so a
     hard-linked tree is never modified in place. --record applies the hunks strictly and writes the
-    observed hashes for this DSH version (use after reviewing the upstream file and the patch)."""
+    observed hashes for this XRK version (use after reviewing the upstream file and the patch)."""
     pins_path = os.path.join(args.patches, "pins.json")
     pins = json.load(open(pins_path)) if os.path.isfile(pins_path) else {"schema": 1, "patches": {}}
     names = sorted(n for n in os.listdir(args.patches) if n.endswith(".diff"))
@@ -352,8 +352,8 @@ def cmd_patch_dsh(args):
         diff = parse_unified_diff(open(os.path.join(args.patches, name)).read())
         want = pins["patches"].get(name, {}).get(args.dsh_version)
         if want is None and not args.record:
-            sys.exit("patch %s has no pin for DSH %s: review the upstream files it touches, then run\n"
-                     "  python3 -I runtime/lib/rtbuild.py patch-dsh --prefix <dsh-prefix> --dsh-version %s --record"
+            sys.exit("patch %s has no pin for XRK %s: review the upstream files it touches, then run\n"
+                     "  python3 -I runtime/lib/rtbuild.py patch-engine --prefix <engine-prefix> --engine-version %s --record"
                      % (name, args.dsh_version, args.dsh_version))
         observed = {}
         for rel, hunks in diff:
@@ -369,7 +369,7 @@ def cmd_patch_dsh(args):
                     observed[rel] = pin
                     continue
                 if before != pin["before"]:
-                    sys.exit("%s: %s sha256 %s differs from the vetted DSH %s original %s"
+                    sys.exit("%s: %s sha256 %s differs from the vetted XRK %s original %s"
                              % (name, rel, before, args.dsh_version, pin["before"]))
             out = apply_hunks(raw.decode("utf-8"), hunks, "%s %s" % (name, rel)).encode("utf-8")
             after = hashlib.sha256(out).hexdigest()
@@ -390,11 +390,11 @@ def cmd_patch_dsh(args):
         with open(pins_path, "w") as f:
             json.dump(pins, f, indent=2, sort_keys=True)
             f.write("\n")
-        print("recorded pins for DSH %s in %s" % (args.dsh_version, pins_path))
+        print("recorded pins for XRK %s in %s" % (args.dsh_version, pins_path))
     if "zzzzzz-session-deletion.diff" in applied:
         # Source-owned companion module, installed only alongside the vetted rc4 seam.
         source = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "session-deletion", "core.mjs")
-        target = os.path.join(args.prefix, "node_modules", "@deepseek-ai", "dsh-session-persistence-jsonl", "lib", "dsh-go-deletion.mjs")
+        target = os.path.join(args.prefix, "node_modules", "@deepseek-ai", "dsh-session-persistence-jsonl", "lib", "xrk-mobile-deletion.mjs")
         tmp = target + ".dsh-app-patch"
         with open(source, "rb") as src, open(tmp, "wb") as dst:
             dst.write(src.read())
@@ -808,12 +808,12 @@ def install_ca_bundle(entries, report):
 
 def bridge_shared_rows():
     """The rows of the bridge bundle's cordis.patch.yml that the local overlay also carries."""
-    source = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bridge", "dsh-go-bridge", "cordis.patch.yml")
+    source = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bridge", "xrk-bridge", "cordis.patch.yml")
     with open(source, encoding="utf-8") as patch:
         rows = patch.read().split("    # --- shared rows ---\n", 1)[1]
     # Local runtimes load the bridge by path; it is not a profile dependency.
-    return rows.replace("name: dsh-go-bridge/companion/full-context",
-                        "name: %s/lib/companion/full-context.js" % DSH_GO_BRIDGE)
+    return rows.replace("name: xrk-bridge/companion/full-context",
+                        "name: %s/lib/companion/full-context.js" % XRK_GO_BRIDGE)
 
 
 def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridge=False):
@@ -847,7 +847,7 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
       "export TERM=\"${TERM:-xterm-256color}\"\n"
       "export TMPDIR=\"${TMPDIR:-/tmp}\"\n"
       "export XRK_HOME=\"${XRK_HOME:-/root/.xrk}\"\n"
-      "export DSH_HOME=\"${DSH_HOME:-/root/.xrk}\"\n"
+      "export XRK_HOME=\"${XRK_HOME:-/root/.xrk}\"\n"
       "export XDG_DATA_DIRS=\"${XDG_DATA_DIRS-/usr/local/share:/usr/share:/system}\"\n"
       + ("export pnpm_config_registry=\"${pnpm_config_registry:-%s}\"\n" % NPMMIRROR if with_pnpm else ""))
     f("etc/apt/apt.conf.d/99dsh-app-proot",
@@ -865,8 +865,8 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
     s("usr/local/bin/npm", "../../../opt/node/bin/npm")
     s("usr/local/bin/npx", "../../../opt/node/bin/npx")
     s("usr/local/bin/corepack", "../../../opt/node/bin/corepack")
-    # `dsh web` (the app's launch) preloads the boot cache: proot makes each path lookup costly
-    # and DSH resolves the read-only /opt tree thousands of times while it boots.
+    # `xrkh serve` (the app's launch) preloads the boot cache: proot makes each path lookup costly
+    # and XRK resolves the read-only /opt tree thousands of times while it boots.
     with open(BOOT_CACHE_SRC, "rb") as src:
         E[BOOT_CACHE.lstrip("/")] = Entry("file", 0o644, data=src.read(), origin="overlay")
     # Immutable direct-engine input; Android's per-install path config and
@@ -874,8 +874,8 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
     for name in sorted(os.listdir(DIRECT_SRC)):
         if name.endswith(".mjs"):
             with open(os.path.join(DIRECT_SRC, name), "rb") as src:
-                E["opt/dsh-go/direct/" + name] = Entry("file", 0o644, data=src.read(), origin="overlay")
-    # XRK Harness CLI shims (keep `dsh` as a thin alias during cutover).
+                E["opt/xrk-mobile/direct/" + name] = Entry("file", 0o644, data=src.read(), origin="overlay")
+    # XRK Harness CLI shims (keep `xrkh` as a thin alias during cutover).
     f("usr/local/bin/xrkh",
       "#!/bin/sh\n"
       "# XRK Harness CLI shim: bundled Node + @xrkseek/harness-cli.\n"
@@ -885,7 +885,7 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
       "exec /usr/local/bin/xrkh \"$@\"\n", 0o755)
     f("usr/local/bin/dsh",
       "#!/bin/sh\n"
-      "# Compatibility alias: map legacy `dsh web` to `xrkh serve`.\n"
+      "# Compatibility alias: map legacy `xrkh serve` to `xrkh serve`.\n"
       "if [ \"$1\" = web ]; then\n"
       "  shift\n"
       "  exec /usr/local/bin/xrkh serve \"$@\"\n"
@@ -897,7 +897,7 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
         for name, target in PNPM_BINS.items():
             s("usr/local/bin/" + name, "../lib/node_modules/pnpm/bin/" + target)
     if with_pnpm or with_bridge:
-        patch = ("# dsh-app: overlay for `dsh web`, passed with --patch by the app's launch command and\n"
+        patch = ("# dsh-app: overlay for `xrkh serve`, passed with --patch by the app's launch command and\n"
                  "# replaced on every runtime upgrade (edits here do not survive one).\n")
         if with_pnpm:
             patch += ("#\n"
@@ -906,7 +906,7 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
                       "# public set, so npm's own registry is asked next when the mirror is unreachable, times out\n"
                       "# or has not synced a version yet. A private registry pnpm is pointed at is still asked\n"
                       "# alone. This row replaces plugin-manager's whole config: a plugin-manager config in the\n"
-                      "# profile's cordis.patch.yml does not apply while DSH runs with this overlay.\n"
+                      "# profile's cordis.patch.yml does not apply while XRK runs with this overlay.\n"
                       "- id: plugin-manager\n"
                       "  config:\n"
                       "    fallbackRegistries:\n"
@@ -914,17 +914,17 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
                       "      - %s\n" % (NPMMIRROR, NPMJS))
         if with_bridge:
             patch += ("#\n"
-                      "# dsh-go-bridge: plugin inventory for the app (GET /dsh-go/v1/inventory), loaded by path.\n"
-                      "# Do not also install dsh-go-bridge into a profile: two sources of one browser package\n"
+                      "# xrk-bridge: plugin inventory for the app (GET /xrk-mobile/v1/inventory), loaded by path.\n"
+                      "# Do not also install xrk-bridge into a profile: two sources of one browser package\n"
                       "# fail the client composition.\n"
                       "- insert:\n"
-                      "    - id: dsh-go-bridge\n"
-                      "      name: %s/lib/index.js\n" % DSH_GO_BRIDGE)
+                      "    - id: xrk-bridge\n"
+                      "      name: %s/lib/index.js\n" % XRK_GO_BRIDGE)
             patch += bridge_shared_rows()
         f(DSH_WEB_PATCH.lstrip("/"), patch)
     d("root/.dsh", 0o700)
     d("root/.l2s", 0o700)          # PROOT_L2S_DIR: hard-link backing files (kept with /root on upgrade)
-    d("root/workspace", 0o755)
+    # Do not seed root/workspace — first boot keeps only 向阳空间 (Face skip).
     d("var/lib/dsh-app", 0o755)
     d("var/lib/dsh-app/shm", 0o1777)    # bound to /dev/shm
     d("var/lib/dsh-app/empty", 0o755)   # bound over /sys/fs/selinux so dpkg/libselinux see no SELinux
@@ -1109,7 +1109,7 @@ def cmd_assemble(args):
     entries["opt"] = Entry("dir", 0o755, origin="node")
     entries["opt/node"] = Entry("dir", 0o755, origin="node")
 
-    # 3. npm trees on disk: DSH (whole --prefix) and pnpm (laid out like `npm i -g pnpm`)
+    # 3. npm trees on disk: XRK (whole --prefix) and pnpm (laid out like `npm i -g pnpm`)
     def add_tree(src, dest_root, origin, drop_reason):
         src = os.path.abspath(src)
         for dirpath, dirnames, filenames in os.walk(src):
@@ -1155,12 +1155,12 @@ def cmd_assemble(args):
                 mode = 0o755 if st.st_mode & 0o111 else 0o644
                 entries[dest] = Entry("file", mode, path=full, origin=origin)
 
-    add_tree(args.dsh_prefix, "opt/dsh", "dsh", dsh_drop_reason)
+    add_tree(args.engine_prefix, "opt/dsh", "engine", dsh_drop_reason)
     if args.pnpm_prefix:
         add_tree(os.path.join(args.pnpm_prefix, "node_modules", "pnpm"), "usr/local/lib/node_modules/pnpm",
                  "pnpm", pnpm_drop_reason)
     if args.bridge:
-        add_tree(args.bridge, DSH_GO_BRIDGE.lstrip("/"), "bridge", lambda rel, abi, prune: None)
+        add_tree(args.bridge, XRK_GO_BRIDGE.lstrip("/"), "bridge", lambda rel, abi, prune: None)
 
     # 4. dsh-app overlay (wins over everything above)
     runtime_info = json.loads(args.runtime_info)
@@ -1209,7 +1209,7 @@ def cmd_assemble(args):
     # Direct native loading supports only the exact bundled addon files, after
     # architecture/libc pruning. This generated inventory is part of the hashed
     # archive, never a hand-maintained asset or a grant to user profile packages.
-    entries["opt/dsh-go/direct/native-addons.json"] = Entry(
+    entries["opt/xrk-mobile/direct/native-addons.json"] = Entry(
         "file", 0o644, data=(json.dumps(direct_native_inventory(entries), sort_keys=True) + "\n").encode(), origin="overlay")
 
     # 6. Implicit parents, symlink normalisation, mode normalisation
@@ -1331,13 +1331,13 @@ def cmd_assemble(args):
 # manifest
 # ---------------------------------------------------------------------------
 def launch_template():
-    """The proot invocation the app runs (placeholders expanded by DshProcess.kt)."""
+    """The proot invocation the app runs (placeholders expanded by XrkProcess.kt)."""
     guest_env = [
         "HOME=/root", "USER=root", "LOGNAME=root", "SHELL=/bin/bash",
         "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         "LANG=C.UTF-8", "TERM=xterm-256color", "TMPDIR=/tmp",
         "XRK_HOME=/root/.xrk",
-        "DSH_HOME=/root/.xrk",
+        "XRK_HOME=/root/.xrk",
         # Linux font discovery appends /fonts; Android's fonts are in the bound /system.
         "XDG_DATA_DIRS=/usr/local/share:/usr/share:/system",
         # pnpm 11 reads its registry from here (not from any npmrc outside $HOME)
@@ -1366,7 +1366,9 @@ def launch_template():
     ] + guest_env + [
         "{GUEST_ENV}",
         "/bin/sh", "-c",
-        "echo $$ > /tmp/dsh-web.pid; exec /usr/local/bin/xrkh serve --host 127.0.0.1 --port {PORT}",
+        # Pin --workspace to 向阳空间 so Face does not register /root (cwd) as a coding workspace.
+        "echo $$ > /tmp/dsh-web.pid; exec /usr/local/bin/xrkh serve --host 127.0.0.1 --port {PORT} "
+        '--workspace "${XRK_HOME:-/root/.xrk}/xiangyang-workspace"',
     ]
     env = {
         "PROOT_LOADER": "{NATIVE_LIB_DIR}/libproot-loader.so",
@@ -1432,13 +1434,13 @@ def cmd_manifest(args):
                         "hard links already converted to copies; every symlink is relative and stays "
                         "inside the rootfs; no member lies under a symlink; setuid/setgid cleared; "
                         "uid/gid 0; sorted parent-before-child",
-        "dshVersion": v["dshVersion"],
+        "engineVersion": v["engineVersion"],
         "nodeVersion": v["nodeVersion"],
         "pnpmVersion": v["pnpmVersion"],
         "ubuntuVersion": v["ubuntuVersion"],
         "prootVersion": v["prootVersion"],
-        "dshPatches": v.get("dshPatches", []),
-        "dshGoBridge": {"version": v["dshGoBridge"], "path": DSH_GO_BRIDGE} if v.get("dshGoBridge") else None,
+        "enginePatches": v.get("enginePatches", []),
+        "xrkBridge": {"version": v["xrkBridge"], "path": XRK_GO_BRIDGE} if v.get("xrkBridge") else None,
         "tallocVersion": v["tallocVersion"],
         "androidShmemVersion": v["androidShmemVersion"],
         "npmRegistry": "https://registry.npmmirror.com",
@@ -1446,21 +1448,21 @@ def cmd_manifest(args):
         "pluginRegistries": {
             "order": [NPMMIRROR, NPMJS],
             "note": "pluginManager asks pnpm's own registry (pnpm_config_registry in launch.argv) and then "
-                    "the fallbackRegistries set by " + DSH_WEB_PATCH + " (passed with --patch)",
+                    "the fallbackRegistries set by " + XRK_WEB_PATCH + " (passed with --patch)",
         },
         "nativeMinSdk": 24,
         "jniLibs": jni,
         "directEngine": {
             "schema": 2,
             "defaultEnabled": False,
-            "preload": "/opt/dsh-go/direct/preload.mjs",
+            "preload": "/opt/xrk-mobile/direct/preload.mjs",
             "loader": "/usr/lib/" + ("x86_64-linux-gnu/ld-linux-x86-64.so.2" if args.abi == "x86_64" else "aarch64-linux-gnu/ld-linux-aarch64.so.1"),
             "paths": "typed guest/physical path seams; same-path PRoot alias only for direct or a prior direct preparation",
             "safeMode": "proot",
             "tls": "Node bundled CA defaults; explicit extra CA environment retained",
             "pnpmPackageImportMethod": "copy",
             "moduleIdentity": "uncached physical identity at load; source and pinned bundled native addons use verified descriptors",
-            "nativeAddonInventory": "/opt/dsh-go/direct/native-addons.json",
+            "nativeAddonInventory": "/opt/xrk-mobile/direct/native-addons.json",
             "compatibilityGate": "nonempty or unreadable PRoot hard-link backing store selects proot; late L2S targets are refused without data migration",
         },
         "launch": launch_template(),
@@ -1487,9 +1489,9 @@ def main():
     p.add_argument("new")
     p.set_defaults(fn=cmd_patch_dynstr)
 
-    p = sub.add_parser("patch-dsh")
+    p = sub.add_parser("patch-engine")
     p.add_argument("--prefix", required=True, help="npm --prefix tree holding node_modules/@deepseek-ai/...")
-    p.add_argument("--dsh-version", required=True)
+    p.add_argument("--engine-version", required=True)
     p.add_argument("--patches", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "patches"))
     p.add_argument("--record", action="store_true", help="write the observed hashes as this version's pins")
     p.add_argument("--out", help="write the applied patch names (JSON list) here")
@@ -1516,7 +1518,7 @@ def main():
     p.add_argument("--abi", required=True, choices=sorted(ABI))
     p.add_argument("--base", required=True)
     p.add_argument("--node", required=True)
-    p.add_argument("--dsh-prefix", required=True)
+    p.add_argument("--engine-prefix", required=True)
     p.add_argument("--pnpm-prefix", help="npm --prefix tree holding node_modules/pnpm -> /usr/local/lib/node_modules/pnpm")
     p.add_argument("--out", required=True)
     p.add_argument("--report", required=True)
@@ -1529,7 +1531,7 @@ def main():
     p.add_argument("--prune-dev-metadata", action="store_true")
     p.add_argument("--deb", action="append", help="extra .deb to unpack and register (no maintainer scripts)")
     p.add_argument("--python", help="python-build-standalone install_only tarball -> /opt/python")
-    p.add_argument("--bridge", help="dsh-go-bridge package dir -> " + DSH_GO_BRIDGE + " (+ overlay row)")
+    p.add_argument("--bridge", help="xrk-bridge package dir -> " + XRK_GO_BRIDGE + " (+ overlay row)")
     p.set_defaults(fn=cmd_assemble)
 
     p = sub.add_parser("manifest")

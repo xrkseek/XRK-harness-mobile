@@ -150,7 +150,7 @@
     <string name="pet_ask_listening">正在听，松开结束</string>
     <string name="pet_ask_transcribing">正在识别</string>
     <string name="pet_ask_not_heard">没听清</string>
-    <string name="pet_ask_voice_missing">先在 App 里下载语音模型</string>
+    <string name="pet_ask_voice_missing">手机版暂不支持语音输入，请打字</string>
     <string name="pet_ask_voice_off">语音要本机引擎在运行</string>
     <string name="pet_ask_mic_permission">先在 App 里允许使用麦克风</string>
     <string name="pet_ask_mic_failed">麦克风打不开</string>

@@ -6,12 +6,12 @@
 
 import 'dart:ui' show GestureSettings;
 
-import 'package:dsh_app/state/adaptive_layout_state.dart';
-import 'package:dsh_app/state/quick_panel_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/settings/quick_panel_items_sheet.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/shell/sessions_drawer.dart' show DrawerDestination;
+import 'package:xrk_app/state/adaptive_layout_state.dart';
+import 'package:xrk_app/state/quick_panel_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/settings/quick_panel_items_sheet.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/shell/sessions_drawer.dart' show DrawerDestination;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

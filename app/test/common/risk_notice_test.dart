@@ -6,14 +6,14 @@
 //
 //   flutter test --update-goldens test/common/risk_notice_test.dart
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/risk_notice_store.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/risk_notice.dart';
-import 'package:dsh_app/ui/common/side_insets.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/risk_notice_store.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/risk_notice.dart';
+import 'package:xrk_app/ui/common/side_insets.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -129,7 +129,7 @@ void main() {
       expect(find.byType(Checkbox), findsNothing);
       // The danger colour, with its own text colour.
       final style = tester.widget<FilledButton>(_confirm).style!;
-      final colors = DshColors.of(tester.element(_sheet));
+      final colors = XrkColors.of(tester.element(_sheet));
       expect(style.backgroundColor!.resolve({}), colors.danger);
       expect(style.foregroundColor!.resolve({}), colors.onDanger);
       // Locked: no handle, the × closes.

@@ -182,9 +182,13 @@ class _PhoneControlScreenState extends ConsumerState<PhoneControlScreen> {
       if (!ok || !mounted) return;
     }
     final done = await _phone.setConfirmMode(next);
-    if (!done && mounted) {
+    if (!mounted) return;
+    if (!done) {
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.l10n.phoneConfirmSaveFailed)));
+      return;
     }
+    // Native revokes mid-task ALWAYS/TASK grants when tightening; next action follows [next].
+    showBriefNotice(context, context.l10n.phoneConfirmApplied(next.label));
   }
 
   void _push(Widget page) => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
@@ -527,7 +531,7 @@ class _PhoneControlScreenState extends ConsumerState<PhoneControlScreen> {
           if (showRestricted)
             ListPageRow(
               icon: AppIcons.unlock,
-              iconColor: _a11yAttemptFailed ? DshColors.of(context).warning : null,
+              iconColor: _a11yAttemptFailed ? XrkColors.of(context).warning : null,
               title: context.l10n.phoneControlAccessibilityBlocked,
               subtitle: _a11yAttemptFailed
                   ? context.l10n.phoneControlRestrictedAfterAttempt
@@ -640,13 +644,15 @@ class _PhoneControlScreenState extends ConsumerState<PhoneControlScreen> {
           ListPageRow(
             icon: policies?.confirmMode.icon ?? AppIcons.askFirst,
             spot: Spots.phoneConfirm,
-            subtitle: policies?.confirmMode.label ?? context.l10n.phoneControlLoading,
+            title: policies?.confirmMode.label ?? context.l10n.phoneConfirmTitle,
+            subtitle: policies?.confirmMode.detail ?? context.l10n.phoneControlLoading,
+            subtitleMaxLines: 2,
             chevron: policies != null,
             onTap: policies == null ? null : () => _pickConfirmMode(policies.confirmMode),
           ),
           ListPageRow(
             icon: AppIcons.unlocks,
-            iconColor: policies?.unlocks.isNotEmpty ?? false ? DshColors.of(context).warning : null,
+            iconColor: policies?.unlocks.isNotEmpty ?? false ? XrkColors.of(context).warning : null,
             spot: SettingsIndex.entry(SettingsPageId.phoneUnlocks),
             subtitle: phoneUnlockSummary(context.l10n, policies) ?? context.l10n.phoneControlLoading,
             onTap: () => _push(const PhoneUnlockPage()),
@@ -662,7 +668,7 @@ class _PhoneControlScreenState extends ConsumerState<PhoneControlScreen> {
           if (recent.isEmpty)
             ListPageRow(
               icon: AppIcons.history,
-              iconColor: DshColors.of(context).textTertiary,
+              iconColor: XrkColors.of(context).textTertiary,
               title: context.l10n.phoneActionLogEmpty,
               subtitle: context.l10n.phoneControlRecentActionsHint,
             )

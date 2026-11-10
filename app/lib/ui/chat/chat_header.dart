@@ -122,7 +122,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final top = MediaQuery.paddingOf(context).top;
     final barHeight = ChatHeader.barHeightOf(context);
     final pillHeight = ChatHeader.pillHeightOf(context);

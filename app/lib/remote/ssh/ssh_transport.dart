@@ -280,10 +280,10 @@ class DartSshTransport implements SshTransport, RemoteBootstrapShell {
     // Each stream's frame follows all of that stream's script output,
     // including the log tail after an exited/timeout result.
     final trap =
-        r'_dsh_status=$?; trap - 0; '
-        'printf ${shQuote('\n$marker stdout %s\n')} "\$_dsh_status"; '
-        'printf ${shQuote('\n$marker stderr %s\n')} "\$_dsh_status" >&2; '
-        r'exit "$_dsh_status"';
+        r'_xrk_status=$?; trap - 0; '
+        'printf ${shQuote('\n$marker stdout %s\n')} "\$_xrk_status"; '
+        'printf ${shQuote('\n$marker stderr %s\n')} "\$_xrk_status" >&2; '
+        r'exit "$_xrk_status"';
     // Keep any login-profile EXIT handler outside this script's trap.
     final command = loginShell('(\ntrap ${shQuote(trap)} 0\n$script\n)');
     final completed = Completer<RemoteExecResult>();

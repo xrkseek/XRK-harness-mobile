@@ -1,11 +1,11 @@
 // Where alerts go (system notification, banner, nothing), what gets cleared,
 // and how a tap opens the conversation (lib/state/notify_state.dart).
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

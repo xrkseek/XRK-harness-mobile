@@ -4,16 +4,16 @@
 
 import 'dart:typed_data';
 
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/ui/chat/widgets/attachments.dart';
-import 'package:dsh_app/ui/chat/widgets/assistant_message.dart';
-import 'package:dsh_app/ui/chat/widgets/notice_row.dart';
-import 'package:dsh_app/ui/chat/widgets/question_card.dart';
-import 'package:dsh_app/ui/chat/widgets/thinking_pill.dart';
-import 'package:dsh_app/ui/chat/widgets/tool_row.dart';
-import 'package:dsh_app/ui/chat/widgets/user_bubble.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart';
+import 'package:xrk_app/ui/chat/widgets/assistant_message.dart';
+import 'package:xrk_app/ui/chat/widgets/notice_row.dart';
+import 'package:xrk_app/ui/chat/widgets/question_card.dart';
+import 'package:xrk_app/ui/chat/widgets/thinking_pill.dart';
+import 'package:xrk_app/ui/chat/widgets/tool_row.dart';
+import 'package:xrk_app/ui/chat/widgets/user_bubble.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

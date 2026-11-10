@@ -30,9 +30,9 @@ import 'ssh_host_form.dart';
 
 /// 远程主机 (a list page): the computers and servers this phone can drive.
 ///
-/// Two ways in, side by side: a DSH Remote account (李国宝's ds-harness-remote,
+/// Two ways in, side by side: a XRK Remote account (李国宝's xrk-remote,
 /// end-to-end encrypted relay, no network setup) and SSH hosts (self-contained:
-/// dsh-app starts `dsh web` over SSH and tunnels to it). Picking a host makes
+/// dsh-app starts `xrkh serve` over SSH and tunnels to it). Picking a host makes
 /// it the active one; the chat and the session list follow. The old Remote
 /// Web console stays as a small fallback at the bottom.
 class RemoteScreen extends ConsumerWidget {
@@ -326,7 +326,7 @@ class _EdgeIconButton extends StatelessWidget {
     final button = IconButton(
       tooltip: tooltip,
       visualDensity: VisualDensity.compact,
-      color: DshColors.of(context).textTertiary,
+      color: XrkColors.of(context).textTertiary,
       icon: icon,
       onPressed: onPressed,
     );
@@ -371,7 +371,7 @@ class _SshRow extends ConsumerWidget {
   }
 }
 
-// ── DSH Remote account ───────────────────────────────────────────────────────
+// ── XRK Remote account ───────────────────────────────────────────────────────
 
 class _RelaySection extends ConsumerWidget {
   const _RelaySection({required this.onUse});
@@ -391,7 +391,7 @@ class _RelaySection extends ConsumerWidget {
       final available = ref.watch(relayBackendProvider).available;
       final server = account.server;
       return SettingsSection(
-        title: 'DSH Remote',
+        title: 'XRK Remote',
         // The credit's link takes taps in the margin below it, so it carries it.
         margin: available ? RelayCredit.sectionMargin : kSettingsGroupMargin,
         footer: available
@@ -401,9 +401,9 @@ class _RelaySection extends ConsumerWidget {
       );
     }
     return SettingsSection(
-      title: 'DSH Remote',
+      title: 'XRK Remote',
       footer: account.hostsFailed && account.hosts.isNotEmpty
-          ? Text(l10n.remoteErrRefreshHosts, style: TextStyle(color: DshColors.of(context).danger))
+          ? Text(l10n.remoteErrRefreshHosts, style: TextStyle(color: XrkColors.of(context).danger))
           : account.hosts.length > 1
           ? Text(l10n.remoteSwitchWarning)
           : null,
@@ -504,7 +504,7 @@ class _LoginCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final notifier = ref.read(relayAccountProvider.notifier);
     return Padding(
       padding: const EdgeInsets.fromLTRB(SettingsMetrics.inset, 12, SettingsMetrics.inset, 12),
@@ -625,7 +625,7 @@ class _Waiting extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

@@ -1,6 +1,6 @@
 // What the companion's reply text carries besides words: `[表情:开心]` and
 // `[动作:点头]` marks, written by the model as the persona asks
-// (runtime/bridge/dsh-go-bridge/cordis.patch.yml). The page shows the words and
+// (runtime/bridge/xrk-bridge/cordis.patch.yml). The page shows the words and
 // hands the marks to the stage. Pure, and fed the whole text so far on every
 // streaming update.
 

@@ -1,13 +1,13 @@
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugin_reload.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/plugins/plugin_reload_action.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugin_reload.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/plugins/plugin_reload_action.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -68,7 +68,7 @@ Future<({ProviderContainer container, _Runtime runtime})> _pump(
   tester.view.physicalSize = Size(width * 2, 1688);
   AppLocale.use(locale);
   final runtime = _Runtime(LocalRuntimeState(loaded: true, status: status), fail: fail);
-  final client = DshClient.withCarrier(FakePluginCarrier());
+  final client = XrkClient.withCarrier(FakePluginCarrier());
   addTearDown(client.close);
   await tester.pumpWidget(
     ProviderScope(
@@ -115,7 +115,7 @@ void main() {
 
   testWidgets('an installed local source exposes reload through the actual detail sheet', (tester) async {
     final carrier = FakePluginCarrier();
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
     carrier.handlers['pluginManager/listBundles'] = (_) => [
       {...bundleJson('example'), 'source': 'file:../example'},

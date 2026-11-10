@@ -6,7 +6,7 @@ import 'provider_backend.dart';
 /// The API keys of custom providers created on the **local** engine, kept in
 /// the Android Keystore-backed secure storage under `provider_key_<id>`.
 ///
-/// The engine's own credential store (`$DSH_HOME/.credentials.yaml`) is what
+/// The engine's own credential store (`$XRK_HOME/.credentials.yaml`) is what
 /// serves requests; this copy only exists so a key that went missing there
 /// (a reset runtime, a restored profile) can be put back on the next connect
 /// ([healProviderKeys]), the way the DeepSeek key is re-pushed. Keys typed

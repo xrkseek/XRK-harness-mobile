@@ -1,8 +1,8 @@
 // Owner generates baselines using the complete product fonts and icons:
 // flutter test --dart-define=W3_GOLDENS=true --update-goldens \
 //   test/engine_settings/schema_structure_golden_test.dart
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -22,7 +22,7 @@ void main() {
         await tester.pumpWidget(
           goldenApp(
             brightness: brightness,
-            overrides: engineOverrides(DshClient.withCarrier(host)),
+            overrides: engineOverrides(XrkClient.withCarrier(host)),
             home: Builder(
               builder: (context) => MediaQuery(
                 data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),

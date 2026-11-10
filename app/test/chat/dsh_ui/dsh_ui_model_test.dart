@@ -6,7 +6,7 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Map<String, Object?> text([String value = 'hello']) => {'type': 'text', 'text': value};
@@ -45,21 +45,21 @@ Map<String, Object?> chart() => {
 };
 Map<String, Object?> stack(List<Object?> children) => {'type': 'stack', 'children': children};
 
-DshUiParse parse(Object? json) => parseDshUiUncached(jsonEncode(json));
+XrkUiParse parse(Object? json) => parseXrkUiUncached(jsonEncode(json));
 
-DshUiView ok(Object? json) {
+XrkUiView ok(Object? json) {
   final parsed = parse(json);
-  if (parsed is DshUiInvalid) fail('expected a view, got ${parsed.error}');
-  return (parsed as DshUiParsed).view;
+  if (parsed is XrkUiInvalid) fail('expected a view, got ${parsed.error}');
+  return (parsed as XrkUiParsed).view;
 }
 
-DshUiIssue invalid(Object? json) {
+XrkUiIssue invalid(Object? json) {
   final parsed = parse(json);
-  if (parsed is DshUiParsed) fail('expected invalid, got a view');
-  return (parsed as DshUiInvalid).error;
+  if (parsed is XrkUiParsed) fail('expected invalid, got a view');
+  return (parsed as XrkUiInvalid).error;
 }
 
-List<DshUiNode> children(DshUiView view) => (view.root as DshUiLayout).children;
+List<XrkUiNode> children(XrkUiView view) => (view.root as XrkUiLayout).children;
 
 /// `count` component nodes, packed under the 16-child cap.
 Map<String, Object?> nodes(int count) {
@@ -83,10 +83,10 @@ void main() {
       final card = ok(stack([text(), metric('进度', 70), chart(), options(), confirm('ship')]));
       expect(card.interactive, isTrue);
       expect(card.issues, isEmpty);
-      final metricNode = children(card)[1] as DshUiMetric;
+      final metricNode = children(card)[1] as XrkUiMetric;
       expect(metricNode.value, '70');
       final toned = ok({'type': 'metric', 'label': 'n', 'value': 70, 'tone': 'good'});
-      expect((toned.root as DshUiMetric).tone, DshUiTone.good);
+      expect((toned.root as XrkUiMetric).tone, XrkUiTone.good);
     });
 
     test('normalize unwraps XML-style arrays and coerces numeric strings', () {
@@ -108,25 +108,25 @@ void main() {
           ],
         },
       };
-      final unwrapped = normalizeDshUi(wrapped) as Map<String, Object?>;
+      final unwrapped = normalizeXrkUi(wrapped) as Map<String, Object?>;
       expect(unwrapped['children'], isA<List<Object?>>());
       final second = (unwrapped['children'] as List)[1] as Map;
       expect(second['options'], isA<List<Object?>>());
       expect(ok(wrapped).interactive, isTrue);
       // Numeric strings land only on the numeric fields, never on labels or text.
-      expect(normalizeDshUi({'type': 'progress', 'label': '70', 'percent': '70'}), {
+      expect(normalizeXrkUi({'type': 'progress', 'label': '70', 'percent': '70'}), {
         'type': 'progress',
         'label': '70',
         'percent': 70,
       });
-      expect(normalizeDshUi({'type': 'metric', 'label': '70', 'value': '70'}), {
+      expect(normalizeXrkUi({'type': 'metric', 'label': '70', 'value': '70'}), {
         'type': 'metric',
         'label': '70',
         'value': 70,
       });
-      expect(normalizeDshUi(text('70')), text('70'), reason: 'text stays a string');
-      expect(normalizeDshUi(metric('进度', '70%')), metric('进度', '70%'), reason: 'a non-numeric string stays a string');
-      expect(normalizeDshUi({'value': 'NaN'}), {'value': 'NaN'});
+      expect(normalizeXrkUi(text('70')), text('70'), reason: 'text stays a string');
+      expect(normalizeXrkUi(metric('进度', '70%')), metric('进度', '70%'), reason: 'a non-numeric string stays a string');
+      expect(normalizeXrkUi({'value': 'NaN'}), {'value': 'NaN'});
       // Input is not mutated.
       expect(wrapped['children'], isA<Map<String, Object?>>());
       // A provider may nest the wrapper: { item: { item: [...] } } collapses too.
@@ -138,7 +138,7 @@ void main() {
           },
         },
       });
-      expect(children(nested).single, isA<DshUiText>());
+      expect(children(nested).single, isA<XrkUiText>());
     });
 
     test('an unknown component is a placeholder with the path and the catalog', () {
@@ -152,7 +152,7 @@ void main() {
           },
         ]),
       );
-      final placeholder = children(view)[2] as DshUiPlaceholder;
+      final placeholder = children(view)[2] as XrkUiPlaceholder;
       expect(placeholder.issue.path, 'view.children[2].type');
       expect(
         placeholder.issue.message,
@@ -160,8 +160,8 @@ void main() {
       );
       expect(view.issues, contains(placeholder.issue));
       // The other children still draw.
-      expect(children(view)[0], isA<DshUiText>());
-      expect(children(view)[1], isA<DshUiMetric>());
+      expect(children(view)[0], isA<XrkUiText>());
+      expect(children(view)[1], isA<XrkUiMetric>());
 
       // A broken root fails the whole block.
       expect(invalid(null).toString(), 'view：应该是一个组件对象');
@@ -174,12 +174,12 @@ void main() {
       // Lenient where DS Bot is strict: unknown properties and tones.
       expect(ok({'type': 'text', 'text': 'hi', 'style': 'red'}).issues, isEmpty);
       final toned = ok({'type': 'metric', 'label': 'n', 'value': '1', 'tone': 'nope'});
-      expect((toned.root as DshUiMetric).tone, isNull);
+      expect((toned.root as XrkUiMetric).tone, isNull);
       expect(toned.issues.single.path, 'view.tone');
 
       // Too long a text is clipped and marked, not rejected.
       final long = ok({'type': 'text', 'text': 'x' * 2001});
-      expect((long.root as DshUiText).text.length, 2001); // 2000 + '…'
+      expect((long.root as XrkUiText).text.length, 2001); // 2000 + '…'
       expect(long.root.truncation, '已截断：文字过长');
       expect(long.issues.single.message, '2001 个字符，超过上限 2000');
     });
@@ -192,7 +192,7 @@ void main() {
           ],
         }),
       );
-      expect((tooMany.root as DshUiOptions).options, hasLength(8));
+      expect((tooMany.root as XrkUiOptions).options, hasLength(8));
       expect(tooMany.root.truncation, '已截断：只显示前 8 个选项');
 
       expect(invalid(options('pick', {'options': <Object?>[]})).path, 'view.options');
@@ -204,7 +204,7 @@ void main() {
           ],
         }),
       );
-      expect((dup.root as DshUiOptions).labels, ['A']);
+      expect((dup.root as XrkUiOptions).labels, ['A']);
       expect(dup.issues.single.message, contains('重复的 label "A"'));
 
       // Six levels draw; the seventh becomes a placeholder.
@@ -212,9 +212,9 @@ void main() {
       for (var level = 1; level < 6; level++) {
         deep = stack([deep]);
       }
-      expect(ok(deep).nodes.whereType<DshUiPlaceholder>(), isEmpty);
+      expect(ok(deep).nodes.whereType<XrkUiPlaceholder>(), isEmpty);
       final tooDeep = ok(stack([deep]));
-      final leaf = tooDeep.nodes.whereType<DshUiPlaceholder>().single;
+      final leaf = tooDeep.nodes.whereType<XrkUiPlaceholder>().single;
       expect(leaf.issue.message, '第 7 层，超过上限 6 层');
 
       expect(ok(nodes(40)).nodes, hasLength(40));
@@ -234,11 +234,11 @@ void main() {
     test('a "__proto__" key is plain data', () {
       // No prototype to pollute in Dart: the key is just an unknown property.
       expect(
-        parseDshUiUncached('{"__proto__": {"type": "options", "id": "x", "options": [{"label": "A"}]}}'),
-        isA<DshUiInvalid>(),
+        parseXrkUiUncached('{"__proto__": {"type": "options", "id": "x", "options": [{"label": "A"}]}}'),
+        isA<XrkUiInvalid>(),
       );
-      final typed = parseDshUiUncached('{"type": "text", "text": "hi", "__proto__": {"polluted": true}}');
-      expect(((typed as DshUiParsed).view.root as DshUiText).text, 'hi');
+      final typed = parseXrkUiUncached('{"type": "text", "text": "hi", "__proto__": {"polluted": true}}');
+      expect(((typed as XrkUiParsed).view.root as XrkUiText).text, 'hi');
     });
 
     test('the size is measured on the source as sent', () {
@@ -269,14 +269,14 @@ void main() {
 
     test('bytes count the source in UTF-8', () {
       final source = jsonEncode({...text('a'), 'title': '测'});
-      final view = (parseDshUiUncached(source) as DshUiParsed).view;
+      final view = (parseXrkUiUncached(source) as XrkUiParsed).view;
       expect(view.bytes, utf8.encode(source).length);
       expect(view.bytes, greaterThan(source.length));
     });
 
     test('the summary keeps a short list of component values', () {
       final view = ok(stack([metric(), options(), text(' ${'word ' * 30}')]));
-      final summary = dshUiSummary(view);
+      final summary = xrkUiSummary(view);
       expect(summary, startsWith('[视图] '));
       final parts = summary.substring('[视图] '.length).split('；');
       expect(parts[0], '进度=70%');
@@ -284,13 +284,13 @@ void main() {
       expect(parts[2].length, lessThanOrEqualTo(40));
       expect(parts[2], startsWith('文字：word word'));
       final many = ok(stack([for (var i = 0; i < 9; i++) metric('m$i', '1')]));
-      expect(dshUiSummary(many).split('；'), hasLength(8));
-      expect(dshUiSummary(ok(stack([text('a')]))), '[视图] 文字：a');
+      expect(xrkUiSummary(many).split('；'), hasLength(8));
+      expect(xrkUiSummary(ok(stack([text('a')]))), '[视图] 文字：a');
       final titled = ok({
         ...stack([chart()]),
         'title': '近 3 个月支出',
       });
-      expect(dshUiSummary(titled), '[视图] 近 3 个月支出：图表：5月=3,800 元, 6月=4,100 元, 7月=3,650 元');
+      expect(xrkUiSummary(titled), '[视图] 近 3 个月支出：图表：5月=3,800 元, 6月=4,100 元, 7月=3,650 元');
     });
 
     test('an answer keeps the question-card selection rules', () {
@@ -303,65 +303,65 @@ void main() {
       );
       // DS Bot keeps the first label in the order sent; a reply we build has
       // one label for a single choice, so ours keeps the first in option order.
-      final single = dshUiAnswerFor(view, const DshUiReply(kind: DshUiReplyKind.choice, value: 'Z、B、A'));
+      final single = xrkUiAnswerFor(view, const XrkUiReply(kind: XrkUiReplyKind.choice, value: 'Z、B、A'));
       expect(single!.selected, ['A']);
       expect(single.nodePath, 'view.children[0]');
-      final none = dshUiAnswerFor(view, const DshUiReply(kind: DshUiReplyKind.choice, value: 'nope'));
+      final none = xrkUiAnswerFor(view, const XrkUiReply(kind: XrkUiReplyKind.choice, value: 'nope'));
       expect(none, isNull);
-      final empty = dshUiAnswerFor(view, const DshUiReply(kind: DshUiReplyKind.choice));
+      final empty = xrkUiAnswerFor(view, const XrkUiReply(kind: XrkUiReplyKind.choice));
       expect(empty, isNull);
-      final yes = dshUiAnswerFor(view, const DshUiReply(kind: DshUiReplyKind.confirm));
+      final yes = xrkUiAnswerFor(view, const XrkUiReply(kind: XrkUiReplyKind.confirm));
       expect(yes!.confirmed, isTrue);
       expect(yes.nodePath, 'view.children[2]');
-      final no = dshUiAnswerFor(view, const DshUiReply(kind: DshUiReplyKind.cancel));
+      final no = xrkUiAnswerFor(view, const XrkUiReply(kind: XrkUiReplyKind.cancel));
       expect(no!.confirmed, isFalse);
 
       final multi = ok(options('many', {'multi': true}));
-      final picked = dshUiAnswerFor(multi, const DshUiReply(kind: DshUiReplyKind.choice, value: 'A、A、C、nope'));
+      final picked = xrkUiAnswerFor(multi, const XrkUiReply(kind: XrkUiReplyKind.choice, value: 'A、A、C、nope'));
       expect(picked!.selected, ['A', 'C']);
     });
   });
 
   group('lenient parsing', () {
     test('broken JSON fails with a readable message and a resend text', () {
-      final parsed = parseDshUiUncached('{"type": "text", "text": ');
-      expect(parsed, isA<DshUiInvalid>());
-      final error = (parsed as DshUiInvalid).error;
+      final parsed = parseXrkUiUncached('{"type": "text", "text": ');
+      expect(parsed, isA<XrkUiInvalid>());
+      final error = (parsed as XrkUiInvalid).error;
       expect(error.path, 'view');
       expect(error.message, startsWith('不是合法的 JSON'));
       expect(parsed.resendText, startsWith('上一个 dsh-ui 视图无法显示：view：不是合法的 JSON'));
       expect(parsed.resendText, endsWith('。请修正后重发。'));
-      expect(parseDshUiUncached('   '), isA<DshUiInvalid>());
+      expect(parseXrkUiUncached('   '), isA<XrkUiInvalid>());
     });
 
     test('comments and trailing commas are forgiven', () {
-      final parsed = parseDshUiUncached('''
+      final parsed = parseXrkUiUncached('''
 {
   // 标题
   "type": "text", /* 正文 */
   "text": "a, b // not a comment",
 }''');
-      final view = (parsed as DshUiParsed).view;
-      expect((view.root as DshUiText).text, 'a, b // not a comment');
+      final view = (parsed as XrkUiParsed).view;
+      expect((view.root as XrkUiText).text, 'a, b // not a comment');
       expect(view.issues.single.message, '含注释或尾逗号，已忽略');
-      final list = parseDshUiUncached('{"type":"steps","items":["a","b",],}');
-      expect(((list as DshUiParsed).view.root as DshUiSteps).items, hasLength(2));
+      final list = parseXrkUiUncached('{"type":"steps","items":["a","b",],}');
+      expect(((list as XrkUiParsed).view.root as XrkUiSteps).items, hasLength(2));
     });
 
     test('a top-level array is a stack', () {
       final view = ok([text(), metric()]);
-      expect(view.root, isA<DshUiLayout>());
+      expect(view.root, isA<XrkUiLayout>());
       expect(children(view), hasLength(2));
     });
 
     test('charts pad, clip and clean their data', () {
       // 1e400 decodes to infinity: not finite, so the point is empty.
-      final view = (parseDshUiUncached(
+      final view = (parseXrkUiUncached(
         '{"type":"chart","kind":"pie","categories":["a","b","c"],'
         '"series":[{"values":["3,800","x",1e400]},{"values":[1,2,3]}]}',
-      ) as DshUiParsed).view;
-      final chartNode = view.root as DshUiChart;
-      expect(chartNode.kind, DshUiChartKind.donut);
+      ) as XrkUiParsed).view;
+      final chartNode = view.root as XrkUiChart;
+      expect(chartNode.kind, XrkUiChartKind.donut);
       expect(chartNode.series, hasLength(1));
       expect(chartNode.series.single.values, [3800, null, null]);
       expect(chartNode.truncation, '已截断：只画第一组数据');
@@ -376,8 +376,8 @@ void main() {
                   },
                 ],
               }).root
-              as DshUiChart;
-      expect(short.kind, DshUiChartKind.bar);
+              as XrkUiChart;
+      expect(short.kind, XrkUiChartKind.bar);
       expect(short.series.single.values, [1, null, null]);
 
       final wide = ok({
@@ -391,8 +391,8 @@ void main() {
             },
         ],
       });
-      final w = wide.root as DshUiChart;
-      expect(w.kind, DshUiChartKind.bar);
+      final w = wide.root as XrkUiChart;
+      expect(w.kind, XrkUiChartKind.bar);
       expect(w.categories, hasLength(60));
       expect(w.series, hasLength(6));
       expect(w.series.first.values, hasLength(60));
@@ -407,7 +407,7 @@ void main() {
                 'categories': ['a', 'b'],
                 'series': [1, '2'],
               }).root
-              as DshUiChart;
+              as XrkUiChart;
       expect(flat.series.single.values, [1, 2]);
       final loose =
           ok({
@@ -415,7 +415,7 @@ void main() {
                 'categories': ['a', 'b'],
                 'values': [3, 4],
               }).root
-              as DshUiChart;
+              as XrkUiChart;
       expect(loose.series.single.values, [3, 4]);
 
       // Nothing finite to draw: the chart is a placeholder.
@@ -434,12 +434,12 @@ void main() {
     });
 
     test('metric values must be finite; numbers are formatted', () {
-      final infinite = parseDshUiUncached('{"type":"metric","label":"n","value":1e400}');
-      expect((infinite as DshUiInvalid).error.message, '应该是有限的数');
-      expect((ok(metric('n', 41800)).root as DshUiMetric).value, '41,800');
-      expect((ok(metric('n', 2024)).root as DshUiMetric).value, '2024');
-      expect((ok(metric('n', 0.126)).root as DshUiMetric).value, '0.13');
-      expect((ok(metric('n', true)).root as DshUiMetric).value, '是');
+      final infinite = parseXrkUiUncached('{"type":"metric","label":"n","value":1e400}');
+      expect((infinite as XrkUiInvalid).error.message, '应该是有限的数');
+      expect((ok(metric('n', 41800)).root as XrkUiMetric).value, '41,800');
+      expect((ok(metric('n', 2024)).root as XrkUiMetric).value, '2024');
+      expect((ok(metric('n', 0.126)).root as XrkUiMetric).value, '0.13');
+      expect((ok(metric('n', true)).root as XrkUiMetric).value, '是');
     });
 
     test('compare, steps and callout accept loose shapes', () {
@@ -463,7 +463,7 @@ void main() {
           for (var i = 0; i < 3; i++) {'title': 'X$i'},
         ],
       });
-      final c = compare.root as DshUiCompare;
+      final c = compare.root as XrkUiCompare;
       expect(c.items.map((i) => i.title), ['方案 A', '方案 B', 'X0', 'X1']);
       expect(c.items[0].rows, [('月供', '¥4,200'), ('总利息', '¥31.2 万')]);
       expect(c.items[1].rows, [('月供', '¥5,100'), ('总利息', '¥22.8 万')]);
@@ -479,17 +479,17 @@ void main() {
           {'label': 'e', 'status': 'later'},
         ],
       });
-      expect((steps.root as DshUiSteps).items.map((i) => i.status), [
-        DshUiStepStatus.done,
-        DshUiStepStatus.current,
-        DshUiStepStatus.todo,
-        DshUiStepStatus.failed,
-        DshUiStepStatus.todo,
+      expect((steps.root as XrkUiSteps).items.map((i) => i.status), [
+        XrkUiStepStatus.done,
+        XrkUiStepStatus.current,
+        XrkUiStepStatus.todo,
+        XrkUiStepStatus.failed,
+        XrkUiStepStatus.todo,
       ]);
       expect(steps.issues.single.path, 'view.items[4].status');
 
       final callout = ok({'type': 'callout', 'text': '注意', 'tone': 'warning'});
-      expect((callout.root as DshUiCallout).tone, DshUiCalloutTone.warn);
+      expect((callout.root as XrkUiCallout).tone, XrkUiCalloutTone.warn);
     });
 
     test('options take bare strings; confirm needs nothing', () {
@@ -503,24 +503,24 @@ void main() {
         ],
         'multi': 'true',
       });
-      final node = view.root as DshUiOptions;
+      final node = view.root as XrkUiOptions;
       expect(node.labels, ['甲', '乙', '丙']);
       expect(node.multi, isTrue);
       expect(node.id, 'options');
-      final c = ok({'type': 'confirm'}).root as DshUiConfirm;
+      final c = ok({'type': 'confirm'}).root as XrkUiConfirm;
       expect(c.confirmText, '确认');
       expect(c.cancelText, '取消');
     });
 
     test('parses are cached by source', () {
       final source = jsonEncode(stack([text('cached')]));
-      expect(identical(parseDshUi(source), parseDshUi(source)), isTrue);
+      expect(identical(parseXrkUi(source), parseXrkUi(source)), isTrue);
     });
   });
 
   group('options free text', () {
-    DshUiOptions optionsNode(Object? freetext) {
-      final parsed = parseDshUiUncached(
+    XrkUiOptions optionsNode(Object? freetext) {
+      final parsed = parseXrkUiUncached(
         jsonEncode({
           'type': 'stack',
           'children': [
@@ -536,7 +536,7 @@ void main() {
           ],
         }),
       );
-      return (parsed as DshUiParsed).view.nodes.whereType<DshUiOptions>().single;
+      return (parsed as XrkUiParsed).view.nodes.whereType<XrkUiOptions>().single;
     }
 
     test('off unless asked for', () {
@@ -565,22 +565,22 @@ void main() {
         'title': '支出',
       });
       final markdown = '结论在这里。\n\n```dsh-ui\n$block\n```\n\n后记';
-      expect(dshUiPlainText(markdown), '结论在这里。\n\n[视图] 支出：月均=¥4,180\n\n后记');
+      expect(xrkUiPlainText(markdown), '结论在这里。\n\n[视图] 支出：月均=¥4,180\n\n后记');
     });
 
     test('leaves other fences alone, even ones that mention dsh-ui', () {
       const markdown = '````markdown\n```dsh-ui\n{}\n```\n````\n```json\n{}\n```';
-      expect(dshUiPlainText(markdown), markdown);
+      expect(xrkUiPlainText(markdown), markdown);
     });
 
     test('an unclosed or broken block still becomes one line', () {
-      expect(dshUiPlainText('前文\n```dsh-ui\n{"type":"te'), '前文\n[视图]（格式有误，未能显示）');
-      expect(dshUiPlainText('没有视图'), '没有视图');
+      expect(xrkUiPlainText('前文\n```dsh-ui\n{"type":"te'), '前文\n[视图]（格式有误，未能显示）');
+      expect(xrkUiPlainText('没有视图'), '没有视图');
     });
 
     test('a bare view JSON is summarised too', () {
       final block = jsonEncode({...stack([metric('月均', '¥4,180')]), 'title': '支出'});
-      expect(dshUiPlainText('结论在这里。\n\n$block\n\n后记'), '结论在这里。\n\n[视图] 支出：月均=¥4,180\n\n后记');
+      expect(xrkUiPlainText('结论在这里。\n\n$block\n\n后记'), '结论在这里。\n\n[视图] 支出：月均=¥4,180\n\n后记');
     });
   });
 
@@ -588,51 +588,51 @@ void main() {
     final view = jsonEncode({...stack([metric('月均', '¥4,180')]), 'title': '本机实况'});
 
     test('gets its fence back so the block draws as a card', () {
-      expect(fenceBareDshUiViews('先说结论。\n\n$view\n\n后记'), '先说结论。\n\n```dsh-ui\n$view\n```\n\n后记');
-      expect(fenceBareDshUiViews(view), '```dsh-ui\n$view\n```');
+      expect(fenceBareXrkUiViews('先说结论。\n\n$view\n\n后记'), '先说结论。\n\n```dsh-ui\n$view\n```\n\n后记');
+      expect(fenceBareXrkUiViews(view), '```dsh-ui\n$view\n```');
     });
 
     test('pretty printed JSON across lines keeps its shape', () {
       final pretty = const JsonEncoder.withIndent('  ').convert({...stack([text('hi')]), 'title': 'T'});
-      expect(fenceBareDshUiViews(pretty), '```dsh-ui\n$pretty\n```');
+      expect(fenceBareXrkUiViews(pretty), '```dsh-ui\n$pretty\n```');
     });
 
     test('braces inside strings do not end the block', () {
       final braces = jsonEncode({'type': 'text', 'text': '一个 } 和 {"x":1}'});
-      expect(fenceBareDshUiViews(braces), '```dsh-ui\n$braces\n```');
+      expect(fenceBareXrkUiViews(braces), '```dsh-ui\n$braces\n```');
     });
 
     test('prose, existing fences and JSON that is not a view stay as they are', () {
       const prose = '返回 {"type":"text","text":"hi"} 这样一个对象';
-      expect(fenceBareDshUiViews(prose), prose);
+      expect(fenceBareXrkUiViews(prose), prose);
       const fenced = '```json\n{"type":"text","text":"hi"}\n```';
-      expect(fenceBareDshUiViews(fenced), fenced);
-      expect(fenceBareDshUiViews('{"looks":"json"}'), '{"looks":"json"}');
-      expect(fenceBareDshUiViews('没有视图'), '没有视图');
+      expect(fenceBareXrkUiViews(fenced), fenced);
+      expect(fenceBareXrkUiViews('{"looks":"json"}'), '{"looks":"json"}');
+      expect(fenceBareXrkUiViews('没有视图'), '没有视图');
     });
 
     test('a half-streamed object stays text, and so does trailing prose', () {
-      expect(fenceBareDshUiViews('{"type":"stack","children":['), '{"type":"stack","children":[');
-      expect(fenceBareDshUiViews('$view 以上是今天的状况。'), '$view 以上是今天的状况。');
+      expect(fenceBareXrkUiViews('{"type":"stack","children":['), '{"type":"stack","children":[');
+      expect(fenceBareXrkUiViews('$view 以上是今天的状况。'), '$view 以上是今天的状况。');
     });
   });
 
   group('number formatting', () {
     test('chart numbers', () {
-      expect(formatDshUiNumber(3800), '3,800');
-      expect(formatDshUiNumber(12.345), '12.3');
-      expect(formatDshUiNumber(1.5), '1.5');
-      expect(formatDshUiNumber(-0.001), '0');
-      expect(formatDshUiNumber(double.nan), '—');
-      expect(formatDshUiNumber(1e20), '1.0e+20');
+      expect(formatXrkUiNumber(3800), '3,800');
+      expect(formatXrkUiNumber(12.345), '12.3');
+      expect(formatXrkUiNumber(1.5), '1.5');
+      expect(formatXrkUiNumber(-0.001), '0');
+      expect(formatXrkUiNumber(double.nan), '—');
+      expect(formatXrkUiNumber(1e20), '1.0e+20');
     });
 
     test('compact ticks use 万 and 亿', () {
-      expect(formatDshUiCompact(999), '999');
-      expect(formatDshUiCompact(1500), '1,500');
-      expect(formatDshUiCompact(12000), '1.2万');
-      expect(formatDshUiCompact(320000000), '3.2亿');
-      expect(formatDshUiCompact(-20000), '-2万');
+      expect(formatXrkUiCompact(999), '999');
+      expect(formatXrkUiCompact(1500), '1,500');
+      expect(formatXrkUiCompact(12000), '1.2万');
+      expect(formatXrkUiCompact(320000000), '3.2亿');
+      expect(formatXrkUiCompact(-20000), '-2万');
     });
   });
 }

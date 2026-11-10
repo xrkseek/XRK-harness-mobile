@@ -3,10 +3,10 @@
 // and on a new ready generation; a failed read keeps the last tasks and isn't
 // retried.
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/header_schedule_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/header_schedule_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -45,7 +45,7 @@ ScheduleTask _task(String id, DateTime? next) => ScheduleTask(
 
 void main() {
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
   late ProviderContainer container;
 
   Future<void> settle() async {
@@ -56,7 +56,7 @@ void main() {
 
   setUp(() {
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     container = ProviderContainer(
       overrides: [
         activeConnectionProvider.overrideWithValue(AsyncData(fakeHost(client))),
@@ -137,7 +137,7 @@ void main() {
     await settle();
     await container.read(sessionSchedulesProvider('s1').future);
 
-    carrier.handlers['schedule/catalog'] = (_) => throw const DshRemoteException('internal_error', 'boom');
+    carrier.handlers['schedule/catalog'] = (_) => throw const XrkRemoteException('internal_error', 'boom');
     carrier.emit('schedule/changed', {'sessionId': 's1'});
     await settle();
     await Future<void>.delayed(const Duration(milliseconds: 400));
@@ -149,7 +149,7 @@ void main() {
   });
 
   test('a first read that fails shows nothing', () async {
-    carrier.handlers['schedule/catalog'] = (_) => throw const DshRemoteException('gateway/method-not-found', 'no');
+    carrier.handlers['schedule/catalog'] = (_) => throw const XrkRemoteException('gateway/method-not-found', 'no');
     await client.mux.start();
     await settle();
     final header = container.read(headerSchedulesProvider);

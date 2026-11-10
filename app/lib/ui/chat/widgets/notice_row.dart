@@ -1,4 +1,4 @@
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
@@ -93,7 +93,7 @@ class _NoticeRowState extends State<NoticeRow> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final isError = item.kind == 'error';
     final lapsed = isError ? lapsedSubscription(item.failure, item.text) : null;
     final (icon, text) = _content(lapsed);
@@ -215,7 +215,7 @@ class ErrorBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final container = info ? dsh.infoContainer : dsh.dangerContainer;
     final accent = info ? dsh.info : dsh.danger;
     final onContainer = info ? dsh.onInfoContainer : dsh.onDangerContainer;

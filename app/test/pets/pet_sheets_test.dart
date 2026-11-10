@@ -4,8 +4,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/pets/pet_pack.dart';
-import 'package:dsh_app/pets/pet_sheets.dart';
+import 'package:xrk_app/pets/pet_pack.dart';
+import 'package:xrk_app/pets/pet_sheets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

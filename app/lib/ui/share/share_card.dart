@@ -1,6 +1,6 @@
 // The share card (晒成果) — a fixed-width poster of a reply, a stretch of a
 // conversation, a file or a plugin, in the app's own type and the person's
-// accent colour, with the dsh-go lockup and a QR code to the project page.
+// accent colour, with the xrk-mobile lockup and a QR code to the project page.
 
 import 'dart:ui' show ImageFilter;
 
@@ -70,8 +70,8 @@ enum ShareTemplate {
 /// │ The answer, as Markdown, ▢ pictures…  │
 /// │ …                                     │  when cut
 /// │ ───────────────────────────────────── │
-/// │ ◖● dsh-go                     ▣▣▣▣    │  brand + QR; the QR's corner
-/// │    手机上的 DSH · 扫码获取       ▣▣▣▣    │  as far from both edges
+/// │ ◖● xrk-mobile                     ▣▣▣▣    │  brand + QR; the QR's corner
+/// │    手机上的 XRK · 扫码获取       ▣▣▣▣    │  as far from both edges
 /// └──────────────────────────────────────┘
 /// ```
 class ShareCard extends StatelessWidget {
@@ -90,7 +90,7 @@ class ShareCard extends StatelessWidget {
   final bool showMeta;
 
   /// The colours to draw in; null: the app's current accent
-  /// ([DshSurfaces.accent] of the ambient theme).
+  /// ([XrkSurfaces.accent] of the ambient theme).
   final AppAccent? accent;
 
   /// Logical width; exported at 2–3× (1170 px wide at 3×).
@@ -181,8 +181,8 @@ class ShareCard extends StatelessWidget {
     }
   }
 
-  static ThemeData _withSurfaces(ThemeData theme, DshSurfaces Function(DshSurfaces) change) =>
-      theme.copyWith(extensions: [for (final e in theme.extensions.values) e is DshSurfaces ? change(e) : e]);
+  static ThemeData _withSurfaces(ThemeData theme, XrkSurfaces Function(XrkSurfaces) change) =>
+      theme.copyWith(extensions: [for (final e in theme.extensions.values) e is XrkSurfaces ? change(e) : e]);
 
   /// [accent] with warm, paper-toned neutrals.
   static AppAccent _paperAccent(AppAccent a) => AppAccent(
@@ -209,7 +209,7 @@ class ShareCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = this.accent ?? Theme.of(context).extension<DshSurfaces>()?.accent ?? AppAccent.mist;
+    final accent = this.accent ?? Theme.of(context).extension<XrkSurfaces>()?.accent ?? AppAccent.mist;
     final blocks = [
       for (final block in content.blocks)
         if (showQuestion || block is! ShareQuestion) block,
@@ -300,7 +300,7 @@ class _PageLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final scheme = Theme.of(context).colorScheme;
     final paper = card.template == ShareTemplate.paper;
     final background = paper ? _PaperLook.bottom : surfaces.backdropBottom;
@@ -363,7 +363,7 @@ class _FieldLayout extends StatelessWidget {
     ];
     // The glass panel is translucent: the body's clip fades into what the
     // panel roughly shows, the card glass over the page.
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final background = glass ? Color.alphaBlend(surfaces.card.fill, surfaces.backdropTop) : scheme.surface;
     final body = Padding(
       padding: const EdgeInsets.all(ShareCard.panelInset),
@@ -491,7 +491,7 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final content = card.content;
     final width = ShareCard.contentWidth(card.template);
     final children = <Widget>[];
@@ -564,7 +564,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = theme.colorScheme;
     final children = <Widget>[];
     void gap(double h) {
@@ -700,7 +700,7 @@ class _Question extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final text = question.text;
     final images = question.images;
     return Column(
@@ -777,7 +777,7 @@ class ShareCodeWell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final label = language?.trim();
     final style = AppType.mono(color: colors.codeWellFg);
     return DecoratedBox(
@@ -832,7 +832,7 @@ class _File extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final image = file.image;
     final excerpt = file.excerpt;
     final tile = Row(
@@ -918,7 +918,7 @@ class _Plugin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final description = plugin.description;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -964,7 +964,7 @@ class _Plugin extends StatelessWidget {
   }
 }
 
-/// The brand line: the 「DSH Go」 lockup with one short line under its word,
+/// The brand line: the 「XRK Go」 lockup with one short line under its word,
 /// the QR code at the right edge, the two centred on each other. A link too
 /// long to scan at the card's size ([ShareCard.qrFor]) leaves the lockup alone.
 class _Footer extends StatelessWidget {
@@ -987,7 +987,7 @@ class _Footer extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final onField = template.onField;
     final paper = template == ShareTemplate.paper;
     final ink = onField ? Colors.white : scheme.onSurface;
@@ -1027,7 +1027,7 @@ class _Footer extends StatelessWidget {
       background:
           qrBackground ??
           (template == ShareTemplate.dark
-              ? NeutralTones.forAccent(DshSurfaces.of(context).accent).mistLow
+              ? NeutralTones.forAccent(XrkSurfaces.of(context).accent).mistLow
               : Colors.white),
       quietZone: ShareCard.qrQuietZone,
       // The app's tile in the centre when the link is short enough.

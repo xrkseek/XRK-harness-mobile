@@ -15,7 +15,7 @@ class MediaImageFeedback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = dark ? Colors.white70 : DshColors.of(context).textTertiary;
+    final color = dark ? Colors.white70 : XrkColors.of(context).textTertiary;
     final loading = error == null;
     return LayoutBuilder(
       builder: (context, constraints) {

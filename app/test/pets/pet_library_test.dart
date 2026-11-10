@@ -3,8 +3,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
-import 'package:dsh_app/pets/pet_library.dart';
-import 'package:dsh_app/pets/pet_pack_validator.dart' show petArchiveByteCap;
+import 'package:xrk_app/pets/pet_library.dart';
+import 'package:xrk_app/pets/pet_pack_validator.dart' show petArchiveByteCap;
 import 'package:flutter_test/flutter_test.dart';
 
 /// A real (transparent) PNG of [w] × [h]; [data] replaces its image data

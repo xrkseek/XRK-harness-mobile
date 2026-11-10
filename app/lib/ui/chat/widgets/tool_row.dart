@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
@@ -11,7 +11,7 @@ import '../../common/fluid_bits.dart';
 import '../../common/overscroll_forwarder.dart';
 import '../../common/smooth_size.dart';
 import '../../common/tool_glyph.dart';
-import '../../plugins/view/plugin_view.dart' show DshUiParsed, PluginToolCard;
+import '../../plugins/view/plugin_view.dart' show XrkUiParsed, PluginToolCard;
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import '../render/ansi_text.dart';
@@ -73,7 +73,7 @@ class ToolRow extends StatefulWidget {
   final ToolChatItem item;
   final ApprovalResponder onRespond;
 
-  /// 带原生卡片(`meta["dsh-go/view"]`)时卡片画在哪,见 [ToolCardPlacement]。
+  /// 带原生卡片(`meta["xrk-mobile/view"]`)时卡片画在哪,见 [ToolCardPlacement]。
   /// 不带卡片的调用不受影响。
   final ToolCardPlacement card;
 
@@ -100,7 +100,7 @@ class _ToolRowState extends State<ToolRow> {
   ToolView get view => _view = ToolView.of(widget.item, _view);
 
   bool _expandedFor(ToolView v) =>
-      _toggled ?? (widget.card == ToolCardPlacement.inline && (v.pluginView is DshUiParsed || v.media != null));
+      _toggled ?? (widget.card == ToolCardPlacement.inline && (v.pluginView is XrkUiParsed || v.media != null));
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +114,7 @@ class _ToolRowState extends State<ToolRow> {
         );
       }
       return switch (v.pluginView) {
-        final DshUiParsed parse => Padding(
+        final XrkUiParsed parse => Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: PluginToolCard(parse: parse, fallback: const SizedBox.shrink(), details: false),
         ),
@@ -137,7 +137,7 @@ class _ToolRowState extends State<ToolRow> {
           expanded: expanded,
           opens: child != null,
           // 卡片正摊开在下面(标题就在卡片上):行里照旧写参数摘要。
-          titled: !(expanded && widget.card == ToolCardPlacement.inline && v.pluginView is DshUiParsed),
+          titled: !(expanded && widget.card == ToolCardPlacement.inline && v.pluginView is XrkUiParsed),
           onTap: () {
             if (child != null && opener!(child)) return;
             setState(() => _toggled = !expanded);
@@ -150,7 +150,7 @@ class _ToolRowState extends State<ToolRow> {
             child: switch (v.pluginView) {
               // 生成的图片 / 视频:媒体卡(折进过程里的那一行不画,卡片在外面)。
               _ when v.media != null && widget.card == ToolCardPlacement.inline => MediaCard(meta: v.media!),
-              // 插件工具带了原生卡片(meta["dsh-go/view"]);折进过程里的
+              // 插件工具带了原生卡片(meta["xrk-mobile/view"]);折进过程里的
               // 那一行不再画卡片(卡片在外面)。
               final parse? when widget.card == ToolCardPlacement.inline => PluginToolCard(
                 parse: parse,
@@ -202,7 +202,7 @@ class _ToolHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final status = view.item.status;
     final blocked = view.sandboxBlocked;
     final failed = status == ToolStatus.failed && !blocked;
@@ -269,7 +269,7 @@ class _LockGlyph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg) = DshColors.of(context).tool(ToolTone.neutral);
+    final (bg, fg) = XrkColors.of(context).tool(ToolTone.neutral);
     const size = StreamRow.lead;
     return SizedBox.square(
       dimension: size,
@@ -325,7 +325,7 @@ class _FluidTrailState extends State<_FluidTrail> {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final kind = _trailKind(widget.view, widget.autoAllowing);
     final Widget child = switch (kind) {
       'spinner' => QuietArc(key: const ValueKey('spinner'), color: dsh.textTertiary),
@@ -366,7 +366,7 @@ class _StatusTrail extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final label = theme.textTheme.labelSmall?.copyWith(fontSize: 12);
 
     switch (view.item.status) {
@@ -404,7 +404,7 @@ class ToolDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final item = view.item;
     final monoStyle = AppType.monoSmall(color: dsh.codeWellFg);
 
@@ -685,7 +685,7 @@ class _ToolGroupState extends State<ToolGroup> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final tools = widget.tools;
     final active = tools.where(_active).toList();
     final shown = tools.where((tool) => _liveKeys.contains(tool.key) || _active(tool)).toList();

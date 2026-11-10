@@ -39,8 +39,8 @@ class DiscardGuard extends StatefulWidget {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(context.l10n.botsKeepEditing)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(context.l10n.botsDiscard),

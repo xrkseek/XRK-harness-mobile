@@ -1,14 +1,14 @@
-import 'package:dsh_app/ui/common/capsule_chip.dart';
-import 'package:dsh_app/ui/common/status_chip.dart';
-import 'package:dsh_app/ui/common/streaming_cursor.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/common/capsule_chip.dart';
+import 'package:xrk_app/ui/common/status_chip.dart';
+import 'package:xrk_app/ui/common/streaming_cursor.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   for (final theme in [buildLightTheme(), buildDarkTheme()]) {
     final scheme = theme.colorScheme;
-    final surfaces = theme.extension<DshSurfaces>()!;
+    final surfaces = theme.extension<XrkSurfaces>()!;
     // An opaque card as it sits on the page, and the opaque sheet.
     final card = Color.alphaBlend(surfaces.card.fill, surfaces.backdropTop);
     final sheet = surfaces.sheet.fallbackFill;

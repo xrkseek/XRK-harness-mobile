@@ -4,8 +4,8 @@
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/ui/common/third_party_licenses.dart';
-import 'package:dsh_app/ui/settings/font_licenses.dart';
+import 'package:xrk_app/ui/common/third_party_licenses.dart';
+import 'package:xrk_app/ui/settings/font_licenses.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -13,10 +13,10 @@ import 'package:flutter_test/flutter_test.dart';
 const _expected = <String, String>{
   'PiPilot': 'Copyright (c) 2026 CikeSeven',
   'Unicode Character Database (15.0.0)': 'Copyright © 1991-2026 Unicode, Inc.',
-  'DeepSeek Harness': 'Copyright (c) 2026 DeepSeek',
+  'XRK-Harness': 'Copyright (c) 2026 DeepSeek',
   'Phase': 'Copyright (c) 2026 CikeSeven',
   'DS Bot': 'Copyright 2026 Fei2411 and the DS Bot contributors',
-  'ds-harness-remote': 'Copyright (c) 2026 DSH Remote contributors',
+  'xrk-remote': 'Copyright (c) 2026 XRK Remote contributors',
   'DSHA': 'Copyright (c) 2026 qiannianhuanxiang',
   'Shizuku-API': 'Copyright (c) 2021 RikkaW',
   'libadb-android': 'Copyright 2021 Muntashir Al-Islam',
@@ -91,8 +91,8 @@ void main() {
   test('each entry carries its own licence text', () {
     for (final package in [
       'PiPilot',
-      'DeepSeek Harness',
-      'ds-harness-remote',
+      'XRK-Harness',
+      'xrk-remote',
       'DSHA',
       'Shizuku-API',
       'Phosphor Icons',

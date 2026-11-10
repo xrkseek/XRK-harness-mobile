@@ -5,14 +5,14 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/schedule_editor_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/features/agent_presets_page.dart';
-import 'package:dsh_app/ui/features/preset_editor/preset_editor_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/schedule_editor_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/features/agent_presets_page.dart';
+import 'package:xrk_app/ui/features/preset_editor/preset_editor_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -63,7 +63,7 @@ const _reviewBundle = {
   'optional': false,
   'removable': true,
   'rows': [
-    {'rowId': 'preset-review', 'moduleName': '@deepseek-ai/dsh-agent-preset'},
+    {'rowId': 'preset-review', 'moduleName': '@xrkseek/harness-cli-agent-preset'},
   ],
   'overrides': <Object?>[],
 };
@@ -72,13 +72,13 @@ void main() {
   setUpAll(loadTestFonts);
 
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
   late _Sessions sessions;
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     sessions = _Sessions();
     carrier.handlers['agentPresets/list'] = (_) => {
       'presets': [
@@ -132,7 +132,7 @@ void main() {
 
   for (final description in <String?>['Saved custom preset', null]) {
     testWidgets('loading diagnostic is visible with description=$description', (tester) async {
-      const broken = 'Cannot resolve @deepseek-ai/dsh-tool-subagent-control/list-agents';
+      const broken = 'Cannot resolve @xrkseek/harness-cli-tool-subagent-control/list-agents';
       carrier.handlers['agentPresets/list'] = (_) => {
         'presets': [
           {'id': 'review', 'name': 'Broken preset', 'description': description, 'broken': broken},
@@ -195,7 +195,7 @@ void main() {
     expect(
       text,
       contains(
-        '          - id: tool-web\n            name: \'@deepseek-ai/dsh-tool-web\'\n            disabled: true\n',
+        '          - id: tool-web\n            name: \'@xrkseek/harness-cli-tool-web\'\n            disabled: true\n',
       ),
     );
     expect(text, contains('            prefix: "你是代码审查员，只读不改。"'));

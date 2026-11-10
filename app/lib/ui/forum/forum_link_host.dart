@@ -1,9 +1,9 @@
 // The forum's app links, registered for as long as the home shell is up (so a
 // sign-in that returns after Android killed the app still lands):
 //
-//   dshgo://forum/auth?payload=…   Discourse's User API Key redirect
-//   dshgo://forum/t/<id>[/<n>]     a topic (and post) in the app
-//   dshgo://forum                  the forum's home
+//   xrkharness://forum/auth?payload=…   Discourse's User API Key redirect
+//   xrkharness://forum/t/<id>[/<n>]     a topic (and post) in the app
+//   xrkharness://forum                  the forum's home
 
 import 'dart:async';
 
@@ -69,7 +69,7 @@ class _ForumLinkHostState extends ConsumerState<ForumLinkHost> {
   }
 }
 
-/// The page for a `dshgo://forum/…` link; null for paths it doesn't know.
+/// The page for a `xrkharness://forum/…` link; null for paths it doesn't know.
 Route<void>? forumRouteFor(Uri uri) {
   final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
   if (segments.isEmpty) return ForumHomePage.route();

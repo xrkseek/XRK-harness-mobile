@@ -3,10 +3,10 @@
 // it is listed — its detail sheet, the inventory, 设置 › 引擎参数 › 插件, the
 // settings search. A plugin is a row of a bundle the person chose —
 // installed from the market or a local path, or an official optional bundle
-// switched on ([PluginConfigScope]); DSH's core and the App's own rows never
+// switched on ([PluginConfigScope]); XRK's core and the App's own rows never
 // are, and an entry nobody recognises isn't either. A plugin without fields
 // gets no entry, never an empty page. Where the Host reads forms one entry
-// at a time (the dsh-go bridge), its own list says which entries can be
+// at a time (the xrk-mobile bridge), its own list says which entries can be
 // configured until a form is read, and (bridge R7) which ones an overlay
 // fixes.
 //
@@ -25,7 +25,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show LocalizedText, PluginBundle, PluginBundleRow;
+import 'package:xrk_client/xrk_client.dart' show LocalizedText, PluginBundle, PluginBundleRow;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/l10n.dart';
@@ -150,7 +150,7 @@ String pluginConfigIdName(String ns, {L10n? l10n}) =>
 
 /// The app's own name for an official entry: a small table for the
 /// optional bundles' rows that have no title of their own, only their
-/// package's name (`@deepseek-ai/dsh-experimental-translator`,
+/// package's name (`@xrkseek/harness-cli-experimental-translator`,
 /// `workflow-ptc`) or one their bundle shares; then the engine namespaces
 /// the app already names (`plugin-market`, `cot-translation`, …).
 String? _appName(String ns, L10n l) =>
@@ -234,7 +234,7 @@ String? _appName(String ns, L10n l) =>
 }
 
 /// [title] is only the row's package or id (what a plugin without a title
-/// of its own shows): `@deepseek-ai/dsh-tool-session-query`, `dsh-media`,
+/// of its own shows): `@xrkseek/harness-cli-tool-session-query`, `xrk-media`,
 /// `workflow-ptc`.
 bool _onlyPackage(String title, PluginBundleRow row) {
   final t = title.trim().toLowerCase();

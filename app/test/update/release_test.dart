@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:dsh_app/update/release.dart';
-import 'package:dsh_app/update/version.dart';
+import 'package:xrk_app/update/release.dart';
+import 'package:xrk_app/update/version.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
@@ -13,25 +13,25 @@ void main() {
     test('version, notes, page, date', () {
       expect(release.version.name, '1.2.0');
       expect(release.tag, 'v1.2.0');
-      expect(release.title, 'DSH 1.2.0');
+      expect(release.title, 'XRK 1.2.0');
       expect(release.notes, startsWith('## 新功能\n\n- 应用内更新'));
       expect(release.notes, isNot(contains('\r')));
       expect(release.publishedAt, DateTime.utc(2026, 11, 1, 8));
-      expect(release.pageUrl.toString(), 'https://github.com/ccch1mneyyy/dsh-go/releases/tag/v1.2.0');
+      expect(release.pageUrl.toString(), 'https://github.com/xrkseek/XRK-harness-mobile/releases/tag/v1.2.0');
       expect(release.checksumsUrl.toString(), endsWith('/v1.2.0/SHA256SUMS'));
     });
 
     test('picks the APK for each flavor; digest becomes the checksum', () {
       final arm = release.apkFor(ApkFlavor.arm64)!;
-      expect(arm.name, 'dsh-go-1.2.0-arm64.apk');
+      expect(arm.name, 'xrk-harness-1.2.0-arm64.apk');
       expect(arm.size, 180107933);
       expect(arm.sha256, '3a8498bcf7d895bac5c9f2f02829c9ec7064cd8bc7ef9f1792f28277d44839f2');
       expect(
         arm.url.toString(),
-        'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk',
+        'https://github.com/xrkseek/XRK-harness-mobile/releases/download/v1.2.0/xrk-harness-1.2.0-arm64.apk',
       );
       final x64 = release.apkFor(ApkFlavor.x64)!;
-      expect(x64.name, 'dsh-go-1.2.0-x64.apk');
+      expect(x64.name, 'xrk-harness-1.2.0-x64.apk');
       expect(x64.sha256, isNull, reason: 'no digest: resolved from SHA256SUMS at download time');
       expect(release.apkFor(null), isNull);
       // update.json and SHA256SUMS are not APKs.
@@ -66,7 +66,7 @@ void main() {
       final arm = release.apkFor(ApkFlavor.arm64)!;
       expect(
         arm.url.toString(),
-        'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk',
+        'https://github.com/xrkseek/XRK-harness-mobile/releases/download/v1.2.0/xrk-harness-1.2.0-arm64.apk',
       );
       expect(arm.sha256, hasLength(64));
       expect(arm.size, 14);
@@ -84,7 +84,7 @@ void main() {
       expect(release.tag, 'v1.3.0');
       expect(release.apkFor(ApkFlavor.arm64)!.url.toString(), 'https://update.example.com/dsh/files/a.apk');
       expect(release.apkFor(ApkFlavor.arm64)!.sha256, 'a' * 64);
-      expect(release.apkFor(ApkFlavor.x64)!.name, 'dsh-go-1.3.0-x64.apk');
+      expect(release.apkFor(ApkFlavor.x64)!.name, 'xrk-harness-1.3.0-x64.apk');
       expect(release.apkFor(ApkFlavor.x64)!.url.host, 'cdn.example.com');
       expect(release.apks, hasLength(2));
     });
@@ -125,8 +125,8 @@ void main() {
   group('names and checksums', () {
     test('asset name follows the convention, without the build number', () {
       final version = AppVersion.tryParse('1.3.0-beta.2+40')!;
-      expect(apkAssetName(version, ApkFlavor.arm64), 'dsh-go-1.3.0-beta.2-arm64.apk');
-      expect(apkAssetName(version, ApkFlavor.x64), 'dsh-go-1.3.0-beta.2-x64.apk');
+      expect(apkAssetName(version, ApkFlavor.arm64), 'xrk-harness-1.3.0-beta.2-arm64.apk');
+      expect(apkAssetName(version, ApkFlavor.x64), 'xrk-harness-1.3.0-beta.2-x64.apk');
     });
 
     test('flavor from appFlavor or the native ABI', () {
@@ -141,11 +141,11 @@ void main() {
 
     test('SHA256SUMS in text and binary mode; digest prefixes', () {
       final sums = parseSha256Sums(
-        '${'A' * 64}  dsh-go-1.2.0-arm64.apk\n'
-        '${'b' * 64} *dsh-go-1.2.0-x64.apk\r\n'
+        '${'A' * 64}  xrk-harness-1.2.0-arm64.apk\n'
+        '${'b' * 64} *xrk-harness-1.2.0-x64.apk\r\n'
         'garbage line\n',
       );
-      expect(sums, {'dsh-go-1.2.0-arm64.apk': 'a' * 64, 'dsh-go-1.2.0-x64.apk': 'b' * 64});
+      expect(sums, {'xrk-harness-1.2.0-arm64.apk': 'a' * 64, 'xrk-harness-1.2.0-x64.apk': 'b' * 64});
       expect(normalizeSha256('sha256:${'C' * 64}'), 'c' * 64);
       expect(normalizeSha256('sha1:abc'), isNull);
       expect(normalizeSha256(null), isNull);

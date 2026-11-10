@@ -2,14 +2,14 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/chat/chat_list.dart';
-import 'package:dsh_app/ui/chat/chat_rows.dart';
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/chat/widgets/assistant_message.dart';
-import 'package:dsh_app/ui/chat/widgets/turn_process.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/chat/chat_list.dart';
+import 'package:xrk_app/ui/chat/chat_rows.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/chat/widgets/assistant_message.dart';
+import 'package:xrk_app/ui/chat/widgets/turn_process.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +25,7 @@ class _StreamMux extends DshMux {
   Stream<DshConnectionState> get states => connection.stream;
 }
 
-class _StreamClient extends DshClient {
+class _StreamClient extends XrkClient {
   _StreamClient() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   final events = StreamController<DshEvent>();
   late final _fakeMux = _StreamMux(carrier);

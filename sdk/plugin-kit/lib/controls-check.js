@@ -1,8 +1,8 @@
-// Twin of dsh_ui_plugin_controls_model.dart. Keep diagnostics and budgets aligned.
+// Twin of xrk_ui_plugin_controls_model.dart. Keep diagnostics and budgets aligned.
 export const INPUT_TYPES = Object.freeze(['textField', 'number', 'stepper', 'toggle', 'slider', 'select', 'segmented', 'chips', 'date', 'time', 'rating'])
 export const CONTROL_TYPES = Object.freeze([...INPUT_TYPES, 'form', 'tabs', 'collapsible', 'accordion', 'carousel', 'timeline', 'grid', 'badge', 'tag', 'avatar', 'codeBlock', 'divider', 'spacer', 'emptyState', 'gallery'])
 export const INPUT_LIMITS = Object.freeze({ fields: 32, options: 24, sections: 8, timeline: 24, textLength: 2000, textLines: 8, columns: 4, codeLength: 8000, valueBytes: 4096 })
-/** Pictures in a gallery (panel, tool card) and points in a metric's trend (DshUiControlLimits). */
+/** Pictures in a gallery (panel, tool card) and points in a metric's trend (XrkUiControlLimits). */
 export const FIGURE_LIMITS = Object.freeze({ gallery: 24, galleryCard: 8, trendPoints: 30 })
 const PATTERNS = ['email', 'integer', 'decimal', 'alphanumeric', 'slug']
 const isMap = (v) => v !== null && typeof v === 'object' && !Array.isArray(v)

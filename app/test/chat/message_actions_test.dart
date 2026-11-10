@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/draft_store.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/common/segmented_pill.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsTile;
-import 'package:dsh_app/ui/share/share_panel.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/draft_store.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/common/segmented_pill.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart' show SettingsTile;
+import 'package:xrk_app/ui/share/share_panel.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,7 +33,7 @@ class _Carrier extends DshCarrier {
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
     final request = (args['request'] as Map).cast<String, Object?>();
     calls.add((endpoint, request));
-    return handlers[endpoint]?.call(request) ?? const RpcError(DshRemoteException('gateway/not-found', 'missing'));
+    return handlers[endpoint]?.call(request) ?? const RpcError(XrkRemoteException('gateway/not-found', 'missing'));
   }
 
   @override
@@ -46,7 +46,7 @@ class _Carrier extends DshCarrier {
   Map<String, Object?> last(String endpoint) => calls.lastWhere((c) => c.$1 == endpoint).$2;
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client(this.host) : super.withCarrier(host);
 
   final _Carrier host;
@@ -85,7 +85,7 @@ Map<String, Object?> _reply(int seq, String text, {int turn = 1}) => _wire(seq, 
   },
 });
 
-/// Two finished turns as DSH 0.2.1 writes them.
+/// Two finished turns as XRK 0.2.1 writes them.
 final _log = [
   _wire(0, 'permission/preset'),
   _wire(1, 'sandbox/mode'),
@@ -262,7 +262,7 @@ void main() {
       expect(carrier.endpoints, isNot(contains('session/fork')));
 
       carrier.handlers['session/fork'] = (_) =>
-          const RpcError(DshRemoteException('session/fork-unavailable', 'event 2 is gone'));
+          const RpcError(XrkRemoteException('session/fork-unavailable', 'event 2 is gone'));
       expect(await chat().forkBeforePrompt(prompt(8)), isNull);
       expect(state().error, '分叉失败：这里不能分叉');
     });
@@ -270,7 +270,7 @@ void main() {
   });
 
   group('reply actions', () {
-    testWidgets('the row: copy, and branch when DSH allows; no rating', (tester) async {
+    testWidgets('the row: copy, and branch when XRK allows; no rating', (tester) async {
       final platform = _platform(tester);
       final harness = ChatHarness(session: 's1', states: {'s1': _conversation()});
       await _pump(tester, harness);

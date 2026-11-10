@@ -4,9 +4,9 @@ DS Bot is a plugin on the host. Each Bot has its own role, chat and memory. Open
 
 ## Mobile support
 
-**DS Bot isn't on mobile yet** means this host's DS Bot has no usable mobile interface. Tap **Open in DSH Web** to use it there for now. After the plugin is updated and restarted on the host, tap **Retry** to check again. This message doesn't mean your Bots or group chats have been deleted.
+**DS Bot isn't on mobile yet** means this host's DS Bot has no usable mobile interface. Tap **Open in XRK Web** to use it there for now. After the plugin is updated and restarted on the host, tap **Retry** to check again. This message doesn't mean your Bots or group chats have been deleted.
 
-If DS Bot isn't detected, the page offers installation or a command to run on the computer. Bots aren't available over DSH Remote; connect to that computer through SSH instead. For the web interface, open DSH Web on the computer.
+If DS Bot isn't detected, the page offers installation or a command to run on the computer. Bots aren't available over XRK Remote; connect to that computer through SSH instead. For the web interface, open XRK Web on the computer.
 
 ## Working directory
 

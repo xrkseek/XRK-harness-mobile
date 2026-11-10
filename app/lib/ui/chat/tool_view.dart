@@ -1,26 +1,26 @@
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../l10n/l10n.dart';
 import '../common/tool_glyph.dart';
-import 'dsh_ui/dsh_ui_model.dart' show DshUiParse, DshUiParsed;
-import 'dsh_ui/dsh_ui_plugin.dart';
+import 'xrk_ui/xrk_ui_model.dart' show XrkUiParse, XrkUiParsed;
+import 'xrk_ui/xrk_ui_plugin.dart';
 import '../../state/sessions_state.dart' show localWorkspaceDir;
 import 'render/code_block.dart' show languageForPath;
 import 'render/diff_view.dart';
 
-/// 插件工具的原生卡片(结果 meta 里的 `dsh-go/view`,见
+/// 插件工具的原生卡片(结果 meta 里的 `xrk-mobile/view`,见
 /// `docs/design/native-plugins-views.md` §8):null = 没有;
-/// `DshUiInvalid` = 有但画不了。只在成功的调用上读;解析按 meta 对象缓存。
-DshUiParse? toolCardParse(ToolChatItem item) {
+/// `XrkUiInvalid` = 有但画不了。只在成功的调用上读;解析按 meta 对象缓存。
+XrkUiParse? toolCardParse(ToolChatItem item) {
   if (item.status != ToolStatus.succeeded) return null;
   final meta = item.meta;
   if (meta is! Map || !meta.containsKey(toolCardViewKey)) return null;
   return parsePluginView(meta[toolCardViewKey], budget: PluginViewBudget.toolCard);
 }
 
-/// 生成的图片 / 视频(结果 meta 里的 `dsh-go/media`,见
+/// 生成的图片 / 视频(结果 meta 里的 `xrk-mobile/media`,见
 /// `docs/design/media-generation.md` §2.5):null = 没有。任何状态都读(视频
 /// 先回一张「生成中」,失败也带原因);解析按 meta 对象缓存。
 MediaMeta? toolMedia(ToolChatItem item) {
@@ -36,7 +36,7 @@ MediaMeta? toolMedia(ToolChatItem item) {
 final _media = Expando<(MediaMeta?,)>('media');
 
 /// 这次调用带了一张画得出来的原生卡片(插件卡片,或生成的媒体卡)。
-bool hasToolCard(ToolChatItem item) => toolCardParse(item) is DshUiParsed || toolMedia(item) != null;
+bool hasToolCard(ToolChatItem item) => toolCardParse(item) is XrkUiParsed || toolMedia(item) != null;
 
 /// 带原生卡片的工具调用,卡片画在哪(`ToolCallRow.card`)。
 enum ToolCardPlacement {
@@ -50,7 +50,7 @@ enum ToolCardPlacement {
   rowOnly,
 }
 
-/// 本机没有沙箱后端时,DSH 默认 `workspace-write` 预设下第一次 bash 会被拒,
+/// 本机没有沙箱后端时,XRK 默认 `workspace-write` 预设下第一次 bash 会被拒,
 /// 模型随后带 `danger-full-access` 重试并触发审批。这次失败不是用户的错,
 /// 工具行要把它显示成中性的"需要授权",而不是红色错误。
 const _sandboxUnavailableMarker = 'no sandbox backend is usable';
@@ -174,14 +174,14 @@ class ToolView {
   /// 插件工具的原生卡片,见 [toolCardParse]。
   /// Read through the parse cache each time: it starts over when the
   /// person's palette changes (a card that asked for `accent: "app"`).
-  DshUiParse? get pluginView => toolCardParse(item);
+  XrkUiParse? get pluginView => toolCardParse(item);
 
   /// 生成的媒体,见 [toolMedia]。
   late final MediaMeta? media = toolMedia(item);
 
   /// 原生卡片的标题:折叠行的摘要用它(卡片画不了或没写标题时为 null)。
   String? get pluginTitle => switch (pluginView) {
-    DshUiParsed(:final view) => view.title,
+    XrkUiParsed(:final view) => view.title,
     _ => null,
   };
 
@@ -291,7 +291,7 @@ class ToolView {
   /// edit / write / str_replace_editor 的行级 diff;没有可用信息时为 null。
   late final List<DiffLine>? diff = _diff();
 
-  /// 这次修改的各处 old → new 文本块(按文件顺序):优先结果 meta 里 DSH
+  /// 这次修改的各处 old → new 文本块(按文件顺序):优先结果 meta 里 XRK
   /// 算好的 hunk(带 3 行上下文),其次参数里的 old/new。null = 不是这类修改。
   late final List<({String? oldText, String newText})>? changeBlocks = _changeBlocks();
 
@@ -312,7 +312,7 @@ class ToolView {
   }
 
   /// [changeBlocks] 每一块的行级 diff,只算一次(详情和本轮改动共用)。
-  /// 纯插入时 DSH 写的 `oldText` 是 null。
+  /// 纯插入时 XRK 写的 `oldText` 是 null。
   late final List<List<DiffLine>>? blockDiffs = changeBlocks == null
       ? null
       : [for (final block in changeBlocks!) computeLineDiff(block.oldText ?? '', block.newText)];

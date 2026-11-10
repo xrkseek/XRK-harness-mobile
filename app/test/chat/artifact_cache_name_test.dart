@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -64,7 +64,7 @@ void main() {
           }
         }
       }, onError: (Object error) => serverErrors.add(error));
-      final client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
+      final client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
       const channel = MethodChannel('test/artifact-cache-name');
       final handedOff = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {

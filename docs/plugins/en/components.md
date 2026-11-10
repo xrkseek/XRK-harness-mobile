@@ -21,7 +21,7 @@ Set `v: 2` at the root for semantic font sizes, weights, rich spans and readable
 
 | Light | Dark |
 |---|---|
-| ![text, steps, callout, compare (light)](../../../app/test/chat/dsh_ui/goldens/dsh_ui_content_light.png) | ![text, steps, callout, compare (dark)](../../../app/test/chat/dsh_ui/goldens/dsh_ui_content_dark.png) |
+| ![text, steps, callout, compare (light)](../../../app/test/chat/xrk_ui/goldens/xrk_ui_content_light.png) | ![text, steps, callout, compare (dark)](../../../app/test/chat/xrk_ui/goldens/xrk_ui_content_dark.png) |
 
 ## Numbers and charts
 
@@ -33,7 +33,7 @@ Set `v: 2` at the root for semantic font sizes, weights, rich spans and readable
 
 | Light | Dark |
 |---|---|
-| ![metric, chart (light)](../../../app/test/chat/dsh_ui/goldens/dsh_ui_display_light.png) | ![metric, chart (dark)](../../../app/test/chat/dsh_ui/goldens/dsh_ui_display_dark.png) |
+| ![metric, chart (light)](../../../app/test/chat/xrk_ui/goldens/xrk_ui_display_light.png) | ![metric, chart (dark)](../../../app/test/chat/xrk_ui/goldens/xrk_ui_display_dark.png) |
 
 ## The six plugin-only components
 
@@ -138,4 +138,4 @@ Too large, or nested deeper than 64: the whole block falls back. Everything else
 
 ## View-v2 inputs and structure
 
-The 24 input and structure components, forms, two-way bindings, bounded arithmetic, scheduling and profile budgets are documented in [Inputs, forms and local state](inputs.md); the empty state and the gallery are above. The [workbench example](../../../examples/plugins/dsh-go-example-workbench/) is runnable.
+The 24 input and structure components, forms, two-way bindings, bounded arithmetic, scheduling and profile budgets are documented in [Inputs, forms and local state](inputs.md); the empty state and the gallery are above. The [workbench example](../../../examples/plugins/xrk-example-workbench/) is runnable.

@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:dsh_app/companion/companion_signals.dart';
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/notify/chat_alerts.dart';
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/companion/companion_signals.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/notify/chat_alerts.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../packages/dsh_client/test/support/companion_signal_host.dart';
+import '../../../packages/xrk_client/test/support/companion_signal_host.dart';
 
 class _Source extends DshAlertSource {
   _Source(super.client);
@@ -60,7 +60,7 @@ Map<String, Object?> _request(String id, {String session = 's'}) => {
 void main() {
   AppLocale.use(AppLocale.zhCN);
   late CompanionSignalTestHost host;
-  late DshClient client;
+  late XrkClient client;
   late _Source source;
   late HostAlertTracker tracker;
   late HostConnection connection;

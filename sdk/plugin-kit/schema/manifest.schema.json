@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://go.dshtui.com/schema/plugin-kit/v1/manifest.schema.json",
-  "title": "dsh-go native plugin manifest (package.json \"dshGo\"), protocol v1",
+  "$id": "https://xrkseek.com/schema/plugin-kit/v1/manifest.schema.json",
+  "title": "xrk-mobile native plugin manifest (package.json \"xrkGo\"), protocol v1",
   "description": "docs/design/native-plugins-protocol.md §1. Unknown keys and surfaces are ignored with a warning by the bridge, so they are allowed here; the SDK check reports them. Serialized size <= 16 KiB.",
   "type": "object",
   "required": [
@@ -15,7 +15,7 @@
     },
     "minApp": {
       "$ref": "#/$defs/semver",
-      "description": "Lowest dsh-go app version that may render this plugin natively."
+      "description": "Lowest xrk-mobile app version that may render this plugin natively."
     },
     "title": {
       "$ref": "#/$defs/text",
@@ -38,7 +38,7 @@
     },
     "assets": {
       "$ref": "#/$defs/relativePath",
-      "description": "Image directory served by GET /dsh-go/v1/assets/<pkg>/<path>."
+      "description": "Image directory served by GET /xrk-mobile/v1/assets/<pkg>/<path>."
     },
     "contributes": {
       "type": "object",

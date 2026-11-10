@@ -1,7 +1,7 @@
-// What other apps share to dsh-go through the system
+// What other apps share to xrk-mobile through the system
 // share sheet — text, photos, files. Native side:
 // android/.../share/ShareActivity.kt (the share-sheet target) and
-// share/SharePlugin.kt (MethodChannel `dsh/share`), which copies the files
+// share/SharePlugin.kt (MethodChannel `xrk/share`), which copies the files
 // into the app cache first (photos scaled like the composer's own picker).
 //
 // Where a share goes is decided in lib/ui/shell/system_entry_host.dart: a
@@ -132,7 +132,7 @@ class IncomingShare {
 /// The native bridge: a stream of shares.
 class ShareIntake extends NativeInbox<IncomingShare> {
   ShareIntake({MethodChannel? channel})
-    : super(channel ?? const MethodChannel('dsh/share'), method: 'share', parse: IncomingShare.parse);
+    : super(channel ?? const MethodChannel('xrk/share'), method: 'share', parse: IncomingShare.parse);
 
   Stream<IncomingShare> get shares => stream;
 }

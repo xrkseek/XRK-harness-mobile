@@ -1,10 +1,10 @@
-import 'package:dsh_app/state/media_generation.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_app/ui/settings/media_settings_page.dart';
-import 'package:dsh_app/update/version.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/media_generation.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_app/ui/settings/media_settings_page.dart';
+import 'package:xrk_app/update/version.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,7 +14,7 @@ import '../plugins/support/fake_plugin_host.dart';
 
 void main() {
   test('official and fallback media names; offered, installed, disabled, disconnected', () {
-    for (final name in ['@dsh-go/media', '@ccchimneyyy/dsh-media', 'dsh-media', '@example/dsh-media']) {
+    for (final name in ['@xrk-mobile/media', '@ccchimneyyy/xrk-media', 'xrk-media', '@example/xrk-media']) {
       expect(isMediaPluginName(name), isTrue);
       final installed = PluginBundle.fromJson(bundleJson(name));
       expect(mediaPluginStateOf([installed]), MediaPluginState.ready);
@@ -28,12 +28,12 @@ void main() {
   });
 
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
   setUp(() {
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     carrier.handlers['pluginManager/listBundles'] = (_) => sampleBundles;
-    carrier.handlers['pluginManager/installBundle'] = (_) => installResult(target: '@dsh-go/media');
+    carrier.handlers['pluginManager/installBundle'] = (_) => installResult(target: '@xrk-mobile/media');
   });
   tearDown(() => client.close());
 
@@ -63,7 +63,7 @@ void main() {
     expect(container.read(mediaPluginProvider), MediaPluginState.installable);
     await tester.tap(find.text('在此主机上安装'));
     await tester.pumpAndSettle();
-    expect(carrier.argsOf('pluginManager/installBundle').single['spec'], '@dsh-go/media@0.2.0');
+    expect(carrier.argsOf('pluginManager/installBundle').single['spec'], '@xrk-mobile/media@0.2.0');
   });
 
   testWidgets('media settings still offers installation when no plugin serves settings', (tester) async {
@@ -71,7 +71,7 @@ void main() {
     expect(find.byType(MediaInstallPrompt), findsOneWidget);
     await tester.tap(find.text('在此主机上安装'));
     await tester.pumpAndSettle();
-    expect(carrier.argsOf('pluginManager/installBundle').single['spec'], '@dsh-go/media@0.2.0');
+    expect(carrier.argsOf('pluginManager/installBundle').single['spec'], '@xrk-mobile/media@0.2.0');
   });
 
   testWidgets('an old app reaches the detail with a disabled install action', (tester) async {
@@ -79,12 +79,12 @@ void main() {
     await tester.tap(find.text('在此主机上安装'));
     await tester.pumpAndSettle();
     expect(find.byType(MarketPluginSheet), findsOneWidget);
-    expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, '需要 DSH Go 1.0.2 或更高版本')).onPressed, isNull);
+    expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, '需要 XRK Go 1.0.2 或更高版本')).onPressed, isNull);
     expect(carrier.argsOf('pluginManager/installBundle'), isEmpty);
   });
 
   testWidgets('a disabled installed media plugin opens management without reinstalling', (tester) async {
-    carrier.handlers['pluginManager/listBundles'] = (_) => [bundleJson('@dsh-go/media', enabled: false)];
+    carrier.handlers['pluginManager/listBundles'] = (_) => [bundleJson('@xrk-mobile/media', enabled: false)];
     await pump(tester);
     await tester.tap(find.text('在此主机上安装'));
     await tester.pumpAndSettle();

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/l10n.dart';
@@ -10,7 +10,7 @@ import 'hosts_state.dart';
 
 /// Where a slash command runs.
 enum SlashCommandKind {
-  /// A DSH command (`commands/list`), run with `commands/execute`.
+  /// A XRK command (`commands/list`), run with `commands/execute`.
   host,
 
   /// Handled by the app itself (`/new`, `/model`).
@@ -76,35 +76,35 @@ List<SlashCommand> get appSlashCommands => [
   ),
 ];
 
-/// Chinese faces for DSH's first-party commands, selected by `definitionId`
+/// Chinese faces for XRK's first-party commands, selected by `definitionId`
 /// like the official web client does (`dsh-client-ui-commands` locales), so a
 /// plugin's same-name override keeps its own copy.
 Map<String, ({String name, String label, String description, String? hint})> get _firstParty => {
-  '@deepseek-ai/dsh-command-compact': (
+  '@xrkseek/harness-cli-command-compact': (
     name: 'compact',
     label: appL10n.stateCompactLabel,
     description: appL10n.stateCommandCompactDescription,
     hint: null,
   ),
-  '@deepseek-ai/dsh-permission-presets': (
+  '@xrkseek/harness-cli-permission-presets': (
     name: 'permission',
     label: appL10n.statePermissionLabel,
     description: appL10n.stateCommandPermissionDescription,
     hint: appL10n.stateCommandPermissionHint,
   ),
-  '@deepseek-ai/dsh-plan-mode': (
+  '@xrkseek/harness-cli-plan-mode': (
     name: 'plan',
     label: appL10n.statePlanLabel,
     description: appL10n.stateCommandPlanDescription,
     hint: appL10n.stateCommandPlanHint,
   ),
-  '@deepseek-ai/dsh-command-goal': (
+  '@xrkseek/harness-cli-command-goal': (
     name: 'goal',
     label: appL10n.stateGoalLabel,
     description: appL10n.stateCommandGoalDescription,
     hint: appL10n.stateCommandGoalHint,
   ),
-  '@deepseek-ai/dsh-command-feedback': (
+  '@xrkseek/harness-cli-command-feedback': (
     name: 'feedback',
     label: appL10n.stateFeedbackLabel,
     description: appL10n.stateCommandFeedbackDescription,

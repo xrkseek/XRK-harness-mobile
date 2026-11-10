@@ -6,13 +6,13 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/share_code/conversation_share.dart';
-import 'package:dsh_app/state/compose_inbox.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/replay/continue_chat.dart';
-import 'package:dsh_app/ui/replay/replay_page.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart' show GlassIconButton;
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/conversation_share.dart';
+import 'package:xrk_app/state/compose_inbox.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/replay/continue_chat.dart';
+import 'package:xrk_app/ui/replay/replay_page.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart' show GlassIconButton;
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;

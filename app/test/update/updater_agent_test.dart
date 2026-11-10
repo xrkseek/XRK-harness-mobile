@@ -5,11 +5,11 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/state/update_state.dart';
-import 'package:dsh_app/update/checker.dart';
-import 'package:dsh_app/update/installer.dart';
-import 'package:dsh_app/update/update_config.dart';
-import 'package:dsh_app/update/update_http.dart';
+import 'package:xrk_app/state/update_state.dart';
+import 'package:xrk_app/update/checker.dart';
+import 'package:xrk_app/update/installer.dart';
+import 'package:xrk_app/update/update_config.dart';
+import 'package:xrk_app/update/update_http.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'support.dart';
 
 const _token = 'dshc_0123456789abcdefghijklmnopqrstuvwxyzABCDEFG';
-const _feed = 'https://go.dshtui.com/beta/update.json';
+const _feed = 'https://xrkseek.com/beta/update.json';
 const _agent = 'dsh-app-updater/0.9.9+10301000 (arm64-v8a)';
 
 /// The share host's reading of it (services/share-worker/src/stats.ts).

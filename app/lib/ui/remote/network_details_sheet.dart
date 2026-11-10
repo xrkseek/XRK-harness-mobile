@@ -58,7 +58,7 @@ class _RemoteNetworkDetailsSheetState extends ConsumerState<RemoteNetworkDetails
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final status = ref.watch(hostLinkStatusProvider(widget.host)).value ?? HostLinkStatus.idle;
     final name = ref.watch(hostNameProvider(widget.host)) ?? l10n.commonRemoteHost;
     final relay = widget.host.kind == HostKind.relay;
@@ -97,7 +97,7 @@ class _RemoteNetworkDetailsSheetState extends ConsumerState<RemoteNetworkDetails
             SheetGroup(
               children: [
                 _NetworkValue(label: l10n.remoteHost, value: name),
-                _NetworkValue(label: l10n.hostDetailsConnectionType, value: relay ? 'DSH Remote' : 'SSH'),
+                _NetworkValue(label: l10n.hostDetailsConnectionType, value: relay ? 'XRK Remote' : 'SSH'),
                 _NetworkValue(label: l10n.commonStatus, value: status.summary),
                 _NetworkValue(
                   label: l10n.remoteNetworkCurrentPath,
@@ -166,7 +166,7 @@ class _NetworkValue extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Text(label, style: TextStyle(color: DshColors.of(context).textTertiary)),
+          child: Text(label, style: TextStyle(color: XrkColors.of(context).textTertiary)),
         ),
         const SizedBox(width: 16),
         Expanded(child: Text(value, textAlign: TextAlign.end)),

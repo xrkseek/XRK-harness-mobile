@@ -1,6 +1,6 @@
 // The window classes and the column plan of the home
-// screen on tablets and foldables. Geometry follows DSH Web's AppFrame
-// (`@deepseek-ai/dsh-client-ui-layout`): the right panel gives way first to
+// screen on tablets and foldables. Geometry follows XRK Web's AppFrame
+// (`@xrkseek/harness-cli-client-ui-layout`): the right panel gives way first to
 // keep the chat column wide enough, and opening it folds a sidebar that no
 // longer fits into the rail.
 
@@ -94,7 +94,7 @@ abstract final class AdaptiveMetrics {
   static const panelMax = 420.0;
   static const panelFraction = 0.3;
 
-  /// The chat column never gets narrower than a phone (DSH Web keeps 400).
+  /// The chat column never gets narrower than a phone (XRK Web keeps 400).
   static const chatMin = 400.0;
 
   /// The sidebar stays unfolded only while the chat keeps this much.

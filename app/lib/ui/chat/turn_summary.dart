@@ -1,6 +1,6 @@
 // Tool-group summaries and per-turn file changes.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../l10n/l10n.dart';
 import 'render/diff_view.dart';
@@ -139,7 +139,7 @@ ToolSummary summarizeTools(Iterable<ToolChatItem> tools) {
 
 /// 一处改动:增删 / 上下文行,和它在文件里的起始行号(知道时)。
 ///
-/// DSH 的 diff meta 不带行号,所以行号要靠同一轮里更早的 `read` 窗口或整
+/// XRK 的 diff meta 不带行号,所以行号要靠同一轮里更早的 `read` 窗口或整
 /// 文件写入对位:旧文本在已知内容里**唯一**出现才算数,对不上就不编号。
 class DiffHunk {
   const DiffHunk({required this.lines, required this.edit, this.oldStart, this.newStart});
@@ -247,7 +247,7 @@ class TurnChanges {
 /// 一组工具调用改了哪些文件,按第一次修改的顺序。
 ///
 /// 只算**成功**的 write / edit / str_replace_editor(create、str_replace、insert);
-/// diff 优先用结果 meta 里 DSH 算好的 hunk(`meta.diffs`),其次用参数里的
+/// diff 优先用结果 meta 里 XRK 算好的 hunk(`meta.diffs`),其次用参数里的
 /// old/new 文本,新建文件按全文计为新增。bash 里的 `sed -i`、重定向等写文件
 /// 的方式看不出来,不在此列。
 List<FileChange> fileChangesOf(Iterable<ToolChatItem> tools) {

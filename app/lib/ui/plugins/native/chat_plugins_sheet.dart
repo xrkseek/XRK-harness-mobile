@@ -19,7 +19,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show DshGoPanel;
+import 'package:xrk_client/xrk_client.dart' show DshGoPanel;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -57,7 +57,7 @@ abstract final class ChatPluginsMetrics {
 }
 
 /// The chat page's seven slots in page order (the header's, then the
-/// composer's): how the island stacks them (`recipes.json` `dsh-go.chat`)
+/// composer's): how the island stacks them (`recipes.json` `xrk-mobile.chat`)
 /// and how the sources line names them.
 const chatSheetSlots = [
   Slots.headerActions,
@@ -242,10 +242,10 @@ class ChatWebPluginsPane extends ConsumerWidget {
 }
 
 /// The capsule row's id for the entry (`composer_capsules.dart`).
-const chatPluginsCapsuleId = 'dsh-go:plugins';
+const chatPluginsCapsuleId = 'xrk-mobile:plugins';
 
 /// The web plugins' part: whose they are, then their island or the way to
-/// DSH Web.
+/// XRK Web.
 class _WebPlugins extends ConsumerStatefulWidget {
   const _WebPlugins({required this.web, required this.sessionId});
 
@@ -300,7 +300,7 @@ class _WebPluginsState extends ConsumerState<_WebPlugins> {
       final o = item.occupant;
       final bundle = seatBundleOf(bundles, o.package);
       final title = seatEntryTitle(o, bundle: bundle);
-      // Nothing native or on an island: the tab is the way to DSH Web.
+      // Nothing native or on an island: the tab is the way to XRK Web.
       final onWeb = item.mode == SeatMode.webLink;
       return Builder(
         key: ValueKey('chat-plugins-page|${o.package}|${o.cell}'),
@@ -332,7 +332,7 @@ class _WebPluginsState extends ConsumerState<_WebPlugins> {
       );
     }
 
-    // The ways in: one row per conversation tab, its settings, DSH Web.
+    // The ways in: one row per conversation tab, its settings, XRK Web.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -344,7 +344,7 @@ class _WebPluginsState extends ConsumerState<_WebPlugins> {
             key: const ValueKey('chat-plugins-sources'),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+            style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
           ),
         ),
         if (islandBody != null) ...[const SizedBox(height: ChatPluginsMetrics.sourcesGap), islandBody],

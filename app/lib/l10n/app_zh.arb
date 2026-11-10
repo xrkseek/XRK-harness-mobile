@@ -4676,15 +4676,20 @@
   "featuresExportRemoteHint": "经 XRK Remote 中转时拿不到日志，可以在电脑上的网页版导出",
   "featuresExportShareHint": "附在问题反馈里，或发给自己",
   "featuresExportSaveDownloads": "存到「下载」",
-  "featuresExportDownloadsHint": "存进 下载/XRK-Harness",
+  "featuresExportDownloadsHint": "存进 下载/XRK-Harness；可再用其他应用打开",
   "featuresExportContents": "含这个对话和子代理的全部记录与附件",
+  "featuresExportSavedTitle": "日志已保存",
+  "featuresExportOpenOther": "用其他应用打开",
+  "featuresExportOpenHint": "系统文件管理或解压软件；本应用不内置资源管理器",
+  "featuresExportOpenFailed": "没有能打开 ZIP 的应用，可改用分享",
+  "featuresExportOverviewHint": "打包成 ZIP，可分享或存到下载",
   "featuresSkillUseHere": "在对话里用",
   "featuresSkillUseNew": "新对话里用",
   "featuresSkillsCallHint": "输入 /技能名 调用",
   "featuresSkillsReadFailed": "没能读取技能",
   "featuresSkillsEmpty": "这个对话还没有技能",
-  "featuresSkillsEmptyHint": "放进 .dsh/skills 的技能会出现在这里",
-  "featuresSkillsSourceHint": "来自项目和 ~/.dsh 下的 skills 目录",
+  "featuresSkillsEmptyHint": "放进 .xrk/skills 的技能会出现在这里",
+  "featuresSkillsSourceHint": "来自项目和 ~/.xrk 下的 skills 目录",
   "featuresSkillUsage": "适用：{usage}",
   "@featuresSkillUsage": {
     "placeholders": {
@@ -5246,7 +5251,7 @@
   "hubTableTintFollowHint": "表头浅底，表身跟随正文",
   "hubTableTintNoneHint": "只剩网格线，最轻",
   "hubAbout": "关于 XRK Harness",
-  "hubAboutAuthor": "XRK Harness 原作者",
+  "hubAboutAuthor": "开源仓库",
   "hubAboutBilibili": "B站主页",
   "hubAboutX": "X 主页",
   "hubAboutGithub": "GitHub 主页",
@@ -5886,7 +5891,7 @@
   "petActionTargetChanged": "主机已变化，重新打开「问一句」；文字已保留",
   "petActionSendFailed": "没能发出，文字已保留，请重试",
   "petActionBusy": "这个对话正在忙，请选择「新对话」",
-  "petActionVoiceMissing": "先到 App 下载离线语音模型",
+  "petActionVoiceMissing": "手机版暂不支持语音输入，请打字",
   "petActionVoiceTitle": "语音问一句",
   "petActionVoiceReturn": "返回桌宠",
   "petActionVoiceStop": "结束录音",
@@ -5985,11 +5990,11 @@
   "phoneAppRuleDeny": "不碰",
   "phoneAppRuleConfirm": "每一步都确认",
   "phoneAppRuleNormal": "照常",
-  "phoneAppRuleDenyHint": "不读也不点，银行、支付类默认如此",
-  "phoneAppRuleConfirmHint": "可以读，点按和输入前先问你",
-  "phoneAppRuleNormalHint": "只有发送这类敏感操作先问你",
+  "phoneAppRuleDenyHint": "立即生效：不读也不点，银行、支付类默认如此",
+  "phoneAppRuleConfirmHint": "立即生效：可以读，点按和输入前先问你",
+  "phoneAppRuleNormalHint": "立即生效：只有发送这类敏感操作先问你",
   "phoneAppRulesTitle": "应用名单",
-  "phoneAppRulesSubtitle": "没列出的 App 照常处理，敏感操作仍先问你",
+  "phoneAppRulesSubtitle": "没列出的 App 照常处理，敏感操作仍先问你；改完立即生效",
   "phoneAppRulesUnavailable": "读不到应用名单",
   "phoneTryLater": "稍后再试",
   "phoneAppRulesChanged": "照常 · 你改过的",
@@ -6075,13 +6080,32 @@
   "phoneConfirmAsk": "每次都询问",
   "phoneConfirmTask": "本任务免确认",
   "phoneConfirmAlways": "始终免确认",
-  "phoneConfirmAskHint": "进新 App、发送、删除、付款前先问你",
-  "phoneConfirmTaskHint": "每个任务只问一次",
-  "phoneConfirmAlwaysHint": "从不询问，直接操作",
+  "phoneConfirmAskHint": "立即生效：进新 App、发送、删除、付款前先问你",
+  "phoneConfirmTaskHint": "立即生效：每个任务只问一次",
+  "phoneConfirmAlwaysHint": "立即生效：从不询问，直接操作",
   "phoneConfirmTitle": "确认方式",
   "phoneConfirmAlwaysTitle": "始终免确认？",
   "phoneConfirmAlwaysBody": "打开 App、点按、发送、删除都直接做，不再问你。",
   "phoneConfirmSaveFailed": "没改成，稍后再试",
+  "phoneConfirmApplied": "已改为「{mode}」，下一步起生效",
+  "@phoneConfirmApplied": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneAppRuleApplied": "「{app}」已改为「{rule}」，下一步起生效",
+  "@phoneAppRuleApplied": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      },
+      "rule": {
+        "type": "String"
+      }
+    }
+  },
   "phoneEnableFailed": "没能开启，稍后再试",
   "phoneDisableFailed": "没能关闭，稍后再试",
   "phoneEnabled": "已开启",
@@ -8348,8 +8372,8 @@
       }
     }
   },
-  "remoteErrDshMissing": "主机上没有 dsh，装好后重试，或在启动命令里填完整路径",
-  "remoteStartCommandExample": "启动命令示例：~/.nvm/versions/node/v22.0.0/bin/dsh web",
+  "remoteErrDshMissing": "主机上没有 xrkh，装好后重试，或在启动命令里填完整路径",
+  "remoteStartCommandExample": "启动命令示例：~/.nvm/versions/node/v22.0.0/bin/xrkh serve",
   "remoteErrDshStartTimeout": "远端 XRK 启动超时",
   "remoteErrDshExited": "远端 XRK 启动后立即退出",
   "remoteErrDshStart": "没能在远端启动 XRK",
@@ -8850,11 +8874,11 @@
   "remoteRelayLoginRequired": "填写服务器地址、邮箱和密码",
   "remoteErrSignIn": "没能登录",
   "remoteSelfHostedServer": "自建服务器",
-  "remoteSelfHostedSignInHelp": "用邮箱和密码登录自己部署的 liguobao/ds-harness-remote",
+  "remoteSelfHostedSignInHelp": "用邮箱和密码登录自己部署的 liguobao/xrk-remote",
   "remoteServerAddress": "服务器地址",
   "remoteEmail": "邮箱",
   "remotePassword": "密码",
-  "remoteRestoreServer": "改回默认服务器 dsh.r2049.cn",
+  "remoteRestoreServer": "改回默认服务器",
   "remoteConsole": "远程控制台",
   "remoteHostsIntro": "在手机上接着用电脑或服务器上的 XRK",
   "remoteSshHosts": "SSH 主机",
@@ -8863,7 +8887,7 @@
   "remoteSshDirect": "不经过第三方服务器",
   "remoteOtherMethods": "其他方式",
   "remoteWebConsole": "网页版远程控制台",
-  "remoteWebConsoleProvider": "dsh.r2049.cn · 第三方页面",
+  "remoteWebConsoleProvider": "第三方页面",
   "remoteActiveHost": "正在使用「{name}」",
   "@remoteActiveHost": {
     "placeholders": {
@@ -9247,7 +9271,7 @@
   },
   "remoteRelayProvider": "服务由 {project} 提供",
   "@remoteRelayProvider": {
-    "description": "Under the XRK Remote card; project is the upstream GitHub project (liguobao/ds-harness-remote), drawn as a link.",
+    "description": "Under the XRK Remote card; project is the upstream GitHub project (liguobao/xrk-remote), drawn as a link.",
     "placeholders": {
       "project": {
         "type": "String"
@@ -10178,7 +10202,7 @@
       }
     }
   },
-  "shellSkillInstallDirectory": "1. 目标目录是 `$DSH_HOME/skills/{skill}/`（没有设置 DSH_HOME 时是 `~/.dsh/skills/{skill}/`），不存在就先建。",
+  "shellSkillInstallDirectory": "1. 目标目录是 `$XRK_HOME/skills/{skill}/`（没有设置 XRK_HOME 时是 `~/.xrk/skills/{skill}/`），不存在就先建。",
   "@shellSkillInstallDirectory": {
     "placeholders": {
       "skill": {
@@ -11000,7 +11024,7 @@
     }
   },
   "stateListSeparator": "、",
-  "stateSafeRepairPrompt": "我的 XRK 正常模式出了问题（{what}）。请按「安全模式」说明排查原因，先用可逆的办法修好 web 配置，修完用 dsh-app-plugins trial 试启动验证，再告诉我改了什么。",
+  "stateSafeRepairPrompt": "我的 XRK 正常模式出了问题（{what}）。请按「安全模式」说明排查原因，先用可逆的办法修好 web 配置，修完用 xrkh plugins trial 试启动验证，再告诉我改了什么。",
   "@stateSafeRepairPrompt": {
     "placeholders": {
       "what": {
@@ -11388,7 +11412,7 @@
   "viewChartHorizontalBar": "横向柱状图",
   "viewChartLine": "折线图",
   "viewChartDonut": "环形图",
-  "viewUiResendMessage": "上一个 dsh-ui 视图无法显示：{value}。请修正后重发。",
+  "viewUiResendMessage": "上一个插件视图无法显示：{value}。请修正后重发。",
   "@viewUiResendMessage": {
     "placeholders": {
       "value": {
@@ -12299,7 +12323,7 @@
       }
     }
   },
-  "viewShareInstallCommand": "安装：dsh plugin add {value}",
+  "viewShareInstallCommand": "安装：xrkh plugin add {value}",
   "@viewShareInstallCommand": {
     "placeholders": {
       "value": {

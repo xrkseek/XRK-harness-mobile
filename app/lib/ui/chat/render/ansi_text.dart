@@ -139,7 +139,7 @@ Color? _xterm256(int n, List<Color> ansi16) {
 
 /// 带 ANSI 着色的可选中文本;按 (text, 色板) 记忆化解析结果。
 ///
-/// 只能铺在代码井([DshColors.codeWellBg])上:ANSI 色板是按井底调的对比度。
+/// 只能铺在代码井([XrkColors.codeWellBg])上:ANSI 色板是按井底调的对比度。
 class AnsiText extends StatefulWidget {
   const AnsiText({super.key, required this.text, required this.style});
 
@@ -158,7 +158,7 @@ class _AnsiTextState extends State<AnsiText> {
 
   @override
   Widget build(BuildContext context) {
-    final palette = DshColors.of(context).ansi;
+    final palette = XrkColors.of(context).ansi;
     if (_span == null ||
         _parsedText != widget.text ||
         _parsedStyle != widget.style ||

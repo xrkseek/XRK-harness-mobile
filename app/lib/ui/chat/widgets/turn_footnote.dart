@@ -1,7 +1,7 @@
 // The quiet per-turn footnote (duration, steps, cost, tokens) that opens the
 // turn's trajectory.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
@@ -45,7 +45,7 @@ class TurnFootnote extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final style = AppType.tabular(
       theme.textTheme.labelSmall!.copyWith(fontSize: 12, color: dsh.textTertiary, height: 1.3),
     );
@@ -89,7 +89,7 @@ class TurnFootnote extends StatelessWidget {
   }
 
   /// [text] ends with the notes: each in the tone its plugin asked for, the rest as it always is.
-  static Widget _noted(String text, NativeTurnNotes notes, TextStyle style, DshColors dsh) => Text.rich(
+  static Widget _noted(String text, NativeTurnNotes notes, TextStyle style, XrkColors dsh) => Text.rich(
     TextSpan(
       children: [
         TextSpan(text: text.substring(0, text.length - notes.text.length)),

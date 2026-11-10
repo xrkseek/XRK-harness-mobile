@@ -4,10 +4,10 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/plugins/seams/seat_models.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/plugins/islands/islands.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/plugins/seams/seat_models.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/plugins/islands/islands.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -248,7 +248,7 @@ void main() {
       expect(await probeRouteGuard(base), RouteGuard.unknown);
       await server.close(force: true);
       expect(await probeRouteGuard(base), RouteGuard.unknown, reason: 'nothing listening');
-      expect(seen.first, '/dsh-go/v1/inventory cookie=null');
+      expect(seen.first, '/xrk-mobile/v1/inventory cookie=null');
     });
 
     test('launch URL is the 网页版 one', () {
@@ -285,7 +285,7 @@ void main() {
         expect(island.tokens['--dsw-alias-bg-base'], 'transparent');
         expect(island.tokens['--dsw-alias-brand-primary'], cssColor(theme.colorScheme.primary));
         expect(island.tokens['--dsw-alias-label-primary'], cssColor(theme.colorScheme.onSurface));
-        expect(island.tokens['--dsw-alias-state-error-primary'], cssColor(theme.extension<DshColors>()!.danger));
+        expect(island.tokens['--dsw-alias-state-error-primary'], cssColor(theme.extension<XrkColors>()!.danger));
         for (final MapEntry(:key, :value) in island.tokens.entries) {
           expect(key, matches(RegExp(r'^--dsw-alias-[a-z0-9-]+$')));
           expect(value, matches(RegExp(r'^(transparent|#[0-9a-f]{6}([0-9a-f]{2})?)$')), reason: key);

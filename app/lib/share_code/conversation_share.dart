@@ -1,4 +1,4 @@
-// A conversation as a share code (对话文件, docs/design/share-codes.md). Not DSH's
+// A conversation as a share code (对话文件, docs/design/share-codes.md). Not XRK's
 // event log: a small, versioned, normalised schema that the app's replay page
 // and the web viewer (site/share/viewer.js) both render, with times for
 // replaying it.
@@ -148,7 +148,7 @@ sealed class ConversationEntry {
   }
 }
 
-/// A turn starts here (before its prompt, as DSH logs it); [d] is how long it
+/// A turn starts here (before its prompt, as XRK logs it); [d] is how long it
 /// ran. The entries after it, up to the next turn, are its own.
 final class TurnEntry extends ConversationEntry {
   const TurnEntry({required int t, this.d, this.end, this.steps, this.tokens}) : super(t);
@@ -341,7 +341,7 @@ final class NoticeEntry extends ConversationEntry {
   Map<String, Object?> toJson() => {'type': type, 't': t, 'kind': kind, 'text': text};
 }
 
-/// The todo list replaced (a new turn clears it, as DSH's projection does).
+/// The todo list replaced (a new turn clears it, as XRK's projection does).
 final class TodosEntry extends ConversationEntry {
   const TodosEntry({required int t, required this.items}) : super(t);
 
@@ -449,7 +449,7 @@ class ConversationShare {
   /// The model of its last reply.
   final String? model;
 
-  /// `dsh-go 1.0.0`.
+  /// `xrk-mobile 1.0.0`.
   final String? app;
 
   /// When it was exported.

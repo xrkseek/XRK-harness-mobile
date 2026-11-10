@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../launch/launch_state.dart';
-import '../../diagnostics/diagnostics_publish.dart';
 import '../../runtime/runtime_bridge.dart';
 import '../../runtime/runtime_state.dart';
 import '../../share_code/guest_fs.dart';
@@ -85,8 +83,6 @@ class RootGate extends ConsumerStatefulWidget {
 class _RootGateState extends ConsumerState<RootGate> {
   bool _decided = false;
 
-  /// Published this engine run's diagnostics snapshot (the agent reads it on demand).
-  bool _publishedDiagnostics = false;
   bool _launchReady = false;
   OnboardingStep? _step;
   bool _autoStartDone = false;
@@ -174,16 +170,6 @@ class _RootGateState extends ConsumerState<RootGate> {
     unawaited(_prefs.setSetupStep(null));
   }
 
-  /// Writes the diagnostics snapshot once per engine run, after the frame that saw it.
-  /// Widget tests have no rootfs and must not leave diagnostics timeouts behind.
-  void _publishDiagnostics() {
-    if (_publishedDiagnostics || Platform.environment.containsKey('FLUTTER_TEST')) return;
-    _publishedDiagnostics = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) unawaited(ref.read(diagnosticsPublisherProvider).publish());
-    });
-  }
-
   void _maybeAutoStart() {
     if (_autoStartDone) return;
     _autoStartDone = true;
@@ -250,24 +236,13 @@ class _RootGateState extends ConsumerState<RootGate> {
         _startEngineBeside();
       }
     });
-    // Each start of the on-device engine writes the bundled skills (dsh-go-ui,
-    // dsh-go-plugin) into its skills folder, while they are still the app's.
+    // Each start of the on-device engine writes the bundled skills (xrk-ui,
+    // xrk-plugin) into its skills folder, while they are still the app's.
     ref.listen(uiSkillAutoInstallProvider, (_, _) {});
     // The rootfs came or went: files read straight from it look again.
     ref.listen(localRuntimeProvider.select((s) => s.status.installedVersion), (prev, next) {
       if (prev != next) ref.invalidate(guestFsProvider);
     });
-    // The engine is up: write this run's diagnostics where its agent can read them
-    // (dsh-go-support does). A restart publishes the next snapshot.
-    ref.listen(localRuntimeProvider.select((s) => s.status.phase), (_, next) {
-      if (next == RuntimePhase.running) {
-        _publishDiagnostics();
-      } else {
-        _publishedDiagnostics = false;
-      }
-    });
-    if (runtime.status.phase == RuntimePhase.running) _publishDiagnostics();
-
     final Widget child;
     if (!settings.loaded || !runtime.loaded || !prefs.loaded) {
       child = const _Splash();

@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/mention_state.dart';
-import 'package:dsh_app/ui/chat/mention/mention_controller.dart';
-import 'package:dsh_app/ui/chat/mention/mention_text_controller.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/mention_state.dart';
+import 'package:xrk_app/ui/chat/mention/mention_controller.dart';
+import 'package:xrk_app/ui/chat/mention/mention_text_controller.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';

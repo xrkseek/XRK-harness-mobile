@@ -1,6 +1,6 @@
 // Portions derived from PiPilot (https://github.com/CikeSeven/pi_pilot), MIT, Copyright (c) 2026 CikeSeven. See THIRD_PARTY_NOTICES.md.
 // Local changes: chrome-tier glass with a 28 radius; a solid primary send
-// key; model picking lives in the header chip; one send action, since DSH
+// key; model picking lives in the header chip; one send action, since XRK
 // queues prompts sent mid-turn.
 
 import 'dart:async';
@@ -15,7 +15,6 @@ import '../../l10n/l10n.dart';
 import '../common/expand_reveal.dart';
 import '../common/smooth_size.dart';
 import '../pets/pet_perch.dart';
-import '../settings/voice_settings_page.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'voice/voice_controller.dart';
@@ -65,7 +64,7 @@ class Composer extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode? focusNode;
 
-  /// 已连上 DSH。没连上时可以先打字,但发不出去。
+  /// 已连上 XRK。没连上时可以先打字,但发不出去。
   final bool connected;
 
   /// 本轮正在生成:输入为空时发送键变成停止键。
@@ -104,7 +103,7 @@ class Composer extends StatefulWidget {
   /// arrows / Enter / Esc).
   final FocusOnKeyEventCallback? onKeyEvent;
 
-  /// The idle hint (「给 Chief 发消息…」 in a Bot chat); 「给 DSH 发消息…」
+  /// The idle hint (「给 Chief 发消息…」 in a Bot chat); 「给 XRK 发消息…」
   /// by default.
   final String? placeholder;
 
@@ -324,12 +323,6 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
           persist: false,
           action: message.openSettings && voice != null
               ? SnackBarAction(label: appL10n.chatGoToSettings, onPressed: () => voice.bridge.openSettings())
-              : message.change
-              ? SnackBarAction(
-                  label: appL10n.nearbyChange,
-                  onPressed: () =>
-                      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const VoiceSettingsPage())),
-                )
               : null,
         ),
       );
@@ -347,7 +340,7 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final textStyle = theme.textTheme.bodyLarge?.copyWith(fontSize: _fontSize, height: _lineHeight);
     // One line centred in the keys' 40: the padding that makes it so, at
     // the current text size (very large text just grows the row).

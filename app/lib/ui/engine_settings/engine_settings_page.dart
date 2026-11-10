@@ -71,7 +71,7 @@ const curatedNamespaces = {
   'ui-conversation',
   'session-log-deepseek',
   // 设置 › 图像与视频.
-  'dsh-media',
+  'xrk-media',
   'media',
 };
 
@@ -109,7 +109,7 @@ Widget settingsPageFor(String ns, {String? title}) => switch (ns) {
   'bash-sandbox' || 'pwsh-sandbox' => const ShellSettingsPage(),
   'web' || 'web-search-deepseek' || 'web-deepseek-api' => const WebSearchSettingsPage(),
   'ui-settings' || 'ui-chat' || 'ui-conversation' || 'session-log-deepseek' => const GeneralSettingsPage(),
-  'dsh-media' || 'media' => const MediaSettingsPage(),
+  'xrk-media' || 'media' => const MediaSettingsPage(),
   _ => PluginConfigPage(ns: ns, title: title),
 };
 

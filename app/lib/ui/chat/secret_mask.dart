@@ -1,4 +1,4 @@
-// Portions derived from DeepSeek Harness (https://github.com/deepseek-ai/deepseek-harness), MIT, Copyright (c) 2026 DeepSeek. See THIRD_PARTY_NOTICES.md.
+// Portions derived from XRK-Harness (https://github.com/deepseek-ai/deepseek-harness), MIT, Copyright (c) 2026 DeepSeek. See THIRD_PARTY_NOTICES.md.
 // Local changes: one forward pass over the whole text; Flutter rendering (an
 // inline mono chip per value, marks painted at the middle of the line).
 

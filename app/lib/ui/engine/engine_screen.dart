@@ -22,7 +22,6 @@ import '../settings/settings_widgets.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import '../web/local_web_screen.dart';
 import 'engine_status.dart';
 import 'local_uninstall.dart';
 import 'log_view.dart';
@@ -80,22 +79,16 @@ class EngineScreen extends ConsumerWidget {
     final status = state.status;
     final view = EngineStatusView.of(state);
     final settings = ref.watch(settingsProvider);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final logHeight = (MediaQuery.sizeOf(context).height * 0.42).clamp(260.0, 520.0);
     final failureCard = EngineFailureCard.visibleFor(status);
     final error = status.phase == RuntimePhase.error;
     // Nothing on this phone yet: no log to show, nothing to reset.
     final missing = status.runtimeMissing;
 
+    // Default product surface is already LocalHostShell WebView — no "open web" escape hatch.
     return AppPage(
       title: l10n.phoneEngineTitle,
-      actions: [
-        GlassIconButton(
-          icon: AppIcons.webApp,
-          tooltip: l10n.commonWeb,
-          onPressed: status.phase == RuntimePhase.running ? () => _push(context, const LocalWebScreen()) : null,
-        ),
-      ],
       hero: PageHero(
         leading: EngineRing(tone: view.tone),
         title: l10n.phoneEngineLocal,
@@ -114,7 +107,7 @@ class EngineScreen extends ConsumerWidget {
         // Leading letters keep the figures whole (a bare number would be read
         // as "number + unit").
         stats: [
-          (status.dshVersion == null ? '—' : 'v${status.dshVersion}', 'xrkh'),
+          (status.engineVersionAlias == null ? '—' : 'v${status.engineVersionAlias}', 'xrkh'),
           (status.nodeVersion == null ? '—' : 'v${status.nodeVersion}', 'Node.js'),
         ],
       ),
@@ -213,8 +206,8 @@ class EngineActions extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(context.l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(context.l10n.commonStop),
@@ -412,7 +405,7 @@ class _ResetDialogState extends State<_ResetDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return AlertDialog(
       title: Text(l10n.phoneEngineResetTitle),
       content: Column(
@@ -467,7 +460,7 @@ class _KeepOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return MergeSemantics(
       child: InkWell(
         onTap: () => onChanged(!value),

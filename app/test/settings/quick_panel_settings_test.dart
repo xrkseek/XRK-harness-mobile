@@ -3,12 +3,12 @@
 //
 //   flutter test test/settings/quick_panel_settings_test.dart
 
-import 'package:dsh_app/state/quick_panel_state.dart';
-import 'package:dsh_app/ui/settings/interface_page.dart';
-import 'package:dsh_app/ui/settings/quick_panel_items_sheet.dart';
-import 'package:dsh_app/ui/shell/sessions_drawer.dart' show DrawerDestination;
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/quick_panel_state.dart';
+import 'package:xrk_app/ui/settings/interface_page.dart';
+import 'package:xrk_app/ui/settings/quick_panel_items_sheet.dart';
+import 'package:xrk_app/ui/shell/sessions_drawer.dart' show DrawerDestination;
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,7 +23,7 @@ const _itemsRow = ValueKey('quick-panel-items');
 Future<void> _pump(WidgetTester tester) => engine.pumpPage(
   tester,
   const InterfacePage(),
-  overrides: engine.engineOverrides(DshClient.withCarrier(engine.FakeSettingsHost())),
+  overrides: engine.engineOverrides(XrkClient.withCarrier(engine.FakeSettingsHost())),
   height: 1600,
 );
 

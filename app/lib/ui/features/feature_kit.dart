@@ -21,7 +21,7 @@ class QuietSpinner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Padding(
       padding: padding,
       child: Center(

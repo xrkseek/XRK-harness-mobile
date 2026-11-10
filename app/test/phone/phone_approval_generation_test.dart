@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/phone/phone_approval.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/phone/phone_approval.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 
 class _HoldCarrier extends DshCarrier {
   _HoldCarrier(this.http);
@@ -37,7 +37,7 @@ class _HoldCarrier extends DshCarrier {
 
 void main() {
   late FakeDsh host;
-  late DshClient client;
+  late XrkClient client;
   late _HoldCarrier wire;
   const request = ApprovalRequest(eventId: 'e1', sessionId: 's1', toolName: 'bash', callId: 'c1');
   const pending = {
@@ -53,7 +53,7 @@ void main() {
     final connection = DshConnection(host.baseUri);
     await connection.login(FakeDsh.token);
     wire = _HoldCarrier(DshHttpCarrier(connection));
-    client = await DshClient.connectCarrier(wire);
+    client = await XrkClient.connectCarrier(wire);
     host.handlers[r'$events/result'] = (_) => {'ok': true};
   });
   tearDown(() async {
@@ -128,7 +128,7 @@ void main() {
       failure = error;
     }
     expect(calls().map((args) => args['clientId']), [generation.clientId]);
-    expect(failure, isA<DshRemoteException>());
+    expect(failure, isA<XrkRemoteException>());
   });
 
   test('an old accepted response does not resolve a redelivered current request', () async {

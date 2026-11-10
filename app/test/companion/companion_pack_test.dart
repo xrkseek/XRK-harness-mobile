@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/companion/companion_pack.dart';
+import 'package:xrk_app/companion/companion_pack.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _core = 'runtime/live2dcubismcore.min.js';

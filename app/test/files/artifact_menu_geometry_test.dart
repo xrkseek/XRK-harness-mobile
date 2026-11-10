@@ -1,7 +1,7 @@
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/ui/chat/widgets/artifact_card.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/ui/chat/widgets/artifact_card.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,7 +15,7 @@ class _Feed extends FakeDsBotTransport {
   @override
   Stream<DsBotSseEvent> openFeed() {
     if (failReconnect && silentReconnect) return const Stream.empty();
-    if (failReconnect) return Stream.error(const DshTransportException('synthetic SSE unavailable'));
+    if (failReconnect) return Stream.error(const XrkTransportException('synthetic SSE unavailable'));
     return super.openFeed();
   }
 }
@@ -31,7 +31,7 @@ void main() {
   for (final mode in ['connected', 'early loss', 'late loss', 'HTTP recovers', 'feed recovers', 'stopped']) {
     testWidgets('room polling $mode', (t) async {
       final fixture =
-          jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_room_poll.json').readAsStringSync()) as Map;
+          jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_room_poll.json').readAsStringSync()) as Map;
       final running = Map<String, Object?>.from(fixture['running']['value'] as Map);
       final finished = Map<String, Object?>.from(fixture['finished']['value'] as Map);
       final fake = _Feed();
@@ -40,7 +40,7 @@ void main() {
       fake.handlers['room-chat'] = (_) {
         if (failHttp) {
           failHttp = false;
-          throw const DshTransportException('synthetic HTTP unavailable');
+          throw const XrkTransportException('synthetic HTTP unavailable');
         }
         return current;
       };

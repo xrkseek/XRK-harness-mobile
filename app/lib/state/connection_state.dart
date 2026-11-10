@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/l10n.dart';
@@ -18,7 +18,7 @@ import 'provider_backend.dart';
 import 'provider_keys.dart';
 import 'settings_state.dart';
 
-/// A connected DSH host: the on-device engine, an SSH host or a relay device.
+/// A connected XRK host: the on-device engine, an SSH host or a relay device.
 class HostConnection {
   const HostConnection({
     required this.client,
@@ -30,7 +30,7 @@ class HostConnection {
     this.workingDirectory,
   });
 
-  final DshClient client;
+  final XrkClient client;
 
   /// A fixed label (tests); null builds it from [kind] and [name].
   final String? _label;
@@ -46,20 +46,20 @@ class HostConnection {
   final String? hostId;
 
   /// Default cwd for new sessions on a remote host (absolute, `~` resolved);
-  /// null lets the remote DSH pick.
+  /// null lets the remote XRK pick.
   final String? workingDirectory;
 }
 
-typedef LocalClientConnector = Future<DshClient> Function({required Uri baseUri, required String token});
+typedef LocalClientConnector = Future<XrkClient> Function({required Uri baseUri, required String token});
 
-/// [DshClient.connect]; tests swap it to decide when a connect finishes.
+/// [XrkClient.connect]; tests swap it to decide when a connect finishes.
 final localClientConnectorProvider = Provider<LocalClientConnector>(
   (ref) =>
       ({required baseUri, required token}) =>
-          DshClient.connect(baseUri: baseUri, token: token, backgroundLists: true, startMux: false),
+          XrkClient.connect(baseUri: baseUri, token: token, backgroundLists: true, startMux: false),
 );
 
-/// Connects to the local `dsh web` once the native runtime reports it running.
+/// Connects to the local `xrkh serve` once the native runtime reports it running.
 class LocalConnectionController extends AsyncNotifier<HostConnection?> {
   @override
   Future<HostConnection?> build() async {
@@ -104,7 +104,7 @@ class LocalConnectionController extends AsyncNotifier<HostConnection?> {
       ),
     );
 
-    // Keep DSH's own credential store in sync with the key saved in the app.
+    // Keep XRK's own credential store in sync with the key saved in the app.
     r.listen(settingsProvider.select((s) => s.apiKey), (prev, next) {
       if (next == prev) return;
       if (next.isNotEmpty) {
@@ -130,14 +130,14 @@ class LocalConnectionController extends AsyncNotifier<HostConnection?> {
         r.read(providerKeyVaultProvider),
       ).catchError((_) => const <String>[]),
     );
-    // An Auto default an older app saved keeps DSH's permission presets from
+    // An Auto default an older app saved keeps XRK's permission presets from
     // starting; it comes out once, with a restart.
     unawaited(clearAutoDefaultPreset(r.container));
 
     return connection;
   }
 
-  Future<void> _pushKey(DshClient client, String key) async {
+  Future<void> _pushKey(XrkClient client, String key) async {
     try {
       await client.setProviderKey(key);
     } catch (_) {
@@ -258,7 +258,7 @@ class RemoteConnectionController extends AsyncNotifier<HostConnection?> {
     if (link == null) return null;
     var name = ref.read(hostNameProvider(host));
 
-    HostConnection wrap(DshClient client) => HostConnection(
+    HostConnection wrap(XrkClient client) => HostConnection(
       client: client,
       name: name,
       isLocal: false,

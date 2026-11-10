@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@xrkseek/harness-cli": "0.2.1-rc.4",
+    "debug": "4.4.3",
+    "ms": "2.1.3",
+    "zod": "4.4.3"
+  }
+}

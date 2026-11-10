@@ -1,7 +1,7 @@
 {
-  "grammar": "dsh-go/media generation header v1",
+  "grammar": "xrk-mobile/media generation header v1",
   "spec": "docs/design/media-generation.md §4.6",
-  "base": "dsh-media M0 candidate R1 (runtime/media/dsh-media/test/fixtures/header-v1.json); every candidate case is here with the same result",
+  "base": "xrk-media M0 candidate R1 (runtime/media/xrk-media/test/fixtures/header-v1.json); every candidate case is here with the same result",
   "shape": "valid[].expected and format[].value use the candidate parser's shape: kind, prompt, aspect, n, seconds, quality (a video's resolution too), model {label, serviceId, id}; an absent key is an absent field",
   "groups": {
     "valid": "parse(text) == expected; parse(format(expected)) == expected; canonical (default true): format(expected) == text byte for byte",
@@ -9,7 +9,7 @@
     "invalid": "parse(text) fails with code",
     "format": "format(value) == text; parse(text) == value",
     "formatRejects": "format(value) fails with code",
-    "titles": "app only: a DSH fallback title split into kind and what follows the header; kind null = shown as it is"
+    "titles": "app only: a XRK fallback title split into kind and what follows the header; kind null = shown as it is"
   },
   "valid": [
     {

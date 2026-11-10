@@ -8,6 +8,6 @@ move的既有diff-basis早期预算仍按不含原首BOM的文本字节判断；
 
 显式writeText仍按调用者给定的完整内容覆盖，不继承旧文件BOM。正文中的U+FEFF、多个连续标记中除首个以外的字符，以及调用者新插入的U+FEFF均属于文本，不去重或吞掉。纯move仍是现有文本服务的两阶段发布/删除并使用原行尾规范策略，不能宣传成任意文件的逐字节copy。
 
-普通Node测试只依赖已有DSH_PREFIX（或DSH_TEST_PREFIX）、真实Cordis/LocalFileSystem和自有临时文件，符合既有CI环境；不新增缺失可执行文件的模块顶层前提。文件字节断言与无首BOM的逻辑结果断言分开，保留无BOM、显式全覆盖及失败不写的负控制。宿主测试不代表Android或PRoot/ARM验收。
+普通Node测试只依赖已有XRK_PREFIX（或XRK_TEST_PREFIX）、真实Cordis/LocalFileSystem和自有临时文件，符合既有CI环境；不新增缺失可执行文件的模块顶层前提。文件字节断言与无首BOM的逻辑结果断言分开，保留无BOM、显式全覆盖及失败不写的负控制。宿主测试不代表Android或PRoot/ARM验收。
 
 Refs W17-B，无对应公开issue。会改runtimeVersion；Android未编译，真机与真实远程模型未验收。

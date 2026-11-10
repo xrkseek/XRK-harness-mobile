@@ -42,7 +42,7 @@ abstract final class AppMotion {
   /// 环境呼吸(安装进度光晕、连接中的状态点)。
   static const breath = Duration(milliseconds: 2400);
 
-  /// 标准缓动(M3 standard,DSH Web 的 cubic-bezier(.4,0,.2,1) 同族)。
+  /// 标准缓动(M3 standard,XRK Web 的 cubic-bezier(.4,0,.2,1) 同族)。
   static const std = Easing.standard;
 
   /// 进场:快出慢停。

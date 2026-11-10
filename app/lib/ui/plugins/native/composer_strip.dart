@@ -6,7 +6,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show DshGoScope;
+import 'package:xrk_client/xrk_client.dart' show DshGoScope;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -80,7 +80,7 @@ class ComposerStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final glyph = nativeIcon(icon);
     final color = nativeToneColor(dsh, tone) ?? theme.colorScheme.onSurface;
     return Semantics(

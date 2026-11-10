@@ -4,8 +4,8 @@
 // (adj_copy_counterexample_test); nothing here depends on the time zone the
 // test runs in, so run it under several TZ values.
 
-import 'package:dsh_app/ui/chat/activity_copy.dart';
-import 'package:dsh_app/ui/chat/run_info.dart';
+import 'package:xrk_app/ui/chat/activity_copy.dart';
+import 'package:xrk_app/ui/chat/run_info.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Turn starts whose seeds do not draw the rare egg (it has its own pool).

@@ -2,7 +2,7 @@
 // picks) keeps the contrast rules of docs/design/polish-guide.md §1.1, in
 // light and dark. Mist stays byte-identical to the original Mist Glass tokens.
 
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -33,9 +33,9 @@ void main() {
     expect(light.colorScheme.surface, DshPalette.mist);
     expect(light.colorScheme.onSurface, DshPalette.ink);
     expect(dark.colorScheme.surface, DshPalette.night);
-    expect(identical(light.extension<DshColors>(), DshColors.light), isTrue);
-    expect(identical(dark.extension<DshColors>(), DshColors.dark), isTrue);
-    final s = light.extension<DshSurfaces>()!;
+    expect(identical(light.extension<XrkColors>(), XrkColors.light), isTrue);
+    expect(identical(dark.extension<XrkColors>(), XrkColors.dark), isTrue);
+    final s = light.extension<XrkSurfaces>()!;
     expect(s.backdropTop, DshPalette.mistTop);
     expect(s.glowSecondary, const Color(0xFFD5CBEB).withValues(alpha: 0.38));
     expect(s.accent, AppAccent.mist);
@@ -76,8 +76,8 @@ void main() {
       test('$name · ${brightness.name}: accent, text and glass contrast', () {
         final theme = dark ? buildDarkTheme(accent: accent) : buildLightTheme(accent: accent);
         final scheme = theme.colorScheme;
-        final s = theme.extension<DshSurfaces>()!;
-        final c = theme.extension<DshColors>()!;
+        final s = theme.extension<XrkSurfaces>()!;
+        final c = theme.extension<XrkColors>()!;
         final card = Color.alphaBlend(s.card.fill, s.backdropTop);
         final grounds = [s.backdropTop, s.backdropBottom, card, scheme.surface, scheme.surfaceContainerHighest];
 

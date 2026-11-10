@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -72,7 +72,7 @@ class _ProbeLocal extends LocalConnectionController {
 
 class _ProbeSessions extends SessionsController {
   _ProbeSessions(this.client);
-  final DshClient client;
+  final XrkClient client;
   @override
   Future<List<SessionSummary>> build() async => [session(probeSession, title: 'Pet probe')];
   @override
@@ -140,7 +140,7 @@ class _FallbackRecorder implements VoiceBridge {
 class PetActionsProbe {
   PetActionsProbe._(this.server);
   final FakeDsh server;
-  late final DshClient client;
+  late final XrkClient client;
   late final ProviderContainer container;
   late final _FallbackRecorder _recorder;
   final lines = ValueNotifier<List<Map<String, Object?>>>([]);
@@ -169,7 +169,7 @@ class PetActionsProbe {
     p._configureServer();
     final connection = DshConnection(p.server.baseUri);
     await connection.login(FakeDsh.token);
-    p.client = await DshClient.connectCarrier(DshHttpCarrier(connection));
+    p.client = await XrkClient.connectCarrier(DshHttpCarrier(connection));
     p._recorder = _FallbackRecorder(p.log);
     final remote = HostConnection(
       client: p.client,

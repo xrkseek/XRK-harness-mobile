@@ -1,9 +1,9 @@
-import 'package:dsh_app/ui/chat/render/code_block.dart';
-import 'package:dsh_app/ui/chat/widgets/stream_row.dart';
-import 'package:dsh_app/ui/chat/widgets/thinking_pill.dart';
-import 'package:dsh_app/ui/chat/widgets/tool_row.dart';
-import 'package:dsh_app/ui/common/think_glyph.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/render/code_block.dart';
+import 'package:xrk_app/ui/chat/widgets/stream_row.dart';
+import 'package:xrk_app/ui/chat/widgets/thinking_pill.dart';
+import 'package:xrk_app/ui/chat/widgets/tool_row.dart';
+import 'package:xrk_app/ui/common/think_glyph.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

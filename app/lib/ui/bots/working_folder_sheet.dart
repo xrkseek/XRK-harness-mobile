@@ -1,5 +1,5 @@
 // Host directory selection uses the existing folders/update endpoints only.
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -131,7 +131,7 @@ class _WorkingFolderSheetState extends ConsumerState<WorkingFolderSheet> {
     } catch (error) {
       if (_current) {
         setState(
-          () => _error = error is DshRemoteException && error.code == 'bot/refused'
+          () => _error = error is XrkRemoteException && error.code == 'bot/refused'
               ? context.l10n.botsFolderRefused
               : describeDsBotError(error),
         );
@@ -167,7 +167,7 @@ class _WorkingFolderSheetState extends ConsumerState<WorkingFolderSheet> {
                   SelectableText(widget.workDir ?? _defaultLabel),
                   const SizedBox(height: 12),
                   if (!current)
-                    Text(l10n.botsFolderUnavailable, style: TextStyle(color: DshColors.of(context).danger))
+                    Text(l10n.botsFolderUnavailable, style: TextStyle(color: XrkColors.of(context).danger))
                   else ...[
                     if (_loading) const Center(child: CircularProgressIndicator()),
                     if (_catalog != null) ...[
@@ -200,7 +200,7 @@ class _WorkingFolderSheetState extends ConsumerState<WorkingFolderSheet> {
                       if (_catalog!.folders.isEmpty) Text(l10n.botsFolderNoChoices),
                     ],
                     if (_error != null) ...[
-                      Text(_error!, style: TextStyle(color: DshColors.of(context).danger)),
+                      Text(_error!, style: TextStyle(color: XrkColors.of(context).danger)),
                       if (_catalog == null)
                         TextButton(onPressed: _loading ? null : _load, child: Text(l10n.commonRetry)),
                     ],

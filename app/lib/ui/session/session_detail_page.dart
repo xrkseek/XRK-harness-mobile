@@ -1,9 +1,9 @@
-// The phone counterpart of DSH Web's right-side session panels (trajectory,
+// The phone counterpart of XRK Web's right-side session panels (trajectory,
 // changes, files, progress, context, subagents) as one full-screen page with a
 // glass segmented control — and, on bigger windows, the same tabs as a sheet
 // (medium) or a column beside the chat (wide).
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -284,7 +284,7 @@ class _SessionDetailPageState extends ConsumerState<SessionDetailPage> with Tick
     }
     _syncPluginsTab(!ref.watch(sessionPluginPlanProvider(widget.sessionId)).isEmpty);
     final theme = Theme.of(context);
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final padding = MediaQuery.paddingOf(context);
     final id = widget.sessionId;
     final title = ref.watch(chatProvider(id).select((s) => s.title?.trim() ?? ''));
@@ -548,7 +548,7 @@ class SessionHero extends ConsumerWidget {
               subtitle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodyMedium?.copyWith(color: DshColors.of(context).textTertiary),
+              style: theme.textTheme.bodyMedium?.copyWith(color: XrkColors.of(context).textTertiary),
             ),
             const SizedBox(height: 12),
             Row(
@@ -731,7 +731,7 @@ class _Note extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
     child: Text(
       text,
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
     ),
   );
 }
@@ -839,7 +839,7 @@ class _TurnCardState extends State<_TurnCard> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final trace = widget.trace;
     final prompt = widget.prompt?.trim().replaceAll(RegExp(r'\s+'), ' ');
     final facts = [
@@ -1001,7 +1001,7 @@ class _ChangesTabState extends ConsumerState<ChangesTab> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final items = ref.watch(chatProvider(widget.sessionId).select((s) => s.items));
     final turns = ref.watch(chatProvider(widget.sessionId).select((s) => s.turns));
     _derive(items, turns);
@@ -1070,7 +1070,7 @@ class ProgressTab extends ConsumerWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final panels = ref.watch(sessionPanelsProvider(sessionId));
     final logged = ref.watch(chatProvider(sessionId).select((s) => s.todos));
     final todos = panels.todos ?? logged ?? const <TodoItem>[];
@@ -1172,7 +1172,7 @@ class _TodoRow extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final (IconData icon, Color color) = switch (todo.status) {
       'completed' => (AppIcons.success, dsh.success),
       'in_progress' => (AppIcons.inProgress, colors.primary),
@@ -1229,7 +1229,7 @@ class ContextTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final usage = ref.watch(sessionUsageProvider(sessionId));
     final model = ref.watch(chatProvider(sessionId).select((s) => s.model));
     final turns = ref.watch(chatProvider(sessionId).select((s) => s.turns));
@@ -1321,7 +1321,7 @@ class SubagentsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final nodes = ref.watch(subagentLineageProvider(sessionId));
     final items = ref.watch(chatProvider(sessionId).select((s) => s.items));
     final turns = ref.watch(chatProvider(sessionId).select((s) => s.turns));

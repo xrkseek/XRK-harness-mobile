@@ -17,7 +17,7 @@ const sansFamily = 'Roboto';
 
 bool _loaded = false;
 
-/// Loads the app icons (DshIcons), Material Icons, JetBrains Mono and Noto Sans
+/// Loads the app icons (XrkIcons), Material Icons, JetBrains Mono and Noto Sans
 /// CJK. Strict: a missing font fails the run rather than quietly drawing the
 /// test engine's boxes.
 Future<void> loadTestFonts() async {
@@ -41,7 +41,7 @@ Future<void> loadTestFonts() async {
   }
 
   await family('MaterialIcons', ['$material/MaterialIcons-Regular.otf']);
-  await family('DshIcons', ['assets/fonts/DshIcons.ttf']);
+  await family('XrkIcons', ['assets/fonts/XrkIcons.ttf']);
   await family('JetBrainsMono', [
     'assets/fonts/JetBrainsMono-Regular.ttf',
     'assets/fonts/JetBrainsMono-Medium.ttf',
@@ -64,7 +64,7 @@ List<String> _latinSans(String material) => [
 
 /// Linux CI uses Noto CJK TTC; Windows uses Noto Sans SC / YaHei.
 List<String> _cjkFaces() {
-  final override = Platform.environment['DSH_TEST_FONT_DIR'];
+  final override = Platform.environment['XRK_TEST_FONT_DIR'];
   if (override != null && override.isNotEmpty) {
     return [
       '$override/NotoSansCJK-Light.ttc',
@@ -86,7 +86,7 @@ List<String> _cjkFaces() {
     final path = '$win${Platform.pathSeparator}$name';
     if (File(path).existsSync()) return [path];
   }
-  throw StateError('Test font missing: Noto Sans CJK (set DSH_TEST_FONT_DIR)');
+  throw StateError('Test font missing: Noto Sans CJK (set XRK_TEST_FONT_DIR)');
 }
 
 /// [theme] with a family named on every component text style built from the

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "dsh-go plugin view v1 and v2",
-  "description": "A native view a DSH plugin hands to the dsh-go phone app: a tree of components from a fixed catalog (the dsh-ui superset), values optionally bound to the view's data model with {\"$\": \"data.path\"}. Used by tool cards (meta[\"dsh-go/view\"]), panels and the composer strip. Strict JSON. Limits JSON Schema cannot express (bytes, node count, depth, children per budget) are listed under x-dsh-go and enforced by the app, which truncates instead of rejecting except for bytes and nesting. Anything the app draws without an issue passes this schema (empty arrays are a legal 'no data yet', long labels are clipped), with three deliberate exceptions where the schema is the stricter author spec: unknown properties (the app ignores them), malformed binding paths (the app shows an em dash) and the alias spellings the app also accepts (success, warning, column, completed, a keyValue 'name'…). Spec: docs/design/native-plugins-views.md.",
+  "title": "xrk-mobile plugin view v1 and v2",
+  "description": "A native view a XRK plugin hands to the xrk-mobile phone app: a tree of components from a fixed catalog (the dsh-ui superset), values optionally bound to the view's data model with {\"$\": \"data.path\"}. Used by tool cards (meta[\"xrk-mobile/view\"]), panels and the composer strip. Strict JSON. Limits JSON Schema cannot express (bytes, node count, depth, children per budget) are listed under x-xrk-mobile and enforced by the app, which truncates instead of rejecting except for bytes and nesting. Anything the app draws without an issue passes this schema (empty arrays are a legal 'no data yet', long labels are clipped), with three deliberate exceptions where the schema is the stricter author spec: unknown properties (the app ignores them), malformed binding paths (the app shows an em dash) and the alias spellings the app also accepts (success, warning, column, completed, a keyValue 'name'…). Spec: docs/design/native-plugins-views.md.",
   "$ref": "#/$defs/root",
   "$defs": {
     "root": {
@@ -58,7 +58,7 @@
       ]
     },
     "icon": {
-      "description": "A plugin icon name: ui.json's whitelist (app/assets/skills/dsh-go-ui/schema.json) plus the native plugin names (app/lib/plugins/native/native_icons.dart). Unknown names draw a default glyph.",
+      "description": "A plugin icon name: ui.json's whitelist (app/assets/skills/xrk-ui/schema.json) plus the native plugin names (app/lib/plugins/native/native_icons.dart). Unknown names draw a default glyph.",
       "anyOf": [
         {
           "enum": [
@@ -1082,7 +1082,7 @@
       }
     }
   },
-  "x-dsh-go": {
+  "x-xrk-mobile": {
     "version": 2,
     "supportedVersions": [1, 2],
     "v2Styles": {
@@ -1157,7 +1157,7 @@
     "inputLimits": { "fields": 32, "options": 24, "sections": 8, "timeline": 24, "textLength": 2000, "textLines": 8, "columns": 4, "codeLength": 8000, "valueBytes": 4096,
       "sliderDivisions": 1000, "changeIntervalMs": 250, "queuedRequests": 120 },
     "formulaLimits": { "length": 256, "tokens": 128, "depth": 16 },
-    "metaKey": "dsh-go/view",
+    "metaKey": "xrk-mobile/view",
     "maxJsonNesting": 64,
     "budgets": {
       "toolCard": { "maxBytes": 8192, "maxNodes": 40, "maxDepth": 6, "maxChildren": 16 },

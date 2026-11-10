@@ -103,7 +103,7 @@ abstract final class DiagnosticsBundle {
         'abi': status.abi,
         'bundledVersion': status.bundledVersion,
         'installedVersion': status.installedVersion,
-        'dshVersion': status.dshVersion,
+        'engineVersion': status.engineVersionAlias,
         'nodeVersion': status.nodeVersion,
         'baseUrl': status.baseUrl,
         'error': status.error,

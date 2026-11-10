@@ -1,4 +1,4 @@
-// From a plugin's native configuration page to DSH Web, which edits the same
+// From a plugin's native configuration page to XRK Web, which edits the same
 // configuration through its own page: never while a save is reloading the
 // plugin (it would land on a plugin in the middle of its reload), held edits
 // asked about and dropped before going (kept, a later 保存 would write them
@@ -7,15 +7,15 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/plugin_config/plugin_config_memory.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/state/plugins_state.dart' show installedPluginsProvider;
-import 'package:dsh_app/state/ui_mode_state.dart';
-import 'package:dsh_app/ui/engine_settings/field_row.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_page.dart';
-import 'package:dsh_app/ui/plugins/seats/seat_links.dart' show seatWebOpenerProvider;
-import 'package:dsh_app/ui/web/dsh_web_launcher.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_memory.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/state/plugins_state.dart' show installedPluginsProvider;
+import 'package:xrk_app/state/ui_mode_state.dart';
+import 'package:xrk_app/ui/engine_settings/field_row.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_page.dart';
+import 'package:xrk_app/ui/plugins/seats/seat_links.dart' show seatWebOpenerProvider;
+import 'package:xrk_app/ui/web/dsh_web_launcher.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,10 +28,10 @@ const _web = ValueKey('plugin-config-web');
 const _primary = ValueKey('plugin-config-primary');
 const _status = ValueKey('plugin-config-status');
 
-/// The weather plugin's card on DSH Web's Plugins page.
+/// The weather plugin's card on XRK Web's Plugins page.
 const _card = ['天气', 'Weather', '@acme/dsh-weather'];
 
-/// 天气 with one more field the app can't draw (a number or a word): DSH
+/// 天气 with one more field the app can't draw (a number or a word): XRK
 /// Web edits it.
 MemoryPluginEntry _weatherWithWebField() => MemoryPluginEntry(
   ns: 'weather',
@@ -105,7 +105,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('plugin-config-web-discard')));
     await settle(tester);
     expect(opened.single.pluginItem, _card);
-    expect(_state(tester).hasDraft('weather'), isFalse, reason: 'no later 保存 over what DSH Web sets');
+    expect(_state(tester).hasDraft('weather'), isFalse, reason: 'no later 保存 over what XRK Web sets');
     expect(find.text('未保存'), findsNothing);
     expect(api.calls.where((c) => c.$1 == 'apply'), isEmpty);
   });
@@ -118,7 +118,7 @@ void main() {
     expect(opened.single.pluginItem, _card);
   });
 
-  testWidgets('while a save reloads the plugin the way to DSH Web is shut, and opens again after', (tester) async {
+  testWidgets('while a save reloads the plugin the way to XRK Web is shut, and opens again after', (tester) async {
     final api = sampleConfigApi()..gate = Completer<void>();
     final opened = await _open(tester, api);
     await _holdEdit(tester);
@@ -146,7 +146,7 @@ void main() {
     expect(opened.single.pluginItem, _card);
   });
 
-  testWidgets('a field only DSH Web edits goes the page\'s way: asks, then the plugin\'s card', (tester) async {
+  testWidgets('a field only XRK Web edits goes the page\'s way: asks, then the plugin\'s card', (tester) async {
     final api = MemoryPluginConfigApi([voiceEntry(), translatorEntry(), _weatherWithWebField()]);
     final opened = await _open(tester, api);
     final row = find.text('在网页版编辑此项');

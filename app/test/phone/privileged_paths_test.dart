@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/phone_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -235,7 +235,7 @@ void main() {
 
   test('new method arguments use only the agreed native actions', () async {
     final calls = <MethodCall>[];
-    const methods = MethodChannel('dsh/phone');
+    const methods = MethodChannel('xrk/phone');
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(methods, (call) async {
       calls.add(call);
@@ -252,7 +252,7 @@ void main() {
   });
 
   test('missing native methods fail normally instead of throwing', () async {
-    const methods = MethodChannel('dsh/phone');
+    const methods = MethodChannel('xrk/phone');
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(methods, (_) async => throw MissingPluginException());
     addTearDown(() => messenger.setMockMethodCallHandler(methods, null));

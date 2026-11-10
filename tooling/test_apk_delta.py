@@ -158,7 +158,7 @@ class ApkDeltaTest(unittest.TestCase):
             (good[:200] + bytes([good[200] ^ 1]) + good[201:], "doesn't reproduce"),
             (good[:-1], "unexpected end"),
             (good[:80] + struct.pack(">BQ", DATA, 1 << 40) + good[89:], "past its target"),
-            (b"DSHDLT02" + good[8:], "not a DSHDLT01 patch"),
+            (b"DSHDLT02" + good[8:], "not a XRKDLT01 patch"),
         ]:
             patch.write_bytes(damaged)
             with self.assertRaisesRegex(DeltaError, error):

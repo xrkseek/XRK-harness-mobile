@@ -1,4 +1,4 @@
-// 网页模式's home — the active host's official DSH Web, full screen, with the
+// 网页模式's home — the active host's official XRK Web, full screen, with the
 // native handle in its back button's seat (web_handle.dart) and the app's
 // system integration underneath:
 //
@@ -15,7 +15,7 @@
 //   the floating pet   its states and its 「宠物设置」, as on the native home
 //
 // The page reports the conversation on screen back to the app
-// (dsh_web_state.js), so the native interface, a cold start and the launcher's
+// (xrk_web_state.js), so the native interface, a cold start and the launcher's
 // recent conversations agree with it.
 
 import 'dart:async';
@@ -43,7 +43,7 @@ import '../notify/chat_alert_host.dart';
 import '../pets/pet_settings_page.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
-import 'dsh_web_launcher.dart';
+import 'xrk_web_launcher.dart';
 import 'local_web_screen.dart';
 import 'web_handle.dart';
 import 'web_target.dart';
@@ -215,7 +215,7 @@ class _PetHostState extends ConsumerState<_PetHost> {
   }
 }
 
-/// The active host has no web page the app can reach (a DSH Remote host):
+/// The active host has no web page the app can reach (a XRK Remote host):
 /// say so, with the handle's ways out at hand.
 class _NoWeb extends StatelessWidget {
   const _NoWeb({required this.reason, required this.handle});

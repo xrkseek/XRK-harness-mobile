@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/session/workspace_upload.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/session/workspace_upload.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,7 +13,7 @@ import '../chat/support/harness.dart';
 
 /// A Remote connection: workspace uploads on or off, each upload recorded and
 /// held until [release] completes when set.
-class _RemoteClient extends DshClient {
+class _RemoteClient extends XrkClient {
   _RemoteClient({this.uploads = true}) : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
 
   final bool uploads;
@@ -113,7 +113,7 @@ void main() {
 
   testWidgets('a refused upload stops the batch and says why', (tester) async {
     usePhoneView(tester);
-    final client = _RemoteClient()..error = const DshRemoteException('UPLOAD_LIMIT', 'too large', {'remote': true});
+    final client = _RemoteClient()..error = const XrkRemoteException('UPLOAD_LIMIT', 'too large', {'remote': true});
     final picker = FakePicker()..files = [_file('big.zip', 10), _file('next.txt', 1)];
     await tester.pumpWidget(_app(client, picker));
     await tester.tap(find.text('传文件到电脑'));

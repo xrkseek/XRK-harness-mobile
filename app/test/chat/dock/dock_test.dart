@@ -2,16 +2,16 @@
 // the goal bar (official ui-goal GoalBar) — what they say, the checklist that
 // opens in place, when they come and go, and the goal actions end to end.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/dock/dock_pill.dart';
-import 'package:dsh_app/ui/chat/dock/dock_stack.dart';
-import 'package:dsh_app/ui/chat/dock/goal_bar.dart';
-import 'package:dsh_app/ui/chat/dock/todo_bar.dart';
-import 'package:dsh_app/ui/chat/run_info.dart';
-import 'package:dsh_app/ui/chat/widgets/activity_strip.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/dock/dock_pill.dart';
+import 'package:xrk_app/ui/chat/dock/dock_stack.dart';
+import 'package:xrk_app/ui/chat/dock/goal_bar.dart';
+import 'package:xrk_app/ui/chat/dock/todo_bar.dart';
+import 'package:xrk_app/ui/chat/run_info.dart';
+import 'package:xrk_app/ui/chat/widgets/activity_strip.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -318,7 +318,7 @@ void main() {
       final goal = goalOf();
       final backend = FakeGoalBackend(canRead: false)
         ..current = goal
-        ..fail = const DshRemoteException(
+        ..fail = const XrkRemoteException(
           'GOAL_STALE_REVISION',
           'stale goal ref "goal-1" revision 1; current is "goal-1" revision 2',
         );

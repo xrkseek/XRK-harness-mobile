@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/account_state.dart' show accountBrowserProvider;
-import 'package:dsh_app/ui/providers/subscription_sheet.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/account_state.dart' show accountBrowserProvider;
+import 'package:xrk_app/ui/providers/subscription_sheet.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -19,7 +19,7 @@ Future<_Outcome> _observe(Future<void> future) => future.then<_Outcome>(
 class _Bridge extends FakeSubscriptionBackend {
   final answerGate = Completer<void>();
   final operations = <Future<_Outcome>>[];
-  final pollFailure = const DshTransportException('post-ACK poll failure');
+  final pollFailure = const XrkTransportException('post-ACK poll failure');
   Future<_Outcome>? pollTerminal;
   bool answerStarted = false;
 

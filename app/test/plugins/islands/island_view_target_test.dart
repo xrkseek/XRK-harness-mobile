@@ -1,5 +1,5 @@
 // A conversation view's island (island.js `then.view`, CR-7881a22), run
-// against a model of DSH Web's conversation page under node
+// against a model of XRK Web's conversation page under node
 // (test/plugins/islands/support/island_page_harness.mjs). View tabs carry
 // no ids, so a name only picks the control to press; the view counts as
 // open when the client's own record of the conversation's view
@@ -58,7 +58,7 @@ void main() {
   }
 
   /// No `ready`: one `empty` (the slot is there, the view isn't), which
-  /// falls back to DSH Web.
+  /// falls back to XRK Web.
   void fellBack(Map<String, Object?> out) {
     expect(messages(out), [
       {'t': 'empty', 'slot': 'conversation.view', 'code': 'empty', 'detail': 'navigation', 'load': 1},
@@ -197,7 +197,7 @@ void main() {
     }, skip: skip);
 
     test(
-      'a different choice stored later (another DSH Web on the same storage) is not overwritten on the way out',
+      'a different choice stored later (another XRK Web on the same storage) is not overwritten on the way out',
       () async {
         final out = await open({
           'views': [chat, target],

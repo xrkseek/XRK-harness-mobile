@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:dsh_app/diagnostics/zip_writer.dart';
+import 'package:xrk_app/diagnostics/zip_writer.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/zip_reader.dart';

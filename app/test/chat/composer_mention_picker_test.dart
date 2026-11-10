@@ -3,19 +3,19 @@
 // by tap / send key / hardware keys, opening folders, and what is sent.
 // Goldens: `flutter test --update-goldens test/chat/composer_mention_picker_test.dart`.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/mention_state.dart';
-import 'package:dsh_app/state/voice_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/mention/mention_chip.dart';
-import 'package:dsh_app/ui/chat/mention/mention_picker.dart';
-import 'package:dsh_app/ui/chat/slash_palette.dart';
-import 'package:dsh_app/ui/chat/voice/voice_bridge.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/mention_state.dart';
+import 'package:xrk_app/state/voice_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/mention/mention_chip.dart';
+import 'package:xrk_app/ui/chat/mention/mention_picker.dart';
+import 'package:xrk_app/ui/chat/slash_palette.dart';
+import 'package:xrk_app/ui/chat/voice/voice_bridge.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -54,7 +54,7 @@ class _Setup {
   final FakeRpcCarrier carrier;
   final recents = MentionRecents(persist: false);
 
-  late final client = DshClient.withCarrier(carrier);
+  late final client = XrkClient.withCarrier(carrier);
 
   Future<void> pump(WidgetTester tester, {Brightness brightness = Brightness.light, bool enterSends = false}) async {
     usePhoneView(tester);

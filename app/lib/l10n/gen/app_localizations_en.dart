@@ -8000,10 +8000,25 @@ class L10nEn extends L10n {
   String get featuresExportSaveDownloads => 'Save to Downloads';
 
   @override
-  String get featuresExportDownloadsHint => 'Save in Downloads/XRK-Harness';
+  String get featuresExportDownloadsHint => 'Save in Downloads/XRK-Harness; open with another app afterward';
 
   @override
   String get featuresExportContents => 'All records and attachments from this chat and its subagents';
+
+  @override
+  String get featuresExportSavedTitle => 'Log saved';
+
+  @override
+  String get featuresExportOpenOther => 'Open with another app';
+
+  @override
+  String get featuresExportOpenHint => 'Use Files or an unzip app. This app has no system file manager.';
+
+  @override
+  String get featuresExportOpenFailed => 'No app opens ZIP. Try Share instead.';
+
+  @override
+  String get featuresExportOverviewHint => 'ZIP for sharing or saving to Downloads';
 
   @override
   String get featuresSkillUseHere => 'Use in chat';
@@ -8746,7 +8761,7 @@ class L10nEn extends L10n {
   String get hubAbout => 'About XRK Harness';
 
   @override
-  String get hubAboutAuthor => 'Original author of XRK Harness';
+  String get hubAboutAuthor => 'Source repository';
 
   @override
   String get hubAboutBilibili => 'Bilibili profile';
@@ -9958,7 +9973,7 @@ class L10nEn extends L10n {
   String get petActionBusy => 'This chat is busy. Choose New chat.';
 
   @override
-  String get petActionVoiceMissing => 'Download the offline voice model in the app first.';
+  String get petActionVoiceMissing => 'Voice input isn’t available on mobile — type instead.';
 
   @override
   String get petActionVoiceTitle => 'Voice for Quick ask';
@@ -10257,19 +10272,20 @@ class L10nEn extends L10n {
   String get phoneAppRuleNormal => 'As usual';
 
   @override
-  String get phoneAppRuleDenyHint => 'No reading or tapping. Default for banking and payment apps.';
+  String get phoneAppRuleDenyHint => 'Takes effect now: no reading or tapping. Default for banking and payment apps.';
 
   @override
-  String get phoneAppRuleConfirmHint => 'Can read. Asks before tapping or typing.';
+  String get phoneAppRuleConfirmHint => 'Takes effect now: can read. Asks before tapping or typing.';
 
   @override
-  String get phoneAppRuleNormalHint => 'Asks only before sensitive actions, like sending';
+  String get phoneAppRuleNormalHint => 'Takes effect now: asks only before sensitive actions, like sending';
 
   @override
   String get phoneAppRulesTitle => 'App rules';
 
   @override
-  String get phoneAppRulesSubtitle => 'Unlisted apps work as usual. Sensitive actions still need approval.';
+  String get phoneAppRulesSubtitle =>
+      'Unlisted apps work as usual. Sensitive actions still need approval. Changes apply immediately.';
 
   @override
   String get phoneAppRulesUnavailable => 'Can’t read app rules';
@@ -10541,13 +10557,13 @@ class L10nEn extends L10n {
   String get phoneConfirmAlways => 'Always skip';
 
   @override
-  String get phoneConfirmAskHint => 'Asks before entering a new app, sending, deleting or paying';
+  String get phoneConfirmAskHint => 'Takes effect now: asks before entering a new app, sending, deleting or paying';
 
   @override
-  String get phoneConfirmTaskHint => 'Asks once per task';
+  String get phoneConfirmTaskHint => 'Takes effect now: asks once per task';
 
   @override
-  String get phoneConfirmAlwaysHint => 'Acts without asking';
+  String get phoneConfirmAlwaysHint => 'Takes effect now: acts without asking';
 
   @override
   String get phoneConfirmTitle => 'Confirmation';
@@ -10560,6 +10576,16 @@ class L10nEn extends L10n {
 
   @override
   String get phoneConfirmSaveFailed => 'Couldn’t change. Try again later.';
+
+  @override
+  String phoneConfirmApplied(String mode) {
+    return 'Changed to “$mode”. Applies on the next action.';
+  }
+
+  @override
+  String phoneAppRuleApplied(String app, String rule) {
+    return '“$app” set to “$rule”. Applies on the next action.';
+  }
 
   @override
   String get phoneEnableFailed => 'Couldn’t turn on. Try again later.';
@@ -17340,7 +17366,7 @@ class L10nEn extends L10n {
 
   @override
   String shellSkillInstallDirectory(String skill) {
-    return '1. Create the target folder `\$DSH_HOME/skills/$skill/` if needed (or `~/.dsh/skills/$skill/` if DSH_HOME isn’t set).';
+    return '1. Create the target folder `\$XRK_HOME/skills/$skill/` if needed (or `~/.dsh/skills/$skill/` if XRK_HOME isn’t set).';
   }
 
   @override

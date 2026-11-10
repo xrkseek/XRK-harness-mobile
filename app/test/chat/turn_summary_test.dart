@@ -1,21 +1,21 @@
 // Tool-group summaries, per-turn change detection and their place in the
-// chat rows, over captured DSH frames (packages/dsh_client/test/fixtures)
+// chat rows, over captured XRK frames (packages/xrk_client/test/fixtures)
 // and a synthetic file-editing session in the same wire shape
 // (test/chat/fixtures/follow_file_changes.jsonl).
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/chat_rows.dart';
-import 'package:dsh_app/ui/chat/render/diff_view.dart';
-import 'package:dsh_app/ui/chat/turn_summary.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/chat_rows.dart';
+import 'package:xrk_app/ui/chat/render/diff_view.dart';
+import 'package:xrk_app/ui/chat/turn_summary.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/sample_chat.dart';
 
-const _clientFixtures = '../packages/dsh_client/test/fixtures';
+const _clientFixtures = '../packages/xrk_client/test/fixtures';
 
 ChatTranscript _load(String path) {
   final transcript = ChatTranscript();
@@ -49,7 +49,7 @@ void main() {
     expect(fileChangesOf([a, b]), same(all));
   });
 
-  group('captured DSH turns', () {
+  group('captured XRK turns', () {
     test('approval turn: one command, no file changes', () {
       final t = _load('$_clientFixtures/follow_approval_with_resync.jsonl');
       final tools = _tools(t);

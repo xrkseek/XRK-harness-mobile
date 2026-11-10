@@ -6,10 +6,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/chat/chat_rows.dart';
-import 'package:dsh_app/ui/chat/widgets/thinking_pill.dart';
-import 'package:dsh_app/ui/chat/widgets/turn_process.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/chat_rows.dart';
+import 'package:xrk_app/ui/chat/widgets/thinking_pill.dart';
+import 'package:xrk_app/ui/chat/widgets/turn_process.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/run_info_fixture.dart';
@@ -89,7 +89,7 @@ void main() {
 
   test('a stopped turn stays open', () {
     final t = ChatTranscript();
-    for (final line in File('../packages/dsh_client/test/fixtures/follow_cancel.jsonl').readAsLinesSync()) {
+    for (final line in File('../packages/xrk_client/test/fixtures/follow_cancel.jsonl').readAsLinesSync()) {
       if (line.trim().isEmpty) continue;
       t.apply(parseFollowFrame('s', jsonDecode(line)));
     }

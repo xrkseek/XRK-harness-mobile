@@ -38,14 +38,14 @@ COPY 的正确性不依赖对 zip 结构的理解：只要旧 APK 那一段和�
 `release_assets.py` 在生成 `dist/` 时：
 
 - `gh release list` 取最新的 N 个已发布版本（不含草稿和本版），`gh release download` 把各自的 arm64 APK 和 `SHA256SUMS` 下到 `~/.cache/dshgo-release/apk/<tag>/`，APK 必须和该版发布的 `SHA256SUMS` 一致（缓存里的对不上就重下）。第一次要下 N 个整包（每个约 200 MB，发版机器上一个要几分钟），之后走缓存。`fromVersion` 用 `aapt2` 从旧 APK 里读。
-- 逐个生成 `dsh-go-<新版本>-from-<旧版本>-arm64.dshdelta`；**不到整包 60 % 的才留下**，其余删掉。60 % 以上省下的流量不值得多一条要维护、会出错的路径。
+- 逐个生成 `xrk-mobile-<新版本>-from-<旧版本>-arm64.dshdelta`；**不到整包 60 % 的才留下**，其余删掉。60 % 以上省下的流量不值得多一条要维护、会出错的路径。
 - 留下的补丁写进 `dist/`、`SHA256SUMS`，以及 `update.json`：
 
 ```json
 "patches": {
   "arm64": [
     { "from": "<1.1.0 APK 的 SHA-256>", "fromVersion": "1.1.0+10201200",
-      "name": "dsh-go-1.2.0-from-1.1.0-arm64.dshdelta", "size": 13278848, "sha256": "<补丁的 SHA-256>" }
+      "name": "xrk-mobile-1.2.0-from-1.1.0-arm64.dshdelta", "size": 13278848, "sha256": "<补丁的 SHA-256>" }
   ]
 }
 ```

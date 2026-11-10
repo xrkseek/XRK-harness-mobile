@@ -48,10 +48,10 @@ export function prepare(argv, cwd = process.cwd()) {
   }
   const source = jsonFile(resolve(cwd, input))
   const object = source.value !== null && typeof source.value === 'object' && !Array.isArray(source.value)
-  const wrapped = object && Object.hasOwn(source.value, 'dsh-go/view') && source.value.type === undefined
+  const wrapped = object && Object.hasOwn(source.value, 'xrk-mobile/view') && source.value.type === undefined
   const budget = opts.budget ?? (wrapped ? 'toolCard' : 'panel')
   if (!['toolCard', 'panel', 'strip'].includes(budget)) throw new Error('--budget must be toolCard, panel or strip')
-  const view = wrapped ? source.value['dsh-go/view'] : source.value
+  const view = wrapped ? source.value['xrk-mobile/view'] : source.value
   const data = opts.data ? jsonFile(resolve(cwd, opts.data)).value : null
   const report = checkViewText(source.raw, { budget, lang: opts.lang, target: input })
   // Tool cards have no data model. Panel/strip bindings use the supplied snapshot.
@@ -73,7 +73,7 @@ export function main(argv, run = spawnSync) {
     writeFileSync(join(job.out, 'request.json'), JSON.stringify(job.request, null, 2) + '\n', { flag: 'wx' })
     writeFileSync(join(job.out, 'sdk-diagnostics.json'), JSON.stringify(job.report, null, 2) + '\n', { flag: 'wx' })
     const result = run(job.opts.flutter, ['test', '--no-pub', 'test/plugins/view/local_preview_test.dart'], {
-      cwd: appDir, stdio: 'inherit', env: { ...process.env, DSH_PLUGIN_PREVIEW_REQUEST: join(job.out, 'request.json') },
+      cwd: appDir, stdio: 'inherit', env: { ...process.env, XRK_PLUGIN_PREVIEW_REQUEST: join(job.out, 'request.json') },
     })
     if (result.error) throw result.error
     if (result.status !== 0) { process.stderr.write(`Flutter preview failed; partial output: ${job.out}\n`); return 3 }

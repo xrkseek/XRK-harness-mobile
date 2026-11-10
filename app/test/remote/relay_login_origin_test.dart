@@ -5,16 +5,16 @@ import 'dart:async';
 import 'dart:convert';
 
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/remote/relay/dsh_remote_backend.dart';
-import 'package:dsh_app/remote/secret_store.dart' as app_secrets;
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/remote/relay_login_sheet.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_remote/dsh_remote.dart' as remote;
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/remote/relay/xrk_remote_backend.dart';
+import 'package:xrk_app/remote/secret_store.dart' as app_secrets;
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/remote/relay_login_sheet.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_remote/xrk_remote.dart' as remote;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +24,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 import 'real_io_driver.dart';
-import '../../../packages/dsh_remote/test/support/fake_remote.dart';
+import '../../../packages/xrk_remote/test/support/fake_remote.dart';
 import '../shell/golden_harness.dart'
     show FakeRuntime, runningStatus, usePhoneSurface;
 
@@ -220,7 +220,7 @@ class _Fixture {
   final SharedPreferencesStorePlatform previousStore;
   final secrets = _Secrets();
   final servers = <FakeRemoteServer>[];
-  final backends = <DshRemoteRelayBackend>{};
+  final backends = <XrkRemoteRelayBackend>{};
   final restored = <remote.RemoteAccount>[];
   late final FakeRemoteServer a;
   late final FakeRemoteServer b;
@@ -270,12 +270,12 @@ class _Fixture {
         relayServerProvider.notifier,
       ) as _ObservedServer;
       // Keep the production provider itself: each origin builds its real
-      // DshRemoteRelayBackend, and its normal dispose callback closes the old.
+      // XrkRemoteRelayBackend, and its normal dispose callback closes the old.
       final subscription = fixture.container.listen(relayBackendProvider, (
         _,
         next,
       ) {
-        if (next is! DshRemoteRelayBackend) {
+        if (next is! XrkRemoteRelayBackend) {
           throw StateError('Expected the production relay backend');
         }
         fixture.backends.add(next);
@@ -299,7 +299,7 @@ class _Fixture {
 
   Future<Map<String, bool>> currentLogin(Uri expected) async {
     final backend = container.read(relayBackendProvider);
-    final real = backend is DshRemoteRelayBackend ? backend : null;
+    final real = backend is XrkRemoteRelayBackend ? backend : null;
     debugPrint('DSH_ORIGIN_STAGE current-user');
     final user = await backend.currentUser();
     final account = remote.RemoteAccount(secrets: secrets, serverUrl: expected);

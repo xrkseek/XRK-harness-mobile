@@ -7,7 +7,7 @@
 This repository currently **does not accept any external pull requests** (code, docs, configuration or templates).
 
 - External PRs are closed automatically by the intake check, see `.github/workflows/pr-gate.yml`.
-- For feature ideas, improvements or bug reports, please [open an issue](https://github.com/ccch1mneyyy/dsh-Go/issues/new/choose) with the use case and expected behavior.
+- For feature ideas, improvements or bug reports, please [open an issue](https://github.com/xrkseek/dsh-Go/issues/new/choose) with the use case and expected behavior.
 - Internal PRs by the maintainer (and maintainer agents) are unaffected.
 
 This is temporary; this page will be updated when external PRs reopen.
@@ -57,8 +57,8 @@ Run these commands from the repository root. Select checks relevant to your chan
 **Dart communication packages:**
 
 ```bash
-(cd packages/dsh_client && dart pub get && dart analyze && dart test)
-(cd packages/dsh_remote && dart pub get && dart analyze && dart test)
+(cd packages/xrk_client && dart pub get && dart analyze && dart test)
+(cd packages/xrk_remote && dart pub get && dart analyze && dart test)
 ```
 
 **Plugin SDK:**

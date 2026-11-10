@@ -84,7 +84,7 @@ class _ProfileShareSheetState extends ConsumerState<ProfileShareSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final source = ref.watch(profileExportProvider);
     final Widget body;
     Widget? footer;
@@ -194,7 +194,7 @@ class _Quiet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,

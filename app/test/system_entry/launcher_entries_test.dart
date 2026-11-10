@@ -1,16 +1,16 @@
-import 'package:dsh_app/links/launcher_entries.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/links/launcher_entries.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const _channel = MethodChannel('dsh/shortcuts');
+const _channel = MethodChannel('xrk/shortcuts');
 
 final _connection = HostConnection(
-  client: DshClient(DshConnection(Uri.parse('http://127.0.0.1:9'))),
+  client: XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9'))),
   label: '本机',
   isLocal: true,
 );

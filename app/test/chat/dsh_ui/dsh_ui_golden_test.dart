@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -290,17 +290,17 @@ const partial =
 
 Future<bool> _ok(String _) async => true;
 
-Widget scoped(String source, {DshUiState state = DshUiState.live, bool streaming = false, bool closed = true}) =>
-    DshUiScope(
+Widget scoped(String source, {XrkUiState state = XrkUiState.live, bool streaming = false, bool closed = true}) =>
+    XrkUiScope(
       sessionId: 's1',
       messageId: 'a1',
       state: state,
       onReply: _ok,
       onAskResend: _ok,
-      child: DshUiBlock(source: source, streaming: streaming, closed: closed),
+      child: XrkUiBlock(source: source, streaming: streaming, closed: closed),
     );
 
-DshUiState answered(String text) => DshUiState(DshUiInteraction.answered, reply: parseDshUiReply(text));
+XrkUiState answered(String text) => XrkUiState(XrkUiInteraction.answered, reply: parseXrkUiReply(text));
 
 Widget sheet(List<Widget> children) => AppBackdrop(
   child: SingleChildScrollView(
@@ -327,8 +327,8 @@ final _sheets = <String, (double, List<Widget> Function())>{
       scoped(free, state: answered('[dsh-ui reply] 要不要先算一遍\n选择：先算成本\n其他：先算一次总利息')),
       scoped(deploy),
       scoped(deploy, state: answered('[dsh-ui reply] 部署到生产\n确认：开始部署')),
-      scoped(quick, state: DshUiState.running),
-      scoped(quick, state: DshUiState.expired),
+      scoped(quick, state: XrkUiState.running),
+      scoped(quick, state: XrkUiState.expired),
     ],
   ),
   'states': (
@@ -380,7 +380,7 @@ void main() {
           await tester.tapAt(Offset(box.left + box.width * 0.62, box.center.dy));
           await tester.pump(const Duration(milliseconds: 400));
         }
-        await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/dsh_ui_${name}_$suffix.png'));
+        await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/xrk_ui_${name}_$suffix.png'));
       });
     }
   }

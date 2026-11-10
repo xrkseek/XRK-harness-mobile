@@ -15,7 +15,7 @@ import 'status_chip.dart';
 /// │ ( 52 )  标题                              ›  │  ← onTap(整块)
 /// │         副标题                               │
 /// │ ──────────────────────────────────────────── │  ← 细分隔(仅有 footer 时)
-/// │   ●     引擎 · 运行中 · DSH 0.2.1          ›  │  ← footer,onFooterTap
+/// │   ●     引擎 · 运行中 · XRK 0.2.1          ›  │  ← footer,onFooterTap
 /// └──────────────────────────────────────────────┘
 /// ```
 ///
@@ -233,7 +233,7 @@ class _OverviewCardState extends State<OverviewCard> {
 /// slot, then one line of text lined up with the title.
 ///
 /// ```dart
-/// OverviewFooter(tone: StatusTone.ok, text: '引擎 · 运行中 · DSH 0.2.1')
+/// OverviewFooter(tone: StatusTone.ok, text: '引擎 · 运行中 · XRK 0.2.1')
 /// ```
 class OverviewFooter extends StatelessWidget {
   const OverviewFooter({super.key, required this.tone, required this.text, this.leading});
@@ -283,7 +283,7 @@ class OverviewGlyph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final i = tint % colors.identity.length;
     return DecoratedBox(
       decoration: ShapeDecoration(color: colors.identity[i], shape: const CircleBorder()),
@@ -311,7 +311,7 @@ class OverviewChevron extends StatelessWidget {
   Widget build(BuildContext context) {
     return Transform.translate(
       offset: const Offset(nudge, 0),
-      child: ExcludeSemantics(child: Icon(AppIcons.disclosure, size: 20, color: DshColors.of(context).textTertiary)),
+      child: ExcludeSemantics(child: Icon(AppIcons.disclosure, size: 20, color: XrkColors.of(context).textTertiary)),
     );
   }
 }

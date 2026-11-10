@@ -3,17 +3,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/state/update_state.dart';
-import 'package:dsh_app/update/installer.dart';
-import 'package:dsh_app/update/update_config.dart';
+import 'package:xrk_app/state/update_state.dart';
+import 'package:xrk_app/update/installer.dart';
+import 'package:xrk_app/update/update_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support.dart';
 
-const _name = 'dsh-go-1.2.0-arm64.apk';
-const _url = 'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/$_name';
+const _name = 'xrk-harness-1.2.0-arm64.apk';
+const _url = 'https://github.com/xrkseek/XRK-harness-mobile/releases/download/v1.2.0/$_name';
 final _bytes = utf8.encode('fixed host-only update test bytes');
 
 void main() {

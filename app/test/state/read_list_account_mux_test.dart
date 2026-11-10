@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/read_list_cache.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/read_list_cache.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -116,7 +116,7 @@ class _Link extends FakeMuxLink {
 class _Harness {
   _Harness({bool initialSignedIn = true, bool watchModels = true})
     : carrier = _Carrier(initialSignedIn: initialSignedIn) {
-    client = DshClient.withCarrier(carrier, muxOptions: const MuxOptions(retryCaps: [Duration.zero]));
+    client = XrkClient.withCarrier(carrier, muxOptions: const MuxOptions(retryCaps: [Duration.zero]));
     api = DshAccountApi(client, callbackOrigin: 'http://127.0.0.1:3080');
     c = ProviderContainer(
       overrides: [
@@ -145,7 +145,7 @@ class _Harness {
   }
 
   final _Carrier carrier;
-  late final DshClient client;
+  late final XrkClient client;
   late final DshAccountApi api;
   late final ProviderContainer c;
   final identities = <ReadListIdentity?>[];

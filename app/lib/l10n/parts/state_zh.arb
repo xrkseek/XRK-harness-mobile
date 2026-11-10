@@ -697,7 +697,7 @@
     }
   },
   "stateListSeparator": "、",
-  "stateSafeRepairPrompt": "我的 XRK 正常模式出了问题（{what}）。请按「安全模式」说明排查原因，先用可逆的办法修好 web 配置，修完用 dsh-app-plugins trial 试启动验证，再告诉我改了什么。",
+  "stateSafeRepairPrompt": "我的 XRK 正常模式出了问题（{what}）。请按「安全模式」说明排查原因，先用可逆的办法修好 web 配置，修完用 xrkh plugins trial 试启动验证，再告诉我改了什么。",
   "@stateSafeRepairPrompt": {
     "placeholders": {
       "what": {

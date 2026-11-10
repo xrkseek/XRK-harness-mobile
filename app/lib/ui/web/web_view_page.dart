@@ -30,7 +30,7 @@ export 'web_keyboard.dart' show WebKeyboard;
 /// controls, a side camera cutout and the gesture bar — with no divider; a
 /// fade of the page colour behind the controls gives content room to breathe
 /// as it scrolls up. The page's content stays inside the safe area: injected
-/// CSS for DSH Web and the top / bottom of other pages, the WebView's own
+/// CSS for XRK Web and the top / bottom of other pages, the WebView's own
 /// bounds for their sides (fixed-position elements ignore body padding).
 class WebViewPage extends StatefulWidget {
   const WebViewPage({
@@ -70,13 +70,13 @@ class WebViewPage extends StatefulWidget {
   final Color lightBackground;
   final Color darkBackground;
 
-  /// The page is DSH Web: fit it to a touch screen (`assets/web/`). Below
+  /// The page is XRK Web: fit it to a touch screen (`assets/web/`). Below
   /// [dshWebDesktopWidth] the sidebar becomes a drawer behind a menu button
   /// in the page's header row; from there up the official layout stays, with
   /// the way back above its sidebar.
   final bool dshWeb;
 
-  /// With [dshWeb]: adapt the layout. Off leaves DSH Web's own layout alone:
+  /// With [dshWeb]: adapt the layout. Off leaves XRK Web's own layout alone:
   /// at phone widths its drawer keeps a leading seat in the header row for
   /// its sidebar opener, and the handle takes the far left of that row while
   /// the seat moves past it ([WebChrome.seat]); wider windows show the app's
@@ -84,12 +84,12 @@ class WebViewPage extends StatefulWidget {
   final bool phoneLayout;
 
   /// With [dshWeb]: the page to land on after the first load
-  /// (`assets/web/dsh_web_open.js`); null opens the home page.
+  /// (`assets/web/xrk_web_open.js`); null opens the home page.
   final DshWebTarget? openTarget;
 
   /// Takes the back button's seat (网页模式: the native handle), at the
   /// size of the button it replaces. A page without one seats the app's mark
-  /// as its way back instead (the marker in DSH Web's leading seat).
+  /// as its way back instead (the marker in XRK Web's leading seat).
   final Widget Function(double size)? leading;
 
   /// The page is the app's home (网页模式): back leaves the app once the page
@@ -109,17 +109,17 @@ class WebViewPage extends StatefulWidget {
   State<WebViewPage> createState() => _WebViewPageState();
 }
 
-/// Frame width from which DSH Web keeps its own layout: the official client
+/// Frame width from which XRK Web keeps its own layout: the official client
 /// keeps its sidebar open from here up (`SIDEBAR_AUTO_COLLAPSE` in
 /// dsh-client-ui-layout) and folds it into an icon rail below. On a touch
 /// screen the app folds it into a drawer instead.
 const dshWebDesktopWidth = 1024.0;
 
-/// Viewport width below which DSH Web's *own* layout (no app CSS) folds the
+/// Viewport width below which XRK Web's *own* layout (no app CSS) folds the
 /// sidebar into a drawer and keeps a leading seat in its header row for the
 /// host's button (`drawer = viewport < 768` in `dsh-client-ui-layout`; the
 /// seat is `.leadingSeat` at top 11 / left 12, with
-/// `--dsh-frame-leading-clearance` making room for it). The seat holds DSH
+/// `--dsh-frame-leading-clearance` making room for it). The seat holds XRK
 /// Web's own sidebar opener, so the app's back button takes the far left and
 /// the seat moves past it ([WebChrome.seat]).
 const dshWebDrawerWidth = 768.0;
@@ -127,20 +127,20 @@ const dshWebDrawerWidth = 768.0;
 /// How the app's controls sit on the page.
 enum WebChrome {
   /// A row under the status bar: back · title · reload · open (other sites),
-  /// or just back (DSH Web as shipped, wider than [dshWebDrawerWidth]).
+  /// or just back (XRK Web as shipped, wider than [dshWebDrawerWidth]).
   bar,
 
-  /// DSH Web as shipped, phone widths: its own drawer layout keeps a leading
+  /// XRK Web as shipped, phone widths: its own drawer layout keeps a leading
   /// seat in the header row for its sidebar opener, the handle takes the far
   /// left of that row and the seat moves past it — no bar of its own, and the
   /// page's opener stays where a finger looks for it.
   seat,
 
-  /// Back and menu inside DSH Web's own header row, which makes room for
+  /// Back and menu inside XRK Web's own header row, which makes room for
   /// them; the sidebar is a drawer.
   inline,
 
-  /// DSH Web's own layout: back sits in a band above its sidebar, centred
+  /// XRK Web's own layout: back sits in a band above its sidebar, centred
   /// on the icon rail's column, which stays put as the sidebar opens.
   side,
 }
@@ -153,16 +153,16 @@ abstract final class WebChromeMetrics {
   /// Side margin of the controls, from the safe area.
   static const edge = 12.0;
 
-  /// Back / menu buttons in DSH Web ([WebChrome.inline], [WebChrome.side]).
+  /// Back / menu buttons in XRK Web ([WebChrome.inline], [WebChrome.side]).
   static const button = 40.0;
 
   /// [WebChrome.inline]: offset of the buttons below the status bar (DSH
   /// Web's header row is 40px from 10px down).
   static const inlineTop = 10.0;
 
-  /// [WebChrome.seat]: DSH Web's own leading seat in the drawer layout
+  /// [WebChrome.seat]: XRK Web's own leading seat in the drawer layout
   /// (`.leadingSeat`, top 11 / left 12 in `dsh-client-ui-layout`). What sits
-  /// in it is DSH Web's own sidebar opener — a 28px icon button
+  /// in it is XRK Web's own sidebar opener — a 28px icon button
   /// (`HeaderLeadingControls` in `dsh-client-ui-sidebar`), which the official
   /// layout keeps clear of the page's title with
   /// `--dsh-frame-leading-clearance: 48px` (12 + 28 + 8).
@@ -200,7 +200,7 @@ abstract final class WebChromeMetrics {
   /// however wide.
   static const phoneHeight = 480.0;
 
-  /// Below this much page height while typing, DSH Web's header row steps
+  /// Below this much page height while typing, XRK Web's header row steps
   /// aside (a phone on its side: about 120 left above the keyboard).
   static const compactHeight = 300.0;
 
@@ -231,7 +231,7 @@ class WebPageInsets {
   });
 
   /// The insets for a page in a window of [size] with system [padding] and a
-  /// [keyboard] that tall. DSH Web keeps its size and lifts its root and
+  /// [keyboard] that tall. XRK Web keeps its size and lifts its root and
   /// layers above the keyboard ([keyboard], a style of its own: typing lays
   /// the page out once and never resizes the WebView); other pages shrink
   /// above it ([WebViewPage] insets the WebView).
@@ -253,7 +253,7 @@ class WebPageInsets {
       return WebPageInsets(chrome: WebChrome.bar, rootTop: fade, layerTop: fade, bottom: bottom, rootBottom: bottom);
     }
     if (!adapt) {
-      // DSH Web as shipped. On a phone its own layout turns the sidebar into
+      // XRK Web as shipped. On a phone its own layout turns the sidebar into
       // a drawer and keeps a leading seat in the header row for the host's
       // button; the handle takes that seat, so nothing needs a bar. Wider
       // windows have no seat (an icon rail instead): the bar holds the handle.
@@ -342,7 +342,7 @@ class WebPageInsets {
   final double rootTop;
   final double rootBottom;
 
-  /// Safe-area sides of DSH Web's root (other sites: 0, the WebView is inset).
+  /// Safe-area sides of XRK Web's root (other sites: 0, the WebView is inset).
   final double left;
   final double right;
 
@@ -364,11 +364,11 @@ class WebPageInsets {
   /// (none while typing: the root ends at the keyboard).
   final double frameBottom;
 
-  /// DSH Web while typing: the root and the layers end this far up, at the
+  /// XRK Web while typing: the root and the layers end this far up, at the
   /// keyboard's top (the WebView keeps its size).
   final double keyboard;
 
-  /// [WebChrome.inline] while typing in a short window: DSH Web's header row
+  /// [WebChrome.inline] while typing in a short window: XRK Web's header row
   /// and the app's buttons in it step aside for the composer.
   final bool compact;
 
@@ -385,8 +385,8 @@ class WebPageInsets {
 
   /// Moves the page's content clear of the controls and the system bars while
   /// its background keeps running underneath. Single-page apps with a #root
-  /// (DSH Web) get #root pinned inside the safe area; other pages get body
-  /// padding instead. `html[data-dsh-app-layout]` tells `dsh_web_phone.css`
+  /// (XRK Web) get #root pinned inside the safe area; other pages get body
+  /// padding instead. `html[data-xrk-app-layout]` tells `xrk_web_phone.css`
   /// which layout the app chose.
   ///
   /// Writes only what changed. The keyboard has a style of its own, in plain
@@ -400,13 +400,13 @@ class WebPageInsets {
       WebChrome.side => 'desktop',
       WebChrome.bar || WebChrome.seat => '',
     };
-    // [WebChrome.seat]: DSH Web's own drawer layout keeps its sidebar opener
+    // [WebChrome.seat]: XRK Web's own drawer layout keeps its sidebar opener
     // in a leading seat at the frame's top left (28 at 12 / 11) and clears
     // the page's title past it with `--dsh-frame-leading-clearance` (48 =
     // 12 + 28 + 8). The marker takes the far left (28 at 12, the same size as
     // the page's own chrome there), so the whole official seat — its opener,
     // and anything a plugin mounts in it — moves past the marker instead of
-    // under it; both stay in the one row DSH Web lays out. The clearance then
+    // under it; both stay in the one row XRK Web lays out. The clearance then
     // covers marker, gap, official seat and the gap after it. The fullscreen
     // right panel has no reserve of its own — its tab strip starts at the
     // panel's left edge — so it starts past them too: one row, no empty band.
@@ -435,16 +435,16 @@ class WebPageInsets {
       '--dsh-app-frame-bottom:${px(frameBottom)}',
     ].join(';');
     final k = px(keyboard);
-    // Ahead of dsh_web_phone.css's own rules for the same boxes whatever the
+    // Ahead of xrk_web_phone.css's own rules for the same boxes whatever the
     // order of the styles (an extra :root): the root, the dialogs' backdrops,
     // the drawer's content and the settings sheet end at the keyboard.
     final typing = keyboard > 0
         ? ':root #root{bottom:$k!important}'
               ':root body>[class*="_overlay"]{bottom:$k!important}'
-              ':root:root[data-dsh-app-layout="drawer"] [class*="_sidebarCol"] [data-slot="sidebar"]>[class*="_root"]'
+              ':root:root[data-xrk-app-layout="drawer"] [class*="_sidebarCol"] [data-slot="sidebar"]>[class*="_root"]'
               '{padding-bottom:$k!important}'
               '@media (max-width:760px),(max-height:600px){'
-              ':root:root[data-dsh-app-layout="drawer"] [class*="_panel"]:has(>nav):has([data-slot="settings.section"])'
+              ':root:root[data-xrk-app-layout="drawer"] [class*="_panel"]:has(>nav):has([data-slot="settings.section"])'
               '{padding-bottom:$k!important}}'
         : '';
     return [
@@ -454,9 +454,9 @@ class WebPageInsets {
       // gets these.
       '  if (!html) return;',
       if (layout.isEmpty)
-        "  if (html.hasAttribute('data-dsh-app-layout')) html.removeAttribute('data-dsh-app-layout');"
+        "  if (html.hasAttribute('data-xrk-app-layout')) html.removeAttribute('data-xrk-app-layout');"
       else
-        "  if (html.getAttribute('data-dsh-app-layout') !== '$layout') html.setAttribute('data-dsh-app-layout', '$layout');",
+        "  if (html.getAttribute('data-xrk-app-layout') !== '$layout') html.setAttribute('data-xrk-app-layout', '$layout');",
       "  if (html.hasAttribute('data-dsh-app-compact') !== $compact) html.toggleAttribute('data-dsh-app-compact', $compact);",
       '  function sheet(id, css) {',
       '    var s = document.getElementById(id);',
@@ -470,7 +470,7 @@ class WebPageInsets {
       "  var vars = ':root{$vars}';",
       "  sheet('dsh-app-insets', root",
       // Pinned inside the safe area, and the document itself never scrolls:
-      // DSH gives #root `min-height: 100vh`, so any offset made the page
+      // XRK gives #root `min-height: 100vh`, so any offset made the page
       // taller than the screen and an overscroll dragged the whole page
       // (composer included) up.
       "    ? vars + '#root{position:fixed!important;top:${px(rootTop)}!important;bottom:${px(rootBottom)}!important;"
@@ -591,7 +591,7 @@ class _WebViewPageState extends State<WebViewPage> {
         _files.attach(controller),
         controller.setNavigationDelegate(
           NavigationDelegate(
-            // DSH Web keeps to its own origin; other pages open in the browser.
+            // XRK Web keeps to its own origin; other pages open in the browser.
             onNavigationRequest: widget.dshWeb ? _onDshWebNavigation : null,
             onPageStarted: (_) {
               if (!mounted || controller != _controller) return;
@@ -633,14 +633,14 @@ class _WebViewPageState extends State<WebViewPage> {
         ),
         // Before the first load: Android only injects a channel on load.
         if (widget.dshWeb && (widget.openTarget != null || widget.link != null))
-          controller.addJavaScriptChannel('DshAppOpen', onMessageReceived: _onOpened),
+          controller.addJavaScriptChannel('XrkAppOpen', onMessageReceived: _onOpened),
         if (widget.dshWeb && widget.link != null)
-          controller.addJavaScriptChannel('DshAppCompose', onMessageReceived: (m) => widget.link?._composed(m.message)),
+          controller.addJavaScriptChannel('XrkAppCompose', onMessageReceived: (m) => widget.link?._composed(m.message)),
         if (widget.dshWeb && widget.onSession != null)
-          controller.addJavaScriptChannel('DshAppState', onMessageReceived: _onState),
-        // Whether DSH Web's own sidebar drawer covers the page (the seat
+          controller.addJavaScriptChannel('XrkAppState', onMessageReceived: _onState),
+        // Whether XRK Web's own sidebar drawer covers the page (the seat
         // marker steps aside while it does).
-        if (widget.dshWeb) controller.addJavaScriptChannel('DshAppSidebar', onMessageReceived: _onSidebar),
+        if (widget.dshWeb) controller.addJavaScriptChannel('XrkAppSidebar', onMessageReceived: _onSidebar),
       ].map((f) => f.catchError((_) {})),
     );
     if (!mounted || controller != _controller) return;
@@ -663,7 +663,7 @@ class _WebViewPageState extends State<WebViewPage> {
     });
   }
 
-  /// 重新打开: a new WebView, back where the page was (DSH Web restores its
+  /// 重新打开: a new WebView, back where the page was (XRK Web restores its
   /// stored conversation; 网页模式's link re-sends nothing it already did).
   void _reopen() {
     setState(() {
@@ -692,20 +692,20 @@ class _WebViewPageState extends State<WebViewPage> {
 
   /// "Open this page" bridge.
   static Future<String> _openBridge() =>
-      _source('open', () => rootBundle.loadString('assets/web/dsh_web_open.js', cache: false));
+      _source('open', () => rootBundle.loadString('assets/web/xrk_web_open.js', cache: false));
 
   /// Whether [WebViewPage.openTarget] was handed to the page already.
   bool _targetSent = false;
 
-  /// Whether DSH Web's own sidebar drawer is up (the seat marker steps aside
-  /// while it is): reported by `assets/web/dsh_web_sidebar.js`.
+  /// Whether XRK Web's own sidebar drawer is up (the seat marker steps aside
+  /// while it is): reported by `assets/web/xrk_web_sidebar.js`.
   bool _sidebarOpen = false;
 
   /// Runs on every load: a session hop reloads the page and the bridge
   /// picks the rest of the target up from there. A load that failed
   /// finished on the WebView's own error page: the target and the
   /// [DshWebLink] calls wait for the load that works (重试), rather than
-  /// being spent on a page with no DSH Web in it.
+  /// being spent on a page with no XRK Web in it.
   Future<void> _injectOpenBridge() async {
     if (_error != null) return;
     try {
@@ -726,9 +726,9 @@ class _WebViewPageState extends State<WebViewPage> {
     }
   }
 
-  /// Back inside the page (`assets/web/dsh_web_back.js`, [WebBack]).
+  /// Back inside the page (`assets/web/xrk_web_back.js`, [WebBack]).
   static Future<String> _backBridgeSource() =>
-      _source('back', () => rootBundle.loadString('assets/web/dsh_web_back.js', cache: false));
+      _source('back', () => rootBundle.loadString('assets/web/xrk_web_back.js', cache: false));
 
   Future<void> _injectBackBridge() async {
     try {
@@ -738,10 +738,10 @@ class _WebViewPageState extends State<WebViewPage> {
     }
   }
 
-  /// DSH Web's own sidebar drawer, open or folded
-  /// (`assets/web/dsh_web_sidebar.js`).
+  /// XRK Web's own sidebar drawer, open or folded
+  /// (`assets/web/xrk_web_sidebar.js`).
   static Future<String> _sidebarBridge() =>
-      _source('sidebar', () => rootBundle.loadString('assets/web/dsh_web_sidebar.js', cache: false));
+      _source('sidebar', () => rootBundle.loadString('assets/web/xrk_web_sidebar.js', cache: false));
 
   Future<void> _injectSidebarBridge() async {
     try {
@@ -758,9 +758,9 @@ class _WebViewPageState extends State<WebViewPage> {
     if (open != _sidebarOpen && mounted) setState(() => _sidebarOpen = open);
   }
 
-  /// Session tracking (`assets/web/dsh_web_state.js`).
+  /// Session tracking (`assets/web/xrk_web_state.js`).
   static Future<String> _stateBridge() =>
-      _source('state', () => rootBundle.loadString('assets/web/dsh_web_state.js', cache: false));
+      _source('state', () => rootBundle.loadString('assets/web/xrk_web_state.js', cache: false));
 
   Future<void> _injectStateBridge() async {
     try {
@@ -844,9 +844,9 @@ class _WebViewPageState extends State<WebViewPage> {
     unawaited(_controller.runJavaScript(insets.script).catchError((_) {}));
   }
 
-  /// CSS + script that fit DSH Web to a touch screen; read once per app run.
+  /// CSS + script that fit XRK Web to a touch screen; read once per app run.
   ///
-  /// Also hands the page the app's JetBrains Mono: DSH's code font stack
+  /// Also hands the page the app's JetBrains Mono: XRK's code font stack
   /// (`"SF Mono", "JetBrains Mono", … Courier`) finds nothing on Android
   /// until `Courier`, which Android maps to a wide typewriter face.
   static Future<String> _phoneLayout() => _source('phone', () async {
@@ -855,8 +855,8 @@ class _WebViewPageState extends State<WebViewPage> {
         '@font-face{font-family:"JetBrains Mono";font-weight:400;'
         'font-style:normal;font-display:swap;'
         'src:url(data:font/ttf;base64,${base64Encode(font.buffer.asUint8List(font.offsetInBytes, font.lengthInBytes))}) format("truetype")}\n';
-    final css = fontFace + await rootBundle.loadString('assets/web/dsh_web_phone.css', cache: false);
-    final js = await rootBundle.loadString('assets/web/dsh_web_phone.js', cache: false);
+    final css = fontFace + await rootBundle.loadString('assets/web/xrk_web_phone.css', cache: false);
+    final js = await rootBundle.loadString('assets/web/xrk_web_phone.js', cache: false);
     return [
       '(function () {',
       "  var s = document.getElementById('dsh-app-phone');",
@@ -907,7 +907,7 @@ class _WebViewPageState extends State<WebViewPage> {
     super.dispose();
   }
 
-  /// System back and the back button: what DSH Web has open first (its
+  /// System back and the back button: what XRK Web has open first (its
   /// dialogs and menus, the drawer, a page inside it), then the page's own
   /// history, then out — off the page, or (as the app's home) out of the app.
   /// One press, one step ([WebBackDispatcher]).
@@ -958,7 +958,7 @@ class _WebViewPageState extends State<WebViewPage> {
       dshWeb: widget.dshWeb,
       adapt: widget._adapt,
     );
-    // DSH Web lifts its root above the keyboard; other pages shrink above it.
+    // XRK Web lifts its root above the keyboard; other pages shrink above it.
     final shrink = widget.dshWeb ? 0.0 : keyboard;
     if (insets != _insets) {
       _insets = insets;
@@ -981,7 +981,7 @@ class _WebViewPageState extends State<WebViewPage> {
             fit: StackFit.expand,
             children: [
               Padding(
-                // DSH Web pads its own root (its backgrounds run under a
+                // XRK Web pads its own root (its backgrounds run under a
                 // cutout); other sites stay out of the cutout and the side
                 // navigation bar, fixed headers and footers included.
                 padding: widget.dshWeb
@@ -1067,12 +1067,12 @@ class _WebViewPageState extends State<WebViewPage> {
     );
   }
 
-  /// DSH Web as shipped at phone widths: its own drawer layout keeps a
+  /// XRK Web as shipped at phone widths: its own drawer layout keeps a
   /// leading seat in the header row, and the marker takes the far left of
   /// that row at the size of the page's own chrome — one mark of the app, no
   /// bar of its own. The page's own opener in the seat moves one gap past the
   /// marker (see the seat CSS in [WebPageInsets.script]), so both stay in the
-  /// row DSH Web lays out.
+  /// row XRK Web lays out.
   ///
   /// Its sidebar, opened, slides over that row: the marker steps aside for it
   /// (fades out, and lets touches through to the sidebar's mask) instead of
@@ -1092,7 +1092,7 @@ class _WebViewPageState extends State<WebViewPage> {
     ),
   );
 
-  /// Adapted DSH Web below [dshWebDesktopWidth]: only the two buttons, left-
+  /// Adapted XRK Web below [dshWebDesktopWidth]: only the two buttons, left-
   /// aligned and sized, so the rest of the page's header row stays touchable.
   Widget _inlineControls(EdgeInsets padding, {required bool hidden}) => Positioned(
     key: const ValueKey('web-controls-inline'),
@@ -1123,7 +1123,7 @@ class _WebViewPageState extends State<WebViewPage> {
     ),
   );
 
-  /// Adapted DSH Web from [dshWebDesktopWidth] up: back, centred in the band
+  /// Adapted XRK Web from [dshWebDesktopWidth] up: back, centred in the band
   /// above the sidebar on the icon rail's column (the page's own toggle
   /// opens and closes the sidebar).
   Widget _sideControls(EdgeInsets padding) => Positioned(
@@ -1135,7 +1135,7 @@ class _WebViewPageState extends State<WebViewPage> {
 
   /// The back button, or what [WebViewPage.leading] seats there instead.
   ///
-  /// [mark]: in DSH Web's own header row, where the page keeps a seat for the
+  /// [mark]: in XRK Web's own header row, where the page keeps a seat for the
   /// app's marker (the official layout, phone widths), the way back is the
   /// app's mark itself — the same round key as the 网页模式 handle, at the
   /// size of the page's own chrome there.
@@ -1155,7 +1155,7 @@ class _WebViewPageState extends State<WebViewPage> {
 
   Widget _bar(BuildContext context, EdgeInsets padding) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Positioned(
       key: const ValueKey('web-controls-bar'),
       left: 0,
@@ -1173,7 +1173,7 @@ class _WebViewPageState extends State<WebViewPage> {
           child: Row(
             children: [
               _leading(44),
-              // DSH Web (official layout) shows its own title and actions in
+              // XRK Web (official layout) shows its own title and actions in
               // its header row: just the way back.
               if (!widget.dshWeb) ...[
                 const SizedBox(width: 8),
@@ -1239,7 +1239,7 @@ class RendererGone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final style = theme.textTheme.bodyMedium?.copyWith(color: colors.textTertiary);
     return Center(
       child: Row(
@@ -1281,7 +1281,7 @@ class _LoadErrorState extends State<_LoadError> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 24),
@@ -1324,7 +1324,7 @@ class _LoadErrorState extends State<_LoadError> {
   }
 }
 
-/// A handle on a live DSH Web page ([WebViewPage.link]): open a
+/// A handle on a live XRK Web page ([WebViewPage.link]): open a
 /// target, fill the composer. Calls made before the page has loaded run once
 /// it has.
 class DshWebLink {
@@ -1359,7 +1359,7 @@ class DshWebLink {
     if (_page == page) _page = null;
   }
 
-  /// Lands on [target] (see `assets/web/dsh_web_open.js`).
+  /// Lands on [target] (see `assets/web/xrk_web_open.js`).
   Future<void> open(DshWebTarget target) => _send(target.openScript);
 
   /// Puts [text] and [files] (name, MIME type, bytes as base64) in the
@@ -1410,7 +1410,7 @@ class WebComposeResult {
   final int files;
 }
 
-/// The page's stored conversation selection (`DshAppState` channel).
+/// The page's stored conversation selection (`XrkAppState` channel).
 class DshWebState {
   const DshWebState(this.sessionId);
 

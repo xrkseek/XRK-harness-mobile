@@ -128,7 +128,7 @@ class ForumQuoteBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final name = quote.username;
     final other = quote.topicTitle;
     final header = Row(
@@ -184,7 +184,7 @@ class ForumOneboxCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final image = onebox.imageUrl;
     return Pressable(
       onTap: () => unawaited(openForumLink(onebox.url)),
@@ -277,7 +277,7 @@ class ForumPostImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final ratio = image.aspectRatio ?? 16 / 9;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -408,7 +408,7 @@ class _ForumImageViewerState extends State<ForumImageViewer> {
 
 // ── Share codes ──────────────────────────────────────────────────────────────
 
-/// A dsh-go share link inside a post: what it is and a one-tap 「安装」.
+/// A xrk-mobile share link inside a post: what it is and a one-tap 「安装」.
 class ForumShareCard extends ConsumerWidget {
   const ForumShareCard({super.key, required this.link, this.label});
 
@@ -421,7 +421,7 @@ class ForumShareCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final summary = summarizeShareLink(link, label: label);
     final tint = summary.kind == ShareKind.plugin ? 3 : 6;
     final subtitle = [summary.kindLabel, ?summary.detail].join(' · ');
@@ -505,7 +505,7 @@ class _DetailsBlockState extends State<_DetailsBlock> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -550,7 +550,7 @@ class _EmbedRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final (icon, label) = switch (embed.kind) {
       CookedEmbedKind.poll => (AppIcons.poll, embed.label ?? l10n.remoteForumPoll),
       CookedEmbedKind.video => (AppIcons.playVideo, embed.label ?? l10n.remoteForumVideo),

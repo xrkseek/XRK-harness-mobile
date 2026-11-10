@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/settings/appearance/launch_screen_section.dart';
+import 'package:xrk_app/ui/settings/appearance/launch_screen_section.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

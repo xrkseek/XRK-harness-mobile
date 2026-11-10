@@ -8,13 +8,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/l10n.dart';
 import '../../state/connection_state.dart';
 import '../../state/session_export.dart';
+import '../common/app_sheet.dart';
+import '../common/brief_notice.dart';
 import '../common/list_page_row.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import 'feature_widgets.dart';
-import '../common/brief_notice.dart';
 
 enum _Action { share, save }
+
+enum _AfterSave { share, open }
 
 class SessionExportPage extends ConsumerStatefulWidget {
   const SessionExportPage({super.key, required this.sessionId});
@@ -38,8 +41,16 @@ class _SessionExportPageState extends ConsumerState<SessionExportPage> {
         case _Action.share:
           await exporter.share(widget.sessionId);
         case _Action.save:
-          final where = await exporter.saveToDownloads(widget.sessionId);
-          if (mounted) showBriefNotice(context, l10n.featuresExportSavedTo(where));
+          final saved = await exporter.saveKeepingArchive(widget.sessionId);
+          try {
+            if (!mounted) return;
+            // Drop the row spinner before the after-save sheet — otherwise
+            // ProgressIndicator keeps pumping and blocks settle/tests.
+            setState(() => _busy = null);
+            await _afterSaved(saved.archive, saved.where);
+          } finally {
+            await saved.archive.dispose();
+          }
       }
     } catch (error) {
       if (mounted) {
@@ -47,6 +58,61 @@ class _SessionExportPageState extends ConsumerState<SessionExportPage> {
       }
     } finally {
       if (mounted) setState(() => _busy = null);
+    }
+  }
+
+  /// After Downloads: keep the cache file alive for open/share, then dispose.
+  Future<void> _afterSaved(SessionLogArchive archive, String where) async {
+    final l10n = context.l10n;
+    final exporter = ref.read(sessionLogExporterProvider);
+    final next = await showAppSheet<_AfterSave>(
+      context,
+      builder: (sheet) => SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SheetHeader(l10n.featuresExportSavedTitle),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+              child: Text(l10n.featuresExportSavedTo(where), style: Theme.of(sheet).textTheme.bodyMedium),
+            ),
+            SheetGroup(
+              children: [
+                ListPageRow(
+                  icon: AppIcons.share,
+                  title: l10n.commonShare,
+                  subtitle: l10n.featuresExportShareHint,
+                  onTap: () => Navigator.pop(sheet, _AfterSave.share),
+                ),
+                ListPageRow(
+                  icon: AppIcons.openExternal,
+                  title: l10n.featuresExportOpenOther,
+                  subtitle: l10n.featuresExportOpenHint,
+                  onTap: () => Navigator.pop(sheet, _AfterSave.open),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || next == null) {
+      showBriefNotice(context, l10n.featuresExportSavedTo(where));
+      return;
+    }
+    try {
+      switch (next) {
+        case _AfterSave.share:
+          await exporter.shareArchive(archive);
+        case _AfterSave.open:
+          await exporter.openArchive(archive);
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(sessionExportErrorText(error))));
+      }
     }
   }
 

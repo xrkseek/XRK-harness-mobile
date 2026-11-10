@@ -2,12 +2,12 @@
 // mirrored stepper and its two equal buttons, row heights, the trailing edge
 // shared by switches and capsules, and the 已修改 tag centred on its title.
 
-import 'package:dsh_app/ui/engine_settings/field_row.dart';
-import 'package:dsh_app/ui/engine_settings/field_sheets.dart';
-import 'package:dsh_app/ui/engine_settings/general_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/runtime_settings_pages.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/engine_settings/field_row.dart';
+import 'package:xrk_app/ui/engine_settings/field_sheets.dart';
+import 'package:xrk_app/ui/engine_settings/general_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/runtime_settings_pages.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -20,7 +20,7 @@ Rect cardOf(WidgetTester tester, Finder child) =>
 void main() {
   testWidgets('the number sheet: mirrored keys, centred value, equal buttons', (tester) async {
     final host = FakeSettingsHost()..namespaces['bash-sandbox']!.user = {'timeoutMs': 90000};
-    await pumpPage(tester, const ShellSettingsPage(), overrides: engineOverrides(DshClient.withCarrier(host)));
+    await pumpPage(tester, const ShellSettingsPage(), overrides: engineOverrides(XrkClient.withCarrier(host)));
     await tester.tap(find.text('命令超时'));
     await settle(tester);
 
@@ -55,12 +55,12 @@ void main() {
     await pumpPage(
       tester,
       const GeneralSettingsPage(),
-      overrides: engineOverrides(DshClient.withCarrier(FakeSettingsHost())),
+      overrides: engineOverrides(XrkClient.withCarrier(FakeSettingsHost())),
     );
     final oneLine = tester.getRect(find.ancestor(of: find.text('工作步骤展示'), matching: find.byType(EngineFieldRow)).first);
     expect(oneLine.height, 52);
     final locked = FakeSettingsHost()..namespaces['agent-loop']!.overlay = {'maxParallelToolCalls': 3};
-    await pumpPage(tester, const AgentLoopSettingsPage(), overrides: engineOverrides(DshClient.withCarrier(locked)));
+    await pumpPage(tester, const AgentLoopSettingsPage(), overrides: engineOverrides(XrkClient.withCarrier(locked)));
     final twoLine = tester.getRect(
       find.ancestor(of: find.text('每步并行工具调用上限'), matching: find.byType(EngineFieldRow)).first,
     );
@@ -78,7 +78,7 @@ void main() {
       await tester.pumpWidget(
         goldenApp(
           brightness: Brightness.light,
-          overrides: engineOverrides(DshClient.withCarrier(FakeSettingsHost())),
+          overrides: engineOverrides(XrkClient.withCarrier(FakeSettingsHost())),
           home: Builder(
             builder: (context) => MediaQuery(
               data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.3)),
@@ -97,7 +97,7 @@ void main() {
 
   testWidgets('switch tracks and capsules end on the same line; the tag sits on the title', (tester) async {
     final host = FakeSettingsHost()..namespaces['ui-chat']!.user = {'linkOpening': 'new-tab'};
-    await pumpPage(tester, const GeneralSettingsPage(), overrides: engineOverrides(DshClient.withCarrier(host)));
+    await pumpPage(tester, const GeneralSettingsPage(), overrides: engineOverrides(XrkClient.withCarrier(host)));
     final card = cardOf(tester, find.text('显示代码工作视图'));
     final switchBox = tester.getRect(find.byType(Switch).first);
     // The track sits 4 inside the switch's box.

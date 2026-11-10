@@ -21,7 +21,7 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return OnboardingScaffold(
       children: [
         const Spacer(flex: 5),

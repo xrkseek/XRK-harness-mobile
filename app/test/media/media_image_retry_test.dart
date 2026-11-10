@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/ui/chat/media/media_card.dart';
-import 'package:dsh_app/ui/chat/media/media_image_feedback.dart';
-import 'package:dsh_app/ui/chat/media/media_viewer.dart';
-import 'package:dsh_app/ui/chat/render/markdown_image.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/ui/chat/media/media_card.dart';
+import 'package:xrk_app/ui/chat/media/media_image_feedback.dart';
+import 'package:xrk_app/ui/chat/media/media_viewer.dart';
+import 'package:xrk_app/ui/chat/render/markdown_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/diagnostics/system_ime_diagnostics.dart';
-import 'package:dsh_app/diagnostics/system_ime_evidence.dart';
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/settings/diagnostics_page.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/diagnostics/system_ime_diagnostics.dart';
+import 'package:xrk_app/diagnostics/system_ime_evidence.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/settings/diagnostics_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

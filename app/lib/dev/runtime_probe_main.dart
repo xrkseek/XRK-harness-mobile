@@ -4,7 +4,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 
 import '../runtime/runtime_bridge.dart';
@@ -70,7 +70,7 @@ class _ProbeState extends State<_Probe> {
       if (!status.isRunning) throw StateError('runtime error: ${status.error}');
       _log('running at ${status.baseUrl} after ${sw.elapsed.inMilliseconds}ms');
 
-      final client = await DshClient.connect(baseUri: Uri.parse(status.baseUrl!), token: status.token);
+      final client = await XrkClient.connect(baseUri: Uri.parse(status.baseUrl!), token: status.token);
       final sessions = await client.listSessions();
       _log('sessions: ${sessions.length}');
       final created = await client.createSession(cwd: '/root/workspace');
@@ -79,14 +79,14 @@ class _ProbeState extends State<_Probe> {
       _log('models: ${models.groups.map((g) => '${g.id}(${g.models.length})').join(', ')}');
 
       // Optional real turn: a key pushed with `run-as … files/probe-key` (deleted after reading).
-      final keyFile = File('/data/user/0/io.github.ccch1mneyyy.dsh_app/files/probe-key');
+      final keyFile = File('/data/user/0/com.xrkseek.harness/files/probe-key');
       if (keyFile.existsSync()) {
         final key = keyFile.readAsStringSync().trim();
         keyFile.deleteSync();
         await client.setProviderKey(key);
         _log('provider key set');
         await _turn(client, created.sessionId);
-        // Restart DSH and check the session survived on disk (link2symlink path).
+        // Restart XRK and check the session survived on disk (link2symlink path).
         await client.close();
         await _bridge.stop();
         while ((await _bridge.status()).phase != RuntimePhase.installed) {
@@ -98,7 +98,7 @@ class _ProbeState extends State<_Probe> {
           if (status.phase == RuntimePhase.error) throw StateError('restart failed: ${status.error}');
           await Future<void>.delayed(const Duration(milliseconds: 300));
         }
-        final again = await DshClient.connect(baseUri: Uri.parse(status.baseUrl!), token: status.token);
+        final again = await XrkClient.connect(baseUri: Uri.parse(status.baseUrl!), token: status.token);
         final after = await again.listSessions();
         final mine = after.where((s) => s.sessionId == created.sessionId).toList();
         _log(
@@ -126,7 +126,7 @@ class _ProbeState extends State<_Probe> {
     }
   }
 
-  Future<void> _turn(DshClient client, String sessionId) async {
+  Future<void> _turn(XrkClient client, String sessionId) async {
     final transcript = ChatTranscript();
     final done = Completer<void>();
     var sawRunning = false;

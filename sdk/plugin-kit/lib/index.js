@@ -1,5 +1,5 @@
-// @dsh-go/plugin-kit — author kit for dsh-go native plugins. Zero runtime
-// dependencies. Docs: docs/plugins/ in the dsh-go repository.
+// @xrkseek/plugin-kit — author kit for xrk-mobile native plugins. Zero runtime
+// dependencies. Docs: docs/plugins/ in the xrk-mobile repository.
 export {
   stack, row, text, metric, chart, compare, steps, callout, options, confirm,
   list, keyValue, progress, table, actions, image,

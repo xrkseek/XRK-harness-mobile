@@ -3,17 +3,17 @@
 // tool row keeps its detail mounted while it collapses again. The waiting dots
 // hand over to whatever comes next by cross-fading on the same line.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart' show chatClock;
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/chat/widgets/assistant_message.dart';
-import 'package:dsh_app/ui/chat/widgets/stream_motion.dart';
-import 'package:dsh_app/ui/chat/widgets/stream_row.dart';
-import 'package:dsh_app/ui/chat/widgets/thinking_pill.dart';
-import 'package:dsh_app/ui/chat/widgets/tool_row.dart';
-import 'package:dsh_app/ui/common/typing_indicator.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart' show chatClock;
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/chat/widgets/assistant_message.dart';
+import 'package:xrk_app/ui/chat/widgets/stream_motion.dart';
+import 'package:xrk_app/ui/chat/widgets/stream_row.dart';
+import 'package:xrk_app/ui/chat/widgets/thinking_pill.dart';
+import 'package:xrk_app/ui/chat/widgets/tool_row.dart';
+import 'package:xrk_app/ui/common/typing_indicator.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

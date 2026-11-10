@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/chat_error_text.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_error_text.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   final cases = <(Object, String)>[
-    (const DshTransportException('raw'), '没能连上引擎'),
+    (const XrkTransportException('raw'), '没能连上引擎'),
     (const DshCarrierLostException('raw'), '没能连上引擎'),
     (const DshClosedException(), '没能连上引擎'),
     (TimeoutException('raw'), '没能连上引擎'),
@@ -25,9 +25,9 @@ void main() {
       ('FRAME_TOO_LARGE', '图片太大，少选几张再发'),
       ('gateway/method-not-found', '当前引擎版本不支持'),
     ])
-      (DshRemoteException(code, 'Exception(raw): boom'), reason),
-    (const DshRemoteException('gateway/internal', 'boom'), ''),
-    (const DshRemoteException('x', 'boom'), ''),
+      (XrkRemoteException(code, 'Exception(raw): boom'), reason),
+    (const XrkRemoteException('gateway/internal', 'boom'), ''),
+    (const XrkRemoteException('x', 'boom'), ''),
     (StateError('Exception(raw): boom'), ''),
   ];
   for (var i = 0; i < cases.length; i++) {

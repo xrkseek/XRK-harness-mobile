@@ -20,7 +20,7 @@ import '../common/list_page_row.dart';
 import '../common/overview_card.dart';
 import '../common/tile_grid.dart';
 import '../settings/settings_widgets.dart' show SettingsSection;
-import '../share/share_content.dart' show dshGoProjectUrl;
+import '../share/share_content.dart' show xrkGoProjectUrl;
 import '../shell/brand_mark.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
@@ -88,7 +88,7 @@ class _Overview extends StatelessWidget {
         onTap: forum,
       );
     }
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return OverviewCard(
       semanticLabel: l10n.botsProjectHome,
       leading: DecoratedBox(
@@ -103,7 +103,7 @@ class _Overview extends StatelessWidget {
       ),
       title: const Text(AppInfo.name),
       subtitle: Text(tagline ?? l10n.botsOpenSource),
-      onTap: () => unawaited(openCommunityLink(context, dshGoProjectUrl)),
+      onTap: () => unawaited(openCommunityLink(context, xrkGoProjectUrl)),
     );
   }
 }

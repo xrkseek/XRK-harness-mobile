@@ -2,7 +2,7 @@
 // PluginClientInfo per package, occupancy with labels in the app's language,
 // and the Tier A guesses for slots a package list can still name.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../ui/engine_settings/engine_settings_page.dart' show isPluginForm;
@@ -28,8 +28,8 @@ class SeatInventory {
 
   static const empty = SeatInventory();
 
-  /// Cells of the native panels' occupants: `dsh-go:<panel id>`.
-  static const nativeCellPrefix = 'dsh-go:';
+  /// Cells of the native panels' occupants: `xrk-mobile:<panel id>`.
+  static const nativeCellPrefix = 'xrk-mobile:';
 
   /// The panel id of a native occupant's [cell]; null for any other cell.
   static String? nativePanelId(String cell) =>
@@ -95,7 +95,7 @@ class SeatInventory {
 
   final ClientInventoryTier tier;
 
-  /// DSH release label of the host.
+  /// XRK release label of the host.
   final String? release;
   final String? bootRev;
   final Map<String, PluginClientInfo> packages;
@@ -111,12 +111,12 @@ class SeatInventory {
   /// local engine.
   final bool routeGuard;
 
-  /// The host serves DSH Web to this connection.
+  /// The host serves XRK Web to this connection.
   final bool webReachable;
 
   /// Native panels the host's plugins declare (switched-on ones): they
   /// occupy 对话详情's 「插件」 tab (`session.tab`) and 全部功能 (`features`)
-  /// as cells `dsh-go:<id>`, ahead of their package's web entries.
+  /// as cells `xrk-mobile:<id>`, ahead of their package's web entries.
   final List<NativePanel> nativePanels;
 
   /// The native panel behind [package]'s [cell], if it is one.
@@ -154,7 +154,7 @@ class SeatInventory {
     final placement = switch (slot) {
       Slots.rightPaneTab => DshGoPanel.sessionTab,
       Slots.main => DshGoPanel.features,
-      Slots.dshGoPanel => '',
+      Slots.xrkGoPanel => '',
       _ => null,
     };
     if (placement == null) return const [];

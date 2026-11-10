@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../l10n/l10n.dart';
 import '../link_status.dart';
@@ -19,7 +19,7 @@ class RelayAuthProvider {
   String toString() => 'RelayAuthProvider($id)';
 }
 
-/// Signed-in DSH Remote (ds-harness-remote) account.
+/// Signed-in XRK Remote (xrk-remote) account.
 class RelayUser {
   const RelayUser({required this.id, required this.displayName, this.provider});
 
@@ -45,8 +45,8 @@ enum RelayTrust {
   unknown,
 }
 
-/// A Host device registered on the account (a computer running DSH with the
-/// ds-harness-remote plugin).
+/// A Host device registered on the account (a computer running XRK with the
+/// xrk-remote plugin).
 class RelayHost {
   const RelayHost({
     required this.id,
@@ -109,8 +109,8 @@ enum RelayConnectionState { connecting, handshaking, connected, reconnecting, fa
 
 typedef RelayStateCallback = void Function(RelayConnectionState state, HostLinkError? error);
 
-/// What dsh-app needs from `packages/dsh_remote` (李国宝's ds-harness-remote
-/// protocol), implemented by `DshRemoteRelayBackend`. [UnavailableRelayBackend]
+/// What dsh-app needs from `packages/xrk_remote` (李国宝's xrk-remote
+/// protocol), implemented by `XrkRemoteRelayBackend`. [UnavailableRelayBackend]
 /// turns the relay off; tests use a fake.
 abstract class RelayBackend {
   /// False when the relay is turned off ([UnavailableRelayBackend]).
@@ -149,24 +149,24 @@ abstract class RelayBackend {
   /// Restarts [client]'s connection after a terminal failure the person has
   /// dealt with (a stopped relay client never retries by itself). False when
   /// [client] isn't a relay client.
-  bool reconnect(DshClient client);
+  bool reconnect(XrkClient client);
 
   /// Checks [client]'s tunnel now (after a network change); a dead one
   /// reconnects. True when it answered or [client] isn't a relay client.
-  Future<bool> probe(DshClient client);
+  Future<bool> probe(XrkClient client);
 
   /// How [client]'s current tunnel travels; null when it has none.
-  RelayPath? pathOf(DshClient client);
+  RelayPath? pathOf(XrkClient client);
 
   /// Opens an end-to-end encrypted tunnel to [host] and returns a ready
   /// client. [onState] reports progress and later drops/reconnects.
-  Future<DshClient> connectHost(RelayHost host, {RelayStateCallback? onState});
+  Future<XrkClient> connectHost(RelayHost host, {RelayStateCallback? onState});
 }
 
 /// Optional real network observations, without expanding the account/backend contract.
 abstract interface class RelayNetworkBackend {
-  RemoteNetworkStatus? networkOf(DshClient client);
-  Future<RemoteNetworkStatus?> inspectNetwork(DshClient client);
+  RemoteNetworkStatus? networkOf(XrkClient client);
+  Future<RemoteNetworkStatus?> inspectNetwork(XrkClient client);
 }
 
 /// The relay turned off: nothing to sign in to or connect to.
@@ -206,16 +206,16 @@ class UnavailableRelayBackend implements RelayBackend {
   Future<void> forgetHost(RelayHost host) async {}
 
   @override
-  bool reconnect(DshClient client) => false;
+  bool reconnect(XrkClient client) => false;
 
   @override
-  Future<bool> probe(DshClient client) async => true;
+  Future<bool> probe(XrkClient client) async => true;
 
   @override
-  RelayPath? pathOf(DshClient client) => null;
+  RelayPath? pathOf(XrkClient client) => null;
 
   @override
-  Future<DshClient> connectHost(RelayHost host, {RelayStateCallback? onState}) => Future.error(_error);
+  Future<XrkClient> connectHost(RelayHost host, {RelayStateCallback? onState}) => Future.error(_error);
 }
 
 /// [HostLink] over a [RelayBackend] connection.
@@ -238,12 +238,12 @@ class RelayHostLink implements HostLink, NetworkInspectableHostLink {
   final Backoff _backoff;
 
   final _statuses = StreamController<HostLinkStatus>.broadcast(sync: true);
-  final _clients = StreamController<DshClient>.broadcast();
+  final _clients = StreamController<XrkClient>.broadcast();
   final _delay = InterruptibleDelay();
   StreamSubscription<void>? _kickSub;
   HostLinkStatus _status = HostLinkStatus.idle;
-  DshClient? _client;
-  Future<DshClient>? _opening;
+  XrkClient? _client;
+  Future<XrkClient>? _opening;
   bool _closed = false;
   Future<RemoteNetworkStatus?>? _networkInspection;
   int _networkEpoch = 0;
@@ -259,10 +259,10 @@ class RelayHostLink implements HostLink, NetworkInspectableHostLink {
   Stream<HostLinkStatus> get statuses => _statuses.stream;
 
   @override
-  Stream<DshClient> get clients => _clients.stream;
+  Stream<XrkClient> get clients => _clients.stream;
 
   @override
-  DshClient? get currentClient => _status.isConnected ? _client : null;
+  XrkClient? get currentClient => _status.isConnected ? _client : null;
 
   void _emit(HostLinkStatus next) {
     if (_closed) return;
@@ -271,14 +271,14 @@ class RelayHostLink implements HostLink, NetworkInspectableHostLink {
   }
 
   @override
-  Future<DshClient> open() {
+  Future<XrkClient> open() {
     if (_closed) return Future.error(StateError('link closed'));
     final client = currentClient;
     if (client != null) return Future.value(client);
     return _opening ??= _run().whenComplete(() => _opening = null);
   }
 
-  Future<DshClient> _run() async {
+  Future<XrkClient> _run() async {
     _backoff.reset();
     var last = HostLinkError(HostLinkErrorKind.other, appL10n.commonConnectionFailed, retryable: true);
     while (!_closed) {
@@ -305,7 +305,7 @@ class RelayHostLink implements HostLink, NetworkInspectableHostLink {
     throw last;
   }
 
-  Future<DshClient> _connectOnce() async {
+  Future<XrkClient> _connectOnce() async {
     final attempt = ++_attempt;
     if (!backend.available) {
       throw HostLinkError(HostLinkErrorKind.unavailable, appL10n.remoteUnavailable);
@@ -375,7 +375,7 @@ class RelayHostLink implements HostLink, NetworkInspectableHostLink {
 
   int _reconnects = 0;
 
-  HostLinkStatus _connected(DshClient client) {
+  HostLinkStatus _connected(XrkClient client) {
     final network = backend is RelayNetworkBackend ? (backend as RelayNetworkBackend).networkOf(client) : null;
     return HostLinkStatus(
       HostLinkPhase.connected,
@@ -396,7 +396,7 @@ class RelayHostLink implements HostLink, NetworkInspectableHostLink {
     ).whenComplete(() => _networkInspection = null);
   }
 
-  Future<RemoteNetworkStatus?> _inspectNetwork(DshClient client, RelayNetworkBackend inspector) async {
+  Future<RemoteNetworkStatus?> _inspectNetwork(XrkClient client, RelayNetworkBackend inspector) async {
     final epoch = _networkEpoch;
     try {
       final value = await inspector.inspectNetwork(client).timeout(const Duration(seconds: 3), onTimeout: () => null);
@@ -575,7 +575,7 @@ class RelayPairingError implements Exception {
   String toString() => 'RelayPairingError($kind${detail == null ? '' : ', $detail'})';
 }
 
-/// Scan-to-pair, implemented by `DshRemoteRelayBackend`; a backend without it
+/// Scan-to-pair, implemented by `XrkRemoteRelayBackend`; a backend without it
 /// shows no pairing entry.
 abstract interface class RelayPairingBackend {
   /// Whether this Server pairs by scanning (false when it cannot be asked).

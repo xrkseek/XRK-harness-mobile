@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -17,14 +17,14 @@ void main() {
       };
       final result = parsePluginView(c['view'], data: c['data'], budget: budget);
       final got = switch (result) {
-        DshUiInvalid(:final error) => {
+        XrkUiInvalid(:final error) => {
           'fatal': true,
           'title': null,
           'issues': [
             {'path': error.path, 'message': error.message},
           ],
         },
-        DshUiParsed(:final view) => {
+        XrkUiParsed(:final view) => {
           'fatal': false,
           'title': view.title,
           'issues': [

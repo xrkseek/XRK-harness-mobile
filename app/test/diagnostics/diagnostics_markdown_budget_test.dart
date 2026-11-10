@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/diagnostics/diagnostics_markdown.dart';
-import 'package:dsh_app/diagnostics/diagnostics_publish.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/state/settings_state.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/diagnostics/diagnostics_markdown.dart';
+import 'package:xrk_app/diagnostics/diagnostics_publish.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/state/settings_state.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

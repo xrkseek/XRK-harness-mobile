@@ -1,16 +1,16 @@
 // English preview runs of the existing golden tests (i18n checks):
 //
-//   DSH_TEST_LANG=en DSH_TEST_GOLDEN_OUT=/abs/dir flutter test test/settings
+//   XRK_TEST_LANG=en XRK_TEST_GOLDEN_OUT=/abs/dir flutter test test/settings
 //
-// switches appL10n to English and sends every golden to DSH_TEST_GOLDEN_OUT
+// switches appL10n to English and sends every golden to XRK_TEST_GOLDEN_OUT
 // (<test dir>/<golden name>) instead of comparing it: the committed Chinese
 // goldens are never read or written. Without the variables nothing changes.
 
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/locale_state.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/locale_state.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 

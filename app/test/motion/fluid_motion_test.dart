@@ -1,14 +1,14 @@
 import 'dart:math' as math;
 
-import 'package:dsh_app/ui/chat/widgets/stream_motion.dart';
-import 'package:dsh_app/ui/common/app_dialog.dart';
-import 'package:dsh_app/ui/common/fade_in.dart';
-import 'package:dsh_app/ui/common/fluid_bits.dart';
-import 'package:dsh_app/ui/common/pressable.dart';
-import 'package:dsh_app/ui/common/segmented_pill.dart';
-import 'package:dsh_app/ui/common/tile_grid.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/chat/widgets/stream_motion.dart';
+import 'package:xrk_app/ui/common/app_dialog.dart';
+import 'package:xrk_app/ui/common/fade_in.dart';
+import 'package:xrk_app/ui/common/fluid_bits.dart';
+import 'package:xrk_app/ui/common/pressable.dart';
+import 'package:xrk_app/ui/common/segmented_pill.dart';
+import 'package:xrk_app/ui/common/tile_grid.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

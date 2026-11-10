@@ -6,8 +6,8 @@
 
 | 场景 | 真实执行 | 受控替换 |
 |---|---|---|
-| 问一句，原会话 / 新会话 | `PET_PROBE ask` 打开原生输入条 → 点击发送 → `dsh/pet_overlay` → `PetOverlayActions` → `ChatController.waitForSync/send` → `DshClient` → HTTP RPC；同步快照由真实 mux 接收 | `FakeDsh` 提供隔离 Host、空会话快照；会话 provider 固定候选，创建仍调用 `session/create` |
-| 允许本次 / 拒绝 / 简单问题 | 控制接口只将 waterfall 写入真实 WebSocket；`DshClient` 解析 → `ChatAlertsController` 创建 token → `PetOverlayBridge` 推原生气泡 → 点击 → `answerFromPet` → `$events/result` | 复用 `FakeAlertSource` 提供会话列表与精确的工具调用文本；测试 reducer 固定宠物展示状态，token 仍来自真实 tracker |
+| 问一句，原会话 / 新会话 | `PET_PROBE ask` 打开原生输入条 → 点击发送 → `dsh/pet_overlay` → `PetOverlayActions` → `ChatController.waitForSync/send` → `XrkClient` → HTTP RPC；同步快照由真实 mux 接收 | `FakeDsh` 提供隔离 Host、空会话快照；会话 provider 固定候选，创建仍调用 `session/create` |
+| 允许本次 / 拒绝 / 简单问题 | 控制接口只将 waterfall 写入真实 WebSocket；`XrkClient` 解析 → `ChatAlertsController` 创建 token → `PetOverlayBridge` 推原生气泡 → 点击 → `answerFromPet` → `$events/result` | 复用 `FakeAlertSource` 提供会话列表与精确的工具调用文本；测试 reducer 固定宠物展示状态，token 仍来自真实 tracker |
 | 语音回填 | 原生按住说话，收到 WAV 后调用真实 `transcribe` 动作；前台回退仍使用 `PetVoiceDialog` 与 `VoiceInputController`；均发送实际 `speech/transcribe` HTTP 请求 | 本地模型固定返回 `probe voice words`。前台回退的录音桥提供一秒 PCM16 WAV，原生浮窗录音器不替换 |
 
 语音验证只证明录音/回退接口、请求协议、文本回填以及“回填不自动发送”，不证明真实识别模型效果。前台回退使用合成 WAV，不能用它声称硬件麦克风已验收。通知弹出由测试 channel 隔离，以免触发其他系统通知；桌宠的 MethodChannel 没有 mock 成功返回。每个 `native-result` 都是实际 Dart handler 的结果。
@@ -38,10 +38,10 @@ tooling/build-apk.sh --debug -f x64 -t lib/dev/pet_actions_probe_main.dart
 
 # 只对明确指定的模拟器安装。下例假设它已经启动。
 adb -s emulator-5556 install -r app/build/app/outputs/flutter-apk/app-x64-debug.apk
-adb -s emulator-5556 shell appops set io.github.ccch1mneyyy.dsh_app SYSTEM_ALERT_WINDOW allow
-adb -s emulator-5556 shell pm grant io.github.ccch1mneyyy.dsh_app android.permission.RECORD_AUDIO
-adb -s emulator-5556 shell am force-stop io.github.ccch1mneyyy.dsh_app
-adb -s emulator-5556 shell monkey -p io.github.ccch1mneyyy.dsh_app -c android.intent.category.LAUNCHER 1
+adb -s emulator-5556 shell appops set com.xrkseek.harness SYSTEM_ALERT_WINDOW allow
+adb -s emulator-5556 shell pm grant com.xrkseek.harness android.permission.RECORD_AUDIO
+adb -s emulator-5556 shell am force-stop com.xrkseek.harness
+adb -s emulator-5556 shell monkey -p com.xrkseek.harness -c android.intent.category.LAUNCHER 1
 
 python3 app/tool/pet_actions_probe.py --serial emulator-5556 --output /tmp/pet-actions-probe-result.json
 ```

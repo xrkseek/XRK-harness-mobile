@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/ui/bots/bots_page.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_app/ui/bots/room_details_page.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/bots/bots_page.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/bots/room_details_page.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,7 +57,7 @@ void main() {
       expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, '允许本次')).onPressed, isNull);
       expect(tester.widget<OutlinedButton>(find.widgetWithText(OutlinedButton, '拒绝')).onPressed, isNull);
       expect(fake.endpoints, ['approval-answer']);
-      gate.completeError(const DshRemoteException('bot/failed', 'raw-secret'));
+      gate.completeError(const XrkRemoteException('bot/failed', 'raw-secret'));
       await _frames(tester);
       expect(find.byType(SnackBar), findsOneWidget);
       expect(find.textContaining('raw-secret'), findsNothing);

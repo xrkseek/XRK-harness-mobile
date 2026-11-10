@@ -62,7 +62,7 @@ class DsBotDrawerRow extends ConsumerWidget {
                         const TextSpan(text: 'DS Bot'),
                         TextSpan(
                           text: ' · $count',
-                          style: TextStyle(color: DshColors.of(context).textTertiary),
+                          style: TextStyle(color: XrkColors.of(context).textTertiary),
                         ),
                       ],
                     ),

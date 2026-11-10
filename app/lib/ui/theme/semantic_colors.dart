@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'accent.dart';
 import 'palette.dart';
 
-/// DSH 工具调用的视觉类别。名字 → 类别的映射在 `common/tool_glyph.dart`。
+/// XRK 工具调用的视觉类别。名字 → 类别的映射在 `common/tool_glyph.dart`。
 enum ToolTone {
   /// bash / pwsh / job_*:终端。
   terminal,
@@ -40,8 +40,8 @@ enum ToolTone {
 /// - 所有 mono / 代码 / diff / ANSI 必须铺在 [codeWellBg] 上,**不能**直接
 ///   放在玻璃或页面渐变上 —— 只有固定的井底才能保证这些固定前景色的对比度。
 /// - 文字类前景对其底色 ≥ 4.5(容器上的 on-色 ≥ 7)。
-class DshColors extends ThemeExtension<DshColors> {
-  const DshColors({
+class XrkColors extends ThemeExtension<XrkColors> {
+  const XrkColors({
     required this.textTertiary,
     required this.textDisabled,
     required this.success,
@@ -128,14 +128,14 @@ class DshColors extends ThemeExtension<DshColors> {
   final List<Color> toolContainers;
   final List<Color> onToolContainers;
 
-  static DshColors of(BuildContext context) => Theme.of(context).extension<DshColors>()!;
+  static XrkColors of(BuildContext context) => Theme.of(context).extension<XrkColors>()!;
 
   /// [accent] 配色下的一套:语义色、ANSI、身份色、工具色原样不动(色相本身
   /// 就是语义);中性的那几格 —— 三级 / 禁用文字、代码井、行号、diff 标题 ——
   /// 换成这套配色的中性色。雾蓝直接返回 [light] / [dark]。
-  static DshColors forAccent(Brightness brightness, AppAccent accent) {
+  static XrkColors forAccent(Brightness brightness, AppAccent accent) {
     final dark = brightness == Brightness.dark;
-    final base = dark ? DshColors.dark : DshColors.light;
+    final base = dark ? XrkColors.dark : XrkColors.light;
     final n = NeutralTones.forAccent(accent);
     if (identical(n, NeutralTones.defaults)) return base;
     return dark
@@ -177,7 +177,7 @@ class DshColors extends ThemeExtension<DshColors> {
     return hash % slots;
   }
 
-  static const light = DshColors(
+  static const light = XrkColors(
     textTertiary: Color(0xFF646974),
     textDisabled: Color(0xFFA1A5AC),
     // 状态色一律低饱和:鲜绿 / 鲜红一出现,界面立刻变成"运维面板"。
@@ -268,7 +268,7 @@ class DshColors extends ThemeExtension<DshColors> {
     ],
   );
 
-  static const dark = DshColors(
+  static const dark = XrkColors(
     textTertiary: Color(0xFF9A9EA9),
     textDisabled: Color(0xFF656971),
     success: Color(0xFF8BCCA6),
@@ -358,7 +358,7 @@ class DshColors extends ThemeExtension<DshColors> {
   );
 
   @override
-  DshColors copyWith({
+  XrkColors copyWith({
     Color? textTertiary,
     Color? textDisabled,
     Color? success,
@@ -392,7 +392,7 @@ class DshColors extends ThemeExtension<DshColors> {
     List<Color>? toolContainers,
     List<Color>? onToolContainers,
   }) {
-    return DshColors(
+    return XrkColors(
       textTertiary: textTertiary ?? this.textTertiary,
       textDisabled: textDisabled ?? this.textDisabled,
       success: success ?? this.success,
@@ -429,11 +429,11 @@ class DshColors extends ThemeExtension<DshColors> {
   }
 
   @override
-  DshColors lerp(DshColors? other, double t) {
-    if (other is! DshColors) return this;
+  XrkColors lerp(XrkColors? other, double t) {
+    if (other is! XrkColors) return this;
     Color mix(Color a, Color b) => Color.lerp(a, b, t)!;
     List<Color> mixAll(List<Color> a, List<Color> b) => [for (var i = 0; i < a.length; i++) mix(a[i], b[i])];
-    return DshColors(
+    return XrkColors(
       textTertiary: mix(textTertiary, other.textTertiary),
       textDisabled: mix(textDisabled, other.textDisabled),
       success: mix(success, other.success),

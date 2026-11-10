@@ -1,4 +1,4 @@
-// Twin of dsh_ui_plugin_formula.dart: a bounded arithmetic language, never eval.
+// Twin of xrk_ui_plugin_formula.dart: a bounded arithmetic language, never eval.
 export const FORMULA_LIMITS = Object.freeze({ length: 256, tokens: 128, depth: 16 })
 
 export function evaluateFormula(source, data) {

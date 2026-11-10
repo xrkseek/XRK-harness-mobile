@@ -3,10 +3,10 @@
 // history, then out — off the page, or (as the app's home, 网页模式) out of
 // the app.
 //
-// DSH Web keeps where the person is in component state, never in its URL or
+// XRK Web keeps where the person is in component state, never in its URL or
 // history (0.2.1-rc.4: no pushState anywhere), so the WebView's history alone
 // let back skip straight past an open settings sheet and leave the app. The
-// page itself is asked first (`assets/web/dsh_web_back.js`): its dialogs and
+// page itself is asked first (`assets/web/xrk_web_back.js`): its dialogs and
 // menus, popovers, the app's drawer, the right panel, a plugin's page, a full
 // page in the conversation's place.
 
@@ -54,7 +54,7 @@ abstract final class WebBack {
     return value is String && steps.contains(value);
   }
 
-  /// The steps `dsh_web_back.js` takes ('none' is not one).
+  /// The steps `xrk_web_back.js` takes ('none' is not one).
   @visibleForTesting
   static const steps = {'layer', 'popup', 'drawer', 'panel', 'page', 'chat'};
 }
@@ -73,7 +73,7 @@ class WebBackDispatcher {
   });
 
   /// Runs [WebBack.script] in the page; null when the page can't be asked
-  /// (still loading, an error page, not DSH Web).
+  /// (still loading, an error page, not XRK Web).
   final Future<Object?>? Function() askPage;
   final Future<bool> Function() canGoBack;
   final Future<void> Function() goBack;

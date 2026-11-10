@@ -1,19 +1,19 @@
-// Goldens for first run's 「想让 DSH Go 帮你做哪些事」 beside the unpack (the
+// Goldens for first run's 「想让 XRK Go 帮你做哪些事」 beside the unpack (the
 // pick, a step, a step after a denial, a maker's switch after the trip, the
 // restricted-settings steps, the summary) and 设置 › 系统权限, on a vivo.
 //
 //   flutter test --update-goldens test/access/access_golden_test.dart
 
-import 'package:dsh_app/phone/phone_channel.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/access_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/access/access_pick_page.dart';
-import 'package:dsh_app/ui/access/access_summary_page.dart';
-import 'package:dsh_app/ui/access/access_walk.dart';
-import 'package:dsh_app/ui/onboarding/access_step.dart';
-import 'package:dsh_app/ui/onboarding/onboarding_scaffold.dart';
-import 'package:dsh_app/ui/settings/system_access_page.dart';
+import 'package:xrk_app/phone/phone_channel.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/access_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/access/access_pick_page.dart';
+import 'package:xrk_app/ui/access/access_summary_page.dart';
+import 'package:xrk_app/ui/access/access_walk.dart';
+import 'package:xrk_app/ui/onboarding/access_step.dart';
+import 'package:xrk_app/ui/onboarding/onboarding_scaffold.dart';
+import 'package:xrk_app/ui/settings/system_access_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -77,11 +77,11 @@ Widget _pick() => _beside(AccessPickPage(onPicked: (_, _) {}, onSkip: () {}));
 
 Widget _walk(List<AccessItem> items) => _beside(AccessWalk(items: items, onDone: () {}));
 
-final _vivoWalk = accessWalk({AccessFeature.voice, AccessFeature.background}, 'vivo');
+final _vivoWalk = accessWalk({AccessFeature.files, AccessFeature.background}, 'vivo');
 
 final _summaryReadings = readingsWith(offPhone, mic: true, notifications: true, battery: true, accessibility: true);
 
-Widget _summary() => _beside(AccessSummaryPage(items: accessWalk(AccessFeature.values, 'vivo'), voice: true, onDone: () {}));
+Widget _summary() => _beside(AccessSummaryPage(items: accessWalk(AccessFeature.values, 'vivo'), onDone: () {}));
 
 void main() {
   goldenBoth('access_pick', _pick, overrides: _with(offPhone));
@@ -145,7 +145,7 @@ void main() {
     },
     before: (tester) async {
       final c = ProviderScope.containerOf(tester.element(find.byType(MaterialApp)));
-      await c.read(accessSetupProvider.notifier).choose({AccessFeature.voice});
+      await c.read(accessSetupProvider.notifier).choose({AccessFeature.files});
       for (var i = 0; i < 20 && find.byKey(const ValueKey('access-summary-done')).evaluate().isEmpty; i++) {
         await tester.pump(const Duration(milliseconds: 100));
       }

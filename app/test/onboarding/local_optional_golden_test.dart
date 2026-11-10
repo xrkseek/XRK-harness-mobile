@@ -4,21 +4,21 @@
 //
 //   flutter test --update-goldens test/onboarding/local_optional_golden_test.dart
 
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/runtime/local_footprint.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/engine/engine_screen.dart';
-import 'package:dsh_app/ui/onboarding/local_install.dart';
-import 'package:dsh_app/ui/onboarding/onboarding_scaffold.dart';
-import 'package:dsh_app/ui/onboarding/runtime_setup_page.dart';
-import 'package:dsh_app/ui/remote/host_switcher.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/runtime/local_footprint.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/engine/engine_screen.dart';
+import 'package:xrk_app/ui/onboarding/local_install.dart';
+import 'package:xrk_app/ui/onboarding/onboarding_scaffold.dart';
+import 'package:xrk_app/ui/onboarding/runtime_setup_page.dart';
+import 'package:xrk_app/ui/remote/host_switcher.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';

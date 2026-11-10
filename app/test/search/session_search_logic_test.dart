@@ -4,11 +4,11 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/session_search.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/shell/session_search_page.dart' show searchDateLabel;
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/session_search.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/shell/session_search_page.dart' show searchDateLabel;
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -348,7 +348,7 @@ void main() {
     testWidgets('connection metadata changes keep the same client backend and pending RPC', (tester) async {
       final response = Completer<Object?>();
       final carrier = FakePluginCarrier()..handlers['session/search'] = (_) => response.future;
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       addTearDown(client.close);
       addTearDown(() {
         if (!response.isCompleted) response.complete({'items': [], 'hasMore': false});
@@ -384,8 +384,8 @@ void main() {
     testWidgets('a new client immediately followed by input sends only one debounced RPC', (tester) async {
       final oldCarrier = FakePluginCarrier()..handlers['session/search'] = (_) => {'items': []};
       final currentCarrier = FakePluginCarrier()..handlers['session/search'] = (_) => {'items': []};
-      final oldClient = DshClient.withCarrier(oldCarrier);
-      final currentClient = DshClient.withCarrier(currentCarrier);
+      final oldClient = XrkClient.withCarrier(oldCarrier);
+      final currentClient = XrkClient.withCarrier(currentCarrier);
       addTearDown(oldClient.close);
       addTearDown(currentClient.close);
       final c = ProviderContainer(
@@ -493,7 +493,7 @@ void main() {
     });
 
     testWidgets('a failure offers a retry that goes out at once', (tester) async {
-      final backend = FakeContentSearch(error: const DshTransportException('socket closed'));
+      final backend = FakeContentSearch(error: const XrkTransportException('socket closed'));
       final c = containerWith(backend);
       type(c, '登录');
       await tester.pump(const Duration(milliseconds: 250));
@@ -546,21 +546,21 @@ void main() {
     expect(isContentSearchUnsupported(searchDisabled), isTrue);
     expect(
       isContentSearchUnsupported(
-        const DshRemoteException(
+        const XrkRemoteException(
           'gateway/internal',
-          'session search is unavailable: this deployment does not mount @deepseek-ai/dsh-session-query',
+          'session search is unavailable: this deployment does not mount @xrkseek/harness-cli-session-query',
         ),
       ),
       isTrue,
     );
-    expect(isContentSearchUnsupported(const DshRemoteException('gateway/method-unavailable', 'x')), isTrue);
+    expect(isContentSearchUnsupported(const XrkRemoteException('gateway/method-unavailable', 'x')), isTrue);
     expect(
       isContentSearchUnsupported(
-        const DshRemoteException('gateway/internal', 'session search failed: SESSION_QUERY_INDEX_FAILED'),
+        const XrkRemoteException('gateway/internal', 'session search failed: SESSION_QUERY_INDEX_FAILED'),
       ),
       isFalse,
     );
-    expect(isContentSearchUnsupported(const DshTransportException('timeout')), isFalse);
+    expect(isContentSearchUnsupported(const XrkTransportException('timeout')), isFalse);
     expect(isContentSearchUnsupported(StateError('x')), isFalse);
   });
 

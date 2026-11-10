@@ -3,13 +3,13 @@
 //
 //   flutter test --update-goldens test/drawer/drawer_golden_test.dart
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/session_attention_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/shell/drawer/folder_sheets.dart';
-import 'package:dsh_app/ui/shell/drawer/session_tile.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/session_attention_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/shell/drawer/folder_sheets.dart';
+import 'package:xrk_app/ui/shell/drawer/session_tile.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;

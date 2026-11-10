@@ -3,22 +3,22 @@
 // the reply's same-path image left out, geometry, the metadata line, save /
 // share from the original bytes, the viewer, and goldens.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/features_state.dart' show jobsProvider;
-import 'package:dsh_app/ui/chat/chat_rows.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/media/generate_mode.dart' show GenerateCapsule;
-import 'package:dsh_app/ui/chat/media/media_card.dart';
-import 'package:dsh_app/ui/chat/media/media_format.dart' show chatTitleShown;
-import 'package:dsh_app/ui/chat/media/media_grid.dart';
-import 'package:dsh_app/ui/chat/media/media_viewer.dart';
-import 'package:dsh_app/ui/chat/render/markdown_image.dart';
-import 'package:dsh_app/ui/chat/tool_view.dart';
-import 'package:dsh_app/ui/chat/widgets/assistant_message.dart';
-import 'package:dsh_app/ui/chat/widgets/user_bubble.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/features_state.dart' show jobsProvider;
+import 'package:xrk_app/ui/chat/chat_rows.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/media/generate_mode.dart' show GenerateCapsule;
+import 'package:xrk_app/ui/chat/media/media_card.dart';
+import 'package:xrk_app/ui/chat/media/media_format.dart' show chatTitleShown;
+import 'package:xrk_app/ui/chat/media/media_grid.dart';
+import 'package:xrk_app/ui/chat/media/media_viewer.dart';
+import 'package:xrk_app/ui/chat/render/markdown_image.dart';
+import 'package:xrk_app/ui/chat/tool_view.dart';
+import 'package:xrk_app/ui/chat/widgets/assistant_message.dart';
+import 'package:xrk_app/ui/chat/widgets/user_bubble.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -102,16 +102,16 @@ void main() {
 
     test('unreadable metas are no card', () {
       expect(MediaMeta.fromToolMeta({'other': 1}), isNull);
-      expect(MediaMeta.fromToolMeta({'dsh-go/media': 'x'}), isNull);
+      expect(MediaMeta.fromToolMeta({'xrk-mobile/media': 'x'}), isNull);
       expect(
         MediaMeta.fromToolMeta({
-          'dsh-go/media': {'v': 1, 'status': 'done', 'items': []},
+          'xrk-mobile/media': {'v': 1, 'status': 'done', 'items': []},
         }),
         isNull,
       );
       expect(
         MediaMeta.fromToolMeta({
-          'dsh-go/media': {
+          'xrk-mobile/media': {
             'v': 1,
             'kind': 'image',
             'status': 'done',
@@ -386,7 +386,7 @@ void main() {
   group('titles', () {
     test('a title that starts with a request shows what follows; a cut-short one, the kind', () {
       expect(chatTitleShown('〔生成图像 · 3:4 · 2 张 · Seedream 5.0〕 画一只橘猫'), '画一只橘猫');
-      // DSH's fallback: the first message's leading eight words.
+      // XRK's fallback: the first message's leading eight words.
       expect(chatTitleShown('〔生成图像 · 3:4 · 2 张 · Seedream'), '生成图像');
       expect(chatTitleShown('〔生成视频 · 5 秒 · 720p〕'), '生成视频');
       expect(chatTitleShown('窗台上的橘猫'), '窗台上的橘猫');

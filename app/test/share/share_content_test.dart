@@ -1,9 +1,9 @@
 // What goes on a share card: masking, images, code segments, the question
 // and stats from the conversation, and cutting long replies at a boundary.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/share/share_content.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/share/share_content.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';

@@ -3,7 +3,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/l10n.dart';
@@ -14,7 +14,7 @@ enum CordisReach {
   /// Not connected yet (or the connection failed).
   offline,
 
-  /// Connected through a carrier without `dynamicCordisRunner/*` (the DSH
+  /// Connected through a carrier without `dynamicCordisRunner/*` (the XRK
   /// Remote tunnel).
   unsupported,
 

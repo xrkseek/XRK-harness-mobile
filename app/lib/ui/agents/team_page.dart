@@ -1,11 +1,11 @@
-// The Agent Teams panel as a detail page. DSH Web's experimental
+// The Agent Teams panel as a detail page. XRK Web's experimental
 // `dsh-experimental-client-ui-agent-team` shows
 // the roster and the shared task board in a header popover; here they are a
 // page with the team's messages added (what members received in their
 // inboxes), reachable from the chat header and the feature hub. With the
 // bundle off the page offers to switch it on.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -186,7 +186,7 @@ class _TeamView extends ConsumerWidget {
     final leadTitle = sessions[leadId]?.title?.trim();
     final running = members.where((m) => m.running).length;
     final done = team.tasks.where((t) => t.status == 'completed').length;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
 
     final content = switch (tab) {
       _TeamTab.members => _MembersTab(members: members, currentId: currentId, onOpen: onOpen),
@@ -271,7 +271,7 @@ class _AvatarStack extends StatelessWidget {
   Widget build(BuildContext context) {
     final shown = names.take(names.length > 4 ? 3 : 4).toList();
     final rest = names.length - shown.length;
-    final ring = DshSurfaces.of(context).backdropTop;
+    final ring = XrkSurfaces.of(context).backdropTop;
     final count = shown.length + (rest > 0 ? 1 : 0);
     if (count == 0) {
       return const SizedBox.square(dimension: size);
@@ -312,7 +312,7 @@ class _MembersTab extends ConsumerWidget {
     final l10n = context.l10n;
     final catalog = ref.watch(modelCatalogProvider).value;
     final sessions = ref.watch(hostSessionsProvider);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final theme = Theme.of(context);
     final lone = members.where((m) => !m.member.lead).isEmpty;
     return Column(
@@ -368,7 +368,7 @@ class _CurrentTag extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
       decoration: ShapeDecoration(
@@ -448,7 +448,7 @@ class _TasksTab extends StatelessWidget {
 
 /// A task's state glyph: ready / blocked / in progress / done.
 Widget _taskGlyph(BuildContext context, TeamTask task) {
-  final colors = DshColors.of(context);
+  final colors = XrkColors.of(context);
   final scheme = Theme.of(context).colorScheme;
   return switch (task.status) {
     'completed' => Icon(AppIcons.success, size: 20, color: colors.success),
@@ -473,7 +473,7 @@ class _TaskRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return ListPageRow(
       leading: _taskGlyph(context, task),
       title: task.subject,
@@ -491,7 +491,7 @@ Future<void> _showTask(BuildContext context, TeamTask task) {
     isScrollControlled: true,
     builder: (context) {
       final theme = Theme.of(context);
-      final colors = DshColors.of(context);
+      final colors = XrkColors.of(context);
       final state = switch (task.status) {
         'completed' => (context.l10n.commonCompleted, StatusTone.ok),
         'in_progress' => (context.l10n.commonInProgress, StatusTone.busy),
@@ -633,7 +633,7 @@ class _MessageRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return InkWell(
       onTap: () => _showMessage(context, from, to, message),
       child: Padding(

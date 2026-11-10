@@ -1,4 +1,4 @@
-// The header's 「N 个子代理」 sheet (DSH Web opens the
+// The header's 「N 个子代理」 sheet (XRK Web opens the
 // same catalog as a dropdown under its session header).
 
 import 'package:flutter/material.dart';

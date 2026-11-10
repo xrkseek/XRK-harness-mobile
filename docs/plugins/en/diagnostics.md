@@ -14,6 +14,6 @@ A disabled bundle gets no extra diagnostics section. An explicitly disabled comp
 | Metadata errors | Metadata diagnostics under a component | The host's actual metadata problem, not a runtime exception stack |
 | Native UI parse and runtime issues | Native UI | Manifest, view and action issues with their JSON paths, using the existing issues page |
 
-If the host API did not return runtime error details, the app says so. For the local engine, **Engine logs** opens the existing log sheet. For SSH / DSH Remote, inspect logs on that host. Local logs never stand in for a remote error, and `pending` is not treated as evidence of a particular missing dependency.
+If the host API did not return runtime error details, the app says so. For the local engine, **Engine logs** opens the existing log sheet. For SSH / XRK Remote, inspect logs on that host. Local logs never stand in for a remote error, and `pending` is not treated as evidence of a particular missing dependency.
 
 Plugin management changes and host-ready events invalidate the existing inventory. **Refresh** in the diagnostics section also reads it again. This section adds no polling and cannot promise to observe every transient phase without a corresponding notification.

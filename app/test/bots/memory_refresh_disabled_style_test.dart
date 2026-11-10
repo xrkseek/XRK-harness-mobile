@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/ui/bots/memory_card.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/ui/bots/memory_card.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,7 +28,7 @@ void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final fixture =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_memory_refresh.json').readAsStringSync()) as Map;
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_memory_refresh.json').readAsStringSync()) as Map;
   for (final entity in ['bot', 'room']) {
     for (final failed in [false, true]) {
       testWidgets('$entity refreshing rows are visibly disabled; failure=$failed', (t) async {

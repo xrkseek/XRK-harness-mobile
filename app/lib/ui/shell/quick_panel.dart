@@ -97,7 +97,7 @@ class QuickPanel extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 13),
                 child: Text(
                   l10n.shellQuickPanelHint('${l10n.commonSettings} › ${l10n.hubSettingsInterface}'),
-                  style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+                  style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
                 ),
               ),
             ],

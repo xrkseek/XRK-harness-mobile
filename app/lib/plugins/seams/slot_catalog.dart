@@ -1,11 +1,11 @@
-// The official web client's slots (DSH 0.2.2-rc.1) and what the app does
+// The official web client's slots (XRK 0.2.2-rc.1) and what the app does
 // with each (docs/design/plugin-seams.md §3). Regenerate the table after a
-// DSH upgrade as the spec's appendix A describes; a slot the table does not
+// XRK upgrade as the spec's appendix A describes; a slot the table does not
 // know is planned as [SeatPolicy.other].
 
 import 'package:flutter/foundation.dart';
 
-/// DSH release the table was extracted from.
+/// XRK release the table was extracted from.
 const slotCatalogRelease = '0.2.2-rc.1';
 
 /// How many occupants a slot holds (`slots.zh.md`, Cardinality).
@@ -26,10 +26,10 @@ enum SeatPriority {
   p2,
 
   /// Message-level slots: one platform view per message would sink scrolling
-  /// and memory, so only an "open in DSH Web" entry.
+  /// and memory, so only an "open in XRK Web" entry.
   message,
 
-  /// A slot §3 does not plan for: an "open in DSH Web" entry at most.
+  /// A slot §3 does not plan for: an "open in XRK Web" entry at most.
   other,
 
   /// Replacement points of the app's own UI: no seat at all.
@@ -70,7 +70,7 @@ class SeatPolicy {
   final bool needsOccupancy;
 
   /// With [needsOccupancy]: the island hides the slot's official entries.
-  /// Not for a slot DSH Web draws one entry of at a time (a conversation
+  /// Not for a slot XRK Web draws one entry of at a time (a conversation
   /// view): there the occupancy is only how the island finds its entry.
   final bool masks;
 
@@ -79,7 +79,7 @@ class SeatPolicy {
   /// Islands only when the person (or ui.json) asked for one.
   final bool optIn;
 
-  /// An "open in DSH Web" entry is a meaningful fallback.
+  /// An "open in XRK Web" entry is a meaningful fallback.
   final bool webLink;
   final SlotInference inference;
 
@@ -103,7 +103,7 @@ class SeatPolicy {
   static const p1MaskedPage = SeatPolicy(priority: SeatPriority.p1, islands: {IslandForm.page}, needsOccupancy: true);
 
   /// A conversation view (docs/design/plugin-ui-v3.md §3.3): a page island,
-  /// found by the name the occupancy reports; DSH Web shows one view at a
+  /// found by the name the occupancy reports; XRK Web shows one view at a
   /// time, so nothing official is hidden.
   static const p1ViewPage = SeatPolicy(
     priority: SeatPriority.p1,
@@ -118,7 +118,7 @@ class SeatPolicy {
     optIn: true,
   );
 
-  /// Native only (declarative panels): nothing in DSH Web to fall back to.
+  /// Native only (declarative panels): nothing in XRK Web to fall back to.
   static const p2Native = SeatPolicy(priority: SeatPriority.p2, webLink: false);
   static const message = SeatPolicy(priority: SeatPriority.message);
   static const other = SeatPolicy(priority: SeatPriority.other);
@@ -145,7 +145,7 @@ class SlotInfo {
   final bool replacesShippedUi;
   final SeatPolicy policy;
 
-  /// A surface of the app's own (not a DSH slot).
+  /// A surface of the app's own (not a XRK slot).
   final bool synthetic;
 
   bool get seatable => policy.seatable;
@@ -184,7 +184,7 @@ abstract final class Slots {
   static const shellOverlay = 'shell.overlay';
 
   /// Declarative panels (§4.3): the app's own surface, served by the bridge.
-  static const dshGoPanel = 'dsh-go.panel';
+  static const xrkGoPanel = 'xrk-mobile.panel';
 
   /// Where the app has a seat today (docs/design/plugin-ui-v3.md §1.2, A):
   /// a plugin's web part anywhere else is listed under 「网页版界面」 in its
@@ -199,15 +199,15 @@ abstract final class Slots {
     rightPaneTab,
     rightPaneTabTitle,
     cordisView,
-    dshGoPanel,
+    xrkGoPanel,
     conversationView,
     ...chatPanel,
   };
 
   /// The chat page's 「插件」 sheet: one panel island of the app's own
   /// showing all of [chatPanel] (docs/design/plugin-ui-v3.md §3.4). Not a
-  /// DSH slot: only `recipes.json` knows it.
-  static const chatSheet = 'dsh-go.chat';
+  /// XRK slot: only `recipes.json` knows it.
+  static const chatSheet = 'xrk-mobile.chat';
 
   /// The slots one chat-page panel island shows stacked (§3).
   static const chatPanel = [
@@ -221,7 +221,7 @@ abstract final class Slots {
   ];
 }
 
-/// The slot, or null for one this table does not know (a newer DSH).
+/// The slot, or null for one this table does not know (a newer XRK).
 SlotInfo? slotInfo(String key) => slotCatalog[key];
 
 /// The policy for [key]; unknown slots get [SeatPolicy.other].
@@ -690,8 +690,8 @@ const Map<String, SlotInfo> slotCatalog = {
     replacesShippedUi: true,
     policy: SeatPolicy.never,
   ),
-  'dsh-go.panel': SlotInfo(
-    'dsh-go.panel',
+  'xrk-mobile.panel': SlotInfo(
+    'xrk-mobile.panel',
     SlotKind.keyed,
     SlotScope.sessionMaybe,
     policy: SeatPolicy.p2Native,

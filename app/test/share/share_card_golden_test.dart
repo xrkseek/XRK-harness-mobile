@@ -8,11 +8,11 @@
 //
 //   flutter test --update-goldens test/share/share_card_golden_test.dart
 
-import 'package:dsh_app/ui/share/qr_code.dart';
-import 'package:dsh_app/ui/share/share_card.dart';
-import 'package:dsh_app/ui/share/share_content.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart' show ImageAttachment;
+import 'package:xrk_app/ui/share/qr_code.dart';
+import 'package:xrk_app/ui/share/share_card.dart';
+import 'package:xrk_app/ui/share/share_content.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart' show ImageAttachment;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
@@ -78,7 +78,7 @@ void main() {
         ),
       );
       expect(find.byType(QrCodeView), findsNothing);
-      expect(find.text('手机上的 DSH'), findsOneWidget);
+      expect(find.text('手机上的 XRK'), findsOneWidget);
       await expectLater(find.byKey(_cardKey), matchesGoldenFile('goldens/card_plugin_link_${template.name}.png'));
     });
   }
@@ -182,7 +182,7 @@ void main() {
       ),
       overrides: [attachmentsFrom(p)],
     );
-    for (final word in ['无法显示', '找不到图片', '未连接 DSH', '轻点重试']) {
+    for (final word in ['无法显示', '找不到图片', '未连接 XRK', '轻点重试']) {
       expect(find.textContaining(word), findsNothing);
     }
     await expectLater(find.byKey(_cardKey), matchesGoldenFile('goldens/card_images_missing_paper.png'));

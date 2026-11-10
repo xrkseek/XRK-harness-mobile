@@ -1,13 +1,13 @@
 // CR-33caa7c B1: a live field refused with 409 conflict (the entry changed
-// since it was read). Over the real BridgePluginConfigApi, DshClient and the
+// since it was read). Over the real BridgePluginConfigApi, XrkClient and the
 // HTTP fake bridge. Started from the review's counterexample
 // (review_live_conflict_test), where both edits went out against r1 four
 // times and never landed.
 
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/state/plugins_state.dart' show installedPluginsProvider;
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/state/plugins_state.dart' show installedPluginsProvider;
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -27,7 +27,7 @@ void main() {
     host = await FakeBridgeHost.start();
     addTearDown(host.close);
     host.entries[_ns] = sensevoiceEntry();
-    final client = await DshClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
+    final client = await XrkClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
     addTearDown(client.close);
     c = ProviderContainer(overrides: engineOverrides(client));
     addTearDown(c.dispose);

@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/bots/bot_chat_kit.dart';
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/bots_state.dart';
+import 'package:xrk_app/ui/bots/bot_chat_kit.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/bots_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -19,7 +19,7 @@ import 'support.dart';
 void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
-  final raw = jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_submit.json').readAsStringSync()) as Map;
+  final raw = jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_submit.json').readAsStringSync()) as Map;
   final card = DsBotViewCard.fromJson(raw['viewState']['value']['views']['writer-now']);
   testWidgets('official text+submit view can complete with its declared action', (t) async {
     final answers = <(String, Map<String, Object?>)>[];

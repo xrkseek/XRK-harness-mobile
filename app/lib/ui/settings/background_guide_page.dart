@@ -132,7 +132,7 @@ class _BackgroundGuidePageState extends ConsumerState<BackgroundGuidePage> {
                 title: l10n.pluginsSystemBatteryOptimization,
                 value: Text(
                   exempt ? l10n.pluginsTurnedOff : l10n.pluginsNotTurnedOff,
-                  style: TextStyle(color: exempt ? null : DshColors.of(context).warning),
+                  style: TextStyle(color: exempt ? null : XrkColors.of(context).warning),
                 ),
                 onTap: exempt
                     ? null

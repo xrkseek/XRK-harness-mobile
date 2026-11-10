@@ -4,14 +4,14 @@
 import 'dart:convert';
 import 'dart:ui' show Tristate;
 
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/remote/host_switcher.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/remote/ssh_host_form.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/remote/host_switcher.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/remote/ssh_host_form.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -93,7 +93,7 @@ void main() {
     await pump(tester, const RemoteScreen());
     await frames(tester, 3);
     expect(find.text('重新登录'), findsOneWidget);
-    expect(find.text('登录 DSH Remote'), findsOneWidget);
+    expect(find.text('登录 XRK Remote'), findsOneWidget);
   });
 
   testWidgets('signed-out card offers one button per sign-in provider, GitHub first', (tester) async {
@@ -247,7 +247,7 @@ void main() {
     final saved = c.read(hostsProvider).ssh.firstWhere((h) => h.name == '书房电脑');
     expect(saved.host, '10.0.0.8');
     expect(saved.user, 'me');
-    expect(saved.launchCommand, 'dsh web');
+    expect(saved.launchCommand, 'xrkh serve');
     expect(secrets.values[SshSecrets.passwordKey(saved.id)], 's3cret');
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString(HostsController.prefsKey), isNot(contains('s3cret')));

@@ -9,7 +9,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart'
     show
         AppLifecycleListener,
@@ -29,14 +29,14 @@ import '../../state/hosts_state.dart';
 import '../../state/locale_state.dart';
 import '../../state/plugins_state.dart';
 import '../../ui_config/ui_config_ignores.dart' show uiHostKey;
-import '../../ui/chat/dsh_ui/dsh_ui_model.dart' show dshUiPluginComponents;
+import '../../ui/chat/xrk_ui/xrk_ui_model.dart' show xrkUiPluginComponents;
 import 'native_model.dart';
 import 'native_platform.dart';
 
 // ── Capabilities ─────────────────────────────────────────────────────────────
 
 /// View components the app draws (the plugin view renderer's catalogue).
-final nativeViewComponentsProvider = Provider<List<String>>((ref) => dshUiPluginComponents.toList());
+final nativeViewComponentsProvider = Provider<List<String>>((ref) => xrkUiPluginComponents.toList());
 
 /// The language plugin texts come in (`zh-CN`, `en`): the app's, resolved
 /// from the setting right here — [AppLocale] switches only once the app's
@@ -81,7 +81,7 @@ final nativeClockProvider = Provider<DateTime Function()>((ref) => DateTime.now)
 
 // ── Contributions ────────────────────────────────────────────────────────────
 
-/// The host's dsh-go bridge as the app uses it (tests swap in a fake).
+/// The host's xrk-mobile bridge as the app uses it (tests swap in a fake).
 abstract interface class NativeBridge {
   Future<DshGoContributions?> contributions(DshGoCaps caps, {DshGoContributions? previous});
 
@@ -96,11 +96,11 @@ abstract interface class NativeBridge {
   ImageProvider? asset(String pkg, String path);
 }
 
-/// [NativeBridge] over a connected [DshClient].
+/// [NativeBridge] over a connected [XrkClient].
 class ClientNativeBridge implements NativeBridge {
   ClientNativeBridge(this.client);
 
-  final DshClient client;
+  final XrkClient client;
 
   @override
   Future<DshGoContributions?> contributions(DshGoCaps caps, {DshGoContributions? previous}) =>
@@ -122,7 +122,7 @@ class ClientNativeBridge implements NativeBridge {
     if (carrier is! DshHttpCarrier) return null;
     final connection = carrier.connection;
     String segments(String s) => s.split('/').map((p) => Uri.encodeComponent(p).replaceAll('%40', '@')).join('/');
-    final url = connection.resolve('/dsh-go/v1/assets/${segments(pkg)}/${segments(path)}');
+    final url = connection.resolve('/xrk-mobile/v1/assets/${segments(pkg)}/${segments(path)}');
     return NetworkImage(
       url.toString(),
       headers: {'cookie': ?connection.cookie?.header, 'host': ?connection.hostHeader},
@@ -139,7 +139,7 @@ final nativeBridgeProvider = Provider<NativeBridge?>((ref) {
 });
 
 /// The last answer per client, for `If-None-Match`.
-final _lastRead = Expando<DshGoContributions>('dshGoContributions');
+final _lastRead = Expando<DshGoContributions>('xrkGoContributions');
 
 /// Raw contributions of the active host; null without a bridge that serves
 /// them. Read once connected, again when the installed list changes (a plugin
@@ -170,7 +170,7 @@ final nativeRawContributionsProvider = FutureProvider<DshGoContributions?>((ref)
   }
 });
 
-final _lastCaps = Expando<DshGoCaps>('dshGoCaps');
+final _lastCaps = Expando<DshGoCaps>('xrkGoCaps');
 
 /// Reads the active host's contributions again (a 304 when nothing
 /// changed): after a reply ends, since the agent may have installed or

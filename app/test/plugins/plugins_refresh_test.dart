@@ -4,12 +4,12 @@
 // detail sheet name a plugin by its own title, the package name only as the
 // quiet line in the sheet.
 
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/plugins/installed_tab.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/plugins/installed_tab.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,14 +21,14 @@ import 'support/fake_plugin_host.dart';
 
 void main() {
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
   late int lists;
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     lists = 0;
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     carrier.handlers['pluginManager/listBundles'] = (_) {
       lists++;
       return sampleBundles;

@@ -1,12 +1,12 @@
 [
   {
-    "name": "@deepseek-ai/dsh-base",
+    "name": "@xrkseek/harness-cli-base",
     "official": false,
     "availability": "installation",
     "version": "0.2.1-rc.4",
     "description": "The shared dsh core as a profile bundle: the first patch layer of base-backed profiles, inserting core rows over the empty profile root",
     "meta": {
-      "title": "@deepseek-ai/dsh-base",
+      "title": "@xrkseek/harness-cli-base",
       "description": "The shared dsh core as a profile bundle: the first patch layer of base-backed profiles, inserting core rows over the empty profile root"
     },
     "enabled": true,
@@ -17,7 +17,7 @@
     "rows": [
       {
         "rowId": "tool-plugin-manager",
-        "moduleName": "@deepseek-ai/dsh-plugin-manager/tools",
+        "moduleName": "@xrkseek/harness-cli-plugin-manager/tools",
         "entryId": "include:tool-plugin-manager",
         "meta": {
           "title": {
@@ -28,7 +28,7 @@
       },
       {
         "rowId": "plugin-manager",
-        "moduleName": "@deepseek-ai/dsh-plugin-manager",
+        "moduleName": "@xrkseek/harness-cli-plugin-manager",
         "entryId": "include:plugin-manager",
         "meta": {
           "title": {
@@ -58,7 +58,7 @@
       },
       {
         "rowId": "hmr",
-        "moduleName": "@deepseek-ai/dsh-hmr",
+        "moduleName": "@xrkseek/harness-cli-hmr",
         "entryId": "include:hmr",
         "meta": {
           "title": {
@@ -73,7 +73,7 @@
       },
       {
         "rowId": "llm",
-        "moduleName": "@deepseek-ai/dsh-llm",
+        "moduleName": "@xrkseek/harness-cli-llm",
         "entryId": "include:llm",
         "meta": {
           "title": {
@@ -81,14 +81,14 @@
             "zh": "模型调用服务"
           },
           "description": {
-            "en": "Provider-neutral LLM service interface for the DeepSeek Harness",
+            "en": "Provider-neutral LLM service interface for the XRK-Harness",
             "zh": "为不同模型提供统一的调用接口。"
           }
         }
       },
       {
         "rowId": "deepseek-llm-api-extensions",
-        "moduleName": "@deepseek-ai/dsh-deepseek-llm-api-extensions",
+        "moduleName": "@xrkseek/harness-cli-deepseek-llm-api-extensions",
         "entryId": "include:deepseek-llm-api-extensions",
         "meta": {
           "title": {
@@ -103,7 +103,7 @@
       },
       {
         "rowId": "session",
-        "moduleName": "@deepseek-ai/dsh-session",
+        "moduleName": "@xrkseek/harness-cli-session",
         "entryId": "include:session",
         "meta": {
           "title": {
@@ -111,14 +111,14 @@
             "zh": "会话记录"
           },
           "description": {
-            "en": "Event-sourced session store for the DeepSeek Harness",
+            "en": "Event-sourced session store for the XRK-Harness",
             "zh": "记录会话中的消息、工具调用和运行事件。"
           }
         }
       },
       {
         "rowId": "session-log-deepseek",
-        "moduleName": "@deepseek-ai/dsh-session-log-deepseek",
+        "moduleName": "@xrkseek/harness-cli-session-log-deepseek",
         "entryId": "include:session-log-deepseek",
         "meta": {
           "title": {
@@ -133,7 +133,7 @@
       },
       {
         "rowId": "typert",
-        "moduleName": "@deepseek-ai/dsh-typert-registry",
+        "moduleName": "@xrkseek/harness-cli-typert-registry",
         "entryId": "include:typert",
         "meta": {
           "title": {
@@ -148,7 +148,7 @@
       },
       {
         "rowId": "typert-loader",
-        "moduleName": "@deepseek-ai/dsh-typert-loader",
+        "moduleName": "@xrkseek/harness-cli-typert-loader",
         "entryId": "include:typert-loader",
         "meta": {
           "title": {
@@ -163,7 +163,7 @@
       },
       {
         "rowId": "typert-gateway",
-        "moduleName": "@deepseek-ai/dsh-api-gateway",
+        "moduleName": "@xrkseek/harness-cli-api-gateway",
         "entryId": "include:typert-gateway",
         "meta": {
           "title": {
@@ -178,16 +178,16 @@
       },
       {
         "rowId": "remote-access",
-        "moduleName": "@deepseek-ai/dsh-api-remote-access",
+        "moduleName": "@xrkseek/harness-cli-api-remote-access",
         "entryId": "include:remote-access",
         "meta": {
-          "title": "@deepseek-ai/dsh-api-remote-access",
+          "title": "@xrkseek/harness-cli-api-remote-access",
           "description": "Method-level Remote access control for non-owner Peers and the per-Peer access snapshot"
         }
       },
       {
         "rowId": "session-title",
-        "moduleName": "@deepseek-ai/dsh-session-title",
+        "moduleName": "@xrkseek/harness-cli-session-title",
         "entryId": "include:session-title",
         "meta": {
           "title": {
@@ -195,14 +195,14 @@
             "zh": "会话标题服务"
           },
           "description": {
-            "en": "Log-backed session title service and provider registry for the DeepSeek Harness",
+            "en": "Log-backed session title service and provider registry for the XRK-Harness",
             "zh": "保存和读取会话标题，并管理标题生成方式。"
           }
         }
       },
       {
         "rowId": "session-title-llm",
-        "moduleName": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+        "moduleName": "@xrkseek/harness-cli-session-title-first-prompt-llm",
         "entryId": "include:session-title-llm",
         "meta": {
           "title": {
@@ -210,14 +210,14 @@
             "zh": "首条消息生成标题"
           },
           "description": {
-            "en": "First-message LLM provider plugin for DeepSeek Harness session titles",
+            "en": "First-message LLM provider plugin for XRK-Harness session titles",
             "zh": "根据会话中的首条消息，使用模型生成标题。"
           }
         }
       },
       {
         "rowId": "user-questions",
-        "moduleName": "@deepseek-ai/dsh-user-questions",
+        "moduleName": "@xrkseek/harness-cli-user-questions",
         "entryId": "include:user-questions",
         "meta": {
           "title": {
@@ -232,7 +232,7 @@
       },
       {
         "rowId": "agent",
-        "moduleName": "@deepseek-ai/dsh-agent",
+        "moduleName": "@xrkseek/harness-cli-agent",
         "entryId": "include:agent",
         "meta": {
           "title": {
@@ -240,14 +240,14 @@
             "zh": "智能体管理"
           },
           "description": {
-            "en": "Agent interface, registry, initiator scope, and event vocabulary for the DeepSeek Harness",
+            "en": "Agent interface, registry, initiator scope, and event vocabulary for the XRK-Harness",
             "zh": "管理智能体实例及其运行上下文和事件。"
           }
         }
       },
       {
         "rowId": "plugin-package-inventory-deepseek",
-        "moduleName": "@deepseek-ai/dsh-plugin-package-inventory-deepseek",
+        "moduleName": "@xrkseek/harness-cli-plugin-package-inventory-deepseek",
         "entryId": "include:plugin-package-inventory-deepseek",
         "meta": {
           "title": {
@@ -262,7 +262,7 @@
       },
       {
         "rowId": "agent-default-model",
-        "moduleName": "@deepseek-ai/dsh-agent-default-model",
+        "moduleName": "@xrkseek/harness-cli-agent-default-model",
         "entryId": "include:agent-default-model",
         "meta": {
           "title": {
@@ -277,7 +277,7 @@
       },
       {
         "rowId": "jobs",
-        "moduleName": "@deepseek-ai/dsh-jobs-local",
+        "moduleName": "@xrkseek/harness-cli-jobs-local",
         "entryId": "include:jobs",
         "meta": {
           "title": {
@@ -285,14 +285,14 @@
             "zh": "本地后台任务"
           },
           "description": {
-            "en": "Process-local implementation of the DeepSeek Harness background job registry seam",
+            "en": "Process-local implementation of the XRK-Harness background job registry seam",
             "zh": "管理当前进程中的后台任务及其运行状态。"
           }
         }
       },
       {
         "rowId": "llm-retry",
-        "moduleName": "@deepseek-ai/dsh-llm-retry",
+        "moduleName": "@xrkseek/harness-cli-llm-retry",
         "entryId": "include:llm-retry",
         "meta": {
           "title": {
@@ -300,14 +300,14 @@
             "zh": "模型请求重试"
           },
           "description": {
-            "en": "Provider-routed LLM request retry policy for the DeepSeek Harness",
+            "en": "Provider-routed LLM request retry policy for the XRK-Harness",
             "zh": "按模型提供方的策略重试失败的请求。"
           }
         }
       },
       {
         "rowId": "config-editor",
-        "moduleName": "@deepseek-ai/dsh-config-editor",
+        "moduleName": "@xrkseek/harness-cli-config-editor",
         "entryId": "include:config-editor",
         "meta": {
           "title": {
@@ -322,7 +322,7 @@
       },
       {
         "rowId": "settings",
-        "moduleName": "@deepseek-ai/dsh-settings",
+        "moduleName": "@xrkseek/harness-cli-settings",
         "entryId": "include:settings",
         "meta": {
           "title": {
@@ -330,14 +330,14 @@
             "zh": "设置服务"
           },
           "description": {
-            "en": "Abstract user-settings seam (ctx.settings) for the DeepSeek Harness",
+            "en": "Abstract user-settings seam (ctx.settings) for the XRK-Harness",
             "zh": "为其他插件提供统一的用户设置接口。"
           }
         }
       },
       {
         "rowId": "authorization",
-        "moduleName": "@deepseek-ai/dsh-authorization",
+        "moduleName": "@xrkseek/harness-cli-authorization",
         "entryId": "include:authorization",
         "meta": {
           "title": {
@@ -352,7 +352,7 @@
       },
       {
         "rowId": "deepseek-account",
-        "moduleName": "@deepseek-ai/dsh-deepseek-account-platform",
+        "moduleName": "@xrkseek/harness-cli-deepseek-account-platform",
         "entryId": "include:deepseek-account",
         "meta": {
           "title": {
@@ -367,7 +367,7 @@
       },
       {
         "rowId": "credentials",
-        "moduleName": "@deepseek-ai/dsh-credentials-local",
+        "moduleName": "@xrkseek/harness-cli-credentials-local",
         "entryId": "include:credentials",
         "meta": {
           "title": {
@@ -375,14 +375,14 @@
             "zh": "本地凭据存储"
           },
           "description": {
-            "en": "File-backed credentials provider ($DSH_HOME/.env under the live process environment) for the DeepSeek Harness",
+            "en": "File-backed credentials provider ($XRK_HOME/.env under the live process environment) for the XRK-Harness",
             "zh": "保存 API 密钥等凭据，并按优先级读取环境变量和本地凭据文件。"
           }
         }
       },
       {
         "rowId": "llm-pi-ai",
-        "moduleName": "@deepseek-ai/dsh-llm-pi-ai",
+        "moduleName": "@xrkseek/harness-cli-llm-pi-ai",
         "entryId": "include:llm-pi-ai",
         "meta": {
           "title": {
@@ -390,14 +390,14 @@
             "zh": "pi-ai 模型适配"
           },
           "description": {
-            "en": "pi-ai-backed DeepSeek adapter for the DeepSeek Harness LLM seam (design-verification twin of dsh-llm-deepseek)",
-            "zh": "通过 pi-ai 为 DeepSeek Harness 提供 DeepSeek 模型适配，作为 dsh-llm-deepseek 的设计验证实现。"
+            "en": "pi-ai-backed DeepSeek adapter for the XRK-Harness LLM seam (design-verification twin of dsh-llm-deepseek)",
+            "zh": "通过 pi-ai 为 XRK-Harness 提供 DeepSeek 模型适配，作为 dsh-llm-deepseek 的设计验证实现。"
           }
         }
       },
       {
         "rowId": "session-persistence-jsonl",
-        "moduleName": "@deepseek-ai/dsh-session-persistence-jsonl",
+        "moduleName": "@xrkseek/harness-cli-session-persistence-jsonl",
         "entryId": "include:session-persistence-jsonl",
         "meta": {
           "title": {
@@ -405,14 +405,14 @@
             "zh": "会话日志持久保存"
           },
           "description": {
-            "en": "JSONL durable session persistence backend for the DeepSeek Harness",
+            "en": "JSONL durable session persistence backend for the XRK-Harness",
             "zh": "将会话日志保存为本地 JSONL 文件，供后续恢复和读取。"
           }
         }
       },
       {
         "rowId": "attachment-local",
-        "moduleName": "@deepseek-ai/dsh-attachment-local",
+        "moduleName": "@xrkseek/harness-cli-attachment-local",
         "entryId": "include:attachment-local",
         "meta": {
           "title": {
@@ -420,14 +420,14 @@
             "zh": "本地附件存储"
           },
           "description": {
-            "en": "Private content-addressed DSH_HOME attachment storage",
+            "en": "Private content-addressed XRK_HOME attachment storage",
             "zh": "保存会话中的图片等附件，并按内容标识读取。"
           }
         }
       },
       {
         "rowId": "session-query-sqlite",
-        "moduleName": "@deepseek-ai/dsh-session-query-sqlite",
+        "moduleName": "@xrkseek/harness-cli-session-query-sqlite",
         "entryId": "include:session-query-sqlite",
         "meta": {
           "title": {
@@ -442,25 +442,25 @@
       },
       {
         "rowId": "working-directory",
-        "moduleName": "@deepseek-ai/dsh-working-directory",
+        "moduleName": "@xrkseek/harness-cli-working-directory",
         "entryId": "include:working-directory",
         "meta": {
-          "title": "@deepseek-ai/dsh-working-directory",
+          "title": "@xrkseek/harness-cli-working-directory",
           "description": "Session working directories with durable changes and model context"
         }
       },
       {
         "rowId": "tool-working-directory",
-        "moduleName": "@deepseek-ai/dsh-tool-working-directory",
+        "moduleName": "@xrkseek/harness-cli-tool-working-directory",
         "entryId": "include:tool-working-directory",
         "meta": {
-          "title": "@deepseek-ai/dsh-tool-working-directory",
+          "title": "@xrkseek/harness-cli-tool-working-directory",
           "description": "Read and change the active Session working directory"
         }
       },
       {
         "rowId": "session-projection",
-        "moduleName": "@deepseek-ai/dsh-session-projection",
+        "moduleName": "@xrkseek/harness-cli-session-projection",
         "entryId": "include:session-projection",
         "meta": {
           "title": {
@@ -475,7 +475,7 @@
       },
       {
         "rowId": "storage",
-        "moduleName": "@deepseek-ai/dsh-storage",
+        "moduleName": "@xrkseek/harness-cli-storage",
         "entryId": "include:storage",
         "meta": {
           "title": {
@@ -483,14 +483,14 @@
             "zh": "数据存储服务"
           },
           "description": {
-            "en": "Storage hub (ctx.storage): named backend registry plus mounted data-form facilities for the DeepSeek Harness",
+            "en": "Storage hub (ctx.storage): named backend registry plus mounted data-form facilities for the XRK-Harness",
             "zh": "统一管理插件使用的存储后端和数据访问方式。"
           }
         }
       },
       {
         "rowId": "storage-json",
-        "moduleName": "@deepseek-ai/dsh-storage-json",
+        "moduleName": "@xrkseek/harness-cli-storage-json",
         "entryId": "include:storage-json",
         "meta": {
           "title": {
@@ -498,14 +498,14 @@
             "zh": "JSON 文件存储"
           },
           "description": {
-            "en": "JSON file KV storage backend for the DeepSeek Harness storage hub",
+            "en": "JSON file KV storage backend for the XRK-Harness storage hub",
             "zh": "将键值数据保存为本地 JSON 文件。"
           }
         }
       },
       {
         "rowId": "storage-domain",
-        "moduleName": "@deepseek-ai/dsh-storage-domain",
+        "moduleName": "@xrkseek/harness-cli-storage-domain",
         "entryId": "include:storage-domain",
         "meta": {
           "title": {
@@ -513,14 +513,14 @@
             "zh": "结构化数据存储"
           },
           "description": {
-            "en": "Domain data form (ctx.storage.domain): schema-validated, event-emitting KV domains over storage backends for the DeepSeek Harness",
+            "en": "Domain data form (ctx.storage.domain): schema-validated, event-emitting KV domains over storage backends for the XRK-Harness",
             "zh": "按数据结构校验和保存键值数据，并通知其他插件发生了变更。"
           }
         }
       },
       {
         "rowId": "session-projection-cache",
-        "moduleName": "@deepseek-ai/dsh-session-projection-cache",
+        "moduleName": "@xrkseek/harness-cli-session-projection-cache",
         "entryId": "include:session-projection-cache",
         "meta": {
           "title": {
@@ -535,7 +535,7 @@
       },
       {
         "rowId": "otel",
-        "moduleName": "@deepseek-ai/dsh-otel",
+        "moduleName": "@xrkseek/harness-cli-otel",
         "entryId": "include:otel",
         "meta": {
           "title": {
@@ -550,7 +550,7 @@
       },
       {
         "rowId": "session-telemetry-otel",
-        "moduleName": "@deepseek-ai/dsh-session-telemetry-otel",
+        "moduleName": "@xrkseek/harness-cli-session-telemetry-otel",
         "entryId": "include:session-telemetry-otel",
         "meta": {
           "title": {
@@ -565,7 +565,7 @@
       },
       {
         "rowId": "subprocess",
-        "moduleName": "@deepseek-ai/dsh-subprocess-local",
+        "moduleName": "@xrkseek/harness-cli-subprocess-local",
         "entryId": "include:subprocess",
         "meta": {
           "title": {
@@ -573,14 +573,14 @@
             "zh": "本地子进程"
           },
           "description": {
-            "en": "Local-subprocess implementation of the DeepSeek Harness subprocess seam",
+            "en": "Local-subprocess implementation of the XRK-Harness subprocess seam",
             "zh": "为其他插件提供本地进程的启动和管理能力。"
           }
         }
       },
       {
         "rowId": "sandbox",
-        "moduleName": "@deepseek-ai/dsh-sandbox-local",
+        "moduleName": "@xrkseek/harness-cli-sandbox-local",
         "entryId": "include:sandbox",
         "meta": {
           "title": {
@@ -588,14 +588,14 @@
             "zh": "本地进程沙箱"
           },
           "description": {
-            "en": "Local process-sandbox backends for the DeepSeek Harness sandbox seam: bwrap, the npm-distributed landlock-run launcher, macOS Seatbelt, or the Windows ACL restricted-token runner — functionally probed, fail-closed",
+            "en": "Local process-sandbox backends for the XRK-Harness sandbox seam: bwrap, the npm-distributed landlock-run launcher, macOS Seatbelt, or the Windows ACL restricted-token runner — functionally probed, fail-closed",
             "zh": "按操作系统提供进程隔离，限制命令的访问范围。"
           }
         }
       },
       {
         "rowId": "sandbox-policy",
-        "moduleName": "@deepseek-ai/dsh-sandbox-policy",
+        "moduleName": "@xrkseek/harness-cli-sandbox-policy",
         "entryId": "include:sandbox-policy",
         "meta": {
           "title": {
@@ -610,7 +610,7 @@
       },
       {
         "rowId": "bash-sandbox",
-        "moduleName": "@deepseek-ai/dsh-bash-sandbox",
+        "moduleName": "@xrkseek/harness-cli-bash-sandbox",
         "entryId": "include:bash-sandbox",
         "meta": {
           "title": {
@@ -618,14 +618,14 @@
             "zh": "Bash 沙箱执行"
           },
           "description": {
-            "en": "Sandbox-consuming implementation of the DeepSeek Harness bash executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)",
+            "en": "Sandbox-consuming implementation of the XRK-Harness bash executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)",
             "zh": "在当前沙箱权限范围内执行 Bash 命令。"
           }
         }
       },
       {
         "rowId": "pwsh-sandbox",
-        "moduleName": "@deepseek-ai/dsh-pwsh-sandbox",
+        "moduleName": "@xrkseek/harness-cli-pwsh-sandbox",
         "entryId": "include:pwsh-sandbox",
         "meta": {
           "title": {
@@ -633,14 +633,14 @@
             "zh": "PowerShell 沙箱执行"
           },
           "description": {
-            "en": "Sandbox-consuming implementation of the DeepSeek Harness PowerShell executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)",
+            "en": "Sandbox-consuming implementation of the XRK-Harness PowerShell executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)",
             "zh": "在当前沙箱权限范围内执行 PowerShell 命令。"
           }
         }
       },
       {
         "rowId": "approval",
-        "moduleName": "@deepseek-ai/dsh-user-approval",
+        "moduleName": "@xrkseek/harness-cli-user-approval",
         "entryId": "include:approval",
         "meta": {
           "title": {
@@ -648,14 +648,14 @@
             "zh": "用户审批服务"
           },
           "description": {
-            "en": "User-approval seam (ctx.approval) for the DeepSeek Harness: one-shot permission decisions dispatched to composed answerers over the approval/request waterfall, fail-closed by default",
+            "en": "User-approval seam (ctx.approval) for the XRK-Harness: one-shot permission decisions dispatched to composed answerers over the approval/request waterfall, fail-closed by default",
             "zh": "向用户请求操作授权，并返回本次审批结果。"
           }
         }
       },
       {
         "rowId": "permission",
-        "moduleName": "@deepseek-ai/dsh-permission-presets",
+        "moduleName": "@xrkseek/harness-cli-permission-presets",
         "entryId": "include:permission",
         "meta": {
           "title": {
@@ -663,14 +663,14 @@
             "zh": "权限模式服务"
           },
           "description": {
-            "en": "User-facing permission presets (ctx.permissionPresets) for the DeepSeek Harness: one product-level Permissions select bundling the sandbox-mode and approval-policy knobs, written through to their own session events",
+            "en": "User-facing permission presets (ctx.permissionPresets) for the XRK-Harness: one product-level Permissions select bundling the sandbox-mode and approval-policy knobs, written through to their own session events",
             "zh": "管理用户选择的权限模式，统一对应的沙箱和审批策略。"
           }
         }
       },
       {
         "rowId": "shell-env",
-        "moduleName": "@deepseek-ai/dsh-shell-env",
+        "moduleName": "@xrkseek/harness-cli-shell-env",
         "entryId": "include:shell-env",
         "meta": {
           "title": {
@@ -678,14 +678,14 @@
             "zh": "命令环境变量"
           },
           "description": {
-            "en": "Tool-independent managed DSH_* shell environment registry",
-            "zh": "为命令执行工具统一提供 DSH 环境变量。"
+            "en": "Tool-independent managed XRK_* shell environment registry",
+            "zh": "为命令执行工具统一提供 XRK 环境变量。"
           }
         }
       },
       {
         "rowId": "tool-bash",
-        "moduleName": "@deepseek-ai/dsh-tool-bash",
+        "moduleName": "@xrkseek/harness-cli-tool-bash",
         "entryId": "include:tool-bash",
         "meta": {
           "title": {
@@ -700,7 +700,7 @@
       },
       {
         "rowId": "tool-pwsh",
-        "moduleName": "@deepseek-ai/dsh-tool-pwsh",
+        "moduleName": "@xrkseek/harness-cli-tool-pwsh",
         "entryId": "include:tool-pwsh",
         "meta": {
           "title": {
@@ -715,7 +715,7 @@
       },
       {
         "rowId": "tool-jobs",
-        "moduleName": "@deepseek-ai/dsh-tool-jobs",
+        "moduleName": "@xrkseek/harness-cli-tool-jobs",
         "entryId": "include:tool-jobs",
         "meta": {
           "title": {
@@ -730,7 +730,7 @@
       },
       {
         "rowId": "fs-observation-policy",
-        "moduleName": "@deepseek-ai/dsh-fs-observation-policy",
+        "moduleName": "@xrkseek/harness-cli-fs-observation-policy",
         "entryId": "include:fs-observation-policy",
         "meta": {
           "title": {
@@ -738,14 +738,14 @@
             "zh": "文件编辑保护"
           },
           "description": {
-            "en": "File-context policy plugin for the DeepSeek Harness — observed-state, read-before-edit, and version-guarded write/edit added over the ctx.fs provider seam through the fs/* event gate (no service API)",
+            "en": "File-context policy plugin for the XRK-Harness — observed-state, read-before-edit, and version-guarded write/edit added over the ctx.fs provider seam through the fs/* event gate (no service API)",
             "zh": "要求 AI 编辑前先读取文件，并在文件发生变化时重新确认内容。"
           }
         }
       },
       {
         "rowId": "tool-fs",
-        "moduleName": "@deepseek-ai/dsh-tool-fs",
+        "moduleName": "@xrkseek/harness-cli-tool-fs",
         "entryId": "include:tool-fs",
         "meta": {
           "title": {
@@ -753,14 +753,14 @@
             "zh": "文件读写工具"
           },
           "description": {
-            "en": "Model-facing filesystem tools (read, write, edit) over the DeepSeek Harness filesystem seam (ctx.fs)",
+            "en": "Model-facing filesystem tools (read, write, edit) over the XRK-Harness filesystem seam (ctx.fs)",
             "zh": "让 AI 读取、创建和编辑工作文件。"
           }
         }
       },
       {
         "rowId": "tool-fs-search",
-        "moduleName": "@deepseek-ai/dsh-tool-fs-search",
+        "moduleName": "@xrkseek/harness-cli-tool-fs-search",
         "entryId": "include:tool-fs-search",
         "meta": {
           "title": {
@@ -775,7 +775,7 @@
       },
       {
         "rowId": "agent-instructions",
-        "moduleName": "@deepseek-ai/dsh-agent-instructions",
+        "moduleName": "@xrkseek/harness-cli-agent-instructions",
         "entryId": "include:agent-instructions",
         "meta": {
           "title": {
@@ -790,7 +790,7 @@
       },
       {
         "rowId": "skill",
-        "moduleName": "@deepseek-ai/dsh-skill",
+        "moduleName": "@xrkseek/harness-cli-skill",
         "entryId": "include:skill",
         "meta": {
           "title": {
@@ -798,14 +798,14 @@
             "zh": "技能注册服务"
           },
           "description": {
-            "en": "Agent skill provider registry for the DeepSeek Harness",
+            "en": "Agent skill provider registry for the XRK-Harness",
             "zh": "汇总不同来源的技能，供 AI 查询和使用。"
           }
         }
       },
       {
         "rowId": "skill-filesystem",
-        "moduleName": "@deepseek-ai/dsh-skill-filesystem",
+        "moduleName": "@xrkseek/harness-cli-skill-filesystem",
         "entryId": "include:skill-filesystem",
         "meta": {
           "title": {
@@ -813,14 +813,14 @@
             "zh": "本地技能加载"
           },
           "description": {
-            "en": "Local filesystem skill provider for the DeepSeek Harness",
+            "en": "Local filesystem skill provider for the XRK-Harness",
             "zh": "从本地目录发现和读取技能。"
           }
         }
       },
       {
         "rowId": "tool-skill",
-        "moduleName": "@deepseek-ai/dsh-tool-skill",
+        "moduleName": "@xrkseek/harness-cli-tool-skill",
         "entryId": "include:tool-skill",
         "meta": {
           "title": {
@@ -828,14 +828,14 @@
             "zh": "技能加载工具"
           },
           "description": {
-            "en": "Model-facing skill loading tool for the DeepSeek Harness",
+            "en": "Model-facing skill loading tool for the XRK-Harness",
             "zh": "让 AI 按需加载技能说明。"
           }
         }
       },
       {
         "rowId": "commands",
-        "moduleName": "@deepseek-ai/dsh-commands",
+        "moduleName": "@xrkseek/harness-cli-commands",
         "entryId": "include:commands",
         "meta": {
           "title": {
@@ -843,14 +843,14 @@
             "zh": "用户命令服务"
           },
           "description": {
-            "en": "Plugin-owned human command registry for DeepSeek Harness UIs",
+            "en": "Plugin-owned human command registry for XRK-Harness UIs",
             "zh": "注册和管理插件提供的用户命令。"
           }
         }
       },
       {
         "rowId": "command-feedback",
-        "moduleName": "@deepseek-ai/dsh-command-feedback",
+        "moduleName": "@xrkseek/harness-cli-command-feedback",
         "entryId": "include:command-feedback",
         "meta": {
           "title": {
@@ -865,7 +865,7 @@
       },
       {
         "rowId": "goal",
-        "moduleName": "@deepseek-ai/dsh-goal",
+        "moduleName": "@deepseek-ai/xrk-mobileal",
         "entryId": "include:goal",
         "meta": {
           "title": {
@@ -873,14 +873,14 @@
             "zh": "会话目标服务"
           },
           "description": {
-            "en": "Event-sourced same-session goal state and lifecycle service for the DeepSeek Harness",
+            "en": "Event-sourced same-session goal state and lifecycle service for the XRK-Harness",
             "zh": "记录会话目标，并管理目标的状态和生命周期。"
           }
         }
       },
       {
         "rowId": "goal-round-driver",
-        "moduleName": "@deepseek-ai/dsh-goal-round-driver",
+        "moduleName": "@deepseek-ai/xrk-mobileal-round-driver",
         "entryId": "include:goal-round-driver",
         "meta": {
           "title": {
@@ -895,7 +895,7 @@
       },
       {
         "rowId": "command-goal",
-        "moduleName": "@deepseek-ai/dsh-command-goal",
+        "moduleName": "@xrkseek/harness-cli-command-goal",
         "entryId": "include:command-goal",
         "meta": {
           "title": {
@@ -910,7 +910,7 @@
       },
       {
         "rowId": "plan-mode",
-        "moduleName": "@deepseek-ai/dsh-plan-mode",
+        "moduleName": "@xrkseek/harness-cli-plan-mode",
         "entryId": "include:plan-mode",
         "meta": {
           "title": {
@@ -925,7 +925,7 @@
       },
       {
         "rowId": "token-meter",
-        "moduleName": "@deepseek-ai/dsh-token-meter",
+        "moduleName": "@xrkseek/harness-cli-token-meter",
         "entryId": "include:token-meter",
         "meta": {
           "title": {
@@ -933,14 +933,14 @@
             "zh": "Token 计量"
           },
           "description": {
-            "en": "Replay-aware token measurement service (ctx.tokenMeter) for the DeepSeek Harness",
+            "en": "Replay-aware token measurement service (ctx.tokenMeter) for the XRK-Harness",
             "zh": "估算模型上下文的 Token 用量，供压缩等功能判断预算。"
           }
         }
       },
       {
         "rowId": "compaction-basic",
-        "moduleName": "@deepseek-ai/dsh-compaction-basic",
+        "moduleName": "@xrkseek/harness-cli-compaction-basic",
         "entryId": "include:compaction-basic",
         "meta": {
           "title": {
@@ -948,14 +948,14 @@
             "zh": "上下文压缩"
           },
           "description": {
-            "en": "Token-meter-driven compaction policy and LLM summarization backend for the DeepSeek Harness",
+            "en": "Token-meter-driven compaction policy and LLM summarization backend for the XRK-Harness",
             "zh": "在上下文达到阈值时，使用模型总结历史内容。"
           }
         }
       },
       {
         "rowId": "command-compact",
-        "moduleName": "@deepseek-ai/dsh-command-compact",
+        "moduleName": "@xrkseek/harness-cli-command-compact",
         "entryId": "include:command-compact",
         "meta": {
           "title": {
@@ -970,7 +970,7 @@
       },
       {
         "rowId": "subagent",
-        "moduleName": "@deepseek-ai/dsh-subagent",
+        "moduleName": "@xrkseek/harness-cli-subagent",
         "entryId": "include:subagent",
         "meta": {
           "title": {
@@ -985,7 +985,7 @@
       },
       {
         "rowId": "subagent-spawn-in-process",
-        "moduleName": "@deepseek-ai/dsh-subagent-spawn-in-process",
+        "moduleName": "@xrkseek/harness-cli-subagent-spawn-in-process",
         "entryId": "include:subagent-spawn-in-process",
         "meta": {
           "title": {
@@ -1000,7 +1000,7 @@
       },
       {
         "rowId": "subagent-fork-in-process",
-        "moduleName": "@deepseek-ai/dsh-subagent-fork-in-process",
+        "moduleName": "@xrkseek/harness-cli-subagent-fork-in-process",
         "entryId": "include:subagent-fork-in-process",
         "meta": {
           "title": {
@@ -1015,7 +1015,7 @@
       },
       {
         "rowId": "tool-subagent-control",
-        "moduleName": "@deepseek-ai/dsh-tool-subagent-control",
+        "moduleName": "@xrkseek/harness-cli-tool-subagent-control",
         "entryId": "include:tool-subagent-control",
         "meta": {
           "title": {
@@ -1030,7 +1030,7 @@
       },
       {
         "rowId": "tool-subagent-list-agents",
-        "moduleName": "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+        "moduleName": "@xrkseek/harness-cli-tool-subagent-control/list-agents",
         "entryId": "include:tool-subagent-list-agents",
         "meta": {
           "title": {
@@ -1041,7 +1041,7 @@
       },
       {
         "rowId": "tool-subagent",
-        "moduleName": "@deepseek-ai/dsh-tool-subagent",
+        "moduleName": "@xrkseek/harness-cli-tool-subagent",
         "entryId": "include:tool-subagent",
         "meta": {
           "title": {
@@ -1056,7 +1056,7 @@
       },
       {
         "rowId": "tool-subagent-fork",
-        "moduleName": "@deepseek-ai/dsh-tool-subagent",
+        "moduleName": "@xrkseek/harness-cli-tool-subagent",
         "entryId": "include:tool-subagent-fork",
         "meta": {
           "title": {
@@ -1071,7 +1071,7 @@
       },
       {
         "rowId": "ptc-runtime",
-        "moduleName": "@deepseek-ai/dsh-ptc-runtime-node",
+        "moduleName": "@xrkseek/harness-cli-ptc-runtime-node",
         "entryId": "include:ptc-runtime",
         "meta": {
           "title": {
@@ -1086,7 +1086,7 @@
       },
       {
         "rowId": "workflow-ptc",
-        "moduleName": "@deepseek-ai/dsh-workflow-ptc",
+        "moduleName": "@xrkseek/harness-cli-workflow-ptc",
         "entryId": "include:workflow-ptc",
         "meta": {
           "title": {
@@ -1101,7 +1101,7 @@
       },
       {
         "rowId": "tool-workflow",
-        "moduleName": "@deepseek-ai/dsh-tool-workflow",
+        "moduleName": "@xrkseek/harness-cli-tool-workflow",
         "entryId": "include:tool-workflow",
         "meta": {
           "title": {
@@ -1116,7 +1116,7 @@
       },
       {
         "rowId": "timeout-policy",
-        "moduleName": "@deepseek-ai/dsh-tool-call-timeout-policy",
+        "moduleName": "@xrkseek/harness-cli-tool-call-timeout-policy",
         "entryId": "include:timeout-policy",
         "meta": {
           "title": {
@@ -1131,7 +1131,7 @@
       },
       {
         "rowId": "spill-local",
-        "moduleName": "@deepseek-ai/dsh-spill-local",
+        "moduleName": "@xrkseek/harness-cli-spill-local",
         "entryId": "include:spill-local",
         "meta": {
           "title": {
@@ -1139,14 +1139,14 @@
             "zh": "本地长结果存储"
           },
           "description": {
-            "en": "Local-filesystem implementation of the DeepSeek Harness spill storage seam (private session-scoped files)",
+            "en": "Local-filesystem implementation of the XRK-Harness spill storage seam (private session-scoped files)",
             "zh": "将过长的工具结果保存到会话专用的本地文件。"
           }
         }
       },
       {
         "rowId": "spill-policy",
-        "moduleName": "@deepseek-ai/dsh-spill-policy",
+        "moduleName": "@xrkseek/harness-cli-spill-policy",
         "entryId": "include:spill-policy",
         "meta": {
           "title": {
@@ -1161,7 +1161,7 @@
       },
       {
         "rowId": "session-checkpoint-policy",
-        "moduleName": "@deepseek-ai/dsh-session-checkpoint-policy",
+        "moduleName": "@xrkseek/harness-cli-session-checkpoint-policy",
         "entryId": "include:session-checkpoint-policy",
         "meta": {
           "title": {
@@ -1176,7 +1176,7 @@
       },
       {
         "rowId": "tool-result-pruner",
-        "moduleName": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+        "moduleName": "@xrkseek/harness-cli-compaction-tool-result-pruner",
         "entryId": "include:tool-result-pruner",
         "meta": {
           "title": {
@@ -1191,7 +1191,7 @@
       },
       {
         "rowId": "image-offload",
-        "moduleName": "@deepseek-ai/dsh-compaction-image-offload",
+        "moduleName": "@xrkseek/harness-cli-compaction-image-offload",
         "entryId": "include:image-offload",
         "meta": {
           "title": {
@@ -1206,7 +1206,7 @@
       },
       {
         "rowId": "tool-todo",
-        "moduleName": "@deepseek-ai/dsh-tool-todo",
+        "moduleName": "@xrkseek/harness-cli-tool-todo",
         "entryId": "include:tool-todo",
         "meta": {
           "title": {
@@ -1214,14 +1214,14 @@
             "zh": "待办清单工具"
           },
           "description": {
-            "en": "Model-facing todo_write tool over the DeepSeek Harness event-sourced session log",
+            "en": "Model-facing todo_write tool over the XRK-Harness event-sourced session log",
             "zh": "让 AI 创建和更新任务待办清单。"
           }
         }
       },
       {
         "rowId": "tool-goal",
-        "moduleName": "@deepseek-ai/dsh-tool-goal",
+        "moduleName": "@xrkseek/harness-cli-tool-goal",
         "entryId": "include:tool-goal",
         "meta": {
           "title": {
@@ -1236,7 +1236,7 @@
       },
       {
         "rowId": "repeat-tool-reminder",
-        "moduleName": "@deepseek-ai/dsh-repeat-tool-reminder",
+        "moduleName": "@xrkseek/harness-cli-repeat-tool-reminder",
         "entryId": "include:repeat-tool-reminder",
         "meta": {
           "title": {
@@ -1251,7 +1251,7 @@
       },
       {
         "rowId": "web",
-        "moduleName": "@deepseek-ai/dsh-web",
+        "moduleName": "@xrkseek/harness-cli-web",
         "entryId": "include:web",
         "meta": {
           "title": {
@@ -1259,14 +1259,14 @@
             "zh": "网页访问服务"
           },
           "description": {
-            "en": "Abstract web access capability seam (ctx.web) for the DeepSeek Harness — search/fetch provider registry, registration-order-independent selection, request/result vocabulary, and the WebError taxonomy",
+            "en": "Abstract web access capability seam (ctx.web) for the XRK-Harness — search/fetch provider registry, registration-order-independent selection, request/result vocabulary, and the WebError taxonomy",
             "zh": "统一管理网页搜索和内容获取的服务提供方。"
           }
         }
       },
       {
         "rowId": "web-search-deepseek",
-        "moduleName": "@deepseek-ai/dsh-web-search-deepseek",
+        "moduleName": "@xrkseek/harness-cli-web-search-deepseek",
         "entryId": "include:web-search-deepseek",
         "meta": {
           "title": {
@@ -1274,14 +1274,14 @@
             "zh": "DeepSeek 网页搜索"
           },
           "description": {
-            "en": "DeepSeek-backed search provider (native web_search via the Anthropic-compatible API) for the DeepSeek Harness web capability seam (ctx.web)",
+            "en": "DeepSeek-backed search provider (native web_search via the Anthropic-compatible API) for the XRK-Harness web capability seam (ctx.web)",
             "zh": "通过 DeepSeek 提供网页搜索结果。"
           }
         }
       },
       {
         "rowId": "web-deepseek-api",
-        "moduleName": "@deepseek-ai/dsh-web-deepseek-api",
+        "moduleName": "@xrkseek/harness-cli-web-deepseek-api",
         "entryId": "include:web-deepseek-api",
         "meta": {
           "title": {
@@ -1289,14 +1289,14 @@
             "zh": "DeepSeek 网页搜索与抓取 API"
           },
           "description": {
-            "en": "DeepSeek Search and Fetch API providers for the DeepSeek Harness web capability seam (ctx.web)",
+            "en": "DeepSeek Search and Fetch API providers for the XRK-Harness web capability seam (ctx.web)",
             "zh": "通过 DeepSeek Search API 搜索网页、Fetch API 抓取网页正文。"
           }
         }
       },
       {
         "rowId": "web-fetch-http",
-        "moduleName": "@deepseek-ai/dsh-web-fetch-http",
+        "moduleName": "@xrkseek/harness-cli-web-fetch-http",
         "entryId": "include:web-fetch-http",
         "meta": {
           "title": {
@@ -1304,14 +1304,14 @@
             "zh": "公开网页获取"
           },
           "description": {
-            "en": "Anonymous public HTTP(S) fetch provider for the DeepSeek Harness web capability seam (ctx.web)",
+            "en": "Anonymous public HTTP(S) fetch provider for the XRK-Harness web capability seam (ctx.web)",
             "zh": "读取无需登录的 HTTP 或 HTTPS 网页内容。"
           }
         }
       },
       {
         "rowId": "tool-web",
-        "moduleName": "@deepseek-ai/dsh-tool-web",
+        "moduleName": "@xrkseek/harness-cli-tool-web",
         "entryId": "include:tool-web",
         "meta": {
           "title": {
@@ -1319,14 +1319,14 @@
             "zh": "网页搜索与读取工具"
           },
           "description": {
-            "en": "Model-facing web tools (web_search, web_fetch) over the DeepSeek Harness web capability seam (ctx.web)",
+            "en": "Model-facing web tools (web_search, web_fetch) over the XRK-Harness web capability seam (ctx.web)",
             "zh": "让 AI 搜索网页并读取页面内容。"
           }
         }
       },
       {
         "rowId": "mcp-resources",
-        "moduleName": "@deepseek-ai/dsh-mcp-resources",
+        "moduleName": "@xrkseek/harness-cli-mcp-resources",
         "entryId": "include:mcp-resources",
         "meta": {
           "title": {
@@ -1341,7 +1341,7 @@
       },
       {
         "rowId": "tools",
-        "moduleName": "@deepseek-ai/dsh-tools",
+        "moduleName": "@xrkseek/harness-cli-tools",
         "entryId": "include:tools",
         "meta": {
           "title": {
@@ -1349,14 +1349,14 @@
             "zh": "工具注册与执行"
           },
           "description": {
-            "en": "Tool registry and execution pipeline for the DeepSeek Harness",
+            "en": "Tool registry and execution pipeline for the XRK-Harness",
             "zh": "管理可用工具及其调用执行流程。"
           }
         }
       },
       {
         "rowId": "system-prompt",
-        "moduleName": "@deepseek-ai/dsh-system-prompt",
+        "moduleName": "@xrkseek/harness-cli-system-prompt",
         "entryId": "include:system-prompt",
         "meta": {
           "title": {
@@ -1364,14 +1364,14 @@
             "zh": "系统提示词组装"
           },
           "description": {
-            "en": "System prompt assembly registry for the DeepSeek Harness",
+            "en": "System prompt assembly registry for the XRK-Harness",
             "zh": "汇总各插件提供的系统提示词内容。"
           }
         }
       },
       {
         "rowId": "agent-loop",
-        "moduleName": "@deepseek-ai/dsh-agent-loop",
+        "moduleName": "@xrkseek/harness-cli-agent-loop",
         "entryId": "include:agent-loop",
         "meta": {
           "title": {
@@ -1379,14 +1379,14 @@
             "zh": "智能体运行循环"
           },
           "description": {
-            "en": "The concrete agent loop plugin for the DeepSeek Harness",
+            "en": "The concrete agent loop plugin for the XRK-Harness",
             "zh": "协调模型请求、工具调用和后续步骤，推进智能体任务。"
           }
         }
       },
       {
         "rowId": "fs-sandbox",
-        "moduleName": "@deepseek-ai/dsh-fs-sandbox",
+        "moduleName": "@xrkseek/harness-cli-fs-sandbox",
         "entryId": "include:fs-sandbox",
         "meta": {
           "title": {
@@ -1394,14 +1394,14 @@
             "zh": "文件沙箱访问"
           },
           "description": {
-            "en": "Sandbox-enforcing implementation of the DeepSeek Harness filesystem seam: fences write/edit by the per-call sandbox mode (read-only denies mutation, workspace-write contains it to the workspace + temp roots) while reads pass through",
+            "en": "Sandbox-enforcing implementation of the XRK-Harness filesystem seam: fences write/edit by the per-call sandbox mode (read-only denies mutation, workspace-write contains it to the workspace + temp roots) while reads pass through",
             "zh": "按当前权限模式限制文件写入和编辑范围。"
           }
         }
       },
       {
         "rowId": "llm-deepseek",
-        "moduleName": "@deepseek-ai/dsh-llm-deepseek-api-key",
+        "moduleName": "@xrkseek/harness-cli-llm-deepseek-api-key",
         "entryId": "include:llm-deepseek",
         "meta": {
           "title": {
@@ -1416,7 +1416,7 @@
       },
       {
         "rowId": "llm-deepseek-account",
-        "moduleName": "@deepseek-ai/dsh-llm-deepseek-account",
+        "moduleName": "@xrkseek/harness-cli-llm-deepseek-account",
         "entryId": "include:llm-deepseek-account",
         "meta": {
           "title": {
@@ -1433,7 +1433,7 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-web-app",
+    "name": "@xrkseek/harness-cli-web-app",
     "official": false,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -1456,7 +1456,7 @@
     "rows": [
       {
         "rowId": "desktop-product-telemetry",
-        "moduleName": "@deepseek-ai/dsh-host-product-telemetry-otel",
+        "moduleName": "@xrkseek/harness-cli-host-product-telemetry-otel",
         "entryId": "include:desktop-product-telemetry",
         "meta": {
           "title": {
@@ -1471,7 +1471,7 @@
       },
       {
         "rowId": "product-analytics",
-        "moduleName": "@deepseek-ai/dsh-client-product-analytics",
+        "moduleName": "@xrkseek/harness-cli-client-product-analytics",
         "entryId": "include:product-analytics",
         "meta": {
           "title": {
@@ -1486,7 +1486,7 @@
       },
       {
         "rowId": "subagent-model-selection-settings",
-        "moduleName": "@deepseek-ai/dsh-tool-subagent/model-selection-settings",
+        "moduleName": "@xrkseek/harness-cli-tool-subagent/model-selection-settings",
         "entryId": "include:subagent-model-selection-settings",
         "meta": {
           "title": {
@@ -1497,7 +1497,7 @@
       },
       {
         "rowId": "message-feedback",
-        "moduleName": "@deepseek-ai/dsh-message-feedback",
+        "moduleName": "@xrkseek/harness-cli-message-feedback",
         "entryId": "include:message-feedback",
         "meta": {
           "title": {
@@ -1512,7 +1512,7 @@
       },
       {
         "rowId": "session-log-download",
-        "moduleName": "@deepseek-ai/dsh-session-log-export",
+        "moduleName": "@xrkseek/harness-cli-session-log-export",
         "entryId": "include:session-log-download",
         "meta": {
           "title": {
@@ -1527,7 +1527,7 @@
       },
       {
         "rowId": "open-in-app",
-        "moduleName": "@deepseek-ai/dsh-host-open-in-app",
+        "moduleName": "@xrkseek/harness-cli-host-open-in-app",
         "entryId": "include:open-in-app",
         "meta": {
           "title": {
@@ -1542,7 +1542,7 @@
       },
       {
         "rowId": "ui-open-in-app",
-        "moduleName": "@deepseek-ai/dsh-client-ui-open-in-app",
+        "moduleName": "@xrkseek/harness-cli-client-ui-open-in-app",
         "entryId": "include:ui-open-in-app",
         "meta": {
           "title": {
@@ -1557,7 +1557,7 @@
       },
       {
         "rowId": "workspace",
-        "moduleName": "@deepseek-ai/dsh-workspace",
+        "moduleName": "@xrkseek/harness-cli-workspace",
         "entryId": "include:workspace",
         "meta": {
           "title": {
@@ -1565,14 +1565,14 @@
             "zh": "工作区管理"
           },
           "description": {
-            "en": "Workspace entity registry (ctx.workspaceRegistry): durable workspace records with validated session attachment over the domain data form for the DeepSeek Harness",
+            "en": "Workspace entity registry (ctx.workspaceRegistry): durable workspace records with validated session attachment over the domain data form for the XRK-Harness",
             "zh": "保存工作区信息，并管理工作区与会话的关联。"
           }
         }
       },
       {
         "rowId": "session-reference",
-        "moduleName": "@deepseek-ai/dsh-session-reference",
+        "moduleName": "@xrkseek/harness-cli-session-reference",
         "entryId": "include:session-reference",
         "meta": {
           "title": {
@@ -1587,7 +1587,7 @@
       },
       {
         "rowId": "file-reference-local",
-        "moduleName": "@deepseek-ai/dsh-file-reference-local",
+        "moduleName": "@xrkseek/harness-cli-file-reference-local",
         "entryId": "include:file-reference-local",
         "meta": {
           "title": {
@@ -1602,7 +1602,7 @@
       },
       {
         "rowId": "session-stats",
-        "moduleName": "@deepseek-ai/dsh-session-stats",
+        "moduleName": "@xrkseek/harness-cli-session-stats",
         "entryId": "include:session-stats",
         "meta": {
           "title": {
@@ -1610,14 +1610,14 @@
             "zh": "会话统计"
           },
           "description": {
-            "en": "Whole-log conversation counts and wall times projection (sessionStats) for the DeepSeek Harness",
+            "en": "Whole-log conversation counts and wall times projection (sessionStats) for the XRK-Harness",
             "zh": "汇总会话的交互次数和耗时等统计信息。"
           }
         }
       },
       {
         "rowId": "session-turn-outline",
-        "moduleName": "@deepseek-ai/dsh-session-turn-outline",
+        "moduleName": "@xrkseek/harness-cli-session-turn-outline",
         "entryId": "include:session-turn-outline",
         "meta": {
           "title": {
@@ -1625,14 +1625,14 @@
             "zh": "会话轮次目录"
           },
           "description": {
-            "en": "Whole-log turn outline projection (turnOutline) for the DeepSeek Harness",
+            "en": "Whole-log turn outline projection (turnOutline) for the XRK-Harness",
             "zh": "生成会话轮次目录，支持定位和跳转历史交互。"
           }
         }
       },
       {
         "rowId": "directory-picker",
-        "moduleName": "@deepseek-ai/dsh-host-directory-picker-auto",
+        "moduleName": "@xrkseek/harness-cli-host-directory-picker-auto",
         "entryId": "include:directory-picker",
         "meta": {
           "title": {
@@ -1640,14 +1640,14 @@
             "zh": "目录选择方式适配"
           },
           "description": {
-            "en": "Adaptive chooser of the directory-picker seam: resolves the host situation at boot and mounts the native or browse backend for the DeepSeek Harness web GUI host",
+            "en": "Adaptive chooser of the directory-picker seam: resolves the host situation at boot and mounts the native or browse backend for the XRK-Harness web GUI host",
             "zh": "根据运行环境选择系统目录对话框或应用内目录浏览。"
           }
         }
       },
       {
         "rowId": "plugin-inventory",
-        "moduleName": "@deepseek-ai/dsh-host-plugin-inventory",
+        "moduleName": "@xrkseek/harness-cli-host-plugin-inventory",
         "entryId": "include:plugin-inventory",
         "meta": {
           "title": {
@@ -1662,7 +1662,7 @@
       },
       {
         "rowId": "session-controller",
-        "moduleName": "@deepseek-ai/dsh-api-session-controller",
+        "moduleName": "@xrkseek/harness-cli-api-session-controller",
         "entryId": "include:session-controller",
         "meta": {
           "title": {
@@ -1677,7 +1677,7 @@
       },
       {
         "rowId": "job-controller",
-        "moduleName": "@deepseek-ai/dsh-api-job-controller",
+        "moduleName": "@xrkseek/harness-cli-api-job-controller",
         "entryId": "include:job-controller",
         "meta": {
           "title": {
@@ -1692,7 +1692,7 @@
       },
       {
         "rowId": "terminal-controller",
-        "moduleName": "@deepseek-ai/dsh-api-terminal-controller",
+        "moduleName": "@xrkseek/harness-cli-api-terminal-controller",
         "entryId": "include:terminal-controller",
         "meta": {
           "title": {
@@ -1707,7 +1707,7 @@
       },
       {
         "rowId": "workspace-files",
-        "moduleName": "@deepseek-ai/dsh-api-workspace-files",
+        "moduleName": "@xrkseek/harness-cli-api-workspace-files",
         "entryId": "include:workspace-files",
         "meta": {
           "title": {
@@ -1722,7 +1722,7 @@
       },
       {
         "rowId": "schedule",
-        "moduleName": "@deepseek-ai/dsh-schedule",
+        "moduleName": "@xrkseek/harness-cli-schedule",
         "entryId": "include:schedule",
         "meta": {
           "title": {
@@ -1737,7 +1737,7 @@
       },
       {
         "rowId": "ui-settings-account",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-account",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-account",
         "entryId": "include:ui-settings-account",
         "meta": {
           "title": {
@@ -1752,7 +1752,7 @@
       },
       {
         "rowId": "account-controller",
-        "moduleName": "@deepseek-ai/dsh-api-account-controller",
+        "moduleName": "@xrkseek/harness-cli-api-account-controller",
         "entryId": "include:account-controller",
         "meta": {
           "title": {
@@ -1767,7 +1767,7 @@
       },
       {
         "rowId": "settings-controller",
-        "moduleName": "@deepseek-ai/dsh-api-settings-controller",
+        "moduleName": "@xrkseek/harness-cli-api-settings-controller",
         "entryId": "include:settings-controller",
         "meta": {
           "title": {
@@ -1782,7 +1782,7 @@
       },
       {
         "rowId": "workspace-controller",
-        "moduleName": "@deepseek-ai/dsh-api-workspace-controller",
+        "moduleName": "@xrkseek/harness-cli-api-workspace-controller",
         "entryId": "include:workspace-controller",
         "meta": {
           "title": {
@@ -1797,7 +1797,7 @@
       },
       {
         "rowId": "cordis-host-runner",
-        "moduleName": "@deepseek-ai/dsh-cordis-host-runner",
+        "moduleName": "@xrkseek/harness-cli-cordis-host-runner",
         "entryId": "include:cordis-host-runner",
         "meta": {
           "title": {
@@ -1812,7 +1812,7 @@
       },
       {
         "rowId": "cordis-inspect-providers",
-        "moduleName": "@deepseek-ai/dsh-tool-cordis/host",
+        "moduleName": "@xrkseek/harness-cli-tool-cordis/host",
         "entryId": "include:cordis-inspect-providers",
         "meta": {
           "title": {
@@ -1823,7 +1823,7 @@
       },
       {
         "rowId": "web-startup",
-        "moduleName": "@deepseek-ai/dsh-web-app/startup",
+        "moduleName": "@xrkseek/harness-cli-web-app/startup",
         "entryId": "include:web-startup",
         "meta": {
           "title": {
@@ -1834,7 +1834,7 @@
       },
       {
         "rowId": "webserver",
-        "moduleName": "@deepseek-ai/dsh-host-webserver",
+        "moduleName": "@xrkseek/harness-cli-host-webserver",
         "entryId": "include:webserver",
         "meta": {
           "title": {
@@ -1849,7 +1849,7 @@
       },
       {
         "rowId": "web-runtime",
-        "moduleName": "@deepseek-ai/dsh-web-app",
+        "moduleName": "@xrkseek/harness-cli-web-app",
         "entryId": "include:web-runtime",
         "meta": {
           "title": {
@@ -1864,16 +1864,16 @@
       },
       {
         "rowId": "harness-dev-context",
-        "moduleName": "@deepseek-ai/dsh-harness-dev-context",
+        "moduleName": "@xrkseek/harness-cli-harness-dev-context",
         "entryId": "include:harness-dev-context",
         "meta": {
-          "title": "@deepseek-ai/dsh-harness-dev-context",
-          "description": "Model context naming the DeepSeek Harness checkout and Web GUI URL without letting either change the system prompt"
+          "title": "@xrkseek/harness-cli-harness-dev-context",
+          "description": "Model context naming the XRK-Harness checkout and Web GUI URL without letting either change the system prompt"
         }
       },
       {
         "rowId": "client-hmr",
-        "moduleName": "@deepseek-ai/dsh-client-hmr",
+        "moduleName": "@xrkseek/harness-cli-client-hmr",
         "entryId": "include:client-hmr",
         "meta": {
           "title": {
@@ -1888,7 +1888,7 @@
       },
       {
         "rowId": "modules",
-        "moduleName": "@deepseek-ai/dsh-client-modules",
+        "moduleName": "@xrkseek/harness-cli-client-modules",
         "entryId": "include:modules",
         "meta": {
           "title": {
@@ -1903,7 +1903,7 @@
       },
       {
         "rowId": "connection",
-        "moduleName": "@deepseek-ai/dsh-client-connection",
+        "moduleName": "@xrkseek/harness-cli-client-connection",
         "entryId": "include:connection",
         "meta": {
           "title": {
@@ -1918,7 +1918,7 @@
       },
       {
         "rowId": "file-upload",
-        "moduleName": "@deepseek-ai/dsh-client-file-upload",
+        "moduleName": "@xrkseek/harness-cli-client-file-upload",
         "entryId": "include:file-upload",
         "meta": {
           "title": {
@@ -1933,7 +1933,7 @@
       },
       {
         "rowId": "api-remotes",
-        "moduleName": "@deepseek-ai/dsh-api-remotes",
+        "moduleName": "@xrkseek/harness-cli-api-remotes",
         "entryId": "include:api-remotes",
         "meta": {
           "title": {
@@ -1948,7 +1948,7 @@
       },
       {
         "rowId": "cordis-client-runner",
-        "moduleName": "@deepseek-ai/dsh-cordis-client-runner",
+        "moduleName": "@xrkseek/harness-cli-cordis-client-runner",
         "entryId": "include:cordis-client-runner",
         "meta": {
           "title": {
@@ -1963,7 +1963,7 @@
       },
       {
         "rowId": "ui-theme",
-        "moduleName": "@deepseek-ai/dsh-client-ui-theme",
+        "moduleName": "@xrkseek/harness-cli-client-ui-theme",
         "entryId": "include:ui-theme",
         "meta": {
           "title": {
@@ -1978,7 +1978,7 @@
       },
       {
         "rowId": "locale",
-        "moduleName": "@deepseek-ai/dsh-client-locale",
+        "moduleName": "@xrkseek/harness-cli-client-locale",
         "entryId": "include:locale",
         "meta": {
           "title": {
@@ -1993,7 +1993,7 @@
       },
       {
         "rowId": "shortcuts",
-        "moduleName": "@deepseek-ai/dsh-client-shortcuts",
+        "moduleName": "@xrkseek/harness-cli-client-shortcuts",
         "entryId": "include:shortcuts",
         "meta": {
           "title": {
@@ -2008,7 +2008,7 @@
       },
       {
         "rowId": "ui-shortcuts",
-        "moduleName": "@deepseek-ai/dsh-client-ui-shortcuts",
+        "moduleName": "@xrkseek/harness-cli-client-ui-shortcuts",
         "entryId": "include:ui-shortcuts",
         "meta": {
           "title": {
@@ -2023,7 +2023,7 @@
       },
       {
         "rowId": "ui-layout",
-        "moduleName": "@deepseek-ai/dsh-client-ui-layout",
+        "moduleName": "@xrkseek/harness-cli-client-ui-layout",
         "entryId": "include:ui-layout",
         "meta": {
           "title": {
@@ -2038,7 +2038,7 @@
       },
       {
         "rowId": "ui-renderer",
-        "moduleName": "@deepseek-ai/dsh-client-ui-renderer",
+        "moduleName": "@xrkseek/harness-cli-client-ui-renderer",
         "entryId": "include:ui-renderer",
         "meta": {
           "title": {
@@ -2053,7 +2053,7 @@
       },
       {
         "rowId": "ui-session",
-        "moduleName": "@deepseek-ai/dsh-client-ui-session",
+        "moduleName": "@xrkseek/harness-cli-client-ui-session",
         "entryId": "include:ui-session",
         "meta": {
           "title": {
@@ -2068,7 +2068,7 @@
       },
       {
         "rowId": "resources",
-        "moduleName": "@deepseek-ai/dsh-client-resources",
+        "moduleName": "@xrkseek/harness-cli-client-resources",
         "entryId": "include:resources",
         "meta": {
           "title": {
@@ -2083,7 +2083,7 @@
       },
       {
         "rowId": "ui-sidebar",
-        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar",
+        "moduleName": "@xrkseek/harness-cli-client-ui-sidebar",
         "entryId": "include:ui-sidebar",
         "meta": {
           "title": {
@@ -2098,7 +2098,7 @@
       },
       {
         "rowId": "ui-sidebar-right",
-        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-right",
+        "moduleName": "@xrkseek/harness-cli-client-ui-sidebar-right",
         "entryId": "include:ui-sidebar-right",
         "meta": {
           "title": {
@@ -2113,7 +2113,7 @@
       },
       {
         "rowId": "office-to-pdf",
-        "moduleName": "@deepseek-ai/dsh-office-to-pdf",
+        "moduleName": "@xrkseek/harness-cli-office-to-pdf",
         "entryId": "include:office-to-pdf",
         "meta": {
           "title": {
@@ -2128,7 +2128,7 @@
       },
       {
         "rowId": "ui-sidebar-documentpreview",
-        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+        "moduleName": "@xrkseek/harness-cli-client-ui-sidebar-documentpreview",
         "entryId": "include:ui-sidebar-documentpreview",
         "meta": {
           "title": {
@@ -2143,7 +2143,7 @@
       },
       {
         "rowId": "ui-sidebar-browser",
-        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-browser",
+        "moduleName": "@xrkseek/harness-cli-client-ui-sidebar-browser",
         "entryId": "include:ui-sidebar-browser",
         "meta": {
           "title": {
@@ -2158,7 +2158,7 @@
       },
       {
         "rowId": "ui-sidebar-terminal",
-        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-terminal",
+        "moduleName": "@xrkseek/harness-cli-client-ui-sidebar-terminal",
         "entryId": "include:ui-sidebar-terminal",
         "meta": {
           "title": {
@@ -2173,7 +2173,7 @@
       },
       {
         "rowId": "ui-sidebar-files",
-        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-files",
+        "moduleName": "@xrkseek/harness-cli-client-ui-sidebar-files",
         "entryId": "include:ui-sidebar-files",
         "meta": {
           "title": {
@@ -2188,7 +2188,7 @@
       },
       {
         "rowId": "ui-settings",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings",
         "entryId": "include:ui-settings",
         "meta": {
           "title": {
@@ -2203,7 +2203,7 @@
       },
       {
         "rowId": "ui-settings-general",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-general",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-general",
         "entryId": "include:ui-settings-general",
         "meta": {
           "title": {
@@ -2218,7 +2218,7 @@
       },
       {
         "rowId": "ui-settings-models",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-models",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-models",
         "entryId": "include:ui-settings-models",
         "meta": {
           "title": {
@@ -2233,7 +2233,7 @@
       },
       {
         "rowId": "ui-plugin-manager",
-        "moduleName": "@deepseek-ai/dsh-client-ui-plugin-manager",
+        "moduleName": "@xrkseek/harness-cli-client-ui-plugin-manager",
         "entryId": "include:ui-plugin-manager",
         "meta": {
           "title": {
@@ -2241,14 +2241,14 @@
             "zh": "插件管理界面"
           },
           "description": {
-            "en": "Plugin management for the dsh web client: the sidebar Plugins panel installs, enables, disables, retries, and composes installed plugin packages",
+            "en": "Plugin management for the xrkh serve client: the sidebar Plugins panel installs, enables, disables, retries, and composes installed plugin packages",
             "zh": "查看和安装插件包，并进行启用、停用和重试等操作。"
           }
         }
       },
       {
         "rowId": "ui-settings-plugin-inventory",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-plugin-inventory",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-plugin-inventory",
         "entryId": "include:ui-settings-plugin-inventory",
         "meta": {
           "title": {
@@ -2263,7 +2263,7 @@
       },
       {
         "rowId": "ui-conversation",
-        "moduleName": "@deepseek-ai/dsh-client-ui-conversation",
+        "moduleName": "@xrkseek/harness-cli-client-ui-conversation",
         "entryId": "include:ui-conversation",
         "meta": {
           "title": {
@@ -2278,7 +2278,7 @@
       },
       {
         "rowId": "ui-approval",
-        "moduleName": "@deepseek-ai/dsh-client-ui-approval",
+        "moduleName": "@xrkseek/harness-cli-client-ui-approval",
         "entryId": "include:ui-approval",
         "meta": {
           "title": {
@@ -2293,7 +2293,7 @@
       },
       {
         "rowId": "ui-chat",
-        "moduleName": "@deepseek-ai/dsh-client-ui-chat",
+        "moduleName": "@xrkseek/harness-cli-client-ui-chat",
         "entryId": "include:ui-chat",
         "meta": {
           "title": {
@@ -2308,7 +2308,7 @@
       },
       {
         "rowId": "ui-brand-official",
-        "moduleName": "@deepseek-ai/dsh-client-ui-brand-official",
+        "moduleName": "@xrkseek/harness-cli-client-ui-brand-official",
         "entryId": "include:ui-brand-official",
         "meta": {
           "title": {
@@ -2316,14 +2316,14 @@
             "zh": "DeepSeek 品牌展示"
           },
           "description": {
-            "en": "Official DeepSeek Harness brand occupants for the Web client's sidebar slots",
+            "en": "Official XRK-Harness brand occupants for the Web client's sidebar slots",
             "zh": "在应用侧栏等位置展示官方品牌元素。"
           }
         }
       },
       {
         "rowId": "ui-attachment",
-        "moduleName": "@deepseek-ai/dsh-client-ui-attachment",
+        "moduleName": "@xrkseek/harness-cli-client-ui-attachment",
         "entryId": "include:ui-attachment",
         "meta": {
           "title": {
@@ -2338,7 +2338,7 @@
       },
       {
         "rowId": "ui-tool",
-        "moduleName": "@deepseek-ai/dsh-client-ui-tool",
+        "moduleName": "@xrkseek/harness-cli-client-ui-tool",
         "entryId": "include:ui-tool",
         "meta": {
           "title": {
@@ -2353,7 +2353,7 @@
       },
       {
         "rowId": "ui-cordis",
-        "moduleName": "@deepseek-ai/dsh-client-ui-cordis",
+        "moduleName": "@xrkseek/harness-cli-client-ui-cordis",
         "entryId": "include:ui-cordis",
         "meta": {
           "title": {
@@ -2368,7 +2368,7 @@
       },
       {
         "rowId": "ui-deliverables",
-        "moduleName": "@deepseek-ai/dsh-client-ui-deliverables",
+        "moduleName": "@xrkseek/harness-cli-client-ui-deliverables",
         "entryId": "include:ui-deliverables",
         "meta": {
           "title": {
@@ -2383,7 +2383,7 @@
       },
       {
         "rowId": "workspace-changes",
-        "moduleName": "@deepseek-ai/dsh-workspace-changes",
+        "moduleName": "@xrkseek/harness-cli-workspace-changes",
         "entryId": "include:workspace-changes",
         "meta": {
           "title": {
@@ -2391,14 +2391,14 @@
             "zh": "工作区变更记录"
           },
           "description": {
-            "en": "Per-turn workspace file changes recorded from git working-tree snapshots and whole-file captures, with per-file comparisons, for the DeepSeek Harness",
+            "en": "Per-turn workspace file changes recorded from git working-tree snapshots and whole-file captures, with per-file comparisons, for the XRK-Harness",
             "zh": "记录每轮任务的文件变化，供逐文件比较。"
           }
         }
       },
       {
         "rowId": "ui-workspace",
-        "moduleName": "@deepseek-ai/dsh-client-ui-workspace",
+        "moduleName": "@xrkseek/harness-cli-client-ui-workspace",
         "entryId": "include:ui-workspace",
         "meta": {
           "title": {
@@ -2413,7 +2413,7 @@
       },
       {
         "rowId": "ui-workflow-run",
-        "moduleName": "@deepseek-ai/dsh-client-ui-workflow-run",
+        "moduleName": "@xrkseek/harness-cli-client-ui-workflow-run",
         "entryId": "include:ui-workflow-run",
         "meta": {
           "title": {
@@ -2421,14 +2421,14 @@
             "zh": "工作流运行展示"
           },
           "description": {
-            "en": "Durable workflow-run Conversation Node and nested member disclosure for dsh web",
+            "en": "Durable workflow-run Conversation Node and nested member disclosure for xrkh serve",
             "zh": "在会话中展示工作流运行记录及其成员详情。"
           }
         }
       },
       {
         "rowId": "ui-input-trigger",
-        "moduleName": "@deepseek-ai/dsh-client-ui-input-trigger",
+        "moduleName": "@xrkseek/harness-cli-client-ui-input-trigger",
         "entryId": "include:ui-input-trigger",
         "meta": {
           "title": {
@@ -2443,7 +2443,7 @@
       },
       {
         "rowId": "ui-commands",
-        "moduleName": "@deepseek-ai/dsh-client-ui-commands",
+        "moduleName": "@xrkseek/harness-cli-client-ui-commands",
         "entryId": "include:ui-commands",
         "meta": {
           "title": {
@@ -2458,7 +2458,7 @@
       },
       {
         "rowId": "ui-skill",
-        "moduleName": "@deepseek-ai/dsh-client-ui-skill",
+        "moduleName": "@xrkseek/harness-cli-client-ui-skill",
         "entryId": "include:ui-skill",
         "meta": {
           "title": {
@@ -2473,7 +2473,7 @@
       },
       {
         "rowId": "ui-subagent",
-        "moduleName": "@deepseek-ai/dsh-client-ui-subagent",
+        "moduleName": "@xrkseek/harness-cli-client-ui-subagent",
         "entryId": "include:ui-subagent",
         "meta": {
           "title": {
@@ -2488,7 +2488,7 @@
       },
       {
         "rowId": "ui-reference",
-        "moduleName": "@deepseek-ai/dsh-client-ui-reference",
+        "moduleName": "@xrkseek/harness-cli-client-ui-reference",
         "entryId": "include:ui-reference",
         "meta": {
           "title": {
@@ -2503,7 +2503,7 @@
       },
       {
         "rowId": "ui-secret-mask",
-        "moduleName": "@deepseek-ai/dsh-client-ui-secret-mask",
+        "moduleName": "@xrkseek/harness-cli-client-ui-secret-mask",
         "entryId": "include:ui-secret-mask",
         "meta": {
           "title": {
@@ -2518,7 +2518,7 @@
       },
       {
         "rowId": "ui-jobs",
-        "moduleName": "@deepseek-ai/dsh-client-ui-jobs",
+        "moduleName": "@xrkseek/harness-cli-client-ui-jobs",
         "entryId": "include:ui-jobs",
         "meta": {
           "title": {
@@ -2533,7 +2533,7 @@
       },
       {
         "rowId": "ui-schedule",
-        "moduleName": "@deepseek-ai/dsh-client-ui-schedule",
+        "moduleName": "@xrkseek/harness-cli-client-ui-schedule",
         "entryId": "include:ui-schedule",
         "meta": {
           "title": {
@@ -2548,7 +2548,7 @@
       },
       {
         "rowId": "ui-goal",
-        "moduleName": "@deepseek-ai/dsh-client-ui-goal",
+        "moduleName": "@xrkseek/harness-cli-client-ui-goal",
         "entryId": "include:ui-goal",
         "meta": {
           "title": {
@@ -2563,7 +2563,7 @@
       },
       {
         "rowId": "ui-message-feedback",
-        "moduleName": "@deepseek-ai/dsh-client-ui-message-feedback",
+        "moduleName": "@xrkseek/harness-cli-client-ui-message-feedback",
         "entryId": "include:ui-message-feedback",
         "meta": {
           "title": {
@@ -2578,7 +2578,7 @@
       },
       {
         "rowId": "ui-model-selection",
-        "moduleName": "@deepseek-ai/dsh-client-ui-model-selection",
+        "moduleName": "@xrkseek/harness-cli-client-ui-model-selection",
         "entryId": "include:ui-model-selection",
         "meta": {
           "title": {
@@ -2593,16 +2593,16 @@
       },
       {
         "rowId": "ui-deepseek-model-label-1017",
-        "moduleName": "@deepseek-ai/dsh-client-ui-deepseek-model-label-1017",
+        "moduleName": "@xrkseek/harness-cli-client-ui-deepseek-model-label-1017",
         "entryId": "include:ui-deepseek-model-label-1017",
         "meta": {
-          "title": "@deepseek-ai/dsh-client-ui-deepseek-model-label-1017",
+          "title": "@xrkseek/harness-cli-client-ui-deepseek-model-label-1017",
           "description": "Temporary 1017 release badge for official DeepSeek Flash model labels"
         }
       },
       {
         "rowId": "ui-permission",
-        "moduleName": "@deepseek-ai/dsh-client-ui-permission-presets",
+        "moduleName": "@xrkseek/harness-cli-client-ui-permission-presets",
         "entryId": "include:ui-permission",
         "meta": {
           "title": {
@@ -2617,7 +2617,7 @@
       },
       {
         "rowId": "ui-agent-preset",
-        "moduleName": "@deepseek-ai/dsh-client-ui-agent-preset",
+        "moduleName": "@xrkseek/harness-cli-client-ui-agent-preset",
         "entryId": "include:ui-agent-preset",
         "meta": {
           "title": {
@@ -2632,7 +2632,7 @@
       },
       {
         "rowId": "entry-customization",
-        "moduleName": "@deepseek-ai/dsh-client-ui-entry-customization",
+        "moduleName": "@xrkseek/harness-cli-client-ui-entry-customization",
         "entryId": "include:entry-customization",
         "meta": {
           "title": {
@@ -2647,7 +2647,7 @@
       },
       {
         "rowId": "ui-settings-session-log",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-session-log",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-session-log",
         "entryId": "include:ui-settings-session-log",
         "meta": {
           "title": {
@@ -2662,7 +2662,7 @@
       },
       {
         "rowId": "ui-settings-plugins",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-plugins",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-plugins",
         "entryId": "include:ui-settings-plugins",
         "meta": {
           "title": {
@@ -2670,14 +2670,14 @@
             "zh": "内置插件设置入口"
           },
           "description": {
-            "en": "Built-in plugins settings section for the dsh web client: the Settings navigation entry and the tab chrome feature-owned tabs register into",
+            "en": "Built-in plugins settings section for the xrkh serve client: the Settings navigation entry and the tab chrome feature-owned tabs register into",
             "zh": "提供设置中的内置插件入口及其功能标签页。"
           }
         }
       },
       {
         "rowId": "ui-settings-shell",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-shell",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-shell",
         "entryId": "include:ui-settings-shell",
         "meta": {
           "title": {
@@ -2685,14 +2685,14 @@
             "zh": "命令执行设置"
           },
           "description": {
-            "en": "Settings page of the shell executor on the dsh web client's Plugins page: the command timeout and the per-stream output cap of the shell namespace",
+            "en": "Settings page of the shell executor on the xrkh serve client's Plugins page: the command timeout and the per-stream output cap of the shell namespace",
             "zh": "配置命令执行超时和输出长度上限。"
           }
         }
       },
       {
         "rowId": "ui-settings-agent-loop",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-agent-loop",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-agent-loop",
         "entryId": "include:ui-settings-agent-loop",
         "meta": {
           "title": {
@@ -2700,14 +2700,14 @@
             "zh": "智能体运行设置"
           },
           "description": {
-            "en": "Settings page of the agent loop on the dsh web client's Plugins page: the parallel tool-call cap of the agent-loop namespace",
+            "en": "Settings page of the agent loop on the xrkh serve client's Plugins page: the parallel tool-call cap of the agent-loop namespace",
             "zh": "配置同时执行的工具调用数量上限。"
           }
         }
       },
       {
         "rowId": "ui-settings-subagent",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-subagent",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-subagent",
         "entryId": "include:ui-settings-subagent",
         "meta": {
           "title": {
@@ -2715,14 +2715,14 @@
             "zh": "子智能体设置"
           },
           "description": {
-            "en": "Settings page of Subagent delegation on the dsh web client's Plugins page: recursion depth, parallel capacity, and the models agents may choose for subagents",
+            "en": "Settings page of Subagent delegation on the xrkh serve client's Plugins page: recursion depth, parallel capacity, and the models agents may choose for subagents",
             "zh": "配置委派深度、并发数量和可选模型。"
           }
         }
       },
       {
         "rowId": "ui-settings-web-search",
-        "moduleName": "@deepseek-ai/dsh-client-ui-settings-web-search",
+        "moduleName": "@xrkseek/harness-cli-client-ui-settings-web-search",
         "entryId": "include:ui-settings-web-search",
         "meta": {
           "title": {
@@ -2730,14 +2730,14 @@
             "zh": "网页搜索设置"
           },
           "description": {
-            "en": "Settings page of the DeepSeek web-search provider on the dsh web client's Plugins page: its API key, endpoint, and per-request search budget",
+            "en": "Settings page of the DeepSeek web-search provider on the xrkh serve client's Plugins page: its API key, endpoint, and per-request search budget",
             "zh": "配置 DeepSeek 网页搜索的密钥、服务地址和请求预算。"
           }
         }
       },
       {
         "rowId": "ui-plan",
-        "moduleName": "@deepseek-ai/dsh-client-ui-plan",
+        "moduleName": "@xrkseek/harness-cli-client-ui-plan",
         "entryId": "include:ui-plan",
         "meta": {
           "title": {
@@ -2752,7 +2752,7 @@
       },
       {
         "rowId": "ui-user-questions",
-        "moduleName": "@deepseek-ai/dsh-client-ui-user-questions",
+        "moduleName": "@xrkseek/harness-cli-client-ui-user-questions",
         "entryId": "include:ui-user-questions",
         "meta": {
           "title": {
@@ -2767,7 +2767,7 @@
       },
       {
         "rowId": "ui-trajectory",
-        "moduleName": "@deepseek-ai/dsh-client-ui-trajectory",
+        "moduleName": "@xrkseek/harness-cli-client-ui-trajectory",
         "entryId": "include:ui-trajectory",
         "meta": {
           "title": {
@@ -2782,7 +2782,7 @@
       },
       {
         "rowId": "agent-preset-registry",
-        "moduleName": "@deepseek-ai/dsh-agent-preset-registry",
+        "moduleName": "@xrkseek/harness-cli-agent-preset-registry",
         "entryId": "include:agent-preset-registry",
         "meta": {
           "title": {
@@ -2797,7 +2797,7 @@
       },
       {
         "rowId": "preset-standard",
-        "moduleName": "@deepseek-ai/dsh-agent-preset",
+        "moduleName": "@xrkseek/harness-cli-agent-preset",
         "entryId": "include:preset-standard",
         "meta": {
           "title": {
@@ -2812,7 +2812,7 @@
       },
       {
         "rowId": "preset-ptc",
-        "moduleName": "@deepseek-ai/dsh-agent-preset",
+        "moduleName": "@xrkseek/harness-cli-agent-preset",
         "entryId": "include:preset-ptc",
         "meta": {
           "title": {
@@ -2827,7 +2827,7 @@
       },
       {
         "rowId": "preset-minimal",
-        "moduleName": "@deepseek-ai/dsh-agent-preset",
+        "moduleName": "@xrkseek/harness-cli-agent-preset",
         "entryId": "include:preset-minimal",
         "meta": {
           "title": {
@@ -2842,7 +2842,7 @@
       },
       {
         "rowId": "preset-cordis",
-        "moduleName": "@deepseek-ai/dsh-agent-preset",
+        "moduleName": "@xrkseek/harness-cli-agent-preset",
         "entryId": "include:preset-cordis",
         "meta": {
           "title": {
@@ -2886,7 +2886,7 @@
     ]
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+    "name": "@xrkseek/harness-cli-experimental-voice-input-bundle",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -2909,7 +2909,7 @@
     "rows": [
       {
         "rowId": "speech-to-text",
-        "moduleName": "@deepseek-ai/dsh-experimental-speech-to-text",
+        "moduleName": "@xrkseek/harness-cli-experimental-speech-to-text",
         "entryId": "include:speech-to-text",
         "meta": {
           "title": {
@@ -2924,7 +2924,7 @@
       },
       {
         "rowId": "speech-to-text-sensevoice",
-        "moduleName": "@deepseek-ai/dsh-experimental-speech-to-text-sensevoice",
+        "moduleName": "@xrkseek/harness-cli-experimental-speech-to-text-sensevoice",
         "entryId": "include:speech-to-text-sensevoice",
         "meta": {
           "title": {
@@ -2939,7 +2939,7 @@
       },
       {
         "rowId": "api-speech-to-text",
-        "moduleName": "@deepseek-ai/dsh-experimental-api-speech-to-text",
+        "moduleName": "@xrkseek/harness-cli-experimental-api-speech-to-text",
         "entryId": "include:api-speech-to-text",
         "meta": {
           "title": {
@@ -2954,7 +2954,7 @@
       },
       {
         "rowId": "ui-voice-input",
-        "moduleName": "@deepseek-ai/dsh-experimental-client-ui-voice-input",
+        "moduleName": "@xrkseek/harness-cli-experimental-client-ui-voice-input",
         "entryId": "include:ui-voice-input",
         "meta": {
           "title": {
@@ -2971,7 +2971,7 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-session-search",
+    "name": "@xrkseek/harness-cli-experimental-session-search",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -2994,7 +2994,7 @@
     "rows": [
       {
         "rowId": "optional-session-query-sqlite",
-        "moduleName": "@deepseek-ai/dsh-session-query-sqlite",
+        "moduleName": "@xrkseek/harness-cli-session-query-sqlite",
         "entryId": "include:optional-session-query-sqlite",
         "meta": {
           "title": {
@@ -3009,10 +3009,10 @@
       },
       {
         "rowId": "optional-tool-session-query",
-        "moduleName": "@deepseek-ai/dsh-tool-session-query",
+        "moduleName": "@xrkseek/harness-cli-tool-session-query",
         "entryId": "include:optional-tool-session-query",
         "meta": {
-          "title": "@deepseek-ai/dsh-tool-session-query",
+          "title": "@xrkseek/harness-cli-tool-session-query",
           "description": "Workspace-authorized model-facing session history search, trace, and event read tools"
         }
       }
@@ -3114,12 +3114,12 @@
         }
       },
       {
-        "rowId": "dsh-media",
-        "moduleName": "dsh-media",
-        "entryId": "include:dsh-media",
+        "rowId": "xrk-media",
+        "moduleName": "xrk-media",
+        "entryId": "include:xrk-media",
         "meta": {
-          "title": "dsh-media",
-          "description": "Host-owned image generation for DeepSeek Harness; M0 review candidate"
+          "title": "xrk-media",
+          "description": "Host-owned image generation for XRK-Harness; M0 review candidate"
         }
       },
       {
@@ -3225,41 +3225,41 @@
     "overrides": []
   },
   {
-    "name": "dsh-media",
+    "name": "xrk-media",
     "official": false,
     "availability": "profile",
     "version": "0.1.0-m0.2",
-    "description": "Host-owned image generation for DeepSeek Harness; M0 review candidate",
+    "description": "Host-owned image generation for XRK-Harness; M0 review candidate",
     "meta": {
-      "title": "dsh-media",
-      "description": "Host-owned image generation for DeepSeek Harness; M0 review candidate"
+      "title": "xrk-media",
+      "description": "Host-owned image generation for XRK-Harness; M0 review candidate"
     },
-    "source": "file:/root/plugins/dsh-media",
+    "source": "file:/root/plugins/xrk-media",
     "enabled": false,
     "installed": true,
     "optional": false,
     "removable": true,
     "rows": [
       {
-        "rowId": "dsh-media",
-        "moduleName": "dsh-media",
-        "entryId": "include:dsh-media",
+        "rowId": "xrk-media",
+        "moduleName": "xrk-media",
+        "entryId": "include:xrk-media",
         "meta": {
-          "title": "dsh-media",
-          "description": "Host-owned image generation for DeepSeek Harness; M0 review candidate"
+          "title": "xrk-media",
+          "description": "Host-owned image generation for XRK-Harness; M0 review candidate"
         }
       }
     ],
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-acp-app",
+    "name": "@xrkseek/harness-cli-acp-app",
     "official": false,
     "availability": "installation",
     "version": "0.2.1-rc.4",
     "description": "The dsh ACP profile bundle: automation-only JSON-RPC stdio and process lifecycle over dsh-base",
     "meta": {
-      "title": "@deepseek-ai/dsh-acp-app",
+      "title": "@xrkseek/harness-cli-acp-app",
       "description": "The dsh ACP profile bundle: automation-only JSON-RPC stdio and process lifecycle over dsh-base"
     },
     "enabled": false,
@@ -3269,18 +3269,18 @@
     "rows": [
       {
         "rowId": "acp-app-startup",
-        "moduleName": "@deepseek-ai/dsh-acp-app",
+        "moduleName": "@xrkseek/harness-cli-acp-app",
         "meta": {
-          "title": "@deepseek-ai/dsh-acp-app",
+          "title": "@xrkseek/harness-cli-acp-app",
           "description": "The dsh ACP profile bundle: automation-only JSON-RPC stdio and process lifecycle over dsh-base"
         }
       },
       {
         "rowId": "acp",
-        "moduleName": "@deepseek-ai/dsh-acp",
+        "moduleName": "@xrkseek/harness-cli-acp",
         "meta": {
-          "title": "@deepseek-ai/dsh-acp",
-          "description": "Automation-only Agent Client Protocol server for driving DeepSeek Harness agents over JSON-RPC stdio"
+          "title": "@xrkseek/harness-cli-acp",
+          "description": "Automation-only Agent Client Protocol server for driving XRK-Harness agents over JSON-RPC stdio"
         }
       }
     ],
@@ -3291,7 +3291,7 @@
     ]
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-agent-team-profile",
+    "name": "@xrkseek/harness-cli-experimental-agent-team-profile",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -3314,7 +3314,7 @@
     "rows": [
       {
         "rowId": "agent-team",
-        "moduleName": "@deepseek-ai/dsh-experimental-agent-team",
+        "moduleName": "@xrkseek/harness-cli-experimental-agent-team",
         "meta": {
           "title": {
             "en": "Team Collaboration",
@@ -3328,7 +3328,7 @@
       },
       {
         "rowId": "tool-agent-team",
-        "moduleName": "@deepseek-ai/dsh-experimental-tool-agent-team",
+        "moduleName": "@xrkseek/harness-cli-experimental-tool-agent-team",
         "meta": {
           "title": {
             "en": "Team Tools",
@@ -3342,7 +3342,7 @@
       },
       {
         "rowId": "ui-agent-team",
-        "moduleName": "@deepseek-ai/dsh-experimental-client-ui-agent-team",
+        "moduleName": "@xrkseek/harness-cli-experimental-client-ui-agent-team",
         "meta": {
           "title": {
             "en": "Team Panel",
@@ -3363,7 +3363,7 @@
     ]
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-inspector-profile",
+    "name": "@xrkseek/harness-cli-experimental-inspector-profile",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -3386,7 +3386,7 @@
     "rows": [
       {
         "rowId": "experimental-inspector",
-        "moduleName": "@deepseek-ai/dsh-experimental-inspector",
+        "moduleName": "@xrkseek/harness-cli-experimental-inspector",
         "meta": {
           "title": {
             "en": "NodeJS Inspector",
@@ -3401,7 +3401,7 @@
       },
       {
         "rowId": "session-inspector",
-        "moduleName": "@deepseek-ai/dsh-experimental-session-inspector",
+        "moduleName": "@xrkseek/harness-cli-experimental-session-inspector",
         "meta": {
           "title": {
             "en": "Session Log",
@@ -3417,13 +3417,13 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-headless",
+    "name": "@xrkseek/harness-cli-headless",
     "official": false,
     "availability": "installation",
     "version": "0.2.1-rc.4",
     "description": "The dsh one-shot bundle: a direct core Agent/Session runner over dsh-base with no Host, HTTP, or browser layer",
     "meta": {
-      "title": "@deepseek-ai/dsh-headless",
+      "title": "@xrkseek/harness-cli-headless",
       "description": "The dsh one-shot bundle: a direct core Agent/Session runner over dsh-base with no Host, HTTP, or browser layer"
     },
     "enabled": false,
@@ -3433,13 +3433,13 @@
     "rows": [
       {
         "rowId": "headless-startup",
-        "moduleName": "@deepseek-ai/dsh-headless/startup"
+        "moduleName": "@xrkseek/harness-cli-headless/startup"
       },
       {
         "rowId": "headless-runner",
-        "moduleName": "@deepseek-ai/dsh-headless",
+        "moduleName": "@xrkseek/harness-cli-headless",
         "meta": {
-          "title": "@deepseek-ai/dsh-headless",
+          "title": "@xrkseek/harness-cli-headless",
           "description": "The dsh one-shot bundle: a direct core Agent/Session runner over dsh-base with no Host, HTTP, or browser layer"
         }
       }
@@ -3454,13 +3454,13 @@
     ]
   },
   {
-    "name": "@deepseek-ai/dsh-sdk-app",
+    "name": "@xrkseek/harness-cli-sdk-app",
     "official": false,
     "availability": "installation",
     "version": "0.2.1-rc.4",
     "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base",
     "meta": {
-      "title": "@deepseek-ai/dsh-sdk-app",
+      "title": "@xrkseek/harness-cli-sdk-app",
       "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base"
     },
     "enabled": false,
@@ -3470,33 +3470,33 @@
     "rows": [
       {
         "rowId": "sdk-app-startup",
-        "moduleName": "@deepseek-ai/dsh-sdk-app",
+        "moduleName": "@xrkseek/harness-cli-sdk-app",
         "meta": {
-          "title": "@deepseek-ai/dsh-sdk-app",
+          "title": "@xrkseek/harness-cli-sdk-app",
           "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base"
         }
       },
       {
         "rowId": "sdk-jsonrpc-server",
-        "moduleName": "@deepseek-ai/dsh-sdk-jsonrpc-server",
+        "moduleName": "@xrkseek/harness-cli-sdk-jsonrpc-server",
         "meta": {
-          "title": "@deepseek-ai/dsh-sdk-jsonrpc-server",
-          "description": "Stdio JSON-RPC server plugin for out-of-process DeepSeek Harness SDK clients"
+          "title": "@xrkseek/harness-cli-sdk-jsonrpc-server",
+          "description": "Stdio JSON-RPC server plugin for out-of-process XRK-Harness SDK clients"
         }
       },
       {
         "rowId": "workspace-dependencies",
-        "moduleName": "@deepseek-ai/dsh-tool-workspace-dependencies",
+        "moduleName": "@xrkseek/harness-cli-tool-workspace-dependencies",
         "meta": {
-          "title": "@deepseek-ai/dsh-tool-workspace-dependencies",
+          "title": "@xrkseek/harness-cli-tool-workspace-dependencies",
           "description": "The load_workspace_dependencies tool: absolute paths into a bundled Python, Node.js, and pnpm payload"
         }
       },
       {
         "rowId": "skill-office",
-        "moduleName": "@deepseek-ai/dsh-skill-office",
+        "moduleName": "@xrkseek/harness-cli-skill-office",
         "meta": {
-          "title": "@deepseek-ai/dsh-skill-office",
+          "title": "@xrkseek/harness-cli-skill-office",
           "description": "Bundled Word, PowerPoint, and Excel workflows and LibreOffice Kit operations"
         }
       }
@@ -3508,13 +3508,13 @@
     ]
   },
   {
-    "name": "@deepseek-ai/dsh-sdk-minimal",
+    "name": "@xrkseek/harness-cli-sdk-minimal",
     "official": false,
     "availability": "installation",
     "version": "0.2.1-rc.4",
     "description": "The standalone minimal SDK profile bundle: JSON-RPC, one DeepSeek adapter, persistent shell, and JSONL sessions",
     "meta": {
-      "title": "@deepseek-ai/dsh-sdk-minimal",
+      "title": "@xrkseek/harness-cli-sdk-minimal",
       "description": "The standalone minimal SDK profile bundle: JSON-RPC, one DeepSeek adapter, persistent shell, and JSONL sessions"
     },
     "enabled": false,
@@ -3525,23 +3525,23 @@
     "rows": [
       {
         "rowId": "sdk-app-startup",
-        "moduleName": "@deepseek-ai/dsh-sdk-app",
+        "moduleName": "@xrkseek/harness-cli-sdk-app",
         "meta": {
-          "title": "@deepseek-ai/dsh-sdk-app",
+          "title": "@xrkseek/harness-cli-sdk-app",
           "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base"
         }
       },
       {
         "rowId": "sdk-jsonrpc-server",
-        "moduleName": "@deepseek-ai/dsh-sdk-jsonrpc-server",
+        "moduleName": "@xrkseek/harness-cli-sdk-jsonrpc-server",
         "meta": {
-          "title": "@deepseek-ai/dsh-sdk-jsonrpc-server",
-          "description": "Stdio JSON-RPC server plugin for out-of-process DeepSeek Harness SDK clients"
+          "title": "@xrkseek/harness-cli-sdk-jsonrpc-server",
+          "description": "Stdio JSON-RPC server plugin for out-of-process XRK-Harness SDK clients"
         }
       },
       {
         "rowId": "deepseek-llm-api-extensions",
-        "moduleName": "@deepseek-ai/dsh-deepseek-llm-api-extensions",
+        "moduleName": "@xrkseek/harness-cli-deepseek-llm-api-extensions",
         "entryId": "include:deepseek-llm-api-extensions",
         "meta": {
           "title": {
@@ -3556,7 +3556,7 @@
       },
       {
         "rowId": "session-log-deepseek",
-        "moduleName": "@deepseek-ai/dsh-session-log-deepseek",
+        "moduleName": "@xrkseek/harness-cli-session-log-deepseek",
         "entryId": "include:session-log-deepseek",
         "meta": {
           "title": {
@@ -3571,7 +3571,7 @@
       },
       {
         "rowId": "plugin-package-inventory-deepseek",
-        "moduleName": "@deepseek-ai/dsh-plugin-package-inventory-deepseek",
+        "moduleName": "@xrkseek/harness-cli-plugin-package-inventory-deepseek",
         "entryId": "include:plugin-package-inventory-deepseek",
         "meta": {
           "title": {
@@ -3586,7 +3586,7 @@
       },
       {
         "rowId": "llm-deepseek",
-        "moduleName": "@deepseek-ai/dsh-llm-deepseek-api-key",
+        "moduleName": "@xrkseek/harness-cli-llm-deepseek-api-key",
         "entryId": "include:llm-deepseek",
         "meta": {
           "title": {
@@ -3601,7 +3601,7 @@
       },
       {
         "rowId": "sandbox",
-        "moduleName": "@deepseek-ai/dsh-sandbox-local",
+        "moduleName": "@xrkseek/harness-cli-sandbox-local",
         "entryId": "include:sandbox",
         "meta": {
           "title": {
@@ -3609,22 +3609,22 @@
             "zh": "本地进程沙箱"
           },
           "description": {
-            "en": "Local process-sandbox backends for the DeepSeek Harness sandbox seam: bwrap, the npm-distributed landlock-run launcher, macOS Seatbelt, or the Windows ACL restricted-token runner — functionally probed, fail-closed",
+            "en": "Local process-sandbox backends for the XRK-Harness sandbox seam: bwrap, the npm-distributed landlock-run launcher, macOS Seatbelt, or the Windows ACL restricted-token runner — functionally probed, fail-closed",
             "zh": "按操作系统提供进程隔离，限制命令的访问范围。"
           }
         }
       },
       {
         "rowId": "filesystem",
-        "moduleName": "@deepseek-ai/dsh-fs-local",
+        "moduleName": "@xrkseek/harness-cli-fs-local",
         "meta": {
-          "title": "@deepseek-ai/dsh-fs-local",
-          "description": "Local-filesystem implementation of the DeepSeek Harness filesystem seam (ctx.fs)"
+          "title": "@xrkseek/harness-cli-fs-local",
+          "description": "Local-filesystem implementation of the XRK-Harness filesystem seam (ctx.fs)"
         }
       },
       {
         "rowId": "attachment-local",
-        "moduleName": "@deepseek-ai/dsh-attachment-local",
+        "moduleName": "@xrkseek/harness-cli-attachment-local",
         "entryId": "include:attachment-local",
         "meta": {
           "title": {
@@ -3632,14 +3632,14 @@
             "zh": "本地附件存储"
           },
           "description": {
-            "en": "Private content-addressed DSH_HOME attachment storage",
+            "en": "Private content-addressed XRK_HOME attachment storage",
             "zh": "保存会话中的图片等附件，并按内容标识读取。"
           }
         }
       },
       {
         "rowId": "tool-fs",
-        "moduleName": "@deepseek-ai/dsh-tool-fs",
+        "moduleName": "@xrkseek/harness-cli-tool-fs",
         "entryId": "include:tool-fs",
         "meta": {
           "title": {
@@ -3647,32 +3647,32 @@
             "zh": "文件读写工具"
           },
           "description": {
-            "en": "Model-facing filesystem tools (read, write, edit) over the DeepSeek Harness filesystem seam (ctx.fs)",
+            "en": "Model-facing filesystem tools (read, write, edit) over the XRK-Harness filesystem seam (ctx.fs)",
             "zh": "让 AI 读取、创建和编辑工作文件。"
           }
         }
       },
       {
         "rowId": "working-directory",
-        "moduleName": "@deepseek-ai/dsh-working-directory",
+        "moduleName": "@xrkseek/harness-cli-working-directory",
         "entryId": "include:working-directory",
         "meta": {
-          "title": "@deepseek-ai/dsh-working-directory",
+          "title": "@xrkseek/harness-cli-working-directory",
           "description": "Session working directories with durable changes and model context"
         }
       },
       {
         "rowId": "tool-working-directory",
-        "moduleName": "@deepseek-ai/dsh-tool-working-directory",
+        "moduleName": "@xrkseek/harness-cli-tool-working-directory",
         "entryId": "include:tool-working-directory",
         "meta": {
-          "title": "@deepseek-ai/dsh-tool-working-directory",
+          "title": "@xrkseek/harness-cli-tool-working-directory",
           "description": "Read and change the active Session working directory"
         }
       },
       {
         "rowId": "session-projection",
-        "moduleName": "@deepseek-ai/dsh-session-projection",
+        "moduleName": "@xrkseek/harness-cli-session-projection",
         "entryId": "include:session-projection",
         "meta": {
           "title": {
@@ -3687,7 +3687,7 @@
       },
       {
         "rowId": "token-meter",
-        "moduleName": "@deepseek-ai/dsh-token-meter",
+        "moduleName": "@xrkseek/harness-cli-token-meter",
         "entryId": "include:token-meter",
         "meta": {
           "title": {
@@ -3695,14 +3695,14 @@
             "zh": "Token 计量"
           },
           "description": {
-            "en": "Replay-aware token measurement service (ctx.tokenMeter) for the DeepSeek Harness",
+            "en": "Replay-aware token measurement service (ctx.tokenMeter) for the XRK-Harness",
             "zh": "估算模型上下文的 Token 用量，供压缩等功能判断预算。"
           }
         }
       },
       {
         "rowId": "compaction-basic",
-        "moduleName": "@deepseek-ai/dsh-compaction-basic",
+        "moduleName": "@xrkseek/harness-cli-compaction-basic",
         "entryId": "include:compaction-basic",
         "meta": {
           "title": {
@@ -3710,14 +3710,14 @@
             "zh": "上下文压缩"
           },
           "description": {
-            "en": "Token-meter-driven compaction policy and LLM summarization backend for the DeepSeek Harness",
+            "en": "Token-meter-driven compaction policy and LLM summarization backend for the XRK-Harness",
             "zh": "在上下文达到阈值时，使用模型总结历史内容。"
           }
         }
       },
       {
         "rowId": "image-offload",
-        "moduleName": "@deepseek-ai/dsh-compaction-image-offload",
+        "moduleName": "@xrkseek/harness-cli-compaction-image-offload",
         "entryId": "include:image-offload",
         "meta": {
           "title": {
@@ -3732,7 +3732,7 @@
       },
       {
         "rowId": "sandbox-policy",
-        "moduleName": "@deepseek-ai/dsh-sandbox-policy",
+        "moduleName": "@xrkseek/harness-cli-sandbox-policy",
         "entryId": "include:sandbox-policy",
         "meta": {
           "title": {
@@ -3747,7 +3747,7 @@
       },
       {
         "rowId": "subprocess",
-        "moduleName": "@deepseek-ai/dsh-subprocess-local",
+        "moduleName": "@xrkseek/harness-cli-subprocess-local",
         "entryId": "include:subprocess",
         "meta": {
           "title": {
@@ -3755,49 +3755,49 @@
             "zh": "本地子进程"
           },
           "description": {
-            "en": "Local-subprocess implementation of the DeepSeek Harness subprocess seam",
+            "en": "Local-subprocess implementation of the XRK-Harness subprocess seam",
             "zh": "为其他插件提供本地进程的启动和管理能力。"
           }
         }
       },
       {
         "rowId": "pty",
-        "moduleName": "@deepseek-ai/dsh-terminal",
+        "moduleName": "@xrkseek/harness-cli-terminal",
         "meta": {
           "title": {
             "en": "terminal",
             "zh": "持久终端服务"
           },
           "description": {
-            "en": "Persistent PTY session seam for the DeepSeek Harness — owner-scoped ids, backend registry, interactive sends, reads, signals, and awaited cleanup",
+            "en": "Persistent PTY session seam for the XRK-Harness — owner-scoped ids, backend registry, interactive sends, reads, signals, and awaited cleanup",
             "zh": "管理可持续交互的终端会话及其输入、输出和清理。"
           }
         }
       },
       {
         "rowId": "terminal-bash",
-        "moduleName": "@deepseek-ai/dsh-terminal-bash",
+        "moduleName": "@xrkseek/harness-cli-terminal-bash",
         "meta": {
           "title": {
             "en": "terminal-bash",
             "zh": "持久 Shell 后端"
           },
           "description": {
-            "en": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
+            "en": "Persistent shell PTY backend over the XRK-Harness subprocess terminal primitive",
             "zh": "提供可跨多次调用保留状态的 Shell 终端。"
           }
         }
       },
       {
         "rowId": "terminal-pwsh",
-        "moduleName": "@deepseek-ai/dsh-terminal-bash",
+        "moduleName": "@xrkseek/harness-cli-terminal-bash",
         "meta": {
           "title": {
             "en": "terminal-bash",
             "zh": "持久 Shell 后端"
           },
           "description": {
-            "en": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
+            "en": "Persistent shell PTY backend over the XRK-Harness subprocess terminal primitive",
             "zh": "提供可跨多次调用保留状态的 Shell 终端。"
           }
         }
@@ -3819,7 +3819,7 @@
       },
       {
         "rowId": "llm",
-        "moduleName": "@deepseek-ai/dsh-llm",
+        "moduleName": "@xrkseek/harness-cli-llm",
         "entryId": "include:llm",
         "meta": {
           "title": {
@@ -3827,14 +3827,14 @@
             "zh": "模型调用服务"
           },
           "description": {
-            "en": "Provider-neutral LLM service interface for the DeepSeek Harness",
+            "en": "Provider-neutral LLM service interface for the XRK-Harness",
             "zh": "为不同模型提供统一的调用接口。"
           }
         }
       },
       {
         "rowId": "session",
-        "moduleName": "@deepseek-ai/dsh-session",
+        "moduleName": "@xrkseek/harness-cli-session",
         "entryId": "include:session",
         "meta": {
           "title": {
@@ -3842,14 +3842,14 @@
             "zh": "会话记录"
           },
           "description": {
-            "en": "Event-sourced session store for the DeepSeek Harness",
+            "en": "Event-sourced session store for the XRK-Harness",
             "zh": "记录会话中的消息、工具调用和运行事件。"
           }
         }
       },
       {
         "rowId": "session-title",
-        "moduleName": "@deepseek-ai/dsh-session-title",
+        "moduleName": "@xrkseek/harness-cli-session-title",
         "entryId": "include:session-title",
         "meta": {
           "title": {
@@ -3857,14 +3857,14 @@
             "zh": "会话标题服务"
           },
           "description": {
-            "en": "Log-backed session title service and provider registry for the DeepSeek Harness",
+            "en": "Log-backed session title service and provider registry for the XRK-Harness",
             "zh": "保存和读取会话标题，并管理标题生成方式。"
           }
         }
       },
       {
         "rowId": "system-prompt",
-        "moduleName": "@deepseek-ai/dsh-system-prompt",
+        "moduleName": "@xrkseek/harness-cli-system-prompt",
         "entryId": "include:system-prompt",
         "meta": {
           "title": {
@@ -3872,14 +3872,14 @@
             "zh": "系统提示词组装"
           },
           "description": {
-            "en": "System prompt assembly registry for the DeepSeek Harness",
+            "en": "System prompt assembly registry for the XRK-Harness",
             "zh": "汇总各插件提供的系统提示词内容。"
           }
         }
       },
       {
         "rowId": "tools",
-        "moduleName": "@deepseek-ai/dsh-tools",
+        "moduleName": "@xrkseek/harness-cli-tools",
         "entryId": "include:tools",
         "meta": {
           "title": {
@@ -3887,14 +3887,14 @@
             "zh": "工具注册与执行"
           },
           "description": {
-            "en": "Tool registry and execution pipeline for the DeepSeek Harness",
+            "en": "Tool registry and execution pipeline for the XRK-Harness",
             "zh": "管理可用工具及其调用执行流程。"
           }
         }
       },
       {
         "rowId": "mcp-resources",
-        "moduleName": "@deepseek-ai/dsh-mcp-resources",
+        "moduleName": "@xrkseek/harness-cli-mcp-resources",
         "entryId": "include:mcp-resources",
         "meta": {
           "title": {
@@ -3909,7 +3909,7 @@
       },
       {
         "rowId": "agent",
-        "moduleName": "@deepseek-ai/dsh-agent",
+        "moduleName": "@xrkseek/harness-cli-agent",
         "entryId": "include:agent",
         "meta": {
           "title": {
@@ -3917,14 +3917,14 @@
             "zh": "智能体管理"
           },
           "description": {
-            "en": "Agent interface, registry, initiator scope, and event vocabulary for the DeepSeek Harness",
+            "en": "Agent interface, registry, initiator scope, and event vocabulary for the XRK-Harness",
             "zh": "管理智能体实例及其运行上下文和事件。"
           }
         }
       },
       {
         "rowId": "llm-retry",
-        "moduleName": "@deepseek-ai/dsh-llm-retry",
+        "moduleName": "@xrkseek/harness-cli-llm-retry",
         "entryId": "include:llm-retry",
         "meta": {
           "title": {
@@ -3932,14 +3932,14 @@
             "zh": "模型请求重试"
           },
           "description": {
-            "en": "Provider-routed LLM request retry policy for the DeepSeek Harness",
+            "en": "Provider-routed LLM request retry policy for the XRK-Harness",
             "zh": "按模型提供方的策略重试失败的请求。"
           }
         }
       },
       {
         "rowId": "jobs",
-        "moduleName": "@deepseek-ai/dsh-jobs-local",
+        "moduleName": "@xrkseek/harness-cli-jobs-local",
         "entryId": "include:jobs",
         "meta": {
           "title": {
@@ -3947,14 +3947,14 @@
             "zh": "本地后台任务"
           },
           "description": {
-            "en": "Process-local implementation of the DeepSeek Harness background job registry seam",
+            "en": "Process-local implementation of the XRK-Harness background job registry seam",
             "zh": "管理当前进程中的后台任务及其运行状态。"
           }
         }
       },
       {
         "rowId": "agent-loop",
-        "moduleName": "@deepseek-ai/dsh-agent-loop",
+        "moduleName": "@xrkseek/harness-cli-agent-loop",
         "entryId": "include:agent-loop",
         "meta": {
           "title": {
@@ -3962,14 +3962,14 @@
             "zh": "智能体运行循环"
           },
           "description": {
-            "en": "The concrete agent loop plugin for the DeepSeek Harness",
+            "en": "The concrete agent loop plugin for the XRK-Harness",
             "zh": "协调模型请求、工具调用和后续步骤，推进智能体任务。"
           }
         }
       },
       {
         "rowId": "persistent-bash",
-        "moduleName": "@deepseek-ai/dsh-tool-bash-persistent",
+        "moduleName": "@xrkseek/harness-cli-tool-bash-persistent",
         "meta": {
           "title": {
             "en": "tool-bash-persistent",
@@ -3983,7 +3983,7 @@
       },
       {
         "rowId": "persistent-pwsh",
-        "moduleName": "@deepseek-ai/dsh-tool-pwsh-persistent",
+        "moduleName": "@xrkseek/harness-cli-tool-pwsh-persistent",
         "meta": {
           "title": {
             "en": "tool-pwsh-persistent",
@@ -3997,14 +3997,14 @@
       },
       {
         "rowId": "sessions",
-        "moduleName": "@deepseek-ai/dsh-session-persistence-jsonl",
+        "moduleName": "@xrkseek/harness-cli-session-persistence-jsonl",
         "meta": {
           "title": {
             "en": "session-persistence-jsonl",
             "zh": "会话日志持久保存"
           },
           "description": {
-            "en": "JSONL durable session persistence backend for the DeepSeek Harness",
+            "en": "JSONL durable session persistence backend for the XRK-Harness",
             "zh": "将会话日志保存为本地 JSONL 文件，供后续恢复和读取。"
           }
         }
@@ -4013,11 +4013,11 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-auto-review",
+    "name": "@xrkseek/harness-cli-experimental-auto-review",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
-    "description": "Per-tool LLM authorization review for the DeepSeek Harness Auto permission preset",
+    "description": "Per-tool LLM authorization review for the XRK-Harness Auto permission preset",
     "meta": {
       "title": {
         "en": "Auto Authorization Review",
@@ -4036,7 +4036,7 @@
     "rows": [
       {
         "rowId": "auto-review",
-        "moduleName": "@deepseek-ai/dsh-experimental-auto-review",
+        "moduleName": "@xrkseek/harness-cli-experimental-auto-review",
         "meta": {
           "title": {
             "en": "Auto Authorization Review",
@@ -4053,7 +4053,7 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+    "name": "@xrkseek/harness-cli-experimental-cot-translation-bundle",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -4076,15 +4076,15 @@
     "rows": [
       {
         "rowId": "translator",
-        "moduleName": "@deepseek-ai/dsh-experimental-translator",
+        "moduleName": "@xrkseek/harness-cli-experimental-translator",
         "meta": {
-          "title": "@deepseek-ai/dsh-experimental-translator",
+          "title": "@xrkseek/harness-cli-experimental-translator",
           "description": "Machine translation with reusable Session results"
         }
       },
       {
         "rowId": "cot-translation",
-        "moduleName": "@deepseek-ai/dsh-experimental-client-ui-cot-translation",
+        "moduleName": "@xrkseek/harness-cli-experimental-client-ui-cot-translation",
         "meta": {
           "title": {
             "en": "Machine translation of reasoning",
@@ -4100,15 +4100,15 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+    "name": "@xrkseek/harness-cli-experimental-badge-skill-bundle",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
     "description": "Let agents add a “powered by dsh” badge to documents, pull requests, and other outputs.",
     "meta": {
       "title": {
-        "en": "DSH badge skill",
-        "zh": "DSH 徽章技能"
+        "en": "XRK badge skill",
+        "zh": "XRK 徽章技能"
       },
       "description": {
         "en": "Let agents add a “powered by dsh” badge to documents, pull requests, and other outputs.",
@@ -4123,15 +4123,15 @@
     "rows": [
       {
         "rowId": "skill-badge",
-        "moduleName": "@deepseek-ai/dsh-skill-badge",
+        "moduleName": "@xrkseek/harness-cli-skill-badge",
         "meta": {
           "title": {
             "en": "DSH",
             "zh": "DSH"
           },
           "description": {
-            "en": "Provide the official powered-by-DSH badge skill.",
-            "zh": "提供官方 powered-by-DSH 徽章技能。"
+            "en": "Provide the official powered-by-XRK badge skill.",
+            "zh": "提供官方 powered-by-XRK 徽章技能。"
           },
           "icon": "<icon>"
         }
@@ -4140,7 +4140,7 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-ralph-bundle",
+    "name": "@xrkseek/harness-cli-experimental-ralph-bundle",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -4163,7 +4163,7 @@
     "rows": [
       {
         "rowId": "optional-ralph-workflow",
-        "moduleName": "@deepseek-ai/dsh-workflow-ptc",
+        "moduleName": "@xrkseek/harness-cli-workflow-ptc",
         "meta": {
           "title": {
             "en": "workflow-ptc",
@@ -4177,7 +4177,7 @@
       },
       {
         "rowId": "tool-ralph",
-        "moduleName": "@deepseek-ai/dsh-tool-ralph",
+        "moduleName": "@xrkseek/harness-cli-tool-ralph",
         "meta": {
           "title": {
             "en": "tool-ralph",
@@ -4193,7 +4193,7 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-session-titles-bundle",
+    "name": "@xrkseek/harness-cli-experimental-session-titles-bundle",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -4216,10 +4216,10 @@
     "rows": [
       {
         "rowId": "optional-session-title-all-prompts",
-        "moduleName": "@deepseek-ai/dsh-session-title-all-prompts-llm",
+        "moduleName": "@xrkseek/harness-cli-session-title-all-prompts-llm",
         "meta": {
-          "title": "@deepseek-ai/dsh-session-title-all-prompts-llm",
-          "description": "All-user-messages LLM provider plugin for DeepSeek Harness session titles"
+          "title": "@xrkseek/harness-cli-session-title-all-prompts-llm",
+          "description": "All-user-messages LLM provider plugin for XRK-Harness session titles"
         }
       }
     ],
@@ -4228,7 +4228,7 @@
     ]
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-terminal-bundle",
+    "name": "@xrkseek/harness-cli-experimental-terminal-bundle",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -4251,51 +4251,51 @@
     "rows": [
       {
         "rowId": "optional-terminal-registry",
-        "moduleName": "@deepseek-ai/dsh-terminal",
+        "moduleName": "@xrkseek/harness-cli-terminal",
         "meta": {
           "title": {
             "en": "terminal",
             "zh": "持久终端服务"
           },
           "description": {
-            "en": "Persistent PTY session seam for the DeepSeek Harness — owner-scoped ids, backend registry, interactive sends, reads, signals, and awaited cleanup",
+            "en": "Persistent PTY session seam for the XRK-Harness — owner-scoped ids, backend registry, interactive sends, reads, signals, and awaited cleanup",
             "zh": "管理可持续交互的终端会话及其输入、输出和清理。"
           }
         }
       },
       {
         "rowId": "optional-terminal-bash",
-        "moduleName": "@deepseek-ai/dsh-terminal-bash",
+        "moduleName": "@xrkseek/harness-cli-terminal-bash",
         "meta": {
           "title": {
             "en": "terminal-bash",
             "zh": "持久 Shell 后端"
           },
           "description": {
-            "en": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
+            "en": "Persistent shell PTY backend over the XRK-Harness subprocess terminal primitive",
             "zh": "提供可跨多次调用保留状态的 Shell 终端。"
           }
         }
       },
       {
         "rowId": "optional-terminal-pwsh",
-        "moduleName": "@deepseek-ai/dsh-terminal-bash",
+        "moduleName": "@xrkseek/harness-cli-terminal-bash",
         "meta": {
           "title": {
             "en": "terminal-bash",
             "zh": "持久 Shell 后端"
           },
           "description": {
-            "en": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
+            "en": "Persistent shell PTY backend over the XRK-Harness subprocess terminal primitive",
             "zh": "提供可跨多次调用保留状态的 Shell 终端。"
           }
         }
       },
       {
         "rowId": "optional-tool-terminal",
-        "moduleName": "@deepseek-ai/dsh-tool-terminal",
+        "moduleName": "@xrkseek/harness-cli-tool-terminal",
         "meta": {
-          "title": "@deepseek-ai/dsh-tool-terminal",
+          "title": "@xrkseek/harness-cli-tool-terminal",
           "description": "Six model-facing persistent PTY tools with owner isolation and generic background-job integration"
         }
       }
@@ -4303,7 +4303,7 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-tool-worktree",
+    "name": "@xrkseek/harness-cli-experimental-tool-worktree",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -4326,15 +4326,15 @@
     "rows": [
       {
         "rowId": "worktree",
-        "moduleName": "@deepseek-ai/dsh-experimental-worktree",
+        "moduleName": "@xrkseek/harness-cli-experimental-worktree",
         "meta": {
-          "title": "@deepseek-ai/dsh-experimental-worktree",
+          "title": "@xrkseek/harness-cli-experimental-worktree",
           "description": "Creates a named Git worktree and changes the calling Session working directory"
         }
       },
       {
         "rowId": "tool-worktree",
-        "moduleName": "@deepseek-ai/dsh-experimental-tool-worktree",
+        "moduleName": "@xrkseek/harness-cli-experimental-tool-worktree",
         "meta": {
           "title": {
             "en": "Git Worktrees",
@@ -4351,7 +4351,7 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+    "name": "@xrkseek/harness-cli-experimental-plugin-market-bundle",
     "official": true,
     "availability": "installation",
     "version": "0.2.1-rc.4",
@@ -4374,25 +4374,25 @@
     "rows": [
       {
         "rowId": "plugin-market",
-        "moduleName": "@deepseek-ai/dsh-plugin-market",
+        "moduleName": "@xrkseek/harness-cli-plugin-market",
         "meta": {
-          "title": "@deepseek-ai/dsh-plugin-market",
+          "title": "@xrkseek/harness-cli-plugin-market",
           "description": "Configured plugin market indexes for the Web Discover page and the plugin_market agent tool"
         }
       },
       {
         "rowId": "ui-plugin-market",
-        "moduleName": "@deepseek-ai/dsh-client-ui-plugin-market",
+        "moduleName": "@xrkseek/harness-cli-client-ui-plugin-market",
         "meta": {
-          "title": "@deepseek-ai/dsh-client-ui-plugin-market",
-          "description": "Discover tab of the dsh web Plugins page: browse configured plugin market indexes and install their bundles"
+          "title": "@xrkseek/harness-cli-client-ui-plugin-market",
+          "description": "Discover tab of the xrkh serve Plugins page: browse configured plugin market indexes and install their bundles"
         }
       }
     ],
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-subagent-claude-code",
+    "name": "@xrkseek/harness-cli-subagent-claude-code",
     "official": true,
     "availability": "missing",
     "meta": {
@@ -4407,7 +4407,7 @@
       "icon": "<icon>"
     },
     "installTarget": {
-      "spec": "@deepseek-ai/dsh-subagent-claude-code@0.2.1-rc.4",
+      "spec": "@xrkseek/harness-cli-subagent-claude-code@0.2.1-rc.4",
       "version": "0.2.1-rc.4"
     },
     "enabled": false,
@@ -4418,7 +4418,7 @@
     "overrides": []
   },
   {
-    "name": "@deepseek-ai/dsh-subagent-codex",
+    "name": "@xrkseek/harness-cli-subagent-codex",
     "official": true,
     "availability": "missing",
     "meta": {
@@ -4433,7 +4433,7 @@
       "icon": "<icon>"
     },
     "installTarget": {
-      "spec": "@deepseek-ai/dsh-subagent-codex@0.2.1-rc.4",
+      "spec": "@xrkseek/harness-cli-subagent-codex@0.2.1-rc.4",
       "version": "0.2.1-rc.4"
     },
     "enabled": false,

@@ -4,17 +4,17 @@ NA v1.3 的 `files` 能力让插件在用户点按后打开系统选择器。用
 
 ## 声明与降级
 
-清单中声明 `"capabilities": ["files"]`。清单按钮加 `"requires": ["files"]`；面板内的选择按钮只在 `caps.features?.includes('files')` 时显示。不支持时显示普通说明文字。旧 App、旧桥、未实现原生适配器的平台和 DSH Remote 中转连接不会协商此能力；普通面板仍能打开。
+清单中声明 `"capabilities": ["files"]`。清单按钮加 `"requires": ["files"]`；面板内的选择按钮只在 `caps.features?.includes('files')` 时显示。不支持时显示普通说明文字。旧 App、旧桥、未实现原生适配器的平台和 XRK Remote 中转连接不会协商此能力；普通面板仍能打开。
 
-`files` 不改变视图格式。仅使用 v1 组件也能取文件。清单 `dshGo.v`、HTTP 路径和 WebSocket `v` 仍为 `1`，不能填写 `1.3`。
+`files` 不改变视图格式。仅使用 v1 组件也能取文件。清单 `xrkGo.v`、HTTP 路径和 WebSocket `v` 仍为 `1`，不能填写 `1.3`。
 
 ## 发起与接收
 
 ```js
 import { createHash } from 'node:crypto'
-import { effects } from '@dsh-go/plugin-kit'
+import { effects } from '@xrkseek/plugin-kit'
 
-ctx.dshGo.panel('files', {
+ctx.xrkGo.panel('files', {
   view: (scope, caps) => caps.features?.includes('files')
     ? { type: 'actions', items: [{ label: '选择文件', action: 'choose' }] }
     : { type: 'text', text: '当前连接不支持文件选择' },
@@ -23,7 +23,7 @@ ctx.dshGo.panel('files', {
     selected: async (scope, event) => {
       if (event.value.status !== 'selected') return
       const files = event.value.files.map(file => {
-        const bytes = ctx.dshGo.readPickedFile(file.handle)
+        const bytes = ctx.xrkGo.readPickedFile(file.handle)
         return { name: file.name, sha256: createHash('sha256').update(bytes).digest('hex') }
       })
       return { patch: { files } }
@@ -34,7 +34,7 @@ ctx.dshGo.panel('files', {
 
 选择图片用 `effects.pickImage('selected', { maxFiles: 2 })`。不使用 SDK 的等价返回值为 `{ type: 'pickFile', action: 'selected', maxFiles: 2 }`。`maxFiles` 默认 `1`，只接受整数 `1–4`；`action` 使用普通动作 id 的规则。
 
-回调在同一个面板的 `actions[action]` 上执行。没有该 handler 时，回落到 `ctx.dshGo.on(原贡献 id, handler)`，通过 `event.action` 分支。回调保留原 `scope`、`surface`、`id` 和 `locale`，并增加随请求撤销的 `event.signal`。`event.value` 是：
+回调在同一个面板的 `actions[action]` 上执行。没有该 handler 时，回落到 `ctx.xrkGo.on(原贡献 id, handler)`，通过 `event.action` 分支。回调保留原 `scope`、`surface`、`id` 和 `locale`，并增加随请求撤销的 `event.signal`。`event.value` 是：
 
 ```js
 { status: 'selected', files: [
@@ -49,7 +49,7 @@ ctx.dshGo.panel('files', {
 
 ## 句柄的有效期
 
-`ctx.dshGo.readPickedFile(handle)` 返回 `Uint8Array` 的独立副本（Node 实现为 `Buffer`）。它只在所属插件的**这一次被等待的选择回调内**有效，回调中的 `await` 不会立即使它失效。回调结束、抛错、超过现有 3 秒 handler 时限、插件卸载、注册替换、主机断连或请求到期后，继续读取会抛错；另一个插件也不能通过此接口读取这个句柄。
+`ctx.xrkGo.readPickedFile(handle)` 返回 `Uint8Array` 的独立副本（Node 实现为 `Buffer`）。它只在所属插件的**这一次被等待的选择回调内**有效，回调中的 `await` 不会立即使它失效。回调结束、抛错、超过现有 3 秒 handler 时限、插件卸载、注册替换、主机断连或请求到期后，继续读取会抛错；另一个插件也不能通过此接口读取这个句柄。
 
 发起动作与文件回调都绑定本次 invoke 开始调用时的注册。桥在调用动作函数之前保存实际 panel action / 回落 handler 的注册身份和 callback 候选；函数等待期间替换任一实际使用的注册，会拒绝旧函数返回的文件效果，不分配选择槽。不能在动作开始后才注册新的 callback 来承接这个旧调用。已签发请求也同时绑定发起动作与 callback；其中任一注册撤销后，旧请求不可继续上传或读文件。
 
@@ -60,7 +60,7 @@ import { randomUUID } from 'node:crypto'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
-const bytes = ctx.dshGo.readPickedFile(file.handle)
+const bytes = ctx.xrkGo.readPickedFile(file.handle)
 // pluginDataDir 由插件配置并创建，与用户文件名无关。
 const importedPath = join(pluginDataDir, randomUUID())
 await writeFile(importedPath, bytes, { flag: 'wx', mode: 0o600, signal: event.signal })
@@ -103,9 +103,9 @@ App 全局一次只允许一个选择流程。切换主机、插件不可用、�
 - 普通文件：`ACTION_OPEN_DOCUMENT` + `CATEGORY_OPENABLE`，MIME `*/*`；本 App 最低 Android 26。
 - 图片：Android 33 起用 `MediaStore.ACTION_PICK_IMAGES`，多选上限取请求数量与 `getPickImagesMaxLimit()` 的较小值；旧系统或没有 Photo Picker Activity 时退回 `ACTION_OPEN_DOCUMENT` + `image/*`。
 - 只请求临时读授权，不请求目录、写授权或新的存储权限，不调用 `takePersistableUriPermission`。读取走带 `CancellationSignal` 的 `ContentResolver.openAssetFileDescriptor(uri, "r", ...)`；不使用依赖库中先完整复制到缓存的路径。
-- 本地与 SSH 直连复用现有主机认证、HTTP carrier 和 SSH 隧道，在我们自己的 `/dsh-go/v1/files/` 路由上传，不改 DSH 引擎协议。旧 `fileUploads/upload` 只返回对话附件凭据，没有插件可读文件路径，因此不能伪装成可用的导入接口。
-- DSH Remote 中转当前不转发 `/dsh-go/*`，因此 `files` 为不可用；不会先打开选择器再假报成功。需要上游提供受认证的桥路由转发后，才能启用。
+- 本地与 SSH 直连复用现有主机认证、HTTP carrier 和 SSH 隧道，在我们自己的 `/xrk-mobile/v1/files/` 路由上传，不改 XRK 引擎协议。旧 `fileUploads/upload` 只返回对话附件凭据，没有插件可读文件路径，因此不能伪装成可用的导入接口。
+- XRK Remote 中转当前不转发 `/xrk-mobile/*`，因此 `files` 为不可用；不会先打开选择器再假报成功。需要上游提供受认证的桥路由转发后，才能启用。
 
 Android API 依据：[Storage Access Framework](https://developer.android.com/training/data-storage/shared/documents-files)、[MediaStore Photo Picker](https://developer.android.com/reference/android/provider/MediaStore#ACTION_PICK_IMAGES)、[ContentResolver](https://developer.android.com/reference/android/content/ContentResolver#openAssetFileDescriptor(android.net.Uri,java.lang.String,android.os.CancellationSignal))。本轮通过真实 API jar 编译和跨层自动化测试；系统 UI、厂商提供方、进程重建及 SSH 实机链路仍需设备验证。
 
-可运行示例：[`dsh-go-example-files`](../../examples/plugins/dsh-go-example-files/)，读取真实内容计算 SHA-256；不会把文件自动加入对话或自动提交模型。
+可运行示例：[`xrk-example-files`](../../examples/plugins/xrk-example-files/)，读取真实内容计算 SHA-256；不会把文件自动加入对话或自动提交模型。

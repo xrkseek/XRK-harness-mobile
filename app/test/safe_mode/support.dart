@@ -1,8 +1,8 @@
 // Fakes for the safe-mode tests: a runtime controller that records how it was
 // started, and a bridge that answers the safe-mode calls without a device.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
 
 class RecordingRuntime extends LocalRuntimeController {
   RecordingRuntime(this.initial);
@@ -111,7 +111,7 @@ RuntimeFailure startupFailure({List<String> recent = const ['break-required'], b
       summary: 'startup failed: 1 required plugin did not activate',
       requiredRows: const ['agent-loop'],
       recent: recent,
-      diagnostics: '/root/.dsh/logs/startup-2026-10-23T07-30-00.000Z.log',
+      diagnostics: '/root/.xrk/logs/startup-2026-10-23T07-30-00.000Z.log',
     );
 
 const lkgUseful = LastKnownGood(available: true, disable: ['break-required'], empty: false);
@@ -122,10 +122,10 @@ RuntimeStatus failedStatus({RuntimeFailure? failure, int strikes = 1, bool autoS
     phase: RuntimePhase.error,
     bundledVersion: 'r4',
     installedVersion: 'r4',
-    dshVersion: '0.2.1-rc.2',
+    engineVersionAlias: '0.2.1-rc.2',
     nodeVersion: '24.22.1',
     abi: 'arm64-v8a',
-    error: 'DSH exited unexpectedly (code 1)',
+    error: 'XRK exited unexpectedly (code 1)',
     strikes: strikes,
     autoSafe: autoSafe,
     failure: f,
@@ -137,7 +137,7 @@ RuntimeStatus safeStatus({RuntimePhase phase = RuntimePhase.running, String reas
   phase: phase,
   bundledVersion: 'r4',
   installedVersion: 'r4',
-  dshVersion: '0.2.1-rc.2',
+  engineVersionAlias: '0.2.1-rc.2',
   nodeVersion: '24.22.1',
   abi: 'arm64-v8a',
   baseUrl: phase == RuntimePhase.running ? 'http://127.0.0.1:3080' : null,

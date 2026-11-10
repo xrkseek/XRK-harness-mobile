@@ -1,8 +1,8 @@
 # 快速开始：给插件加一张原生工具卡
 
-5 分钟。前提：你已经有一个用 `defineTool` 注册工具的 DSH 插件。做完之后，这个工具在 dsh-go App 里显示成原生卡片，在 DSH 网页版照旧显示官方通用卡。
+5 分钟。前提：你已经有一个用 `defineTool` 注册工具的 XRK 插件。做完之后，这个工具在 xrk-mobile App 里显示成原生卡片，在 XRK 网页版照旧显示官方通用卡。
 
-完整可运行的例子：[`examples/plugins/dsh-go-example-weather`](../../examples/plugins/dsh-go-example-weather/)。
+完整可运行的例子：[`examples/plugins/xrk-example-weather`](../../examples/plugins/xrk-example-weather/)。
 
 ## 1. 写一个视图函数
 
@@ -29,8 +29,8 @@ export function weatherView(value) {
 ## 2. 接进 `presentationMeta`
 
 ```js
-import { defineTool } from '@deepseek-ai/dsh-tools'
-import { toolCard } from './tool-card.js'          // 或 @dsh-go/plugin-kit 的 toolCard
+import { defineTool } from '@xrkseek/harness-cli-tools'
+import { toolCard } from './tool-card.js'          // 或 @xrkseek/plugin-kit 的 toolCard
 import { weatherView } from './view.js'
 
 ctx.tools.register(defineTool({
@@ -44,9 +44,9 @@ ctx.tools.register(defineTool({
 }))
 ```
 
-`toolCard()` 把视图放进 `{ "dsh-go/view": 视图 }`，并且兜住三件会让**整次工具调用失败**的事：
+`toolCard()` 把视图放进 `{ "xrk-mobile/view": 视图 }`，并且兜住三件会让**整次工具调用失败**的事：
 
-| DSH 的规则 | `toolCard()` 怎么处理 |
+| XRK 的规则 | `toolCard()` 怎么处理 |
 |---|---|
 | `presentationMeta` 抛错 → 工具调用失败 | 捕获，返回 `{}`（不出卡片） |
 | 返回值不是无损 JSON（含 `undefined`、`NaN`、`Infinity`、`-0`、`Date`、`Map`）→ 工具调用失败 | 过一遍 JSON：`undefined` 字段去掉，非有限数变 `null` |
@@ -61,7 +61,7 @@ export function toolCard(build, maxBytes = 8 * 1024) {
     try {
       const text = JSON.stringify(build(args, value))
       if (text === undefined || Buffer.byteLength(text, 'utf8') > maxBytes) return {}
-      return { 'dsh-go/view': JSON.parse(text) }
+      return { 'xrk-mobile/view': JSON.parse(text) }
     } catch {
       return {}
     }
@@ -72,14 +72,14 @@ export function toolCard(build, maxBytes = 8 * 1024) {
 ## 3. 自查
 
 ```sh
-node sdk/plugin-kit/bin/check.mjs card.json           # 单个视图；文件是 { "dsh-go/view": … } 时按工具卡的上限查
+node sdk/plugin-kit/bin/check.mjs card.json           # 单个视图；文件是 { "xrk-mobile/view": … } 时按工具卡的上限查
 node sdk/plugin-kit/bin/check.mjs . --load            # 插件目录：package.json、清单，并加载代码确认工具注册上了
 ```
 
 在单测里直接校验视图函数的输出更省事：
 
 ```js
-import { checkView } from '@dsh-go/plugin-kit/check'
+import { checkView } from '@xrkseek/plugin-kit/check'
 const result = checkView(weatherView(sample), { budget: 'toolCard' })
 assert.deepEqual(result.issues, [])
 ```

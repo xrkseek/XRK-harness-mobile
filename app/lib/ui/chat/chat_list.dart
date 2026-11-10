@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -36,7 +36,7 @@ import 'chat_rows.dart';
 import 'chat_rows_cache.dart';
 import 'media/media_paths.dart';
 import 'composer_toast.dart';
-import 'dsh_ui/dsh_ui.dart';
+import 'xrk_ui/xrk_ui.dart';
 import 'render/markdown_image.dart';
 import 'trajectory_sheet.dart';
 import 'widgets/approval_card.dart';
@@ -828,8 +828,8 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
     if (prompt.isBackgroundTask) {
       return BackgroundTaskNotice(key: ValueKey((widget.sessionId, prompt.requestId, prompt.inboxId)), prompt: prompt);
     }
-    if (dshUiReplyChip(prompt.text) case final label? when !prompt.failed) {
-      return DshUiReplyChip(label: label, pending: true);
+    if (xrkUiReplyChip(prompt.text) case final label? when !prompt.failed) {
+      return XrkUiReplyChip(label: label, pending: true);
     }
     final chat = ref.read(chatProvider(widget.sessionId).notifier);
     final (label, icon) = switch ((prompt.slot, prompt.mode)) {
@@ -940,12 +940,12 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
     // State; only replies that carry one pay for working out whether it can
     // still be answered.
     final s = ref.read(chatProvider(widget.sessionId));
-    return DshUiScope(
+    return XrkUiScope(
       sessionId: widget.sessionId,
       messageId: item.id,
       state: !item.text.contains('dsh-ui') && !item.text.contains('{')
-          ? DshUiState.expired
-          : dshUiStateFor(
+          ? XrkUiState.expired
+          : xrkUiStateFor(
               items: s.items,
               messageId: item.id,
               running: s.running,
@@ -1128,7 +1128,7 @@ class _ChatListState extends ConsumerState<ChatList> with SingleTickerProviderSt
 
   Widget _rowWidget(ChatRow row) {
     return switch (row) {
-      UserRow(:final item) when dshUiReplyChip(item.text) != null => DshUiReplyChip(label: dshUiReplyChip(item.text)!),
+      UserRow(:final item) when xrkUiReplyChip(item.text) != null => XrkUiReplyChip(label: xrkUiReplyChip(item.text)!),
       UserRow(:final item) => UserBubble(
         text: item.text,
         attachments: item.images.isEmpty && item.files.isEmpty
@@ -1216,7 +1216,7 @@ class _JumpToBottom extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final quick = AppMotion.of(context, AppMotion.quick);
     final fluid = AppMotion.fluid(context);
 

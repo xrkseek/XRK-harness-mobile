@@ -1,11 +1,11 @@
 // Conversation titles in the list (sessionsProvider), as an SSH host serves
-// them. DSH 0.2.1-rc.4's `session/list` gives a conversation the Host process
+// them. XRK 0.2.1-rc.4's `session/list` gives a conversation the Host process
 // isn't holding the title from its projection cache, read once when the
-// process starts: one another DSH process wrote since (the desktop app, the
-// TUI, a headless run — on an SSH host the app's `dsh web` lives on between
+// process starts: one another XRK process wrote since (the desktop app, the
+// TUI, a headless run — on an SSH host the app's `xrkh serve` lives on between
 // connections) comes with no projections at all, and showed 「未命名」 until
-// opened (ccch1mneyyy/dsh-go#57, item 1). Checked against two rc.4 processes
-// on one DSH_HOME: the long-lived one lists the other's conversation with no
+// opened (xrkseek/xrk-mobile#57, item 1). Checked against two rc.4 processes
+// on one XRK_HOME: the long-lived one lists the other's conversation with no
 // projections, and answers `session/projections` with its title.
 //
 // And a race: a refresh asked for while the first list of a (re)connection
@@ -14,13 +14,13 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,12 +92,12 @@ class _SshHost {
       }
       return folded[id];
     };
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
   }
 
   final String id;
   final carrier = FakePluginCarrier();
-  late final DshClient client;
+  late final XrkClient client;
   List<Map<String, Object?>> rows = [];
   final folded = <String, Object?>{};
   final reads = <String>[];
@@ -165,7 +165,7 @@ void main() {
     return c = _container(host);
   }
 
-  test('a conversation another DSH process wrote gets its title read, without being opened', () async {
+  test('a conversation another XRK process wrote gets its title read, without being opened', () async {
     host.rows = [_row('own', title: 'Release notes'), _row('desktop', cold: true)];
     host.folded['desktop'] = _folded(title: 'Plan the garden party');
     start();
@@ -255,8 +255,8 @@ void main() {
   group('a read that failed just then is asked again by the next list', () {
     for (final (name, failure) in [
       // The Host couldn't read the log just then (session-controller wraps it).
-      ('gateway/internal', const DshRemoteException('gateway/internal', 'EIO reading the conversation log')),
-      // A tunnel or reverse proxy in front of `dsh web`.
+      ('gateway/internal', const XrkRemoteException('gateway/internal', 'EIO reading the conversation log')),
+      // A tunnel or reverse proxy in front of `xrkh serve`.
       ('HTTP 502', const DshHttpException(502, 'HTTP 502 from /api/rpc')),
     ]) {
       test(name, () async {
@@ -279,7 +279,7 @@ void main() {
   test('a row that keeps failing is asked less and less often, at once when it changed', () async {
     host.rows = [_row('desktop', cold: true)];
     host.folded['desktop'] = _folded(title: 'Plan the garden party');
-    const internal = DshRemoteException('gateway/internal', 'EIO reading the conversation log');
+    const internal = XrkRemoteException('gateway/internal', 'EIO reading the conversation log');
     host.failReads.addAll([internal, internal, internal]);
     start();
     await c.read(sessionsProvider.future);
@@ -316,7 +316,7 @@ void main() {
     await _settle();
     host.rows = [_row('desktop', cold: true, updatedAt: 1793000050000)];
     host.folded['desktop'] = _folded(title: 'Garden party, Saturday 3 pm');
-    host.failReads.add(const DshRemoteException('gateway/internal', 'EIO reading the conversation log'));
+    host.failReads.add(const XrkRemoteException('gateway/internal', 'EIO reading the conversation log'));
     await c.read(sessionsProvider.notifier).refresh();
     await _settle();
     expect(_titles(c), {'desktop': 'Plan the garden party'});

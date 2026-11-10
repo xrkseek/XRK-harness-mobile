@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Recording proxy for the dsh-go bridge wire: HTTP requests / responses and WebSocket text
+// Recording proxy for the xrk-mobile bridge wire: HTTP requests / responses and WebSocket text
 // frames pass through unchanged (Host rewritten to the upstream) and are appended to a JSONL
 // file for scripts/validate-wire.mjs. Test tooling only.
 //
@@ -33,7 +33,7 @@ const server = http.createServer((req, res) => {
       ur.on('data', (c) => rchunks.push(c))
       ur.on('end', () => {
         const rbody = Buffer.concat(rchunks)
-        if (req.url.startsWith('/dsh-go/')) {
+        if (req.url.startsWith('/xrk-mobile/')) {
           record({
             kind: 'http', method: req.method, path: req.url,
             reqType: req.headers['content-type'], req: json(body, req.headers['content-type']), reqRaw: body.length && json(body, 'json') === undefined ? body.toString('utf8').slice(0, 200) : undefined,

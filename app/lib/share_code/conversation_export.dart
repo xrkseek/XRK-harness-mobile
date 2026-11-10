@@ -5,11 +5,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../l10n/l10n.dart';
 import '../state/chat_state.dart' show CommandNotice;
-import '../ui/chat/dsh_ui/dsh_ui_model.dart' show dshUiPlainText;
+import '../ui/chat/xrk_ui/xrk_ui_model.dart' show xrkUiPlainText;
 import '../ui/chat/tool_view.dart';
 import 'conversation_redact.dart';
 import 'conversation_share.dart';
@@ -207,7 +207,7 @@ class ConversationExport {
           final model = item.model ?? span?.model;
           if (model != null) lastModel = model;
           final plain = item.text.contains('dsh-ui')
-              ? markdownWithoutImages(redactText(dshUiPlainText(item.text)))
+              ? markdownWithoutImages(redactText(xrkUiPlainText(item.text)))
               : null;
           timed.add((
             seq: seq,
@@ -400,7 +400,7 @@ class ConversationExport {
     final out = <ExportRound>[];
     int? previous;
     for (final (i, user) in users.indexed) {
-      // The turn this prompt opened starts just before it (DSH logs
+      // The turn this prompt opened starts just before it (XRK logs
       // `turn/start`, then the prompt); turns between two prompts that no
       // prompt opened (a goal going on by itself) stay with the round before.
       var start = user.seq;

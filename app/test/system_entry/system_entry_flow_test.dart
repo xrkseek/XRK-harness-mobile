@@ -6,16 +6,16 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/links/app_links.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/draft_store.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/voice_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/widgets/attachments.dart';
-import 'package:dsh_app/ui/shell/system_entry_host.dart';
+import 'package:xrk_app/links/app_links.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/draft_store.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/voice_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart';
+import 'package:xrk_app/ui/shell/system_entry_host.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -137,8 +137,8 @@ void main() {
   });
 
   void natives(WidgetTester tester) {
-    _shares = _Native(tester, 'dsh/share', 'share');
-    _entries = _Native(tester, 'dsh/shortcuts', 'entry');
+    _shares = _Native(tester, 'xrk/share', 'share');
+    _entries = _Native(tester, 'xrk/shortcuts', 'entry');
     _voice = FakeVoiceBridge();
   }
 

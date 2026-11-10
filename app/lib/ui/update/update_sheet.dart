@@ -105,7 +105,7 @@ class UpdateSheet extends ConsumerWidget {
     final l10n = context.l10n;
     final update = ref.watch(appUpdateProvider);
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final latest = update.latest;
     if (latest == null) {
       // The offer went away (installed elsewhere, or a check found nothing newer).
@@ -153,7 +153,7 @@ class UpdateSheet extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('DSH ${latest.version.name}', style: theme.textTheme.titleLarge),
+                            Text('XRK ${latest.version.name}', style: theme.textTheme.titleLarge),
                             const SizedBox(height: 2),
                             Text(facts, style: theme.textTheme.bodySmall?.copyWith(color: colors.textTertiary)),
                           ],
@@ -208,7 +208,7 @@ class UpdateSheet extends ConsumerWidget {
   Widget? _status(BuildContext context, AppUpdateState update) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = theme.colorScheme;
     if (update.asset == null) {
       final abi = update.flavor?.name;
@@ -474,7 +474,7 @@ class _Progress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

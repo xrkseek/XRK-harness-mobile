@@ -1,19 +1,19 @@
 // Shared setup for the shell golden tests: real fonts, fake providers, a phone-sized
 // surface and a helper that renders one screen in light and dark.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/onboarding_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/common/side_insets.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/onboarding_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/common/side_insets.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:dsh_app/state/balance_state.dart';
+import 'package:xrk_app/state/balance_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -122,7 +122,7 @@ const runningStatus = RuntimeStatus(
   abi: 'arm64-v8a',
   bundledVersion: 'r1-dsh0.2.0-rc.2-node24.22.1-ubuntu24.04.5-a45b1e8964a3',
   installedVersion: 'r1-dsh0.2.0-rc.2-node24.22.1-ubuntu24.04.5-a45b1e8964a3',
-  dshVersion: '0.2.0-rc.2',
+  engineVersionAlias: '0.2.0-rc.2',
   nodeVersion: '24.22.1',
   baseUrl: 'http://127.0.0.1:3080',
   token: 'golden-token',
@@ -131,10 +131,10 @@ const runningStatus = RuntimeStatus(
 const sampleLogs = [
   '[dsh-app] unpacking runtime r1-dsh0.2.0-rc.2-node24.22.1-ubuntu24.04.5-a45b1e8964a3 (arm64-v8a)',
   '[dsh-app] runtime ready in 41s',
-  'dsh web: http://127.0.0.1:3080/?token=•••',
+  'xrkh serve: http://127.0.0.1:3080/?token=•••',
   '\x1B[2m[gateway]\x1B[0m listening on 127.0.0.1:3080',
-  '[gateway] session store: /root/.dsh/sessions (12 sessions)',
-  '[dsh-app] DSH is listening at http://127.0.0.1:3080',
+  '[gateway] session store: /root/.xrk/sessions (12 sessions)',
+  '[dsh-app] XRK is listening at http://127.0.0.1:3080',
   '[agent] model deepseek-v4-pro · thinking: medium',
   '[agent] turn started · session 01JB7Q…',
   '[tool] bash: flutter test test/auth --reporter compact',

@@ -1,6 +1,6 @@
 // Dev-only copies of existing pure-Dart test fixtures. Kept here because package:
 // imports cannot escape lib/ in an Android entry point. Sources (same APIs):
-// packages/dsh_client/test/support/fake_dsh.dart: FakeDsh/FakeMuxSocket
+// packages/xrk_client/test/support/fake_dsh.dart: FakeDsh/FakeMuxSocket
 // app/test/notify/support.dart: session/alert/notification fixtures
 // app/test/chat/support/composer_fakes.dart: silentWav/readySpeechCatalog
 // No Flutter test binding, platform mocking or production entry references.
@@ -9,11 +9,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../state/notify_state.dart';
 
-/// Minimal in-process imitation of `dsh web` 0.2.0-rc.2's carrier: launch
+/// Minimal in-process imitation of `xrkh serve` 0.2.0-rc.2's carrier: launch
 /// token login, cookie check, Host/Origin fence, `POST /api/<endpoint>`
 /// envelopes and the `/api/remote.mux` WebSocket with `$events`.
 class FakeDsh {

@@ -2,8 +2,8 @@
 // be taken), the step says so with 重试, and 继续 works again instead of
 // staying pressed for good.
 
-import 'package:dsh_app/state/access_state.dart';
-import 'package:dsh_app/ui/onboarding/access_step.dart';
+import 'package:xrk_app/state/access_state.dart';
+import 'package:xrk_app/ui/onboarding/access_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,7 +37,7 @@ void main() {
     );
     await _frames(tester);
     final c = ProviderScope.containerOf(tester.element(find.byType(MaterialApp)));
-    await c.read(accessSetupProvider.notifier).choose({AccessFeature.voice});
+    await c.read(accessSetupProvider.notifier).choose({AccessFeature.files});
     await _frames(tester);
     await tester.tap(find.byKey(const ValueKey('access-primary')));
     await _frames(tester, 20);
@@ -49,7 +49,7 @@ void main() {
     await _frames(tester);
     expect(done, 0);
     expect(find.text('没能完成设置'), findsOneWidget);
-    expect(c.read(accessSetupProvider).features, {AccessFeature.voice}, reason: 'the step is not over');
+    expect(c.read(accessSetupProvider).features, {AccessFeature.files}, reason: 'the step is not over');
     expect(tester.takeException(), isNull);
 
     await tester.tap(find.widgetWithText(SnackBarAction, '重试'));
@@ -72,7 +72,7 @@ void main() {
     );
     await _frames(tester);
     final c = ProviderScope.containerOf(tester.element(find.byType(MaterialApp)));
-    await c.read(accessSetupProvider.notifier).choose({AccessFeature.voice});
+    await c.read(accessSetupProvider.notifier).choose({AccessFeature.files});
     await _frames(tester, 20);
     if (find.byKey(_done).evaluate().isEmpty) {
       await tester.tap(find.byKey(const ValueKey('access-primary')));

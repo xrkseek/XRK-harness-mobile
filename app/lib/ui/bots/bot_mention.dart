@@ -6,7 +6,7 @@
 // way DS Bot reads a mention. Self-contained: it only listens to a
 // TextEditingController, so any composer can host it.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -209,7 +209,7 @@ class BotMentionPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final options = controller.options;
     return Semantics(
       container: true,
@@ -218,7 +218,7 @@ class BotMentionPicker extends StatelessWidget {
         tier: GlassTier.sheet,
         borderRadius: const BorderRadius.all(Radius.circular(radius)),
         child: Material(
-          color: DshSurfaces.of(context).backdropTop.withValues(alpha: 0.94),
+          color: XrkSurfaces.of(context).backdropTop.withValues(alpha: 0.94),
           clipBehavior: Clip.antiAlias,
           shape: const RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(radius))),
           child: SmoothSize(
@@ -266,7 +266,7 @@ class _MentionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     const inset = BotMentionPicker.inset;
     final bot = option.bot;
     return Padding(

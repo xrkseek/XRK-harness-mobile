@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_app/phone/phone_channel.dart';
+import 'package:xrk_app/phone/phone_channel.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

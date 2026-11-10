@@ -81,7 +81,7 @@ class _ChangeDiffPageState extends State<ChangeDiffPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final files = widget.files;
     final padding = MediaQuery.paddingOf(context);
     const barHeight = 56.0;
@@ -366,7 +366,7 @@ class FileDiffPane extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final rows = _rowsOf(file);
     final lines = rows.whereType<_LineRow>();
     final hasOld = lines.any((l) => l.oldNo != null);
@@ -502,7 +502,7 @@ class _DiffLineRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final (Color? bg, Color markColor, String mark) = switch (line.kind) {
       DiffLineKind.add => (dsh.diffAddBg, dsh.diffAddFg, '+'),
       DiffLineKind.del => (dsh.diffDelBg, dsh.diffDelFg, '−'),
@@ -565,7 +565,7 @@ class _FileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final directory = file.directory;
     final facts = [
       if (file.created) l10n.activityDiffNewFile else if (file.edits > 1) l10n.activityDiffEditCount(file.edits),

@@ -42,8 +42,9 @@ class HostedShareException implements Exception {
 }
 
 class HostedShareClient {
-  HostedShareClient({http.Client? client, this.origin = shareHostOrigin, DateTime Function()? clock})
-    : _client = client ?? http.Client(),
+  HostedShareClient({http.Client? client, String? origin, DateTime Function()? clock})
+    : origin = origin ?? shareHostOrigin,
+      _client = client ?? http.Client(),
       _clock = clock ?? DateTime.now;
 
   final http.Client _client;

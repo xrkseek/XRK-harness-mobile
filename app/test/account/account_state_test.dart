@@ -3,8 +3,8 @@
 import 'dart:async';
 import 'dart:ui' show Brightness;
 
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -68,7 +68,7 @@ void main() {
         ..getStateError = const DshHttpException(404, 'endpoint account/getState is not served');
       final c = _container(api: api);
       await _flush();
-      api.failWatchers(const DshRemoteException('gateway/not-found', 'no account/watch'));
+      api.failWatchers(const XrkRemoteException('gateway/not-found', 'no account/watch'));
       await _flush();
       expect(_state(c).phase, AccountPhase.unsupported);
       expect(await _account(c).signIn(), SignInResult.failed);
@@ -79,7 +79,7 @@ void main() {
       final c = _container(api: api);
       await _flush();
       api.current = signedInView();
-      api.failWatchers(const DshRemoteException('gateway/internal', 'boom'));
+      api.failWatchers(const XrkRemoteException('gateway/internal', 'boom'));
       await _flush();
       expect(_state(c).signedIn, isTrue, reason: 'getState snapshot applied');
     });
@@ -297,11 +297,11 @@ void main() {
     }
 
     final refusals = <(Object, SignInFailureKind)>[
-      (const DshRemoteException('gateway/internal', 'account: no-response'), SignInFailureKind.offline),
-      (const DshRemoteException('gateway/internal', 'account: protocol'), SignInFailureKind.rejected),
-      (const DshRemoteException('gateway/input-invalid', 'wire field "loginSource"'), SignInFailureKind.rejected),
+      (const XrkRemoteException('gateway/internal', 'account: no-response'), SignInFailureKind.offline),
+      (const XrkRemoteException('gateway/internal', 'account: protocol'), SignInFailureKind.rejected),
+      (const XrkRemoteException('gateway/input-invalid', 'wire field "loginSource"'), SignInFailureKind.rejected),
       (const DshHttpException(404, 'not served'), SignInFailureKind.unsupported),
-      (const DshTransportException('connection refused'), SignInFailureKind.engine),
+      (const XrkTransportException('connection refused'), SignInFailureKind.engine),
     ];
     for (final (error, kind) in refusals) {
       test('startSignIn refusal $error reads as ${kind.name}', () async {
@@ -328,7 +328,7 @@ void main() {
     });
 
     test('a new attempt clears the previous failure', () async {
-      final api = FakeAccountApi()..onStart = () async => throw const DshRemoteException('x', 'account: network');
+      final api = FakeAccountApi()..onStart = () async => throw const XrkRemoteException('x', 'account: network');
       final c = _container(api: api);
       await _flush();
       await _account(c).signIn();

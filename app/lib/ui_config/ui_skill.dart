@@ -1,11 +1,11 @@
-// The dsh-go-ui skill that teaches a host's agent to edit ui.json. The files
-// ship in assets/skills/dsh-go-ui/ (flat; manifest.json maps each to its place
+// The xrk-ui skill that teaches a host's agent to edit ui.json. The files
+// ship in assets/skills/xrk-ui/ (flat; manifest.json maps each to its place
 // in the skill folder).
 //
-// - On-device engine: written into `$DSH_HOME/skills/dsh-go-ui/` each time the
-//   engine comes up. DSH watches that root, so the skill appears without a
+// - On-device engine: written into `$XRK_HOME/skills/xrk-ui/` each time the
+//   engine comes up. XRK watches that root, so the skill appears without a
 //   restart. The app keeps the folder current while SKILL.md carries the
-//   managed line (a YAML comment inside the front matter — DSH only reads a
+//   managed line (a YAML comment inside the front matter — XRK only reads a
 //   skill whose first line is `---`); once the person deletes that line the
 //   folder is theirs.
 // - Remote hosts: only after the person confirms ([UiSkillRemoteInstaller]):
@@ -27,27 +27,27 @@ import '../runtime/runtime_state.dart';
 import '../state/hosts_state.dart';
 import 'ui_config_state.dart';
 
-const uiSkillName = 'dsh-go-ui';
-const uiSkillAssetDir = 'assets/skills/dsh-go-ui/';
+const uiSkillName = 'xrk-ui';
+const uiSkillAssetDir = 'assets/skills/xrk-ui/';
 
 /// The second skill the app ships: teaches a host's agent to write a small
 /// local native plugin (sdk/plugin-kit/skill, built into
-/// assets/skills/dsh-go-plugin/ by sdk/plugin-kit/scripts/sync-skill.mjs).
+/// assets/skills/xrk-plugin/ by sdk/plugin-kit/scripts/sync-skill.mjs).
 /// Installed and kept current exactly like [uiSkillName], in its own folder.
-const pluginSkillName = 'dsh-go-plugin';
+const pluginSkillName = 'xrk-plugin';
 
 /// The third: the app's own user guide (docs/guide, built into
-/// assets/skills/dsh-go-guide/ by tool/guide_sync.py), so the agent can answer
+/// assets/skills/xrk-guide/ by tool/guide_sync.py), so the agent can answer
 /// how to use the app. Read-only; installed and kept current the same way.
-const guideSkillName = 'dsh-go-guide';
+const guideSkillName = 'xrk-guide';
 
 /// The fourth: troubleshooting and bug-report playbook. Reads the diagnostics
-/// snapshot the app writes into the engine (`$DSH_HOME/dsh-app/diagnostics.md`)
+/// snapshot the app writes into the engine (`$XRK_HOME/dsh-app/diagnostics.md`)
 /// and turns a symptom into a redacted environment summary / issue draft.
-const supportSkillName = 'dsh-go-support';
+const supportSkillName = 'xrk-mobile-support';
 
 /// The managed line inside SKILL.md's front matter.
-const uiSkillManagedMarker = '# dsh-go:managed';
+const uiSkillManagedMarker = '# xrk-mobile:managed';
 
 final _safePath = RegExp(r'^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$');
 
@@ -61,12 +61,12 @@ class UiSkillBundle {
 
   final Map<String, String> files;
 
-  /// The skill's folder name under `$DSH_HOME/skills/`.
+  /// The skill's folder name under `$XRK_HOME/skills/`.
   final String name;
 
   String get skillMd => files['SKILL.md'] ?? '';
 
-  /// SKILL.md last, so DSH never sees the skill before its files.
+  /// SKILL.md last, so XRK never sees the skill before its files.
   List<MapEntry<String, String>> get writeOrder => [
     ...files.entries.where((e) => e.key != 'SKILL.md'),
     ...files.entries.where((e) => e.key == 'SKILL.md'),
@@ -107,17 +107,17 @@ enum UiSkillInstallResult {
   /// The person took the folder over (managed line removed): left alone.
   userOwned,
 
-  /// DSH home doesn't exist yet (the engine never ran).
+  /// XRK home doesn't exist yet (the engine never ran).
   noHome,
 }
 
-/// Writes [bundle] into `<rootfs>/root/.dsh/skills/<bundle.name>/`. Files are
+/// Writes [bundle] into `<rootfs>/root/.xrk/skills/<bundle.name>/`. Files are
 /// replaced atomically and only when their text differs. This synchronous IO
 /// reference helper requires exclusive ownership of [rootfs]. The running
 /// Android engine's auto-installer uses the native serialized transaction;
 /// this is never a fallback around that runtime lifecycle boundary.
 Future<UiSkillInstallResult> installUiSkill(Directory rootfs, UiSkillBundle bundle) async {
-  final home = Directory('${rootfs.path}/root/.dsh');
+  final home = Directory('${rootfs.path}/root/.xrk');
   if (!home.existsSync()) return UiSkillInstallResult.noHome;
   final dir = Directory('${home.path}/skills/${bundle.name}');
   final skillFile = File('${dir.path}/SKILL.md');
@@ -138,7 +138,7 @@ Future<UiSkillInstallResult> installUiSkill(Directory rootfs, UiSkillBundle bund
       if (file.existsSync() && file.readAsStringSync() == text) continue;
     } catch (_) {}
     file.parent.createSync(recursive: true);
-    final tmp = File('${file.path}.dsh-go-tmp');
+    final tmp = File('${file.path}.xrk-mobile-tmp');
     tmp.writeAsStringSync(text, flush: true);
     tmp.renameSync(file.path);
     changed = true;
@@ -356,13 +356,13 @@ abstract interface class UiSkillRemoteInstaller {
 final uiSkillRemoteInstallerProvider = Provider<UiSkillRemoteInstaller?>((ref) => null);
 
 /// A POSIX `sh` script that writes [bundle] to
-/// `${DSH_HOME:-$HOME/.dsh}/skills/dsh-go-ui/` (leaving a folder the person
+/// `${XRK_HOME:-$HOME/.dsh}/skills/xrk-ui/` (leaving a folder the person
 /// took over alone) and prints `DSHAPP skill=installed` or
 /// `DSHAPP skill=user-owned`.
 String uiSkillShellScript(UiSkillBundle bundle) {
   final out = StringBuffer()
     ..writeln('set -e')
-    ..writeln('d="\${DSH_HOME:-\$HOME/.dsh}/skills/${bundle.name}"')
+    ..writeln('d="\${XRK_HOME:-\$HOME/.dsh}/skills/${bundle.name}"')
     ..writeln(
       'if [ -f "\$d/SKILL.md" ] && ! grep -q \'^ *$uiSkillManagedMarker\' "\$d/SKILL.md"; then '
       "echo 'DSHAPP skill=user-owned'; exit 0; fi",
@@ -381,10 +381,10 @@ String uiSkillShellScript(UiSkillBundle bundle) {
     n++;
     final body = text.endsWith('\n') ? text : '$text\n';
     out
-      ..writeln("cat > \"\$d/$path.dsh-go-tmp\" <<'$tag'")
+      ..writeln("cat > \"\$d/$path.xrk-mobile-tmp\" <<'$tag'")
       ..write(body)
       ..writeln(tag)
-      ..writeln('mv "\$d/$path.dsh-go-tmp" "\$d/$path"');
+      ..writeln('mv "\$d/$path.xrk-mobile-tmp" "\$d/$path"');
   }
   out.writeln("echo 'DSHAPP skill=installed'");
   return out.toString();
@@ -399,7 +399,7 @@ String uiSkillInstallPrompt(UiSkillBundle bundle) {
     ..writeln(appL10n.shellSkillInstallDirectory(uiSkillName))
     ..writeln(appL10n.shellSkillInstallFiles)
     ..writeln(
-      appL10n.shellSkillInstallCheck('`node "\${DSH_HOME:-\$HOME/.dsh}/skills/$uiSkillName/scripts/check.mjs"`'),
+      appL10n.shellSkillInstallCheck('`node "\${XRK_HOME:-\$HOME/.dsh}/skills/$uiSkillName/scripts/check.mjs"`'),
     )
     ..writeln(appL10n.shellSkillInstallConfirm);
   for (final path in const ['SKILL.md', 'schema.json', 'scripts/check.mjs']) {

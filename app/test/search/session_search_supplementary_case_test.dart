@@ -1,4 +1,4 @@
-import 'package:dsh_app/state/session_search.dart';
+import 'package:xrk_app/state/session_search.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

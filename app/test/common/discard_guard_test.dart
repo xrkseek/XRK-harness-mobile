@@ -1,22 +1,22 @@
 import 'dart:io';
 
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/schedule_editor_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/common/status_dot.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_app/ui/bots/new_bot_page.dart';
-import 'package:dsh_app/ui/common/discard_guard.dart';
-import 'package:dsh_app/ui/features/preset_editor/preset_editor_page.dart';
-import 'package:dsh_app/ui/features/schedule_editor/schedule_editor_page.dart';
-import 'package:dsh_app/ui/providers/provider_form_page.dart';
-import 'package:dsh_app/ui/remote/ssh_host_form.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/schedule_editor_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/common/status_dot.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/bots/new_bot_page.dart';
+import 'package:xrk_app/ui/common/discard_guard.dart';
+import 'package:xrk_app/ui/features/preset_editor/preset_editor_page.dart';
+import 'package:xrk_app/ui/features/schedule_editor/schedule_editor_page.dart';
+import 'package:xrk_app/ui/providers/provider_form_page.dart';
+import 'package:xrk_app/ui/remote/ssh_host_form.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -71,7 +71,7 @@ void main() {
       'content': File('test/features/fixtures/preset_standard.yaml').readAsStringSync(),
     };
     carrier.handlers['pluginManager/listBundles'] = (_) => <Object?>[];
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
     final navigator = await open(tester, const PresetEditorPage(), [
       activeConnectionProvider.overrideWithValue(AsyncData(fakeHost(client))),

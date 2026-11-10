@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/schema_documentation.dart';
-import 'package:dsh_app/ui/engine_settings/schema_fields.dart' show FieldCopy, hintFor, labelFor, plainSchemaText;
-import 'package:dsh_app/ui/plugins/plugin_inventory_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/schema_documentation.dart';
+import 'package:xrk_app/ui/engine_settings/schema_fields.dart' show FieldCopy, hintFor, labelFor, plainSchemaText;
+import 'package:xrk_app/ui/plugins/plugin_inventory_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
@@ -117,7 +117,7 @@ void main() {
     await pumpPage(
       tester,
       const EngineSettingsPage(ns: 'voice'),
-      overrides: engineOverrides(DshClient.withCarrier(host)),
+      overrides: engineOverrides(XrkClient.withCarrier(host)),
     );
     expect(find.byTooltip('字段说明'), findsOneWidget);
   });
@@ -158,7 +158,7 @@ void main() {
         await tester.pumpWidget(
           goldenApp(
             brightness: brightness,
-            overrides: engineOverrides(DshClient.withCarrier(host)),
+            overrides: engineOverrides(XrkClient.withCarrier(host)),
             home: const Scaffold(
               body: InventorySheet(
                 item: InventoryItem(
@@ -244,7 +244,7 @@ void main() {
     const markdown = '''[Web](https://example.test/manual)
 [Relative](/settings)
 [File](file:///tmp/private)
-[App](dshgo://open/settings)
+[App](xrkharness://open/settings)
 ![image](https://example.test/pixel.png)
 <img src="https://example.test/html.png">
 ```dsh-ui
@@ -271,14 +271,14 @@ void main() {
     }, createHttpClient: network.createHttpClient);
     expect(network.requests, 0);
     expect(find.byType(Image), findsNothing);
-    expect(find.byWidgetPredicate((w) => w.runtimeType.toString().contains('DshUi')), findsNothing);
+    expect(find.byWidgetPredicate((w) => w.runtimeType.toString().contains('XrkUi')), findsNothing);
     final body = tester.widget<GptMarkdown>(find.byType(GptMarkdown));
     expect(body.html, isFalse);
     expect(launched, isEmpty);
     for (final link in [
       '/settings',
       'file:///tmp/private',
-      'dshgo://open/settings',
+      'xrkharness://open/settings',
       '//example.test/path',
       'https://user:secret@example.test',
     ]) {

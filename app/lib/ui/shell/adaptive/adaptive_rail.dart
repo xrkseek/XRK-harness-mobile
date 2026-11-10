@@ -1,5 +1,5 @@
 // The folded conversation list of a wide window: a
-// column of round keys, like DSH Web's 56px sidebar rail.
+// column of round keys, like XRK Web's 56px sidebar rail.
 
 import 'dart:math' as math;
 

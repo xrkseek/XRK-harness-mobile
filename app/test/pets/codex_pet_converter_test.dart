@@ -4,10 +4,10 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/pets/codex_pet_converter.dart';
-import 'package:dsh_app/pets/pet_library.dart' hide pngSize;
-import 'package:dsh_app/pets/pet_pack_validator.dart';
-import 'package:dsh_app/pets/pet_state.dart';
+import 'package:xrk_app/pets/codex_pet_converter.dart';
+import 'package:xrk_app/pets/pet_library.dart' hide pngSize;
+import 'package:xrk_app/pets/pet_pack_validator.dart';
+import 'package:xrk_app/pets/pet_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as image;
 
@@ -111,7 +111,7 @@ void main() {
     expect(converted.warnings, contains('dsh-state-loops-replace-codex-settle-to-idle'));
   });
 
-  test('DSH states, all working tiers, reactions and sleep have explicit mappings', () {
+  test('XRK states, all working tiers, reactions and sleep have explicit mappings', () {
     final pack = CodexPetConverter.convertArchive(petZip(metadata())).validated.pack;
     const expected = {
       'idle': 'idle',

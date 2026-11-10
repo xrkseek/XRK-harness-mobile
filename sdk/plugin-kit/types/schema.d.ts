@@ -23,7 +23,7 @@ export type ViewFlag = boolean | ViewBinding
 
 export type ViewTone = "good" | "warn" | "bad" | "info" | "muted" | ViewBinding
 
-/** A plugin icon name: ui.json's whitelist (app/assets/skills/dsh-go-ui/schema.json) plus the native plugin names (app/lib/plugins/native/native_icons.dart). Unknown names draw a default glyph. */
+/** A plugin icon name: ui.json's whitelist (app/assets/skills/xrk-ui/schema.json) plus the native plugin names (app/lib/plugins/native/native_icons.dart). Unknown names draw a default glyph. */
 export type ViewIcon = "bolt" | "star" | "sparkle" | "heart" | "flag" | "bookmark" | "pin" | "bell" | "clock" | "alarm" | "calendar" | "todo" | "note" | "document" | "folder" | "search" | "code" | "terminal" | "globe" | "chart" | "lightbulb" | "book" | "puzzle" | "robot" | "chat" | "mail" | "translate" | "image" | "camera" | "mic" | "link" | "summary" | "wrench" | "bug" | "travel" | "school" | "home" | "play" | "refresh" | "archive" | "team" | "wallet" | "palette" | "coin" | "money" | "speaker" | "read" | "copy" | "quote" | "share" | "edit" | "write" | "save" | "paste" | "add" | "remove" | "delete" | "clear" | "fork" | "regenerate" | "reply" | "select-text" | "qr" | "download" | "downloads" | "external" | "info" | "warning" | "check" | "done" | "success" | "error" | "question" | "pending" | "running" | "tip" | "list" | "table" | "panel" | "sidebar" | "menu" | "more" | "expand" | "collapse" | "file" | "folder-open" | "workspace" | "storage" | "pdf" | "zip" | "slides" | "article" | "text" | "diff" | "gallery" | "audio" | "music" | "video" | "video-file" | "play-video" | "pause" | "stop" | "replay" | "generate-image" | "generate-video" | "diagram" | "plugin" | "bot" | "agent" | "skill" | "model" | "tool" | "workflow" | "goal" | "plan" | "job" | "automation" | "command" | "trajectory" | "web" | "web-search" | "browser" | "history" | "time" | "today" | "timezone" | "schedule" | "repeat" | "reminder" | "user" | "account" | "group" | "chats" | "mention" | "invite" | "announcement" | "reaction" | "poll" | "notification" | "send" | "community" | "forum" | "feedback" | "wechat" | "qq" | "telegram" | "discord" | "phone" | "computer" | "cloud" | "server" | "power" | "restart" | "retry" | "theme" | "color" | "text-size" | "pet" | "featured" | "badge" | "favorite" | "settings" | ViewBinding
 
 export type ViewActionId = string
@@ -498,7 +498,7 @@ export interface ViewGalleryV2 {
   aspect?: number | ViewBinding
 }
 
-/** dsh-go plugin view v1 and v2 */
+/** xrk-mobile plugin view v1 and v2 */
 export type View = ViewRoot
 
 // ── manifest.schema.json ──────────────────────────────────────────────────
@@ -562,18 +562,18 @@ export interface ManifestTool {
   panel?: ManifestId
 }
 
-/** dsh-go native plugin manifest (package.json "dshGo"), protocol v1 */
+/** xrk-mobile native plugin manifest (package.json "xrkGo"), protocol v1 */
 export interface Manifest {
   /** Protocol major version. */
   v: 1
-  /** Lowest dsh-go app version that may render this plugin natively. */
+  /** Lowest xrk-mobile app version that may render this plugin natively. */
   minApp?: ManifestSemver
   /** Display name, <= 24 characters after locale resolution. */
   title?: ManifestText
   icon?: ManifestIconName
   /** Content attached to taps: draft/clipboard on composer.actions and composer.tools, message on message.actions. */
   wants?: Array<"draft" | "clipboard" | "message">
-  /** Image directory served by GET /dsh-go/v1/assets/<pkg>/<path>. */
+  /** Image directory served by GET /xrk-mobile/v1/assets/<pkg>/<path>. */
   assets?: ManifestRelativePath
   contributes: {
     "composer.actions"?: ManifestAction[]
@@ -621,7 +621,7 @@ export interface InvokeRequest {
   /** panel only; any JSON, <= 4 KiB serialized */
   value?: unknown
   scope?: InvokeScope
-  /** Only honoured when declared in dshGo.wants and allowed for the surface; each field <= 16 KiB UTF-8. */
+  /** Only honoured when declared in xrkGo.wants and allowed for the surface; each field <= 16 KiB UTF-8. */
   context?: {
     draft?: string
     clipboard?: string
@@ -798,7 +798,7 @@ export interface InvokeFileCompletionResponse {
   issues?: ContributionsIssue[]
 }
 
-/** POST /dsh-go/v1/invoke, protocol v1 */
+/** POST /xrk-mobile/v1/invoke, protocol v1 */
 export type InvokeRequestRoot = InvokeRequest
 
 // ── contributions.schema.json ─────────────────────────────────────────────
@@ -984,10 +984,10 @@ export interface ContributionsLimits {
   turnNotesPerFeed?: 64
 }
 
-/** GET /dsh-go/v1/contributions response, protocol v1 */
+/** GET /xrk-mobile/v1/contributions response, protocol v1 */
 export interface ContributionsResponse {
   v: 1
-  /** dsh-go-bridge version */
+  /** xrk-bridge version */
   bridge: string
   /** Content hash; also the ETag */
   rev: string
@@ -1118,5 +1118,5 @@ export interface StreamMicroData {
 /** v1.2 only: 16 lowercase hexadecimal epoch, dot, canonical positive decimal seq <=9007199254740991. Bind epoch per subscription; accept only larger seq. */
 export type StreamMicroRev = string
 
-/** WS /dsh-go/v1/stream messages, protocol v1 */
+/** WS /xrk-mobile/v1/stream messages, protocol v1 */
 export type StreamMessage = StreamUp | StreamDown

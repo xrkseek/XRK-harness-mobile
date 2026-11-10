@@ -1,7 +1,7 @@
 """Writes test/chat/fixtures/follow_artifacts.jsonl (run from app/:
 `python3 test/chat/fixtures/make_follow_artifacts.py test/chat/fixtures/follow_artifacts.jsonl`).
 
-A synthetic four-turn session in DSH 0.2.1 follow-frame shape for the chat's
+A synthetic four-turn session in XRK 0.2.1 follow-frame shape for the chat's
 artifact cards (lib/state/artifacts.dart):
 
 1. Deliverables: a PDF and a chart declared with `present`
@@ -10,7 +10,7 @@ artifact cards (lib/state/artifacts.dart):
    and an edited script (not artifacts), a failed CSV write, and a final reply
    linking a workbook its bash run named (artifact), an image nothing named,
    a web URL and a code file (all ignored).
-3. Copies the workbook to /sdcard/Download/DSH (the test supplies the phone
+3. Copies the workbook to /sdcard/Download/XRK (the test supplies the phone
    folder listing).
 4. Still running, with a declaration that must not show yet."""
 import json, sys
@@ -87,7 +87,7 @@ ev(30010, "turn/end", {"turn": 2, "reason": {"kind": "completed"}})
 # Turn 3: phone output folder --------------------------------------------------
 ev(40000, "turn/start", {"turn": 3})
 user(40010, "把表格存到手机上。", "rpc-3")
-tool(42000, 3, 1, "m-3-1", "c-cp", "bash", {"command": "mkdir -p /sdcard/Download/DSH && cp out/summary.xlsx /sdcard/Download/DSH/"}, "")
+tool(42000, 3, 1, "m-3-1", "c-cp", "bash", {"command": "mkdir -p /sdcard/Download/XRK && cp out/summary.xlsx /sdcard/Download/DSH/"}, "")
 message(44000, 3, 2, "m-3-2", "已经放到手机的「下载/DSH」里了。")
 ev(44010, "turn/end", {"turn": 3, "reason": {"kind": "completed"}})
 

@@ -3,7 +3,7 @@
 // three latest conversations), the Quick Settings tile (新对话), and a
 // screenshot taken explicitly from the floating pet. Native
 // side: android/.../shortcuts/ (EntryActivity, ShortcutsPlugin — MethodChannel
-// `dsh/shortcuts`) and tile/NewChatTileService.kt. Routed by
+// `xrk/shortcuts`) and tile/NewChatTileService.kt. Routed by
 // lib/ui/shell/system_entry_host.dart.
 
 import 'package:flutter/foundation.dart' show listEquals;
@@ -90,7 +90,7 @@ class RecentShortcut {
 /// The native bridge: entries in, recent conversations out.
 class LauncherBridge extends NativeInbox<LauncherEntry> {
   LauncherBridge({MethodChannel? channel})
-    : super(channel ?? const MethodChannel('dsh/shortcuts'), method: 'entry', parse: LauncherEntry.parse);
+    : super(channel ?? const MethodChannel('xrk/shortcuts'), method: 'entry', parse: LauncherEntry.parse);
 
   Stream<LauncherEntry> get entries => stream;
 

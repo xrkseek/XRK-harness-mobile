@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/usage_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/usage_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 import '../chat/support/session_sync_host.dart' show HeldReplyCarrier, ReplyHold;
 
 void main() {
@@ -20,7 +20,7 @@ void main() {
       await connection.login(FakeDsh.token);
       final hold = ReplyHold();
       if (frameFirst) hold.arm('session/projections');
-      final client = DshClient.withCarrier(HeldReplyCarrier(DshHttpCarrier(connection), hold));
+      final client = XrkClient.withCarrier(HeldReplyCarrier(DshHttpCarrier(connection), hold));
       var opens = 0;
       var seeds = 0;
       FakeMuxSocket? controlSocket;

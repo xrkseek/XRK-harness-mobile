@@ -2,9 +2,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'support.dart' show tempRootfs, until;
 
 UiSkillBundle _bundle(String value) =>
-    UiSkillBundle({'SKILL.md': '---\n# dsh-go:managed\nname: dsh-go-ui\n---\n$value\n', 'value.txt': value});
+    UiSkillBundle({'SKILL.md': '---\n# xrk-mobile:managed\nname: xrk-ui\n---\n$value\n', 'value.txt': value});
 
 class _Runtime extends LocalRuntimeController {
   @override
@@ -47,7 +47,7 @@ class _Harness {
     );
     c.listen(uiSkillAutoInstallProvider, (_, _) {});
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('dsh/runtime'),
+      const MethodChannel('xrk/runtime'),
       (call) async {
         if (call.method == 'cancelManagedSkill') {
           cancelled.add((call.arguments as Map)['requestId'] as String);
@@ -85,7 +85,7 @@ class _Harness {
   }
 
   Future<void>? get running => c.read(uiSkillAutoInstallProvider.notifier).running;
-  File skill(Directory dir) => File('${dir.path}/root/.dsh/skills/dsh-go-ui/SKILL.md');
+  File skill(Directory dir) => File('${dir.path}/root/.xrk/skills/xrk-ui/SKILL.md');
   void dispose() {
     if (!disposed) {
       disposed = true;
@@ -96,7 +96,7 @@ class _Harness {
   Future<void> close() async {
     dispose();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('dsh/runtime'),
+      const MethodChannel('xrk/runtime'),
       null,
     );
     if (root.existsSync()) root.deleteSync(recursive: true);
@@ -116,7 +116,7 @@ void main() {
       h.runtime.emit(RuntimePhase.installing);
       await h.c.pump();
       retired = h.root.renameSync('${h.root.path}.retired');
-      Directory('${h.root.path}/root/.dsh').createSync(recursive: true);
+      Directory('${h.root.path}/root/.xrk').createSync(recursive: true);
       held.complete(_bundle('old run'));
       await running;
       expect(h.skill(h.root).existsSync(), isFalse, reason: 'a late old loader cannot populate newly activated root');

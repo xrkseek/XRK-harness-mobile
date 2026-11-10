@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:math';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/widgets.dart' show AppLifecycleListener, AppLifecycleState, WidgetsBinding;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,7 +26,7 @@ import 'hosts_state.dart';
 
 /// Plugin management and the plugin market for the active host.
 ///
-/// Writes go through `pluginManager/*` (the only write path DSH has, the same
+/// Writes go through `pluginManager/*` (the only write path XRK has, the same
 /// on every host). The market is a format-1 index read by the app itself, so
 /// it works on hosts without the experimental `pluginMarket` bundle and over
 /// the relay.
@@ -34,7 +34,7 @@ import 'hosts_state.dart';
 /// Default market: dshfind's format-1 index (attribution "数据来自 dshfind").
 const dshfindIndexUrl = 'https://api.dshfind.com/market/dsh-index.json';
 
-/// Profile `dsh web` runs with; the app starts every host it drives that way.
+/// Profile `xrkh serve` runs with; the app starts every host it drives that way.
 const pluginProfile = 'web';
 
 /// Install command for hosts the app cannot install on (relay).
@@ -125,7 +125,7 @@ class MarketEntry {
 
   final MarketPlugin plugin;
 
-  /// Likely only affects the DSH web UI ([isWebOnlyPlugin]).
+  /// Likely only affects the XRK web UI ([isWebOnlyPlugin]).
   final bool webOnly;
   final bool featured;
   final String? categoryTitle;
@@ -226,15 +226,11 @@ final marketCatalogProvider = FutureProvider<MarketCatalog>((ref) async {
 
 // ── Official index ───────────────────────────────────────────────────────────
 
-/// The official market (docs/design/plugin-market.md): a format-1 index with
-/// one pinned version per plugin, and the DSH Go sidecar (`dsh-go.json`)
-/// beside it, read from [officialMarketBases]. Wherever it was read, the
-/// index is the Worker's (this URL resolves its links).
-const officialIndexUrl = 'https://go.dshtui.com/market/index.json';
+/// Official market index URL. Empty until XRK publishes its own market feed.
+const officialIndexUrl = '';
 
-/// Where both files are read, in turn: the public bucket the Worker's cron
-/// writes (no Worker request), then the Worker.
-const officialMarketBases = ['https://dl.dshtui.com/market/', 'https://go.dshtui.com/market/'];
+/// Bases that serve index + sidecar. Empty = no official market in product builds.
+const officialMarketBases = <String>[];
 
 /// How long the copy on the phone is used without asking the server.
 const officialMarketFresh = Duration(hours: 6);
@@ -291,7 +287,7 @@ Future<MarketCatalog> _officialCatalog(String index, MarketSidecar sidecar) asyn
 /// has its listing for the pinned version (the edge may briefly serve one
 /// file newer than the other).
 Future<MarketCatalog> _readOfficial(String base, MarketFileFetcher get, _OfficialCopy? copy) async {
-  final sidecarFile = get(Uri.parse('${base}dsh-go.json'), etag: copy?.sidecarTag);
+  final sidecarFile = get(Uri.parse('${base}xrk-mobile.json'), etag: copy?.sidecarTag);
   unawaited(sidecarFile.then((_) {}, onError: (Object _) {}));
   final indexFile = await get(Uri.parse('${base}index.json'), etag: copy?.indexTag);
   final index = indexFile.text ?? copy!.index;
@@ -327,6 +323,9 @@ Future<MarketCatalog> _readOfficial(String base, MarketFileFetcher get, _Officia
 /// still current); else, offline, the copy at any age. Without a copy, an
 /// index published nowhere (404) is an empty market and other failures fail.
 Future<MarketCatalog> fetchOfficialMarket({MarketFileFetcher get = fetchMarketFile, bool refresh = false}) async {
+  if (officialMarketBases.isEmpty && officialIndexUrl.isEmpty) {
+    return MarketCatalog(MarketIndex(url: Uri.parse('about:blank'), title: LocalizedText.plain('')));
+  }
   final copy = await _readOfficialCopy();
   if (copy != null && !refresh && DateTime.now().difference(copy.at) < officialMarketFresh) {
     return _officialCatalog(copy.index, parseMarketSidecarText(copy.sidecar));
@@ -341,7 +340,8 @@ Future<MarketCatalog> fetchOfficialMarket({MarketFileFetcher get = fetchMarketFi
   }
   if (copy != null) return _officialCatalog(copy.index, parseMarketSidecarText(copy.sidecar));
   if (_notPublished(failure)) {
-    return MarketCatalog(MarketIndex(url: Uri.parse(officialIndexUrl), title: LocalizedText.plain('go.dshtui.com')));
+    final url = officialIndexUrl.isEmpty ? 'about:blank' : officialIndexUrl;
+    return MarketCatalog(MarketIndex(url: Uri.parse(url), title: LocalizedText.plain('')));
   }
   throw failure!;
 }
@@ -384,7 +384,7 @@ List<MarketEntry> marketSection(MarketCatalog official, MarketSection section, M
   ];
 }
 
-/// The app's own version, for `dshGo.minApp`.
+/// The app's own version, for `xrkGo.minApp`.
 final appVersionProvider = Provider<AppVersion>((ref) => AppVersion.tryParse(AppInfo.version)!);
 
 /// The version [entry] needs when this app is older: it shows but doesn't
@@ -439,7 +439,7 @@ const _webOnlyCategoryIds = {'ui', 'skin', 'skins', 'theme', 'themes', 'client',
 final _webOnlyCategoryTitle = RegExp(r'\b(?:ui|themes?|skins?|panels?|clients?|appearance)\b', caseSensitive: false);
 final _webOnlyName = RegExp(r'(?:client-ui|web-ui|webui|(?:^|[-/])(?:themes?|skins?)(?:-|$))');
 
-/// Heuristic for "only changes the DSH web UI or is a separate client".
+/// Heuristic for "only changes the XRK web UI or is a separate client".
 ///
 /// Format 1 has no surface field, so this reads what indexes do carry:
 /// * the category id: dshfind `ui` (Panels & Views), `skin` (Skins & Themes),
@@ -448,7 +448,7 @@ final _webOnlyName = RegExp(r'(?:client-ui|web-ui|webui|(?:^|[-/])(?:themes?|ski
 ///   client / appearance), for other indexes;
 /// * for uncategorized entries, package names like `dsh-client-ui-*`,
 ///   `*-web-ui`, `*-theme`, `skin-*`.
-/// Such plugins load into DSH's web profile but do nothing for this app's
+/// Such plugins load into XRK's web profile but do nothing for this app's
 /// native chat; they are hidden by default behind 「显示网页版插件」.
 bool isWebOnlyPlugin(MarketPlugin plugin, MarketIndex index) {
   final category = plugin.category;
@@ -529,7 +529,7 @@ class PluginHost {
   factory PluginHost.of(HostConnection connection, {bool safeMode = false}) =>
       PluginHost(client: connection.client, label: connection.label, kind: connection.kind, safeMode: safeMode);
 
-  final DshClient client;
+  final XrkClient client;
   final String label;
   final HostKind kind;
 
@@ -565,7 +565,7 @@ enum BundleGroup {
   /// problem).
   installed,
 
-  /// Official optional bundles shipped with DSH: switch only.
+  /// Official optional bundles shipped with XRK: switch only.
   official,
 
   /// Official on-demand entries not installed yet.
@@ -637,7 +637,7 @@ class PendingPluginRemoval {
 /// `pluginManager/listBundles` of the active host; refreshed on
 /// `plugin-manager/changed`. Null while disconnected.
 class InstalledPluginsController extends AsyncNotifier<List<PluginBundle>?> {
-  DshClient? _client;
+  XrkClient? _client;
   int _loadSeq = 0;
   Future<List<PluginBundle>>? _buildRead;
   List<PluginBundle> _latest = const [];
@@ -1262,20 +1262,20 @@ PluginFailure describeOperationFailure(
 /// Maps an exception from a plugin call to user copy.
 PluginFailure describePluginError(Object error) {
   switch (error) {
-    case DshRemoteException(code: 'METHOD_NOT_ALLOWED'):
+    case XrkRemoteException(code: 'METHOD_NOT_ALLOWED'):
       return PluginFailure(
         PluginFailureKind.unsupported,
         appL10n.statePluginRemoteForbidden,
         appL10n.statePluginRelayToggleOnly,
       );
-    case DshRemoteException(:final code, :final message) when code.startsWith('gateway/'):
+    case XrkRemoteException(:final code, :final message) when code.startsWith('gateway/'):
       return PluginFailure(
         PluginFailureKind.unsupported,
         appL10n.statePluginManagementUnsupported,
         appL10n.statePluginEngineUnsupported,
         detail: '$code: $message',
       );
-    case DshRemoteException(:final code, :final message):
+    case XrkRemoteException(:final code, :final message):
       return PluginFailure(
         PluginFailureKind.unknown,
         appL10n.statePluginOperationIncomplete,
@@ -1318,7 +1318,7 @@ class _InstallResultUnknown implements Exception {
 // ── Install queue ────────────────────────────────────────────────────────────
 
 /// What to install. [replaceInstalled] removes the installed copy first
-/// (DSH has no in-place upgrade).
+/// (XRK has no in-place upgrade).
 class PluginInstallRequest {
   const PluginInstallRequest({
     required this.name,
@@ -1455,7 +1455,7 @@ class PluginInstallJob {
   );
 }
 
-/// Per-plugin installs on the active host, run one at a time (DSH holds a
+/// Per-plugin installs on the active host, run one at a time (XRK holds a
 /// profile lock anyway). Keyed by package name.
 class PluginInstallsController extends Notifier<Map<String, PluginInstallJob>> {
   static const _logLimit = 16 * 1024;
@@ -1500,7 +1500,7 @@ class PluginInstallsController extends Notifier<Map<String, PluginInstallJob>> {
                 appL10n.commonEngineUnreachable,
                 appL10n.statePluginConnectFirst,
               )
-            : describePluginError(const DshRemoteException('METHOD_NOT_ALLOWED', 'install not allowed')),
+            : describePluginError(const XrkRemoteException('METHOD_NOT_ALLOWED', 'install not allowed')),
       );
       _put(failed);
       return Future.value(failed);
@@ -1628,7 +1628,7 @@ class PluginInstallsController extends Notifier<Map<String, PluginInstallJob>> {
                 PluginFailureKind.mismatch,
                 appL10n.marketMismatchTitle,
                 appL10n.marketMismatchMessage(expected.version),
-                detail: 'dsh-go.json  ${expected.integrity}\nnpm          $reported',
+                detail: 'xrk-mobile.json  ${expected.integrity}\nnpm          $reported',
               ),
             ),
           );
@@ -1666,7 +1666,7 @@ class PluginInstallsController extends Notifier<Map<String, PluginInstallJob>> {
           approvedBuilds: job.request.approvedBuilds.isEmpty ? null : job.request.approvedBuilds,
         );
       } on DshException catch (error) {
-        if (error is DshRemoteException) rethrow;
+        if (error is XrkRemoteException) rethrow;
         result = await _recover(client, requestId, name);
       }
       if (result.succeeded) {
@@ -1692,13 +1692,13 @@ class PluginInstallsController extends Notifier<Map<String, PluginInstallJob>> {
 
   /// The install response was lost (timeout, dropped tunnel): ask the Host
   /// for the running install's result, then fall back to the bundle list.
-  Future<PluginOperationResult> _recover(DshClient client, String requestId, String name) async {
+  Future<PluginOperationResult> _recover(XrkClient client, String requestId, String name) async {
     for (var attempt = 0; attempt < 3; attempt++) {
       try {
         final result = await client.waitForInstall(requestId);
         if (result != null) return result;
         break;
-      } on DshRemoteException {
+      } on XrkRemoteException {
         break;
       } on DshException {
         await Future<void>.delayed(Duration(seconds: 2 * (attempt + 1)));

@@ -7,7 +7,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'chat_state.dart';
@@ -34,11 +34,11 @@ abstract interface class WorkspaceSource {
   Future<List<FileReferenceCandidate>> search(String query);
 }
 
-/// [WorkspaceSource] over a connected [DshClient].
+/// [WorkspaceSource] over a connected [XrkClient].
 class ClientWorkspaceSource implements WorkspaceSource {
   ClientWorkspaceSource(this.client, this.sessionId);
 
-  final DshClient client;
+  final XrkClient client;
   final String sessionId;
 
   @override
@@ -452,12 +452,12 @@ Future<Uint8List> readWorkspaceBytes(WorkspaceSource source, String path, {requi
   while (true) {
     final part = await source.readWindow(path, offset: offset, length: window);
     if ((part.bytes ?? 0) > maxBytes) {
-      throw DshRemoteException('workspace-file/too-large', 'over $maxBytes bytes', {'path': path, 'limit': maxBytes});
+      throw XrkRemoteException('workspace-file/too-large', 'over $maxBytes bytes', {'path': path, 'limit': maxBytes});
     }
     out.add(part.data);
     offset += part.data.length;
     if (offset > maxBytes) {
-      throw DshRemoteException('workspace-file/too-large', 'over $maxBytes bytes', {'path': path, 'limit': maxBytes});
+      throw XrkRemoteException('workspace-file/too-large', 'over $maxBytes bytes', {'path': path, 'limit': maxBytes});
     }
     if (part.eof || part.data.isEmpty) return out.takeBytes();
   }

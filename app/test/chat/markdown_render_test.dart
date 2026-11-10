@@ -4,18 +4,18 @@
 
 import 'dart:typed_data';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/render/code_block.dart';
-import 'package:dsh_app/ui/chat/render/markdown_blocks.dart';
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/chat/render/markdown_image.dart';
-import 'package:dsh_app/ui/chat/render/markdown_math.dart';
-import 'package:dsh_app/ui/common/streaming_cursor.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/render/code_block.dart';
+import 'package:xrk_app/ui/chat/render/markdown_blocks.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/chat/render/markdown_image.dart';
+import 'package:xrk_app/ui/chat/render/markdown_math.dart';
+import 'package:xrk_app/ui/common/streaming_cursor.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

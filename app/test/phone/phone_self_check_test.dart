@@ -2,18 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/diagnostics/diagnostics_markdown.dart' show diagnosticsMarkdownBytes;
-import 'package:dsh_app/phone/phone_self_check.dart';
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/phone/phone_self_check_panel.dart';
+import 'package:xrk_app/diagnostics/diagnostics_markdown.dart' show diagnosticsMarkdownBytes;
+import 'package:xrk_app/phone/phone_self_check.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/phone/phone_self_check_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../shell/golden_harness.dart';
 
-const _phone = MethodChannel('dsh/phone');
-const _files = MethodChannel('dsh/files');
+const _phone = MethodChannel('xrk/phone');
+const _files = MethodChannel('xrk/files');
 Map<String, Object?> _reply(String state, {String? handle, String? reason, String? profile, List<Object?>? steps}) => {
   'v': 1, 'accepted': true, 'coverage': 'partial', 'state': state,
   'runHandle': ?handle,

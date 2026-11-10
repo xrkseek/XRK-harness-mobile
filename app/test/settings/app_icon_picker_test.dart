@@ -9,9 +9,9 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/state/app_icon_state.dart';
-import 'package:dsh_app/ui/settings/appearance/app_icon_picker.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/state/app_icon_state.dart';
+import 'package:xrk_app/ui/settings/appearance/app_icon_picker.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -214,7 +214,7 @@ void main() {
   });
 
   group('channel', () {
-    const name = 'dsh/launcher_icon';
+    const name = 'xrk/launcher_icon';
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     tearDown(() => messenger.setMockMethodCallHandler(const MethodChannel(name), null));
 

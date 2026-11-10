@@ -93,11 +93,11 @@
   "phoneAppRuleDeny": "不碰",
   "phoneAppRuleConfirm": "每一步都确认",
   "phoneAppRuleNormal": "照常",
-  "phoneAppRuleDenyHint": "不读也不点，银行、支付类默认如此",
-  "phoneAppRuleConfirmHint": "可以读，点按和输入前先问你",
-  "phoneAppRuleNormalHint": "只有发送这类敏感操作先问你",
+  "phoneAppRuleDenyHint": "立即生效：不读也不点，银行、支付类默认如此",
+  "phoneAppRuleConfirmHint": "立即生效：可以读，点按和输入前先问你",
+  "phoneAppRuleNormalHint": "立即生效：只有发送这类敏感操作先问你",
   "phoneAppRulesTitle": "应用名单",
-  "phoneAppRulesSubtitle": "没列出的 App 照常处理，敏感操作仍先问你",
+  "phoneAppRulesSubtitle": "没列出的 App 照常处理，敏感操作仍先问你；改完立即生效",
   "phoneAppRulesUnavailable": "读不到应用名单",
   "phoneTryLater": "稍后再试",
   "phoneAppRulesChanged": "照常 · 你改过的",
@@ -183,13 +183,26 @@
   "phoneConfirmAsk": "每次都询问",
   "phoneConfirmTask": "本任务免确认",
   "phoneConfirmAlways": "始终免确认",
-  "phoneConfirmAskHint": "进新 App、发送、删除、付款前先问你",
-  "phoneConfirmTaskHint": "每个任务只问一次",
-  "phoneConfirmAlwaysHint": "从不询问，直接操作",
+  "phoneConfirmAskHint": "立即生效：进新 App、发送、删除、付款前先问你",
+  "phoneConfirmTaskHint": "立即生效：每个任务只问一次",
+  "phoneConfirmAlwaysHint": "立即生效：从不询问，直接操作",
   "phoneConfirmTitle": "确认方式",
   "phoneConfirmAlwaysTitle": "始终免确认？",
   "phoneConfirmAlwaysBody": "打开 App、点按、发送、删除都直接做，不再问你。",
   "phoneConfirmSaveFailed": "没改成，稍后再试",
+  "phoneConfirmApplied": "已改为「{mode}」，下一步起生效",
+  "@phoneConfirmApplied": {
+    "placeholders": {
+      "mode": { "type": "String" }
+    }
+  },
+  "phoneAppRuleApplied": "「{app}」已改为「{rule}」，下一步起生效",
+  "@phoneAppRuleApplied": {
+    "placeholders": {
+      "app": { "type": "String" },
+      "rule": { "type": "String" }
+    }
+  },
   "phoneEnableFailed": "没能开启，稍后再试",
   "phoneDisableFailed": "没能关闭，稍后再试",
   "phoneEnabled": "已开启",

@@ -41,7 +41,7 @@ class MentionPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final sections = controller.sections;
     final query = controller.query;
 
@@ -112,7 +112,7 @@ class MentionPicker extends StatelessWidget {
         tier: GlassTier.sheet,
         borderRadius: const BorderRadius.all(Radius.circular(SlashPalette.radius)),
         child: Material(
-          color: DshSurfaces.of(context).backdropTop.withValues(alpha: 0.94),
+          color: XrkSurfaces.of(context).backdropTop.withValues(alpha: 0.94),
           clipBehavior: Clip.antiAlias,
           shape: shape,
           child: SmoothSize(
@@ -142,7 +142,7 @@ class _SectionTitle extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(MentionPicker.textInset, first ? 12 : 8, 16, 4),
         child: Text(
           title,
-          style: theme.textTheme.labelSmall?.copyWith(color: DshColors.of(context).textTertiary, letterSpacing: 0.2),
+          style: theme.textTheme.labelSmall?.copyWith(color: XrkColors.of(context).textTertiary, letterSpacing: 0.2),
         ),
       ),
     );
@@ -166,7 +166,7 @@ class _MentionTile extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final detail = item.detail;
     final kind = MentionChip.semanticKind(item.kind);
 

@@ -258,7 +258,7 @@ class AlertBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final (icon, bg, fg) = switch (alert.kind) {
       AlertKind.done => (AppIcons.done, colors.successContainer, colors.onSuccessContainer),
       AlertKind.failed => (AppIcons.error, colors.dangerContainer, colors.onDangerContainer),

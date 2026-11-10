@@ -1,7 +1,7 @@
 // Shared setup for the feature-tile tests: a themed app on the real page
 // backdrop, and a helper that finishes decoding the glass bitmaps.
 
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

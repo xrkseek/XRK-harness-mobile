@@ -35,7 +35,7 @@ enum IslandStretch {
   };
 }
 
-/// How to reach a slot in DSH Web and how to show it: one entry of
+/// How to reach a slot in XRK Web and how to show it: one entry of
 /// `assets/islands/recipes.json`. Selectors live in island.js and only use
 /// `data-slot`, roles, accessible names and the client's own data attributes.
 @immutable
@@ -68,7 +68,7 @@ class IslandRecipe {
   /// [IslandTiming.ready].
   final Duration? ready;
 
-  /// The DSH slots an island of an app-side key shows together (the chat
+  /// The XRK slots an island of an app-side key shows together (the chat
   /// page's 「插件」 sheet); null: just the key itself.
   final List<String>? slots;
 
@@ -77,7 +77,7 @@ class IslandRecipe {
 }
 
 /// `assets/islands/recipes.json`: the recipe per slot, the official ids the
-/// open bridge (`assets/web/dsh_web_open.js`) knows, and the names of the
+/// open bridge (`assets/web/xrk_web_open.js`) knows, and the names of the
 /// official controls island.js clicks on the way.
 @immutable
 class IslandRecipeBook {
@@ -150,7 +150,7 @@ class IslandRecipeBook {
 
   final int version;
 
-  /// The DSH release the recipes were checked against.
+  /// The XRK release the recipes were checked against.
   final String? release;
   final Map<String, List<String>> labels;
   final Set<String> officialSettings;
@@ -222,7 +222,7 @@ class IslandRecipeBook {
         return at(then: {'panel': names});
       case 'rightbar':
         if (officialRightbar.contains(cell)) return at(web: {'rightbar': cell});
-        // dsh-go-bridge opens a tab by its id (the cell); labels are the
+        // xrk-bridge opens a tab by its id (the cell); labels are the
         // fallback on hosts without it.
         if (cell.isEmpty) return null;
         return at(then: {'rightbar': names});

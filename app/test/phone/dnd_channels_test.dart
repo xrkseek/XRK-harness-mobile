@@ -4,13 +4,13 @@
 // in-use channel's own switch, and that an old native module keeps the
 // three-way page.
 
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/risk_notice.dart';
-import 'package:dsh_app/ui/engine_settings/field_row.dart' show FieldBadge;
-import 'package:dsh_app/ui/phone/dnd_mode_page.dart';
-import 'package:dsh_app/ui/phone/phone_widgets.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/risk_notice.dart';
+import 'package:xrk_app/ui/engine_settings/field_row.dart' show FieldBadge;
+import 'package:xrk_app/ui/phone/dnd_mode_page.dart';
+import 'package:xrk_app/ui/phone/phone_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -191,7 +191,7 @@ void main() {
 
     await open(tester, 'Sui');
     expect(find.text('Sui 接口可用'), findsOneWidget);
-    await tester.tap(find.text('授权给 DSH Go'));
+    await tester.tap(find.text('授权给 XRK Go'));
     await tester.pumpAndSettle();
     expect(h.native!.callsOf('requestShizukuPermission').single.arguments, {'provider': 'sui'});
     expect(h.native!.callsOf('setBackgroundMode'), isEmpty);
@@ -203,7 +203,7 @@ void main() {
     expect(inRow('Sui', '未检测到'), findsOneWidget);
     await open(tester, 'Sui');
     expect(find.textContaining('没有检测到 Sui'), findsOneWidget);
-    expect(find.text('授权给 DSH Go'), findsNothing);
+    expect(find.text('授权给 XRK Go'), findsNothing);
     await open(tester, 'Shizuku');
     expect(find.text('打开 Shizuku 官网'), findsOneWidget);
   });

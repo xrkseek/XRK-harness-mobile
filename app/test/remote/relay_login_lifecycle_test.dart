@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dsh_app/remote/relay/relay_backend.dart';
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/state/hosts_state.dart';
+import 'package:xrk_app/remote/relay/relay_backend.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/state/hosts_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

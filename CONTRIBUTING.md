@@ -7,7 +7,7 @@
 本仓库目前**不接受任何外部 Pull Request**（代码、文档、配置、模板都不接收）。
 
 - 外部 PR 会被入口检查自动关闭，见 `.github/workflows/pr-gate.yml`。
-- 想提功能建议、改进想法或反馈问题：请[开 Issue](https://github.com/ccch1mneyyy/dsh-Go/issues/new/choose)，写清使用场景和期望的行为。
+- 想提功能建议、改进想法或反馈问题：请[开 Issue](https://github.com/xrkseek/dsh-Go/issues/new/choose)，写清使用场景和期望的行为。
 - 维护者自己（及其代理）的内部 PR 不受影响。
 
 这是暂时限制，恢复接收外部 PR 时会更新本页。
@@ -57,8 +57,8 @@
 **Dart 通信包：**
 
 ```bash
-(cd packages/dsh_client && dart pub get && dart analyze && dart test)
-(cd packages/dsh_remote && dart pub get && dart analyze && dart test)
+(cd packages/xrk_client && dart pub get && dart analyze && dart test)
+(cd packages/xrk_remote && dart pub get && dart analyze && dart test)
 ```
 
 **插件 SDK：**

@@ -23,7 +23,7 @@ class RefreshRateService {
 
   /// The channel MainActivity already serves for the app.
   @visibleForTesting
-  static MethodChannel channel = const MethodChannel('dsh/app');
+  static MethodChannel channel = const MethodChannel('xrk/app');
 
   /// How long after the last frame the preference is released.
   static const idleAfter = Duration(milliseconds: 700);

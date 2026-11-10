@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -99,8 +99,8 @@ void main() {
       if (out.existsSync()) throw StateError('Refusing to overwrite ${out.path}');
       await tester.runAsync(() => out.writeAsBytes(png!, flush: true));
       final issues = switch (parsed) {
-        DshUiParsed(:final view) => view.issues,
-        DshUiInvalid(:final error) => [error],
+        XrkUiParsed(:final view) => view.issues,
+        XrkUiInvalid(:final error) => [error],
       };
       final diagnostic = {
         'renderer': 'App PluginView',
@@ -114,7 +114,7 @@ void main() {
         'viewportOnly': true,
         'hostConnected': false,
         'assetResolverInstalled': false,
-        'fatal': parsed is DshUiInvalid,
+        'fatal': parsed is XrkUiInvalid,
         'issues': [
           for (final i in issues) {'path': i.path, 'message': i.message},
         ],

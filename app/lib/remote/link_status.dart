@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../l10n/l10n.dart';
 
@@ -14,7 +14,7 @@ enum HostLinkPhase {
   /// First attempt in progress; [HostLinkStatus.step] says which stage.
   connecting,
 
-  /// A [DshClient] is ready.
+  /// A [XrkClient] is ready.
   connected,
 
   /// Lost (or never reached) and retrying with backoff.
@@ -65,7 +65,7 @@ class HostLinkError implements Exception {
   String toString() => detail == null ? message : appL10n.remoteErrorDetail(message, detail!);
 }
 
-/// How a DSH Remote tunnel travels: straight to the computer (LAN or P2P),
+/// How a XRK Remote tunnel travels: straight to the computer (LAN or P2P),
 /// through a TURN server, or through the Server's relay.
 enum RelayPath {
   lan,
@@ -212,10 +212,10 @@ class HostLinkStatus {
   final int attempt;
   final DateTime? nextRetryAt;
 
-  /// Optional one-line progress note ("复用已在运行的 DSH" …).
+  /// Optional one-line progress note ("复用已在运行的 XRK" …).
   final String? detail;
 
-  /// DSH Remote, connected: how the tunnel travels.
+  /// XRK Remote, connected: how the tunnel travels.
   final RelayPath? path;
   final RemoteNetworkStatus? network;
 
@@ -259,24 +259,24 @@ class HostLinkStatus {
   String toString() => 'HostLinkStatus($phase, step: $step, attempt: $attempt, error: $error)';
 }
 
-/// A connection to one non-local DSH host, SSH or relay.
+/// A connection to one non-local XRK host, SSH or relay.
 ///
-/// [open] resolves with the first ready [DshClient]; later the link keeps
+/// [open] resolves with the first ready [XrkClient]; later the link keeps
 /// itself alive (keepalive, network changes, backoff) and publishes a fresh
 /// client on [clients] when the old one can't be recovered (e.g. the remote
-/// `dsh web` restarted on another port). The previous client is closed by
+/// `xrkh serve` restarted on another port). The previous client is closed by
 /// the link after the new one has been published.
 abstract class HostLink {
   HostLinkStatus get status;
   Stream<HostLinkStatus> get statuses;
 
   /// The ready client while connected.
-  DshClient? get currentClient;
+  XrkClient? get currentClient;
 
   /// Replacement clients after the first one.
-  Stream<DshClient> get clients;
+  Stream<XrkClient> get clients;
 
-  Future<DshClient> open();
+  Future<XrkClient> open();
 
   /// Network changed / app resumed: check now instead of waiting for backoff.
   void kick();

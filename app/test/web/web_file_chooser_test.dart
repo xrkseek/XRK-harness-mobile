@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_app/ui/web/web_file_chooser.dart';
+import 'package:xrk_app/ui/web/web_file_chooser.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';

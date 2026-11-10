@@ -1,12 +1,12 @@
-// The dsh_remote adapter's failure mapping, and RelayHostLink following the
+// The xrk_remote adapter's failure mapping, and RelayHostLink following the
 // relay client's own reconnect states.
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/relay/dsh_remote_backend.dart';
-import 'package:dsh_app/remote/relay/relay_backend.dart';
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_client/dsh_client.dart';
-import 'package:dsh_remote/dsh_remote.dart' as remote;
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/relay/xrk_remote_backend.dart';
+import 'package:xrk_app/remote/relay/relay_backend.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_client/xrk_client.dart';
+import 'package:xrk_remote/xrk_remote.dart' as remote;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_relay.dart';
@@ -20,7 +20,7 @@ class _StatefulRelay extends FakeRelayBackend {
   int connects = 0;
 
   @override
-  Future<DshClient> connectHost(RelayHost host, {RelayStateCallback? onState}) async {
+  Future<XrkClient> connectHost(RelayHost host, {RelayStateCallback? onState}) async {
     this.onState = onState;
     connects++;
     return super.connectHost(host, onState: onState);
@@ -30,7 +30,7 @@ class _StatefulRelay extends FakeRelayBackend {
 void main() {
   group('failure mapping', () {
     HostLinkError map(String code, {bool retryable = false}) =>
-        DshRemoteRelayBackend.describe(remote.RemoteFailure(code, 'x', retryable: retryable), '家里的 Mac');
+        XrkRemoteRelayBackend.describe(remote.RemoteFailure(code, 'x', retryable: retryable), '家里的 Mac');
 
     test('offline host is retryable and says what to check', () {
       final e = map('HOST_OFFLINE');
@@ -54,18 +54,18 @@ void main() {
       for (final code in ['PROTOCOL_MISMATCH', 'FRAME_TOO_LARGE']) {
         final e = map(code);
         expect(e.retryable, isFalse, reason: code);
-        expect(e.message, '版本不匹配，请更新 DSH Go 和主机上的远程插件');
+        expect(e.message, '版本不匹配，请更新 XRK Go 和主机上的远程插件');
         expect(e.detail, contains(code));
       }
       // Explicit incompatibility is final even when the transport called it retryable.
       for (final code in ['PROTOCOL_MISMATCH', 'UNSUPPORTED_VERSION', 'CAPABILITY_NOT_SUPPORTED']) {
         final e = map(code, retryable: true);
         expect(e.retryable, isFalse, reason: code);
-        expect(e.message, '版本不匹配，请更新 DSH Go 和主机上的远程插件');
+        expect(e.message, '版本不匹配，请更新 XRK Go 和主机上的远程插件');
       }
       final host = map('HARNESS_VERSION_INCOMPATIBLE', retryable: true);
       expect(host.retryable, isFalse);
-      expect(host.message, '主机上的 DSH 或远程插件需要更新');
+      expect(host.message, '主机上的 XRK 或远程插件需要更新');
     });
 
     test('a retryable malformed frame (a reconnect race) reads as a connection problem', () {
@@ -89,16 +89,16 @@ void main() {
     });
   });
 
-  group('DshRemoteRelayBackend', () {
+  group('XrkRemoteRelayBackend', () {
     test('server addresses normalize to an origin; bad ones explain themselves', () {
-      expect(DshRemoteRelayBackend.normalizeServer('remote.example.com/'), 'https://remote.example.com');
-      expect(DshRemoteRelayBackend.normalizeServer('http://192.168.1.5:8080'), 'http://192.168.1.5:8080');
-      expect(() => DshRemoteRelayBackend.normalizeServer('http://example.com'), throwsA(isA<HostLinkError>()));
-      expect(() => DshRemoteRelayBackend.normalizeServer('https://x.com/path'), throwsA(isA<HostLinkError>()));
+      expect(XrkRemoteRelayBackend.normalizeServer('remote.example.com/'), 'https://remote.example.com');
+      expect(XrkRemoteRelayBackend.normalizeServer('http://192.168.1.5:8080'), 'http://192.168.1.5:8080');
+      expect(() => XrkRemoteRelayBackend.normalizeServer('http://example.com'), throwsA(isA<HostLinkError>()));
+      expect(() => XrkRemoteRelayBackend.normalizeServer('https://x.com/path'), throwsA(isA<HostLinkError>()));
     });
 
     test('first-use trust pins only the fingerprint the person confirmed', () {
-      final backend = DshRemoteRelayBackend(secrets: MemorySecretStore());
+      final backend = XrkRemoteRelayBackend(secrets: MemorySecretStore());
       addTearDown(backend.close);
       expect(backend.approves('mac', '3F2A 9C41 07BE'), isFalse);
       backend.approveHost(sampleRelayHosts.first);
@@ -147,7 +147,7 @@ void main() {
 
     test('a terminal failure stops; 重新连接 restarts the same client in place', () async {
       final first = await link.open();
-      final published = <DshClient>[];
+      final published = <XrkClient>[];
       link.clients.listen(published.add);
       relay.onState!(RelayConnectionState.failed, const HostLinkError(HostLinkErrorKind.other, 'replaced'));
       expect(link.status.phase, HostLinkPhase.failed);
@@ -209,13 +209,13 @@ void main() {
     });
 
     test('a version mismatch fails at once; a network change leaves it, 重试 tries again', () async {
-      final mismatch = DshRemoteRelayBackend.describe(
+      final mismatch = XrkRemoteRelayBackend.describe(
         const remote.RemoteFailure('PROTOCOL_MISMATCH', 'Unknown Control frame type.', retryable: false),
       );
       relay.connectErrors.add(mismatch);
       await expectLater(link.open(), throwsA(isA<HostLinkError>()));
       expect(link.status.phase, HostLinkPhase.failed);
-      expect(link.status.error?.message, '版本不匹配，请更新 DSH Go 和主机上的远程插件');
+      expect(link.status.error?.message, '版本不匹配，请更新 XRK Go 和主机上的远程插件');
       expect(relay.connects, 1, reason: 'no backoff loop');
       link.kick();
       await Future<void>.delayed(const Duration(milliseconds: 30));

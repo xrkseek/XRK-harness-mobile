@@ -1,23 +1,23 @@
 import 'dart:io';
 
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/share_code/share_import.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/share_code/share_import.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_engine.dart';
 
 void main() {
   late GuestFs fs;
-  late DshClient client;
+  late XrkClient client;
   late ImportTarget target;
 
   setUp(() {
     fs = tempGuest();
-    client = DshClient.withCarrier(FakeEngine());
+    client = XrkClient.withCarrier(FakeEngine());
     target = ImportTarget(
       HostConnection(client: client, label: '本机', isLocal: true, kind: HostKind.local),
       isActive: false,

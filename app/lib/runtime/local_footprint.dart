@@ -33,7 +33,7 @@ class LocalFootprint {
   /// about 5.5 GB.
   static const lowMemoryMb = 5 * 1024;
 
-  /// What the engine (proot + Node + DSH) takes while it runs, MiB: its peak,
+  /// What the engine (proot + Node + XRK) takes while it runs, MiB: its peak,
   /// rounded. PSS from `/proc/<pid>/smaps_rollup` on the x86_64 emulator (DSH
   /// 0.2.1-rc.2): node 275–306 MB for the first minute or so after start,
   /// about 185 MB once settled and through a turn without a model; proot

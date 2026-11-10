@@ -1,14 +1,14 @@
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/providers_state.dart';
-import 'package:dsh_app/state/session_export.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/providers_state.dart';
+import 'package:xrk_app/state/session_export.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   for (final error in <Object>[
-    const DshRemoteException('foo/bar', 'English text'),
+    const XrkRemoteException('foo/bar', 'English text'),
     const DshHttpException(500, 'boom'),
     StateError('private failure'),
   ]) {
@@ -30,7 +30,7 @@ void main() {
     });
   }
   test('offline copy is consistent', () {
-    const error = DshTransportException('private timeout');
+    const error = XrkTransportException('private timeout');
     expect(describeProviderError(error), '没能连上引擎');
     expect(describeSettingsError(error), '没能连上引擎');
     expect(describePluginError(error).message, '没能连上引擎');

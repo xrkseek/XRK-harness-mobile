@@ -4,7 +4,7 @@
 // validated and trimmed; the app keeps a second line of limits, drops entries
 // that aren't ready, and turns issue codes into its own words.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart' show immutable, listEquals, setEquals;
 import 'package:flutter/widgets.dart' show IconData;
 
@@ -118,7 +118,7 @@ class NativeIssue {
     at: at,
   );
 
-  /// JSON Pointer (`/dshGo/contributes/composer.actions/2/label`,
+  /// JSON Pointer (`/xrkGo/contributes/composer.actions/2/label`,
   /// `/runtime/translate`).
   final String pointer;
 

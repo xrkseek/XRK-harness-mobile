@@ -7,7 +7,7 @@ import 'island_platform.dart';
 /// The island memory policy's numbers (docs/design/plugin-seams.md §7).
 abstract final class IslandBudgetRules {
   /// What islands cost, PSS in MB, measured on the emulator (Android 15
-  /// x86_64, WebView 124, DSH 0.2.1-rc.2, debug build). All WebViews share
+  /// x86_64, WebView 124, XRK 0.2.1-rc.2, debug build). All WebViews share
   /// one renderer process, so the first island pays for it and for Chromium
   /// in the app process; the next ones add their page.
   ///
@@ -34,7 +34,7 @@ abstract final class IslandBudgetRules {
   static const backgroundGrace = Duration(seconds: 60);
 
   /// A spec whose slot isn't there (missing, empty, no client) stays a web
-  /// link this long: the recipe doesn't fit this DSH, trying again won't help.
+  /// link this long: the recipe doesn't fit this XRK, trying again won't help.
   static const failureMemory = Duration(minutes: 10);
 
   /// A spec that only ran out of time (a cold start, a lost click, a load

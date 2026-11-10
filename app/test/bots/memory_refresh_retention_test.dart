@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/bots/memory_card.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/features/feature_kit.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/bots/memory_card.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/features/feature_kit.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -39,7 +39,7 @@ void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final fixture =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_memory_refresh.json').readAsStringSync()) as Map;
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_memory_refresh.json').readAsStringSync()) as Map;
   Future<ProviderContainer> open(
     WidgetTester t,
     FakeDsBotTransport old,
@@ -112,7 +112,7 @@ void main() {
           expect(find.byType(QuietSpinner), findsNothing);
           expect(entry(t, entity).onTap, isNull);
           if (failed) {
-            pending.completeError(const DshTransportException('synthetic refresh failure'));
+            pending.completeError(const XrkTransportException('synthetic refresh failure'));
             await frames(t);
             expect(find.text(marker(entity)), findsOneWidget);
             expect(find.textContaining('未更新 · 上次结果'), findsOneWidget);
@@ -172,7 +172,7 @@ void main() {
         await frames(t);
         expect(find.text('SYNTHETIC_${entity}_MEMORY_REFRESHED'), findsOneWidget);
         if (failed) {
-          pending.completeError(const DshTransportException('old refresh failed'));
+          pending.completeError(const XrkTransportException('old refresh failed'));
         } else {
           pending.complete(fixture['before'][entity]['value']);
         }

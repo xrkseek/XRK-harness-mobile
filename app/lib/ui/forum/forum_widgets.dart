@@ -59,8 +59,8 @@ class ForumAvatar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = DshColors.of(context);
-    final slot = DshColors.identityIndex(username.toLowerCase());
+    final colors = XrkColors.of(context);
+    final slot = XrkColors.identityIndex(username.toLowerCase());
     final base = ref.watch(forumApiProvider.select((api) => api.baseUrl));
     final dpr = MediaQuery.devicePixelRatioOf(context);
     final source = template != null ? forumAvatarUrl(base, template, size: (size * dpr).ceil()) : url;
@@ -159,7 +159,7 @@ class ForumCategoryLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = style ?? Theme.of(context).textTheme.bodySmall!.copyWith(color: DshColors.of(context).textTertiary);
+    final text = style ?? Theme.of(context).textTheme.bodySmall!.copyWith(color: XrkColors.of(context).textTertiary);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -208,7 +208,7 @@ class ForumTopicRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final meta = theme.textTheme.bodySmall!.copyWith(color: colors.textTertiary);
     final fresh = topic.unseen || topic.unreadPosts > 0;
     final title = Text.rich(
@@ -365,7 +365,7 @@ class ForumListFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     Widget child;
     if (loading) {
       child = const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2));

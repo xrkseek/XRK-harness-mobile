@@ -5,7 +5,7 @@
 // names) stay — they name a credential, they don't hold one. Absolute local
 // paths are dropped: they mean nothing on the receiving machine.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../ui/chat/secret_mask.dart' show findSecrets;
 

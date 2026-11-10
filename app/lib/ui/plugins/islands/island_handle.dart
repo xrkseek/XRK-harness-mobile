@@ -16,7 +16,7 @@ import 'island_theme.dart';
 
 /// Where an island is in its life.
 enum IslandPhase {
-  /// Loading DSH Web, navigating, waiting for the slot (hidden, skeleton on
+  /// Loading XRK Web, navigating, waiting for the slot (hidden, skeleton on
   /// top).
   loading,
 
@@ -46,7 +46,7 @@ abstract final class IslandTiming {
 
   /// The chat page's 「插件」 sheet island (`recipes.json` "ready":
   /// "sheet"). The same measurements (0.8–3.4 s typically, 11.3 s at
-  /// worst); a sheet is a glance, so past 8 s it is the way to DSH Web.
+  /// worst); a sheet is a glance, so past 8 s it is the way to XRK Web.
   static const sheetReady = Duration(seconds: 8);
 
   /// A recipe's `ready` name; null (unnamed or unknown): [ready].
@@ -67,7 +67,7 @@ abstract final class IslandTiming {
   static const themeSettle = Duration(milliseconds: 160);
 }
 
-/// One island: a WebView on the host's DSH Web, isolated to one slot. Lives
+/// One island: a WebView on the host's XRK Web, isolated to one slot. Lives
 /// in the [IslandHost]'s pool and outlives the views that show it (a warm
 /// island comes back without a reload). Views listen to it.
 class IslandHandle extends ChangeNotifier {
@@ -158,18 +158,18 @@ class IslandHandle extends ChangeNotifier {
   /// context for a confirmation and a route).
   Stream<IslandMessage> get requests => _requests.stream;
 
-  /// The launch URL plus what dsh-go-bridge picks up at boot: island mode
+  /// The launch URL plus what xrk-bridge picks up at boot: island mode
   /// for a list slot whose official entries it masks, or the right-pane tab
   /// to open (never both: masking that slot would empty official tabs too).
   Uri get _loadUrl {
     final cell = spec.cell ?? '';
     if (spec.slot == rightPaneTabSlot) {
       if (cell.isEmpty || book.officialRightbar.contains(cell)) return url;
-      return url.replace(fragment: 'dsh-go-tab=${Uri.encodeComponent(cell)}');
+      return url.replace(fragment: 'xrk-mobile-tab=${Uri.encodeComponent(cell)}');
     }
     if (!spec.maskOfficial) return url;
     final slots = recipe?.slotsFor(spec.slot) ?? [spec.slot];
-    return url.replace(fragment: 'dsh-go-island=${slots.map(Uri.encodeComponent).join(',')}');
+    return url.replace(fragment: 'xrk-mobile-island=${slots.map(Uri.encodeComponent).join(',')}');
   }
 
   static const rightPaneTabSlot = 'sidebar.right.pane.tab';
@@ -244,13 +244,13 @@ class IslandHandle extends ChangeNotifier {
       final config = await initConfig();
       await controller.runJavaScript(await _assets.openBridge);
       await controller.runJavaScript(await _assets.runtime);
-      await controller.runJavaScript('window.__dshGoIsland && window.__dshGoIsland.init(${jsonEncode(config)});');
+      await controller.runJavaScript('window.__xrkGoIsland && window.__xrkGoIsland.init(${jsonEncode(config)});');
     } catch (_) {
       // A page without a DOM (an error page): the load error handles it.
     }
   }
 
-  /// `__dshGoIsland.init`'s argument.
+  /// `__xrkGoIsland.init`'s argument.
   Future<Map<String, Object?>> initConfig() async => {
     'slot': spec.slot,
     'slots': ?recipe?.slots,
@@ -357,7 +357,7 @@ class IslandHandle extends ChangeNotifier {
     final id = _webViewId;
     if (id != null && sent.dark != theme.dark) await _platform.setDark(id, theme.dark);
     if (id != null && sent.textZoom != theme.textZoom) await _platform.setTextZoom(id, theme.textZoom);
-    await _run('window.__dshGoIsland && window.__dshGoIsland.setTheme(${jsonEncode(theme.toJson())});');
+    await _run('window.__xrkGoIsland && window.__xrkGoIsland.setTheme(${jsonEncode(theme.toJson())});');
   }
 
   /// Room the frame keeps clear at the top and bottom (logical px).
@@ -365,7 +365,7 @@ class IslandHandle extends ChangeNotifier {
     if (insets == _insets) return;
     _insets = insets;
     await _run(
-      'window.__dshGoIsland && window.__dshGoIsland.setInsets(${jsonEncode({'top': insets.top, 'bottom': insets.bottom})});',
+      'window.__xrkGoIsland && window.__xrkGoIsland.setInsets(${jsonEncode({'top': insets.top, 'bottom': insets.bottom})});',
     );
   }
 
@@ -380,7 +380,7 @@ class IslandHandle extends ChangeNotifier {
   Future<Object?> inspect() async {
     try {
       final raw = await controller.runJavaScriptReturningResult(
-        'JSON.stringify(window.__dshGoIsland ? window.__dshGoIsland.inspect() : null)',
+        'JSON.stringify(window.__xrkGoIsland ? window.__xrkGoIsland.inspect() : null)',
       );
       final text = raw is String ? raw : '$raw';
       final decoded = jsonDecode(text);

@@ -39,13 +39,13 @@ class ShareOut {
 
   Future<void> shareText(String text) => _share(ShareParams(text: text));
 
-  /// `dsh-go-profile-20261024.dshgo` / `dsh-go-plugin-notes.dshgo`.
+  /// `xrk-mobile-profile-20261024.dshgo` / `xrk-plugin-notes.dshgo`.
   String fileName({required bool profile, String? name}) {
     final t = _clock();
     String two(int n) => n.toString().padLeft(2, '0');
-    if (profile) return 'dsh-go-profile-${t.year}${two(t.month)}${two(t.day)}.$shareFileExtension';
+    if (profile) return 'xrk-mobile-profile-${t.year}${two(t.month)}${two(t.day)}.$shareFileExtension';
     final slug = (name ?? 'plugin').split('/').last.replaceAll(RegExp(r'[^A-Za-z0-9._-]+'), '-');
-    return 'dsh-go-plugin-${slug.isEmpty ? 'plugin' : slug}.$shareFileExtension';
+    return 'xrk-plugin-${slug.isEmpty ? 'plugin' : slug}.$shareFileExtension';
   }
 
   /// Writes [content] into the cache's `share_code/` (keeping the last few).

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/artifacts.dart' show FilesChannel;
-import 'package:dsh_app/ui/replay/conversation_out.dart';
+import 'package:xrk_app/state/artifacts.dart' show FilesChannel;
+import 'package:xrk_app/ui/replay/conversation_out.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

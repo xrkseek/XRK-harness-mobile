@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,7 +103,7 @@ class _Missing extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Text(
         context.l10n.activityStepMissing,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: DshColors.of(context).textTertiary),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: XrkColors.of(context).textTertiary),
       ),
     ),
   );
@@ -126,7 +126,7 @@ class _ToolStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final view = viewOfSpan(span, item);
     final tool = view.item;
     final title = span.kind == TraceKind.question ? l10n.activityStepQuestion : view.verb;
@@ -255,7 +255,7 @@ class _ToolStep extends StatelessWidget {
             context,
             result,
             ansi: true,
-            color: tool.status == ToolStatus.failed && !view.sandboxBlocked ? DshColors.of(context).danger : null,
+            color: tool.status == ToolStatus.failed && !view.sandboxBlocked ? XrkColors.of(context).danger : null,
           ),
         ),
       );
@@ -268,7 +268,7 @@ class _ToolStep extends StatelessWidget {
             context,
             '${failure.name} · ${failure.code}'
             '${failure.reason == null ? '' : '\n${failure.reason}'}',
-            color: DshColors.of(context).danger,
+            color: XrkColors.of(context).danger,
           ),
         ),
       );
@@ -280,7 +280,7 @@ class _ToolStep extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
             child: Text(
               tool.status == ToolStatus.denied ? l10n.activityStepDeclined : l10n.activityStepNoOutput,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
             ),
           ),
         ),
@@ -314,7 +314,7 @@ class _ModelStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final label = spanLabel(span);
     final usage = span.usage;
     final speed = span.tokensPerSecond;
@@ -457,7 +457,7 @@ class _CallRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final label = spanLabel(span, tool);
     return InkWell(
       onTap: onTap,
@@ -546,7 +546,7 @@ Widget _mono(BuildContext context, String text) => SelectableText(
 );
 
 Widget _wellText(BuildContext context, String text, {bool ansi = false, Color? color}) {
-  final dsh = DshColors.of(context);
+  final dsh = XrkColors.of(context);
   final shown = text.length > _maxShownChars
       ? context.l10n.activityStepTruncated(text.substring(0, _maxShownChars), _maxShownChars ~/ 1000)
       : text;
@@ -572,7 +572,7 @@ class _Elapsed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final color = warn ? DshColors.of(context).warning : null;
+    final color = warn ? XrkColors.of(context).warning : null;
     final duration = span.duration;
     if (duration != null) {
       return Text.rich(
@@ -604,7 +604,7 @@ class FactsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return SheetGroup(
       title: title,
       margin: const EdgeInsets.symmetric(horizontal: AppSpace.gutter),
@@ -656,7 +656,7 @@ class CodeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final header = Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 4, 0),
       child: Row(

@@ -4,20 +4,20 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/links/app_links.dart';
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/share_code/share_code_state.dart';
-import 'package:dsh_app/share_code/share_codec.dart';
-import 'package:dsh_app/share_code/share_import.dart';
-import 'package:dsh_app/share_code/share_link.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/share_code/share_net.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/links/app_links.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/share_code/share_code_state.dart';
+import 'package:xrk_app/share_code/share_codec.dart';
+import 'package:xrk_app/share_code/share_import.dart';
+import 'package:xrk_app/share_code/share_link.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/share_code/share_net.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +27,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../share_code/support/fake_engine.dart';
 import '../shell/golden_harness.dart';
 
-const _channel = MethodChannel('dsh/links');
+const _channel = MethodChannel('xrk/links');
 
 const _plugin = SharedPlugin(
   name: 'dsh-notes',
@@ -40,7 +40,7 @@ const _plugin = SharedPlugin(
 
 List<Override> _shareOverrides(FakeEngine engine) => [
   importTargetsProvider.overrideWithValue([
-    ImportTarget(HostConnection(client: DshClient.withCarrier(engine), label: '本机', isLocal: true), isActive: false),
+    ImportTarget(HostConnection(client: XrkClient.withCarrier(engine), label: '本机', isLocal: true), isActive: false),
   ]),
   shareNetProvider.overrideWithValue(FakeShareNet()),
   guestFsProvider.overrideWith((ref) async => null),
@@ -109,10 +109,10 @@ Widget _shell({List<Override> extra = const []}) => ProviderScope(
 );
 
 void main() {
-  testWidgets('a cold-start dshgo:// link reaches a handler a feature registers at startup', (tester) async {
+  testWidgets('a cold-start xrkharness:// link reaches a handler a feature registers at startup', (tester) async {
     final native = _FakeLinksNative(tester);
     // The intent that launched the app, before Flutter draws anything.
-    await native.arrive('dshgo://demo/hello?payload=cold');
+    await native.arrive('xrkharness://demo/hello?payload=cold');
 
     await tester.pumpWidget(_shell());
     await tester.pump();
@@ -130,14 +130,14 @@ void main() {
     expect(got.single.queryParameters['payload'], 'cold');
 
     // Later links while the app runs (onNewIntent) go straight through, once.
-    await native.arrive('dshgo://demo/hello?payload=warm');
+    await native.arrive('xrkharness://demo/hello?payload=warm');
     await tester.pump();
     expect(got.map((u) => u.queryParameters['payload']), ['cold', 'warm']);
     await tester.pump(const Duration(seconds: 5));
     expect(find.text('无法打开这个链接'), findsNothing);
   });
 
-  testWidgets('a cold-start dshgo://share/plugin link opens the install sheet', (tester) async {
+  testWidgets('a cold-start xrkharness://share/plugin link opens the install sheet', (tester) async {
     final native = _FakeLinksNative(tester);
     final link = ShareLink.inline(ShareKind.plugin, encodeShareCode(const PluginShare(_plugin)));
     await native.arrive(link.appLink.toString());

@@ -6,15 +6,15 @@
 // ✕ takes the +'s: all four are the same 36 circle in the same two seats. A new
 // line grows the capsule from its bottom edge, and a pinned list follows it.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/mention/mention_text_controller.dart';
-import 'package:dsh_app/ui/chat/voice/voice_controller.dart';
-import 'package:dsh_app/ui/chat/voice/voice_widgets.dart';
-import 'package:dsh_app/ui/chat/widgets/attachments.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/mention/mention_text_controller.dart';
+import 'package:xrk_app/ui/chat/voice/voice_controller.dart';
+import 'package:xrk_app/ui/chat/voice/voice_widgets.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -122,7 +122,7 @@ void main() {
     await _pump(tester, running: true, waiting: true, onStop: () => stops++);
     // The approval card and the header say what waits; the hint is the plain
     // one, not 「生成中」.
-    expect(tester.widget<TextField>(find.byType(TextField)).decoration!.hintText, '给 DSH 发消息…');
+    expect(tester.widget<TextField>(find.byType(TextField)).decoration!.hintText, '给 XRK 发消息…');
     final key = find.ancestor(of: find.byIcon(AppIcons.stopGenerating), matching: find.byType(AnimatedContainer)).first;
     final decoration = tester.widget<AnimatedContainer>(key).decoration! as BoxDecoration;
     final colors = Theme.of(tester.element(find.byType(Composer))).colorScheme;

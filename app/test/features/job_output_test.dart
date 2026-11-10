@@ -1,7 +1,7 @@
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/engine/log_view.dart';
-import 'package:dsh_app/ui/features/jobs_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/engine/log_view.dart';
+import 'package:xrk_app/ui/features/jobs_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -81,7 +81,7 @@ void main() {
   });
   testWidgets('live job output reuses bounded reversed log and follows latest line', (tester) async {
     final carrier = _Carrier();
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
     usePhoneView(tester);
     await tester.pumpWidget(
@@ -118,7 +118,7 @@ void main() {
   });
   testWidgets('gap and lossy frames show a bounded-output count', (tester) async {
     final carrier = _Carrier();
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
     usePhoneView(tester);
     await tester.pumpWidget(

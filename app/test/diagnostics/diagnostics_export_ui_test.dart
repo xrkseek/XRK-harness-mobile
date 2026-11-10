@@ -1,18 +1,16 @@
-// 「导出诊断包」 on screen: the step an export is on, the confirmation, errors
-// in words, the sheet the failure card opens (it closes before its toast),
-// measured symmetry, and goldens (light + dark). Regenerate the goldens with
-// `flutter test --update-goldens test/diagnostics`.
+// 「导出诊断包」 on screen: share-only steps, the sheet the failure
+// card opens, measured symmetry, and goldens (light + dark).
+// Regenerate the goldens with `flutter test --update-goldens test/diagnostics`.
 
 import 'dart:async';
 
-import 'package:dsh_app/diagnostics/diagnostics_export.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/engine/diagnostics_export_card.dart';
-import 'package:dsh_app/ui/safe_mode/engine_failure_card.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/diagnostics/diagnostics_export.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/engine/diagnostics_export_card.dart';
+import 'package:xrk_app/ui/safe_mode/engine_failure_card.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,7 +20,7 @@ import '../shell/golden_harness.dart';
 
 /// Walks through the steps on cue instead of touching files.
 class _ScriptedExporter extends DiagnosticsExporter {
-  _ScriptedExporter({this.failWith}) : super(collect: (_) => throw UnimplementedError(), files: const FilesChannel());
+  _ScriptedExporter({this.failWith}) : super(collect: (_) => throw UnimplementedError());
 
   final Object? failWith;
   final packed = Completer<void>();
@@ -36,12 +34,6 @@ class _ScriptedExporter extends DiagnosticsExporter {
     await done.future;
     if (failWith case final error?) throw error;
     onStep?.call(last);
-  }
-
-  @override
-  Future<String> saveToDownloads({void Function(DiagnosticsStep step)? onStep}) async {
-    await _walk(onStep, DiagnosticsStep.saving);
-    return 'Download/XRK-Harness/xrk-harness-diagnostics-20261024-153012.zip';
   }
 
   @override
@@ -96,16 +88,15 @@ Future<_ScriptedExporter> _pump(WidgetTester tester, {Object? failWith}) async {
 Finder _row(String title) => find.ancestor(of: find.text(title), matching: find.byType(ListPageRow)).first;
 
 void main() {
-  testWidgets('saving shows each step, then where it went', (tester) async {
+  testWidgets('sharing shows each step', (tester) async {
     final exporter = await _pump(tester);
-    expect(find.text('存进 下载/XRK-Harness'), findsOneWidget);
+    expect(find.text('分享诊断包'), findsOneWidget);
+    expect(find.text('存到「下载」'), findsNothing);
 
-    await tester.tap(find.text('存到「下载」'));
+    await tester.tap(find.text('分享诊断包'));
     await tester.pump();
     expect(find.text('正在收集…'), findsOneWidget);
-    expect(find.descendant(of: _row('存到「下载」'), matching: find.byType(CircularProgressIndicator)), findsOneWidget);
-    // The other way out waits.
-    expect(tester.widget<ListPageRow>(_row('分享诊断包')).onTap, isNull);
+    expect(find.descendant(of: _row('分享诊断包'), matching: find.byType(CircularProgressIndicator)), findsOneWidget);
 
     exporter.packed.complete();
     await tester.pump();
@@ -114,39 +105,20 @@ void main() {
     exporter.done.complete();
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('已存到 下载/XRK-Harness/xrk-harness-diagnostics-20261024-153012.zip'), findsOneWidget);
-    expect(find.text('存进 下载/XRK-Harness'), findsOneWidget);
+    expect(exporter.shares, 1);
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(tester.widget<ListPageRow>(_row('分享诊断包')).onTap, isNotNull);
   });
 
-  testWidgets('a refused save says why in words', (tester) async {
+  testWidgets('a refused share says why in words', (tester) async {
     final exporter = await _pump(tester, failWith: PlatformException(code: 'permission'));
-    await tester.tap(find.text('存到「下载」'));
+    await tester.tap(find.text('分享诊断包'));
     await tester.pump();
     exporter.packed.complete();
     exporter.done.complete();
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('没有存储权限，存不进「下载」'), findsOneWidget);
-    expect(find.text('存进 下载/XRK-Harness'), findsOneWidget);
-  });
-
-  testWidgets('the sheet closes before it confirms a save', (tester) async {
-    final exporter = await _pump(tester);
-    await tester.tap(find.text('打开导出'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 600));
-    expect(find.text('导出诊断包'), findsOneWidget);
-    final sheetRow = find.text('存到「下载」').last;
-    await tester.tap(sheetRow);
-    await tester.pump();
-    exporter.packed.complete();
-    exporter.done.complete();
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 600));
-    expect(find.text('导出诊断包'), findsNothing);
-    expect(find.text('已存到 下载/XRK-Harness/xrk-harness-diagnostics-20261024-153012.zip'), findsOneWidget);
   });
 
   testWidgets('sharing from the sheet closes it once sent', (tester) async {
@@ -181,10 +153,7 @@ void main() {
     expect(note.right, 390);
     final noteText = tester.getRect(inSheet(find.text(diagnosticsBundleNote)));
     expect(noteText.left, 28);
-    // The rows' icons share one column, 16 into the card.
     final share = tester.getRect(inSheet(find.byIcon(AppIcons.share)));
-    final save = tester.getRect(inSheet(find.byIcon(AppIcons.download)));
-    expect(share.center.dx, closeTo(save.center.dx, .5));
     expect(share.center.dx, closeTo(card.left + ListPageRow.horizontal + ListPageRow.glyphSlot / 2, .5));
   });
 
@@ -212,7 +181,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.byType(DiagnosticsExportCard), findsOneWidget);
-    expect(find.text('存到「下载」'), findsOneWidget);
+    expect(find.text('分享诊断包'), findsOneWidget);
+    expect(find.text('存到「下载」'), findsNothing);
   });
 
   goldenBoth(
@@ -232,7 +202,7 @@ void main() {
     () => const _Host(),
     overrides: () => [diagnosticsExporterProvider.overrideWithValue(_ScriptedExporter()..packed.complete())],
     before: (tester) async {
-      await tester.tap(find.text('存到「下载」'));
+      await tester.tap(find.text('分享诊断包'));
       await tester.pump();
       await tester.pump();
     },

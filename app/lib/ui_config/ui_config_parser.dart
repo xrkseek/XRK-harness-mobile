@@ -2,7 +2,7 @@
 // with a JSON Pointer and a short reason, the rest applies. A file that cannot
 // be read as a whole (syntax, size, version) keeps the last good configuration.
 //
-// `assets/skills/dsh-go-ui/check.mjs` is this file's twin for the agent on the
+// `assets/skills/xrk-ui/check.mjs` is this file's twin for the agent on the
 // Host: same traversal order, same pointers, same words. Change both together;
 // test/ui_config/check_mjs_parity_test.dart runs the shared fixtures through
 // each.

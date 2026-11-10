@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/schedule_editor_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/schedule_editor_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -85,11 +85,11 @@ class _Link implements DshMuxLink {
   void endUplink(String streamId) {}
 }
 
-HostConnection _host(DshClient client) => HostConnection(client: client, isLocal: true);
+HostConnection _host(XrkClient client) => HostConnection(client: client, isLocal: true);
 
 class _Harness {
   _Harness({bool connected = true}) {
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     container = ProviderContainer(
       overrides: [activeConnectionProvider.overrideWithValue(AsyncData(connected ? _host(client) : null))],
     );
@@ -97,7 +97,7 @@ class _Harness {
   }
 
   final carrier = _Carrier();
-  late final DshClient client;
+  late final XrkClient client;
   late final ProviderContainer container;
   late final ProviderSubscription<AsyncValue<List<Workspace>>> listener;
   _Link get link => carrier.link;
@@ -154,7 +154,7 @@ void main() {
   testWidgets('a replacement connection releases the old pending read and adopts the new baseline', (tester) async {
     final h = _Harness();
     final nextCarrier = _Carrier();
-    final next = DshClient.withCarrier(nextCarrier);
+    final next = XrkClient.withCarrier(nextCarrier);
     addTearDown(() async {
       await h.close();
       await next.close();

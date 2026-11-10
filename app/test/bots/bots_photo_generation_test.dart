@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,7 +74,7 @@ void main() {
         // The reference and the image bytes are identical on both hosts. The
         // issue is a stranded read, not a manufactured content-hash collision.
         if (lateError) {
-          pending.completeError(const DshTransportException('old connection closed'));
+          pending.completeError(const XrkTransportException('old connection closed'));
         } else {
           pending.complete({'botId': 'b3', 'ref': 'abc123', 'image': tinyPhoto});
         }

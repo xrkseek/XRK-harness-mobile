@@ -2,16 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/schedule_editor_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/features/preset_editor/preset_editor_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/schedule_editor_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/features/preset_editor/preset_editor_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,7 +43,7 @@ void main() {
           });
         }
         final carrier = FakePluginCarrier();
-        final client = DshClient.withCarrier(carrier);
+        final client = XrkClient.withCarrier(carrier);
         addTearDown(client.close);
         final createReply = Completer<Object?>();
         var creates = 0;
@@ -109,7 +109,7 @@ void main() {
                 reason: 'closing the page does not dispose the non-autoDispose session controller');
           }
           if (fallback) {
-            createReply.completeError(const DshRemoteException(WorkspaceErrors.notFound, 'controlled removed workspace'));
+            createReply.completeError(const XrkRemoteException(WorkspaceErrors.notFound, 'controlled removed workspace'));
           } else {
             createReply.complete({'sessionId': 'created-a'});
           }
@@ -119,7 +119,7 @@ void main() {
             if (!leave) {
               final retry = carrier.argsOf('session/create').last['request'] as Map;
               expect(retry['workspaceId'], isNull);
-              expect(retry['cwd'], localWorkspaceDir);
+              expect(retry['cwd'], isNull);
             }
             expect(carrier.argsOf('commands/execute'), isEmpty);
           } else {

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +10,7 @@ import '../state/artifacts.dart';
 
 /// No URL entry point: the caller must materialize through its captured Host.
 class MediaVideoChannel {
-  const MediaVideoChannel([this.channel = const MethodChannel('dsh/media_video')]);
+  const MediaVideoChannel([this.channel = const MethodChannel('xrk/media_video')]);
   final MethodChannel channel;
 
   // One decoder request at a time across channel instances. Queued requests

@@ -31,7 +31,7 @@
     "conversation.session.header.actions": { "forms": ["panel"], "open": "session", "stretch": "parent", "pad": [12, 8], "session": true },
     "conversation.session.header.utilities": { "forms": ["panel"], "open": "session", "stretch": "parent", "pad": [12, 8], "session": true },
     "shell.overlay": { "forms": ["overlay"], "open": "none", "stretch": "none", "pad": [0, 0] },
-    "dsh-go.chat": {
+    "xrk-mobile.chat": {
       "forms": ["panel"], "open": "session", "stretch": "common", "pad": [12, 8], "session": true, "ready": "sheet",
       "slots": [
         "conversation.session.header.actions", "conversation.session.header.utilities", "conversation.input.dock",

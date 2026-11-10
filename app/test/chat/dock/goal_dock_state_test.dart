@@ -5,9 +5,9 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/goal_dock_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/goal_dock_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -260,19 +260,19 @@ void main() {
       final s = _Setup(goal: goal, backend: backend);
       addTearDown(s.dispose);
 
-      backend.fail = const DshRemoteException(
+      backend.fail = const XrkRemoteException(
         'GOAL_STALE_REVISION',
         'stale goal ref "goal-1" revision 1; current is "goal-1" revision 2',
       );
       expect(await s.controller.pause(), '没能暂停：目标刚有变化，再试一次');
 
-      backend.fail = const DshRemoteException(
+      backend.fail = const XrkRemoteException(
         'GOAL_INVALID_TRANSITION',
         'goal "goal-1" exhausted 256 goal rounds; increase maxGoalRounds before resuming',
       );
       expect(await s.controller.resume(), '没能恢复：轮次已用完');
 
-      backend.fail = const DshTransportException('connection refused');
+      backend.fail = const XrkTransportException('connection refused');
       expect(await s.controller.clear(), '没能清除：没能连上引擎');
       expect(s.shown, isNotNull, reason: 'a failed clear keeps the goal');
       expect(s.shown!.busy, isFalse);

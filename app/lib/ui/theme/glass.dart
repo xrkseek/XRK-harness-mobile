@@ -29,7 +29,7 @@ import 'surfaces.dart';
 ///   `BackdropGroup`,并传 [grouped] = true,引擎只采一次背景。
 /// - 模糊用 `ImageFilterConfig.blur(bounded: true)`:采样不越出形状边界,
 ///   边缘不会被外面的颜色"渗"进来(iOS 同款)。
-/// - 降级:主题里 `DshSurfaces.blurEnabled == false`(设置"减少透明效果"/
+/// - 降级:主题里 `XrkSurfaces.blurEnabled == false`(设置"减少透明效果"/
 ///   低端机)或系统高对比度时,不创建 `BackdropFilter`,改用近乎不透明的
 ///   `fallbackFill` —— 观感是"磨砂纸",可读性不降。
 ///
@@ -106,7 +106,7 @@ class GlassSurface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final s = style ?? surfaces.glass(tier);
     final highContrast = MediaQuery.maybeHighContrastOf(context) ?? false;
     final reduce = !surfaces.blurEnabled || highContrast || uiTraceNoBlur;
@@ -375,13 +375,13 @@ class GlassOverNativeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     if (!surfaces.blurEnabled) return child;
     return Theme(
       data: theme.copyWith(
         extensions: [
           for (final e in theme.extensions.values)
-            if (e is! DshSurfaces) e,
+            if (e is! XrkSurfaces) e,
           surfaces.copyWith(blurEnabled: false),
         ],
       ),

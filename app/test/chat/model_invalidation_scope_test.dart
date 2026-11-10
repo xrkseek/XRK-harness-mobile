@@ -1,11 +1,11 @@
 // A provider invalidation retires model replies before a lazy rebuild.
-// Real DshClient and loopback HTTP/WS; no provider read or pump is inserted
+// Real XrkClient and loopback HTTP/WS; no provider read or pump is inserted
 // between invalidation and completion in the first two cases.
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/session_sync_host.dart';

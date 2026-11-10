@@ -6,10 +6,10 @@
 // with equal room either side of their text; the galleries' even gaps and
 // edges on the column; and the card unchanged by the phone's text size.
 
-import 'package:dsh_app/ui/share/qr_code.dart';
-import 'package:dsh_app/ui/share/share_card.dart';
-import 'package:dsh_app/ui/share/share_content.dart';
-import 'package:dsh_app/ui/share/share_gallery.dart';
+import 'package:xrk_app/ui/share/qr_code.dart';
+import 'package:xrk_app/ui/share/share_card.dart';
+import 'package:xrk_app/ui/share/share_content.dart';
+import 'package:xrk_app/ui/share/share_gallery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -75,7 +75,7 @@ void main() {
       expect(logo.center.dx, closeTo(qr.center.dx, 1e-6));
       expect(logo.center.dy, closeTo(qr.center.dy, 1e-6));
       final (code, plate) = QrCodeView.codeFor(
-        dshGoProjectUrl,
+        xrkGoProjectUrl,
         QrEcc.medium,
         logo: true,
         size: ShareCard.qrSize,
@@ -91,7 +91,7 @@ void main() {
   }
 
   test('at 72 the card takes the logo at every logo version: links up to 58 bytes', () {
-    for (final (link, version) in [('https://qm.qq.com/q/example', 4), (dshGoProjectUrl, 5), ('x' * 58, 6)]) {
+    for (final (link, version) in [('https://qm.qq.com/q/example', 4), (xrkGoProjectUrl, 5), ('x' * 58, 6)]) {
       final (code, plate) = QrCodeView.codeFor(link, QrEcc.medium, logo: true, size: ShareCard.qrSize, quietZone: 3);
       expect((code.version, code.ecc, plate?.side), (version, QrEcc.high, QrCode.logoPlates[version]));
       expect(ShareCard.qrSize / (code.size + 6), greaterThanOrEqualTo(QrCodeView.logoMinModule));
@@ -99,12 +99,12 @@ void main() {
   });
 
   test('a card draws a code up to version 6, and none past it', () {
-    String link(int bytes) => 'https://go.dshtui.com/share/#p=${'A' * (bytes - 31)}';
+    String link(int bytes) => 'https://xrkseek.com/share/#p=${'A' * (bytes - 31)}';
     // Version 6 is the finest that read in every halved export; 7 is under the line.
     expect(ShareCard.qrSize / (4 * 6 + 17 + 6), greaterThanOrEqualTo(ShareCard.qrMinModule));
     expect(ShareCard.qrSize / (4 * 7 + 17 + 6), lessThan(ShareCard.qrMinModule));
     for (final (text, version, ecc, logo) in [
-      (dshGoProjectUrl, 5, QrEcc.high, true),
+      (xrkGoProjectUrl, 5, QrEcc.high, true),
       (link(58), 6, QrEcc.high, true),
       (link(59), 4, QrEcc.medium, false),
       (link(106), 6, QrEcc.medium, false),
@@ -129,7 +129,7 @@ void main() {
       );
       expect(find.byKey(const ValueKey('share-qr')), findsNothing);
       expect(find.byType(QrCodeView), findsNothing);
-      expect(find.text('手机上的 DSH'), findsOneWidget);
+      expect(find.text('手机上的 XRK'), findsOneWidget);
       expect(find.textContaining('扫码'), findsNothing);
       final card = tester.getRect(find.byType(ShareCard));
       final brand = _rect(tester, 'share-brand');

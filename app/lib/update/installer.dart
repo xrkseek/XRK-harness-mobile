@@ -142,7 +142,7 @@ abstract interface class UpdateInstaller {
 class ChannelUpdateInstaller implements UpdateInstaller {
   const ChannelUpdateInstaller();
 
-  static const _channel = MethodChannel('dsh/update');
+  static const _channel = MethodChannel('xrk/update');
 
   Future<Map<Object?, Object?>> _map(String method, [Object? args]) async =>
       await _channel.invokeMethod<Map<Object?, Object?>>(method, args) ?? const {};

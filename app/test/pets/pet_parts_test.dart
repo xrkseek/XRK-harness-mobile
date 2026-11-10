@@ -3,17 +3,17 @@
 // (the pet's bubble replaces the glass banner while it is on screen), the
 // empty state's whale, and 宠物设置.
 
-import 'package:dsh_app/pets/pet_prefs.dart';
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_app/ui/chat/widgets/activity_strip.dart';
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
-import 'package:dsh_app/ui/pets/pet_bubble.dart';
-import 'package:dsh_app/ui/pets/pet_picker.dart';
-import 'package:dsh_app/ui/pets/pet_settings_page.dart';
+import 'package:xrk_app/pets/pet_prefs.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_app/ui/chat/widgets/activity_strip.dart';
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart';
+import 'package:xrk_app/ui/pets/pet_bubble.dart';
+import 'package:xrk_app/ui/pets/pet_picker.dart';
+import 'package:xrk_app/ui/pets/pet_settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -286,7 +286,7 @@ void main() {
       expect(find.text('Deepy 小鲸鱼'), findsOneWidget);
       expect(find.text('鲸娘'), findsOneWidget);
       expect(find.text('不显示'), findsOneWidget);
-      expect(find.textContaining('来自 DSH-TUI'), findsOneWidget);
+      expect(find.textContaining('来自 XRK-TUI'), findsOneWidget);
       expect(find.text('大小'), findsOneWidget);
       for (final s in ['小', '标准', '大']) {
         expect(find.text(s), findsOneWidget);

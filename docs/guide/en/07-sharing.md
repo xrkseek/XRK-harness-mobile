@@ -25,7 +25,7 @@ Pick a template and whether to show the **Question** and **Model and steps**, th
 
 ### File
 
-Choose a **Chat file** (`.dshgo`, to replay and continue in DSH Go), a **Web page** (opens in any browser, even offline) or Markdown (plain text, readable anywhere). **Preview** it if you like, then **Save** (to Download/DSH-Go) or **Share**.
+Choose a **Chat file** (`.dshgo`, to replay and continue in XRK Go), a **Web page** (opens in any browser, even offline) or Markdown (plain text, readable anywhere). **Preview** it if you like, then **Save** (to Download/DSH-Go) or **Share**.
 
 ### Text
 
@@ -46,10 +46,10 @@ If you change the range or options after creating a link, the link on the panel 
 
 ## Replay and continue
 
-Open a `.dshgo` file or DSH Go share link with DSH Go to replay it:
+Open a `.dshgo` file or XRK Go share link with XRK Go to replay it:
 
 - It plays automatically. Pause, drag the progress bar, and switch between 1×, 2× and 4×. When it ends, tap **Replay**.
 - Tap **Full chat** to see the whole conversation at once.
 - Tap **Continue chat** to start a new chat with this replay attached as a Markdown transcript (one summary line per tool call, without thinking or tool output) and a line ready in the composer. Check it, then send. Files and tool state from the original chat aren't restored.
 
-**Continue chat** isn't shown in the preview of your own share. If the current DSH Remote host does not support file uploads, the transcript is dropped. Otherwise it is uploaded to the current workspace when you send, subject to the normal attachment limit and the host's actual limits.
+**Continue chat** isn't shown in the preview of your own share. If the current XRK Remote host does not support file uploads, the transcript is dropped. Otherwise it is uploaded to the current workspace when you send, subject to the normal attachment limit and the host's actual limits.

@@ -1,6 +1,6 @@
-// Hands the diagnostics bundle to Android — the share
-// sheet or the phone's Downloads — the way artifacts and conversation logs
-// go (`FilesChannel.saveToDownloads`, `SharePlus`).
+// Hands the diagnostics bundle to the system share sheet
+// (`SharePlus`). Product never dumps a silent copy into Downloads —
+// people cannot find it.
 
 import 'dart:io';
 
@@ -9,17 +9,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../state/artifacts.dart' show FilesChannel, filesChannelProvider;
 import '../l10n/l10n.dart';
 import 'diagnostics_bundle.dart';
 
 /// Where an export is; the UI says it in words.
-enum DiagnosticsStep { collecting, packing, sharing, saving }
+enum DiagnosticsStep { collecting, packing, sharing }
 
 class DiagnosticsExporter {
   DiagnosticsExporter({
     required this.collect,
-    required this.files,
     Future<ShareResultStatus> Function(ShareParams params)? share,
     Future<Directory> Function()? cacheRoot,
     DateTime Function()? clock,
@@ -28,7 +26,6 @@ class DiagnosticsExporter {
        _clock = clock ?? DateTime.now;
 
   final Future<DiagnosticsSnapshot> Function(DateTime at) collect;
-  final FilesChannel files;
   final Future<ShareResultStatus> Function(ShareParams params) _share;
   final Future<Directory> Function() _cacheRoot;
   final DateTime Function() _clock;
@@ -40,18 +37,16 @@ class DiagnosticsExporter {
   /// replaced) and returns it.
   Future<File> build({void Function(DiagnosticsStep step)? onStep}) => _build(onStep: onStep);
 
-  Future<File> _build({Directory? target, void Function(DiagnosticsStep step)? onStep}) async {
+  Future<File> _build({void Function(DiagnosticsStep step)? onStep}) async {
     final at = _clock();
     onStep?.call(DiagnosticsStep.collecting);
     final snapshot = await collect(at);
     onStep?.call(DiagnosticsStep.packing);
     final bytes = DiagnosticsBundle.build(snapshot);
-    final dir = target ?? Directory('${(await _cacheRoot()).path}/diagnostics');
+    final dir = Directory('${(await _cacheRoot()).path}/diagnostics');
     await dir.create(recursive: true);
-    if (target == null) {
-      for (final old in dir.listSync().whereType<File>()) {
-        if (old.path.endsWith('.zip')) old.deleteSync();
-      }
+    for (final old in dir.listSync().whereType<File>()) {
+      if (old.path.endsWith('.zip')) old.deleteSync();
     }
     final file = File('${dir.path}/${DiagnosticsBundle.fileName(at)}');
     await file.writeAsBytes(bytes, flush: true);
@@ -73,26 +68,6 @@ class DiagnosticsExporter {
     );
     return status == ShareResultStatus.success;
   }
-
-  /// A fresh bundle in the phone's Downloads; returns where
-  /// (`Download/XRK-Harness/xrk-harness-diagnostics-….zip`).
-  Future<String> saveToDownloads({void Function(DiagnosticsStep step)? onStep}) async {
-    final dir = await Directory('${(await _cacheRoot()).path}/diagnostics').create(recursive: true);
-    // Another widget may build a bundle while the native worker still reads ours.
-    final operation = await dir.createTemp('save-');
-    try {
-      final file = await _build(target: operation, onStep: onStep);
-      onStep?.call(DiagnosticsStep.saving);
-      return await files.saveToDownloads(file.path, name: file.uri.pathSegments.last, mime: DiagnosticsBundle.mime);
-    } finally {
-      // The native reply follows the copy; cleanup cannot replace its outcome.
-      try {
-        await operation.delete(recursive: true);
-      } catch (_) {
-        // Failed cleanup leaves this operation in the temporary cache.
-      }
-    }
-  }
 }
 
 /// What went wrong, in words.
@@ -102,13 +77,8 @@ String diagnosticsErrorText(Object error) => switch (error) {
   _ => appL10n.stateDiagnosticsExportFailed,
 };
 
-/// `已存到 下载/XRK-Harness/…` for a saved bundle.
-String diagnosticsSavedText(String where) =>
-    appL10n.stateDiagnosticsSaved(where.replaceFirst(RegExp(r'^Download/'), appL10n.stateDownloadsPrefix));
-
 final diagnosticsExporterProvider = Provider<DiagnosticsExporter>(
   (ref) => DiagnosticsExporter(
     collect: (at) => collectDiagnostics(ref, at, includeSystemIme: true),
-    files: ref.watch(filesChannelProvider),
   ),
 );

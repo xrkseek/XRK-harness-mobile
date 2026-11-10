@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -107,7 +107,7 @@ void main() {
     final h = await _Harness.start(tester);
     await h.firstCompletes(tester);
     final failed = h.sessions.refresh();
-    h.reads[1].completeError(const DshRemoteException('test/failed', 'controlled failure'));
+    h.reads[1].completeError(const XrkRemoteException('test/failed', 'controlled failure'));
     await _finish(tester, failed);
     await h.deadline(tester);
     expect(h.reads, hasLength(3));
@@ -154,7 +154,7 @@ void main() {
       final latest = h.sessions.refresh();
       expect(h.reads, hasLength(3));
       if (failed) {
-        h.reads[2].completeError(const DshRemoteException('test/failed', 'controlled latest failure'));
+        h.reads[2].completeError(const XrkRemoteException('test/failed', 'controlled latest failure'));
         await _finish(tester, latest);
       }
       await h.deadline(tester);

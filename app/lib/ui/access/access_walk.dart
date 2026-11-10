@@ -211,7 +211,7 @@ class _AccessWalkState extends ConsumerState<AccessWalk> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final readings = ref.watch(accessReadingsProvider).value;
     ref.watch(accessVisitedProvider);
     // Readings that turn the item on (from the trip, or by any other way).
@@ -355,7 +355,7 @@ class _RestrictedSteps extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     // Xiaomi keeps the option under 「高级设置」, not behind ⋮.
     final advanced = RomFamily.of(manufacturer) == RomFamily.xiaomi;
     final steps = [
@@ -421,7 +421,7 @@ class _StepMark extends StatelessWidget {
     final scheme = theme.colorScheme;
     final now = state == _Mark.now;
     final fill = now ? scheme.primaryContainer : scheme.onSurface.withValues(alpha: 0.06);
-    final ink = now ? scheme.onPrimaryContainer : DshColors.of(context).textTertiary;
+    final ink = now ? scheme.onPrimaryContainer : XrkColors.of(context).textTertiary;
     // Optically on the first line of its text.
     return Padding(
       padding: EdgeInsets.only(top: (MediaQuery.textScalerOf(context).scale(14) * 1.5 - size).clamp(0, 8) / 2),

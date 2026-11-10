@@ -8,7 +8,7 @@ import '../slash_palette.dart' show slashIconFor;
 import 'command_result_text.dart';
 import 'stream_row.dart';
 
-/// 斜杠指令的执行记录:指令图标 + 等宽的 `/compact`,下面是 DSH 返回的结果文字。
+/// 斜杠指令的执行记录:指令图标 + 等宽的 `/compact`,下面是 XRK 返回的结果文字。
 ///
 /// 指令不进模型上下文,所以它长得像提示行而不是消息:没有气泡,三级文字;
 /// 失败用 danger 色,执行中行尾一个小环。
@@ -21,7 +21,7 @@ class CommandRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final colors = Theme.of(context).colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final (tileBg, tileFg) = dsh.tool(ToolTone.neutral);
     final failed = notice.done && !notice.success;
     final text = notice.text?.trim();

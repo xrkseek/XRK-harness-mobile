@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/compose_inbox.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/compose_inbox.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -81,7 +81,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     final c = ProviderScope.containerOf(tester.element(find.byType(MaterialApp)));
-    expect(c.read(composeInboxProvider).single.text, '/dsh-go-guide 怎么连接自己的电脑或服务器？和用本机有什么不同？');
+    expect(c.read(composeInboxProvider).single.text, '/xrk-guide 怎么连接自己的电脑或服务器？和用本机有什么不同？');
   });
 
   testWidgets('the startup preference stays out of the way until a remote host exists', (tester) async {

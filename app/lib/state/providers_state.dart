@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/l10n.dart';
@@ -13,7 +13,7 @@ import 'models_state.dart';
 import 'provider_backend.dart';
 import 'settings_state.dart';
 
-export 'package:dsh_client/dsh_client.dart'
+export 'package:xrk_client/xrk_client.dart'
     show
         CredentialStatus,
         DiscoveredModel,
@@ -365,7 +365,7 @@ class ProviderFailure implements Exception {
 /// behind it (`llm/discoverModels` names the URL and the HTTP status).
 String describeProviderError(Object error) {
   if (error is ProviderFailure) return error.message;
-  if (error is DshRemoteException) {
+  if (error is XrkRemoteException) {
     final message = error.message;
     final code = error.code;
     if (code == 'settings/conflict') return appL10n.stateProviderConflict;
@@ -523,7 +523,7 @@ class ProviderActions {
         backend.discover(provider: existingId, baseUrl: url, api: api, apiKey: apiKey.isEmpty ? null : apiKey);
     try {
       return (models: await ask(baseUrl), baseUrl: baseUrl);
-    } on DshRemoteException catch (error) {
+    } on XrkRemoteException catch (error) {
       final uri = Uri.tryParse(baseUrl);
       final bare = uri != null && (uri.path.isEmpty || uri.path == '/');
       final notFound = RegExp(r'answered 404').hasMatch(error.message);

@@ -1,6 +1,6 @@
 // The home screen's frame on tablets and foldables:
 // the conversation list as a rail or a sidebar on the left, the chat in the
-// middle, 对话详情 as a column on the right (DSH Web's AppFrame, `push`
+// middle, 对话详情 as a column on the right (XRK Web's AppFrame, `push`
 // presentation: the chat gives way, the panel's left edge moves with it).
 
 import 'dart:math' as math;
@@ -334,7 +334,7 @@ class _PanelColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hairline = DshSurfaces.of(context).chrome.hairline;
+    final hairline = XrkSurfaces.of(context).chrome.hairline;
     final line = 1 / media.devicePixelRatio;
     return Stack(
       fit: StackFit.expand,

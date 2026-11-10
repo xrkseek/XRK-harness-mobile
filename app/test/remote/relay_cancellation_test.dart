@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/remote/relay/relay_backend.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/relay/relay_backend.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_relay.dart';
@@ -11,7 +11,7 @@ class HeldRelay extends FakeRelayBackend {
   final release = Completer<void>();
 
   @override
-  Future<DshClient> connectHost(RelayHost host, {RelayStateCallback? onState}) async {
+  Future<XrkClient> connectHost(RelayHost host, {RelayStateCallback? onState}) async {
     entered.complete();
     await release.future;
     return super.connectHost(host, onState: onState);
@@ -27,7 +27,7 @@ void main() {
     final opening = link.open().then<Object?>((client) => client, onError: (Object error) => error);
     await link.close();
     presence.complete(sampleRelayHosts.first);
-    expect(await opening, isNot(isA<DshClient>()));
+    expect(await opening, isNot(isA<XrkClient>()));
     expect(relay.connected, isEmpty);
   });
 
@@ -39,7 +39,7 @@ void main() {
     await relay.entered.future;
     await link.close();
     relay.release.complete();
-    expect(await opening, isNot(isA<DshClient>()));
+    expect(await opening, isNot(isA<XrkClient>()));
     expect(relay.closedClients, hasLength(1));
     expect(link.currentClient, isNull);
   });

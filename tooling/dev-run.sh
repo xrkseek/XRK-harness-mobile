@@ -25,13 +25,13 @@
 # layout, sizes and colours. Judge smoothness on a release build (tooling/build-apk.sh).
 #
 # Windows: the Android toolchain lives in
-# DSH_ANDROID_TOOLS (default D:/Tools/android), Flutter in DSH_FLUTTER (default
-# D:/Tools/flutter-3.47.7/flutter), Python in DSH_PYTHON. Elsewhere, what's on PATH.
+# XRK_ANDROID_TOOLS (default D:/Tools/android), Flutter in XRK_FLUTTER (default
+# D:/Tools/flutter-3.47.7/flutter), Python in XRK_PYTHON. Elsewhere, what's on PATH.
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 APP="$ROOT/app"
-PKG=io.github.ccch1mneyyy.dsh_app
+PKG=com.xrkseek.harness
 APK="$APP/build/app/outputs/flutter-apk/app-arm64-debug.apk"
 
 usage() { sed -n '2,15p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
@@ -50,8 +50,8 @@ while (($#)); do
 done
 
 # --- the toolchain (a Windows machine has none of it on PATH)
-tools=${DSH_ANDROID_TOOLS:-/d/Tools/android}
-flutter_home=${DSH_FLUTTER:-/d/Tools/flutter-3.47.7/flutter}
+tools=${XRK_ANDROID_TOOLS:-/d/Tools/android}
+flutter_home=${XRK_FLUTTER:-/d/Tools/flutter-3.47.7/flutter}
 to_native() { if command -v cygpath >/dev/null; then cygpath -w "$1"; else echo "$1"; fi; }
 if [[ -d $tools/sdk ]]; then
   JAVA_HOME=$(to_native "$tools/jdk-17")
@@ -66,10 +66,10 @@ export PATH
 if [[ -n ${WINDIR:-} ]]; then
   flutter() { flutter.bat "$@"; }
   export -f flutter
-  py=${DSH_PYTHON:-$HOME/.workbuddy/binaries/python/envs/default/Scripts/python.exe}
+  py=${XRK_PYTHON:-$HOME/.workbuddy/binaries/python/envs/default/Scripts/python.exe}
   if [[ -x $py ]]; then
-    export DSH_DEV_PY=$py
-    python3() { "$DSH_DEV_PY" "$@"; }
+    export XRK_DEV_PY=$py
+    python3() { "$XRK_DEV_PY" "$@"; }
     export -f python3
   fi
 fi
@@ -127,7 +127,7 @@ grep -Eq 'flags=\[.*DEBUGGABLE' <<<"$package" ||
 # Attach finds the app by the address it logs when it starts, and only hears that once it
 # is listening: the app restarts a moment after attach is up, not before.
 (
-  sleep "${DSH_ATTACH_WAIT:-10}"
+  sleep "${XRK_ATTACH_WAIT:-10}"
   # Too late to call off: a stop with no launch after it would leave the app closed.
   trap '' TERM
   phone shell am force-stop "$PKG"
@@ -142,5 +142,5 @@ cd "$APP"
 name=$(sed -n 's/^ *versionName=\([^[:space:]]*\).*/\1/p' <<<"$package" | head -n 1)
 code=$(sed -n 's/^ *versionCode=\([0-9]*\).*/\1/p' <<<"$package" | head -n 1)
 # The same define the APK was built with, or a reload would change what it reads.
-exec_flutter=(flutter attach -d "$serial" --app-id "$PKG" "--dart-define=DSH_APP_VERSION=$name+$code")
+exec_flutter=(flutter attach -d "$serial" --app-id "$PKG" "--dart-define=XRK_APP_VERSION=$name+$code")
 "${exec_flutter[@]}"

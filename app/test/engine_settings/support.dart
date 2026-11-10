@@ -1,20 +1,20 @@
-// A fake `dsh web` for the engine settings tests: `settings/describe` and
+// A fake `xrkh serve` for the engine settings tests: `settings/describe` and
 // `settings/mutate` with the Host's layering (base, the profile's user layer,
 // an optional home-patch overlay that locks the namespace), schema checks on
 // writes, revisions and stale-revision conflicts, the credential store, the
 // model catalog, the plugin inventory and the bundle list. The namespaces
-// start from a recorded DSH 0.2.1-rc.2 `settings/describe`.
+// start from a recorded XRK 0.2.1-rc.2 `settings/describe`.
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -23,9 +23,9 @@ import 'package:flutter_test/flutter_test.dart';
 import '../plugins/support/fake_plugin_host.dart' show FakeMuxLink;
 import '../shell/golden_harness.dart' show FakeSettings, goldenApp, loadGoldenFonts;
 
-Object? _fixture(String name) => jsonDecode(File('../packages/dsh_client/test/fixtures/$name').readAsStringSync());
+Object? _fixture(String name) => jsonDecode(File('../packages/xrk_client/test/fixtures/$name').readAsStringSync());
 
-/// `settings/describe` of a throwaway DSH 0.2.1-rc.2 (fresh HOME; the
+/// `settings/describe` of a throwaway XRK 0.2.1-rc.2 (fresh HOME; the
 /// thinking-translation and plugin-market bundles on).
 Map<String, Object?> recordedDescribe() => _fixture('settings_describe.json')! as Map<String, Object?>;
 
@@ -34,21 +34,21 @@ Map<String, Object?> recordedInventory() => _fixture('plugin_inventory.json')! a
 
 /// The two official optional bundles that Host had on (`listBundles`,
 /// trimmed): what makes `cot-translation` and `plugin-market` plugins
-/// (PluginConfigScope), the rest of [recordedDescribe] being DSH's own.
+/// (PluginConfigScope), the rest of [recordedDescribe] being XRK's own.
 List<Object?> recordedBundles() => [
   for (final (name, rows) in [
     (
-      '@deepseek-ai/dsh-experimental-cot-translation-bundle',
+      '@xrkseek/harness-cli-experimental-cot-translation-bundle',
       {
-        'translator': '@deepseek-ai/dsh-experimental-translator',
-        'cot-translation': '@deepseek-ai/dsh-experimental-client-ui-cot-translation',
+        'translator': '@xrkseek/harness-cli-experimental-translator',
+        'cot-translation': '@xrkseek/harness-cli-experimental-client-ui-cot-translation',
       },
     ),
     (
-      '@deepseek-ai/dsh-experimental-plugin-market-bundle',
+      '@xrkseek/harness-cli-experimental-plugin-market-bundle',
       {
-        'plugin-market': '@deepseek-ai/dsh-plugin-market',
-        'ui-plugin-market': '@deepseek-ai/dsh-client-ui-plugin-market',
+        'plugin-market': '@xrkseek/harness-cli-plugin-market',
+        'ui-plugin-market': '@xrkseek/harness-cli-client-ui-plugin-market',
       },
     ),
   ])
@@ -135,7 +135,7 @@ class FakeNamespace {
   };
 }
 
-DshRemoteException _rejected(String ns, String message) => DshRemoteException('settings/rejected', message, {'ns': ns});
+XrkRemoteException _rejected(String ns, String message) => XrkRemoteException('settings/rejected', message, {'ns': ns});
 
 /// Mirrors the engine's schemastery messages for the checks the forms rely on.
 String? _invalid(SchemaNode node, Object? value, String path) {
@@ -178,7 +178,7 @@ String? _invalid(SchemaNode node, Object? value, String path) {
   return null;
 }
 
-/// The fake Host behind a [DshClient].
+/// The fake Host behind a [XrkClient].
 class FakeSettingsHost extends DshCarrier {
   FakeSettingsHost({Map<String, Object?>? describe, this.writable = true}) {
     final recorded = describe ?? recordedDescribe();
@@ -249,7 +249,7 @@ class FakeSettingsHost extends DshCarrier {
     calls.add((endpoint, args));
     try {
       return RpcOk(await _answer(endpoint, args));
-    } on DshRemoteException catch (error) {
+    } on XrkRemoteException catch (error) {
       return RpcError(error);
     }
   }
@@ -271,7 +271,7 @@ class FakeSettingsHost extends DshCarrier {
         if (!writable) throw _rejected(ns, 'settings are read-only');
         final expected = args['expectedRevision'] as int?;
         if (expected != null && expected != n.revision) {
-          throw DshRemoteException(
+          throw XrkRemoteException(
             'settings/conflict',
             'settings namespace "$ns" changed since it was read (expected revision $expected, now ${n.revision})',
             {'ns': ns, 'expected': expected, 'actual': n.revision},
@@ -319,7 +319,7 @@ class FakeSettingsHost extends DshCarrier {
       case 'credentials/set':
         final ref = args['ref']! as String;
         if (envCredentials.contains(ref)) {
-          throw DshRemoteException('credential/rejected', 'supplied by the launch environment', {'ref': ref});
+          throw XrkRemoteException('credential/rejected', 'supplied by the launch environment', {'ref': ref});
         }
         credentials[ref] = args['value']! as String;
         scheduleMicrotask(() => emit('credentials/reference-updated', [ref]));
@@ -332,15 +332,15 @@ class FakeSettingsHost extends DshCarrier {
       case 'session/modelCatalog':
         return modelCatalog;
       case 'pluginInventory/list':
-        if (inventory == null) throw const DshRemoteException('gateway/method-not-found', 'no pluginInventory');
+        if (inventory == null) throw const XrkRemoteException('gateway/method-not-found', 'no pluginInventory');
         return inventory;
       case 'pluginManager/listBundles':
-        if (failListBundles) throw const DshRemoteException('gateway/internal', 'listBundles unavailable');
+        if (failListBundles) throw const XrkRemoteException('gateway/internal', 'listBundles unavailable');
         return bundles;
       case 'pluginManager/listPlugins':
         return const <Object?>[];
     }
-    throw DshRemoteException('gateway/method-not-found', 'no handler for $endpoint');
+    throw XrkRemoteException('gateway/method-not-found', 'no handler for $endpoint');
   }
 
   @override
@@ -375,12 +375,12 @@ const sampleCatalog = <String, Object?>{
 };
 
 /// A connected client over [host] (mux started so host events arrive).
-Future<DshClient> fakeClient(FakeSettingsHost host) async {
-  final client = DshClient.withCarrier(host);
+Future<XrkClient> fakeClient(FakeSettingsHost host) async {
+  final client = XrkClient.withCarrier(host);
   return client;
 }
 
-HostConnection fakeConnection(DshClient client, {bool local = true}) => HostConnection(
+HostConnection fakeConnection(XrkClient client, {bool local = true}) => HostConnection(
   client: client,
   label: local ? '本机' : '电脑 · SSH',
   isLocal: local,
@@ -388,7 +388,7 @@ HostConnection fakeConnection(DshClient client, {bool local = true}) => HostConn
 );
 
 /// What the engine settings pages need, with [host] as the active engine.
-List<Override> engineOverrides(DshClient? client, {bool local = true, AppSettings? settings}) => [
+List<Override> engineOverrides(XrkClient? client, {bool local = true, AppSettings? settings}) => [
   activeConnectionProvider.overrideWithValue(AsyncData(client == null ? null : fakeConnection(client, local: local))),
   localSafeModeProvider.overrideWithValue(false),
   settingsProvider.overrideWith(() => FakeSettings(settings ?? const AppSettings(loaded: true))),
@@ -434,11 +434,11 @@ Future<void> pumpPage(
 /// translation (on), with the rows the settings pages route by.
 List<Object?> sampleBundles() => [
   {
-    'name': '@deepseek-ai/dsh-base',
+    'name': '@xrkseek/harness-cli-base',
     'official': false,
     'availability': 'installation',
     'version': '0.2.1-rc.2',
-    'meta': {'title': '@deepseek-ai/dsh-base'},
+    'meta': {'title': '@xrkseek/harness-cli-base'},
     'enabled': true,
     'installed': false,
     'optional': false,
@@ -460,12 +460,12 @@ List<Object?> sampleBundles() => [
         'tool-bash',
         'tool-pwsh',
       ])
-        {'rowId': id, 'moduleName': '@deepseek-ai/dsh-$id', 'entryId': 'include:$id'},
+        {'rowId': id, 'moduleName': '@xrkseek/harness-cli-$id', 'entryId': 'include:$id'},
     ],
     'overrides': <Object?>[],
   },
   {
-    'name': '@deepseek-ai/dsh-web-app',
+    'name': '@xrkseek/harness-cli-web-app',
     'official': false,
     'availability': 'installation',
     'version': '0.2.1-rc.2',
@@ -478,12 +478,12 @@ List<Object?> sampleBundles() => [
     'removable': false,
     'rows': [
       for (final id in ['subagent-model-selection-settings', 'ui-theme'])
-        {'rowId': id, 'moduleName': '@deepseek-ai/dsh-$id', 'entryId': 'include:$id'},
+        {'rowId': id, 'moduleName': '@xrkseek/harness-cli-$id', 'entryId': 'include:$id'},
     ],
     'overrides': <Object?>[],
   },
   {
-    'name': '@deepseek-ai/dsh-experimental-cot-translation-bundle',
+    'name': '@xrkseek/harness-cli-experimental-cot-translation-bundle',
     'official': true,
     'availability': 'installation',
     'version': '0.2.1-rc.2',
@@ -498,12 +498,12 @@ List<Object?> sampleBundles() => [
     'rows': [
       {
         'rowId': 'translator',
-        'moduleName': '@deepseek-ai/dsh-experimental-translator',
+        'moduleName': '@xrkseek/harness-cli-experimental-translator',
         'entryId': 'include:translator',
       },
       {
         'rowId': 'cot-translation',
-        'moduleName': '@deepseek-ai/dsh-experimental-cot-translation',
+        'moduleName': '@xrkseek/harness-cli-experimental-cot-translation',
         'entryId': 'include:cot-translation',
       },
     ],

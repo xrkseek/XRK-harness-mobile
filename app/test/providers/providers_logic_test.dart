@@ -5,10 +5,10 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:dsh_app/state/provider_keys.dart';
-import 'package:dsh_app/state/providers_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/provider_keys.dart';
+import 'package:xrk_app/state/providers_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -108,7 +108,7 @@ void main() {
 
   group('error copy', () {
     String copy(String message, [String code = 'gateway/internal']) =>
-        describeProviderError(DshRemoteException(code, message));
+        describeProviderError(XrkRemoteException(code, message));
 
     test('discovery failures name what to fix, in Chinese', () {
       expect(copy('https://gw.example.com/v1/models answered 401; check the API key'), 'API Key 无效或没有权限');
@@ -129,7 +129,7 @@ void main() {
     });
 
     test('pipe failures', () {
-      expect(describeProviderError(const DshTransportException('timeout')), '没能连上引擎');
+      expect(describeProviderError(const XrkTransportException('timeout')), '没能连上引擎');
       expect(describeProviderError(const DshHttpException(403, 'fence')), '引擎拒绝了请求（403）');
       expect(describeProviderError(const ProviderFailure('原样')), '原样');
     });
@@ -267,7 +267,7 @@ void main() {
     });
 
     test('a failed key write reports the id that was saved', () async {
-      container = start(FakeProviderBackend()..storeKeyError = const DshRemoteException('credential/rejected', 'x'));
+      container = start(FakeProviderBackend()..storeKeyError = const XrkRemoteException('credential/rejected', 'x'));
       await container.read(customProvidersProvider.future);
       await expectLater(
         container.read(providerActionsProvider).save(draft),
@@ -388,16 +388,16 @@ void main() {
       final actions = container.read(providerActionsProvider);
       await expectLater(
         actions.discover(api: ProviderApi.openaiCompletions, baseUrl: 'https://gw.example.com/api'),
-        throwsA(isA<DshRemoteException>()),
+        throwsA(isA<XrkRemoteException>()),
       );
       await expectLater(
         actions.discover(api: ProviderApi.anthropicMessages, baseUrl: 'https://gw.example.com'),
-        throwsA(isA<DshRemoteException>()),
+        throwsA(isA<XrkRemoteException>()),
       );
       backend.discoverError = listingRefused('https://gw.example.com', 401);
       await expectLater(
         actions.discover(api: ProviderApi.openaiCompletions, baseUrl: 'https://gw.example.com', apiKey: 'bad'),
-        throwsA(isA<DshRemoteException>()),
+        throwsA(isA<XrkRemoteException>()),
       );
       expect(backend.calls.where((c) => c.$1 == 'discover'), hasLength(3));
     });

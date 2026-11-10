@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_app/ui/plugins/plugin_actions.dart';
-import 'package:dsh_app/ui/plugins/market_tab.dart';
-import 'package:dsh_app/ui/plugins/plugin_widgets.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_app/ui/plugins/plugin_actions.dart';
+import 'package:xrk_app/ui/plugins/market_tab.dart';
+import 'package:xrk_app/ui/plugins/plugin_widgets.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,7 +24,7 @@ void main() {
     final undo = outcome == 'undo';
     testWidgets('market removal hides before dispatch and outcome=$outcome', (tester) async {
       final carrier = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       addTearDown(client.close);
       var installed = true;
       carrier.handlers['pluginManager/listBundles'] = (_) => [
@@ -90,7 +90,7 @@ void main() {
       tester,
     ) async {
       final carrier = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       addTearDown(client.close);
       final first = PluginBundle.fromJson(bundleJson('first'));
       final second = PluginBundle.fromJson(bundleJson('second'));
@@ -159,7 +159,7 @@ void main() {
   for (final outcome in ['success', 'failure', 'throws']) {
     testWidgets('committing A result never steals waiting B undo: $outcome', (tester) async {
       final carrier = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       addTearDown(client.close);
       final first = PluginBundle.fromJson(bundleJson('first'));
       final second = PluginBundle.fromJson(bundleJson('second'));
@@ -201,7 +201,7 @@ void main() {
       final waitingText = (tester.widget<SnackBar>(find.byType(SnackBar)).content as Text).data!;
       expect(waitingText, contains('second'));
       if (outcome == 'throws') {
-        reply.completeError(const DshRemoteException('DENIED', 'controlled failure'));
+        reply.completeError(const XrkRemoteException('DENIED', 'controlled failure'));
       } else {
         if (outcome == 'success') inventory = [bundleJson('second')];
         reply.complete({
@@ -231,7 +231,7 @@ void main() {
   for (final next in ['third', 'host', 'route', 'dispose']) {
     testWidgets('deferred A result rechecks newer undo and owner: $next', (tester) async {
       final carrier = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       addTearDown(client.close);
       var inventory = [
         for (final name in ['first', 'second', 'third']) bundleJson(name),
@@ -305,7 +305,7 @@ void main() {
         if (next == 'host') {
           final other = FakePluginCarrier();
           other.handlers['pluginManager/listBundles'] = (_) => <Object?>[];
-          final otherClient = DshClient.withCarrier(other);
+          final otherClient = XrkClient.withCarrier(other);
           addTearDown(otherClient.close);
           container.read(switchConnectionProvider.notifier).set(fakeHost(otherClient));
         } else if (next == 'route') {

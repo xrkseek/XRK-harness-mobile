@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/agents_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/agents/team_page.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart' show ListPageCard;
-import 'package:dsh_app/ui/common/segmented_pill.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/agents_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/agents/team_page.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart' show ListPageCard;
+import 'package:xrk_app/ui/common/segmented_pill.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,7 +21,7 @@ import 'support.dart';
 
 enum _Read { failed, closed, empty, message }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client({this.prefix = 'SYNTHETIC', this.defaultRead = _Read.message})
     : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
 

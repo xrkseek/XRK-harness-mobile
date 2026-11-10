@@ -1,6 +1,6 @@
 // A plugin's own page: one seat at page size (docs/design/plugin-seams.md §3):
 // a settings form drawn natively, a web island, or, when neither can come up,
-// the way to DSH Web.
+// the way to XRK Web.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,7 +38,7 @@ class PluginSeatPage extends ConsumerWidget {
     if (items.isNotEmpty && items.every((i) => i.mode == SeatMode.native)) {
       return AppPage.list(title: title, children: [seat()]);
     }
-    // An island (or the way to DSH Web) takes the page under the bar.
+    // An island (or the way to XRK Web) takes the page under the bar.
     return AppPage(
       title: title,
       showLargeTitle: false,

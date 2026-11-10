@@ -4,16 +4,16 @@
 // that revision, and its controls go back to the plugin with the action
 // name and value; `patch` and `stale` land on it.
 
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/features/feature_catalog.dart';
-import 'package:dsh_app/ui/plugins/native/native_panel.dart';
-import 'package:dsh_app/ui/plugins/seats/plugin_seat_page.dart';
-import 'package:dsh_app/ui/plugins/seats/session_plugins_tab.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/features/feature_catalog.dart';
+import 'package:xrk_app/ui/plugins/native/native_panel.dart';
+import 'package:xrk_app/ui/plugins/seats/plugin_seat_page.dart';
+import 'package:xrk_app/ui/plugins/seats/session_plugins_tab.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -24,7 +24,7 @@ import '../../chat/support/harness.dart';
 import 'support.dart';
 
 const _usage = NativePanel(
-  package: 'dsh-go-example-usage',
+  package: 'xrk-example-usage',
   id: 'usage',
   title: '用量',
   icon: 'chart',
@@ -64,7 +64,7 @@ SeatInventory inventory({List<NativePanel> panels = const [_usage], bool webTab 
   webReachable: true,
   occupancy: {
     Slots.rightPaneTab: [
-      if (webTab) const SlotOccupant(slot: Slots.rightPaneTab, package: 'dsh-go-example-usage', cell: 'cost-tab'),
+      if (webTab) const SlotOccupant(slot: Slots.rightPaneTab, package: 'xrk-example-usage', cell: 'cost-tab'),
       const SlotOccupant(slot: Slots.rightPaneTab, package: 'web-only', cell: 'notes'),
     ],
   },
@@ -89,8 +89,8 @@ List<Override> panelOverrides(FakeBridge bridge, SeatInventory inv) => [
 
 FakeBridge usageBridge() {
   final bridge = FakeBridge(contributions([usagePlugin()]));
-  bridge.views['dsh-go-example-usage/usage'] = const DshGoView(
-    pkg: 'dsh-go-example-usage',
+  bridge.views['xrk-example-usage/usage'] = const DshGoView(
+    pkg: 'xrk-example-usage',
     id: 'usage',
     title: '用量',
     view: _view,
@@ -111,7 +111,7 @@ void main() {
       final items = plan(inventory());
       expect(
         [for (final i in items) (i.occupant.package, i.occupant.cell, i.mode)],
-        [('dsh-go-example-usage', 'dsh-go:usage', SeatMode.native), ('web-only', 'notes', SeatMode.island)],
+        [('xrk-example-usage', 'xrk-mobile:usage', SeatMode.native), ('web-only', 'notes', SeatMode.island)],
       );
       expect(items.first.adapter?.id, 'dsh-ui-panel');
       expect(items.first.occupant.label, '用量');
@@ -121,7 +121,7 @@ void main() {
       final items = plan(
         inventory(),
         overrides: const SeatOverrides({
-          Slots.rightPaneTab: {'dsh-go-example-usage': SeatOverride.web},
+          Slots.rightPaneTab: {'xrk-example-usage': SeatOverride.web},
         }),
       );
       expect(items.first.occupant.cell, 'cost-tab');
@@ -140,7 +140,7 @@ void main() {
         webTab: false,
       );
       expect(features.occupantsFor(Slots.rightPaneTab).map((o) => o.cell), ['notes']);
-      expect(features.occupantsFor(Slots.main).map((o) => o.cell), ['dsh-go:board']);
+      expect(features.occupantsFor(Slots.main).map((o) => o.cell), ['xrk-mobile:board']);
     });
   });
 
@@ -208,8 +208,8 @@ void main() {
     expect(find.text('已清零'), findsOneWidget);
 
     // The plugin's view changed: read again.
-    bridge.views['dsh-go-example-usage/usage'] = const DshGoView(
-      pkg: 'dsh-go-example-usage',
+    bridge.views['xrk-example-usage/usage'] = const DshGoView(
+      pkg: 'xrk-example-usage',
       id: 'usage',
       view: {'type': 'text', 'text': '新的视图'},
       rev: 'r9',
@@ -265,7 +265,7 @@ void main() {
     final bridge = FakeBridge(
       contributions([
         plugin(
-          'dsh-go-example-usage',
+          'xrk-example-usage',
           title: '用量统计',
           icon: 'chart',
           panels: [
@@ -293,7 +293,7 @@ void main() {
           inventory(
             panels: const [
               NativePanel(
-                package: 'dsh-go-example-usage',
+                package: 'xrk-example-usage',
                 id: 'usage',
                 title: '今日用量',
                 icon: 'wallet',

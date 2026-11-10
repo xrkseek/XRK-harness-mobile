@@ -1,12 +1,13 @@
 import 'dart:ui' show SemanticsAction;
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/star_prompt.dart';
-import 'package:dsh_app/state/update_state.dart';
-import 'package:dsh_app/ui/settings/about_page.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_app/update/version.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/app_info.dart';
+import 'package:xrk_app/state/star_prompt.dart';
+import 'package:xrk_app/state/update_state.dart';
+import 'package:xrk_app/ui/settings/about_page.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_app/update/version.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,11 +30,8 @@ class _StarStore implements StarPromptStore {
   Future<void> write(StarPromptRecord record) async => writes.add(record);
 }
 
-const _profiles = [
-  ('about-author-bilibili', 'https://b23.tv/9WBns6Y'),
-  ('about-author-x', 'https://x.com/cccch1mneyyyy'),
-  ('about-author-github', 'https://github.com/ccch1mneyyy'),
-];
+const _githubKey = 'about-author-github';
+const _githubUrl = 'https://github.com/xrkseek/XRK-harness-mobile';
 
 void main() {
   late List<Uri> opened;
@@ -97,28 +95,24 @@ void main() {
 
   for (final locale in AppLocale.supported) {
     for (final brightness in Brightness.values) {
-      testWidgets('author profiles fit 360dp at 1.3x in $locale $brightness', (tester) async {
+      testWidgets('source repo row fits 360dp at 1.3x in $locale $brightness', (tester) async {
         await pump(tester, locale: locale, brightness: brightness, scale: 1.3);
         final english = locale == AppLocale.en;
-        expect(find.text(english ? 'Original author of DSH Go' : 'DSH Go 原作者'), findsOneWidget);
-        expect(find.text('ccch1mneyyy'), findsOneWidget);
-        expect(find.text('ccchimneyyy'), findsOneWidget);
-        expect(find.text('@cccch1mneyyyy'), findsOneWidget);
-        expect(find.text('@ccch1mneyyy'), findsOneWidget);
+        expect(find.text(english ? 'Source repository' : '开源仓库'), findsOneWidget);
+        expect(find.text(AppInfo.authorGithubHandle), findsOneWidget);
         expect(find.text('1.0.2 (42)'), findsOneWidget);
         expect(find.byKey(const ValueKey('settings-star')), findsOneWidget);
-        expect(find.text(english ? 'Bilibili profile' : 'B站主页'), findsOneWidget);
-        expect(find.text(english ? 'X profile' : 'X 主页'), findsOneWidget);
         expect(find.text(english ? 'GitHub profile' : 'GitHub 主页'), findsOneWidget);
+        expect(find.text(english ? 'Bilibili profile' : 'B站主页'), findsNothing);
+        expect(find.text(english ? 'X profile' : 'X 主页'), findsNothing);
 
-        for (final (key, _) in _profiles) {
-          final row = find.byKey(ValueKey(key));
-          await tester.ensureVisible(row);
-          await tester.pumpAndSettle();
-          expect(tester.getSize(row).height, greaterThanOrEqualTo(64));
-          expect(tester.widget<SettingsTile>(row).onTap, isNotNull);
-          expect(tester.takeException(), isNull, reason: 'No overflow at $key');
-        }
+        final row = find.byKey(const ValueKey(_githubKey));
+        await tester.ensureVisible(row);
+        await tester.pumpAndSettle();
+        expect(tester.getSize(row).height, greaterThanOrEqualTo(64));
+        expect(tester.widget<SettingsTile>(row).onTap, isNotNull);
+        expect(tester.takeException(), isNull);
+
         final disclaimer = find.text(
           english ? 'Official XRK Harness · Local-first' : 'XRK Harness 官方产品 · 本地优先',
         );
@@ -130,23 +124,21 @@ void main() {
     }
   }
 
-  testWidgets('each profile opens its exact personal URL without finishing the star prompt', (tester) async {
+  testWidgets('GitHub author row opens the product repository without finishing star', (tester) async {
     await pump(tester);
-    for (final (key, _) in _profiles) {
-      await tap(tester, key);
-    }
-    expect(opened.map((uri) => uri.toString()), _profiles.map((profile) => profile.$2));
+    await tap(tester, _githubKey);
+    expect(opened.map((uri) => uri.toString()), [_githubUrl]);
     expect(store.writes, isEmpty);
   });
 
   testWidgets('the separate project star still opens the repository', (tester) async {
     await pump(tester);
     await tap(tester, 'settings-star');
-    expect(opened.map((uri) => uri.toString()), ['https://github.com/ccch1mneyyy/dsh-go']);
+    expect(opened.map((uri) => uri.toString()), [_githubUrl]);
     expect(store.writes.last.finished, isTrue);
   });
 
-  testWidgets('no browser copies the original B23 URL and reports it', (tester) async {
+  testWidgets('no browser copies the GitHub URL and reports it', (tester) async {
     String? clipboard;
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
       if (call.method == 'Clipboard.setData') clipboard = (call.arguments as Map)['text'] as String?;
@@ -155,8 +147,8 @@ void main() {
     addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null));
     opener = (_) async => false;
     await pump(tester);
-    await tap(tester, 'about-author-bilibili');
-    expect(clipboard, 'https://b23.tv/9WBns6Y');
+    await tap(tester, _githubKey);
+    expect(clipboard, _githubUrl);
     expect(find.text('没能打开浏览器，网址已复制'), findsOneWidget);
     expect(store.writes, isEmpty);
   });
@@ -169,24 +161,22 @@ void main() {
     addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null));
     opener = (_) async => throw PlatformException(code: 'no-browser');
     await pump(tester, locale: AppLocale.en);
-    await tap(tester, 'about-author-x');
+    await tap(tester, _githubKey);
     expect(find.text(lookupL10n(AppLocale.en).stateBrowserOpenFailed), findsOneWidget);
     expect(find.text(lookupL10n(AppLocale.en).shellBrowserUrlCopied), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('profiles are announced as actionable links', (tester) async {
+  testWidgets('GitHub row is announced as an actionable link', (tester) async {
     final semantics = tester.ensureSemantics();
     try {
       await pump(tester, locale: AppLocale.en);
-      for (final (key, _) in _profiles) {
-        final row = find.byKey(ValueKey(key));
-        await tester.ensureVisible(row);
-        await tester.pumpAndSettle();
-        final node = tester.getSemantics(row);
-        expect(node.flagsCollection.isLink, isTrue);
-        expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
-      }
+      final row = find.byKey(const ValueKey(_githubKey));
+      await tester.ensureVisible(row);
+      await tester.pumpAndSettle();
+      final node = tester.getSemantics(row);
+      expect(node.flagsCollection.isLink, isTrue);
+      expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
     } finally {
       semantics.dispose();
     }

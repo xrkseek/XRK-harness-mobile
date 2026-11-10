@@ -4,18 +4,18 @@ import 'package:flutter/foundation.dart';
 import '../../theme/theme.dart';
 
 /// What an island takes from the App's look (§8): light / dark, the accent,
-/// text colours, lines and surfaces as DSH Web's alias tokens, and the text
-/// size. Pushed with `__dshGoIsland.setTheme` whenever it changes; the page
+/// text colours, lines and surfaces as XRK Web's alias tokens, and the text
+/// size. Pushed with `__xrkGoIsland.setTheme` whenever it changes; the page
 /// never reloads for it.
 @immutable
 class IslandTheme {
   const IslandTheme({required this.dark, required this.tokens, this.textScale = 1});
 
-  /// The App's theme as DSH Web tokens. [textScale] is the App's (system)
+  /// The App's theme as XRK Web tokens. [textScale] is the App's (system)
   /// text scale; the WebView applies it as its text zoom.
   factory IslandTheme.fromTheme(ThemeData theme, {double textScale = 1}) {
     final scheme = theme.colorScheme;
-    final colors = theme.extension<DshColors>();
+    final colors = theme.extension<XrkColors>();
     final dark = theme.brightness == Brightness.dark;
     final ink = scheme.onSurface;
     Color a(Color c, double alpha) => c.withValues(alpha: alpha);
@@ -64,7 +64,7 @@ class IslandTheme {
   /// The WebView's text zoom, percent (50–300, as Android takes it).
   int get textZoom => (textScale * 100).round().clamp(50, 300);
 
-  /// `__dshGoIsland.setTheme`'s argument.
+  /// `__xrkGoIsland.setTheme`'s argument.
   Map<String, Object?> toJson() => {'dark': dark, 'tokens': tokens};
 
   @override

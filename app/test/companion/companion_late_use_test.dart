@@ -1,4 +1,4 @@
-import 'package:dsh_app/companion/companion_late_use.dart';
+import 'package:xrk_app/companion/companion_late_use.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 final start = DateTime.utc(2026, 11, 5, 23).millisecondsSinceEpoch;

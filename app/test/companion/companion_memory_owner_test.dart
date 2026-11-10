@@ -4,12 +4,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dsh_app/l10n/gen/app_localizations.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/companion/companion_memory_page.dart';
-import 'package:dsh_app/ui/theme/app_theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/gen/app_localizations.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/companion/companion_memory_page.dart';
+import 'package:xrk_app/ui/theme/app_theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -66,13 +66,13 @@ class _Bridge extends DshConnection {
     Map<String, String>? headers,
     Duration? timeout,
   }) async {
-    if (path == '$dshGoCompanionPath/memories') {
+    if (path == '$xrkGoCompanionPath/memories') {
       listReads++;
       final handler = nextList;
       nextList = null;
       return handler == null ? memories() : await handler();
     }
-    expect(path, dshGoCompanionPath);
+    expect(path, xrkGoCompanionPath);
     snapshotReads++;
     final handler = nextSnapshot;
     nextSnapshot = null;
@@ -113,13 +113,13 @@ class _Room {
   }
   late final _Bridge a;
   final host = _Host();
-  final clients = <DshClient>[];
+  final clients = <XrkClient>[];
   final connections = <HostRef, HostConnection>{};
   late ProviderContainer container;
 
   _Bridge connect(HostRef host, String text) {
     final bridge = _Bridge('store-${host.id}-${clients.length}', text);
-    final client = DshClient(bridge);
+    final client = XrkClient(bridge);
     clients.add(client);
     connections[host] = HostConnection(client: client, isLocal: host.isLocal, kind: host.kind, hostId: host.id);
     return bridge;

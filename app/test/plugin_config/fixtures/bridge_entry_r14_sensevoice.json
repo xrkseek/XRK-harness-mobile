@@ -3,7 +3,7 @@
   "entryId": "speech-to-text-sensevoice",
   "kind": "plugin",
   "owner": "optional",
-  "bundle": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+  "bundle": "@xrkseek/harness-cli-experimental-voice-input-bundle",
   "source": "official-optional-bundle",
   "revision": "wm2tejHq2bRzhlk8DOsFBPtpFDnHrrprGRWSRGIr2-w",
   "schema": {

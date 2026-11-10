@@ -3,8 +3,8 @@
 //
 //   flutter test test/shell/adaptive/layout_prefs_test.dart
 
-import 'package:dsh_app/state/adaptive_layout_state.dart';
-import 'package:dsh_app/ui/session/session_tab.dart';
+import 'package:xrk_app/state/adaptive_layout_state.dart';
+import 'package:xrk_app/ui/session/session_tab.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

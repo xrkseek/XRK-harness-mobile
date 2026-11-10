@@ -2,11 +2,11 @@
 
 [English](en/preview.md)
 
-检查器能列出视图的路径问题。需要看实际排版时，可用仓库内的预览命令调用 App 的 `PluginView`，把一份静态 JSON 和数据快照画成浅色、深色 PNG。它使用 App 的 Flutter 解析器、组件和主题；不启动 DSH，不加载插件 JavaScript，也不发送动作。
+检查器能列出视图的路径问题。需要看实际排版时，可用仓库内的预览命令调用 App 的 `PluginView`，把一份静态 JSON 和数据快照画成浅色、深色 PNG。它使用 App 的 Flutter 解析器、组件和主题；不启动 XRK，不加载插件 JavaScript，也不发送动作。
 
 ## 准备
 
-需要完整 dsh-go 源码、Node 22.19+、仓库指定的 Flutter，以及已经准备好依赖、本地化、App 字体和测试字体的 `app/`。预览沿用 `test/flutter_test_config.dart` 的严格字体检查；缺字体会失败，不静默换成占位字体。`DSH_TEST_FONT_DIR` 可指定 Noto Sans CJK 字体目录，见 `app/test/support/test_fonts.dart`。
+需要完整 xrk-mobile 源码、Node 22.19+、仓库指定的 Flutter，以及已经准备好依赖、本地化、App 字体和测试字体的 `app/`。预览沿用 `test/flutter_test_config.dart` 的严格字体检查；缺字体会失败，不静默换成占位字体。`XRK_TEST_FONT_DIR` 可指定 Noto Sans CJK 字体目录，见 `app/test/support/test_fonts.dart`。
 
 先按项目现有流程准备 App；预览本身运行 `flutter test --no-pub`，不改依赖、构建配置或生成本地化。它是源码仓库内的开发工具，不是手机内置技能的一部分。
 
@@ -21,7 +21,7 @@ node sdk/plugin-kit/bin/preview.mjs /绝对路径/view.json \
   --width 320 --height 960 --scale 1.3
 ```
 
-`--data` 可省略。原始视图默认按面板检查；形如 `{ "dsh-go/view": ... }` 的工具结果元数据自动使用工具卡上限，工具卡不会读取数据模型。也可以显式传 `--budget panel|strip|toolCard`。
+`--data` 可省略。原始视图默认按面板检查；形如 `{ "xrk-mobile/view": ... }` 的工具结果元数据自动使用工具卡上限，工具卡不会读取数据模型。也可以显式传 `--budget panel|strip|toolCard`。
 
 | 参数 | 默认值与范围 |
 |---|---|

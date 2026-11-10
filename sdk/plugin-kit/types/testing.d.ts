@@ -18,7 +18,7 @@ export interface TestFeed<D = unknown> {
   data: D | null | undefined
   /** Every emitted value, in order (no 4 Hz throttling here). */
   history: Array<D | null>
-  /** How many times ctx.dshGo.refresh(id) was called while subscribed. */
+  /** How many times ctx.xrkGo.refresh(id) was called while subscribed. */
   stale: number
   /** Emits the bridge would reject, and failures of the data function or its cleanup. */
   errors: string[]
@@ -31,14 +31,14 @@ export interface TestHost {
   /** Pass to your plugin: `plugin.apply(host.ctx)`. Cordis-like: inject, on, effect, get, logger. */
   readonly ctx: any
   readonly caps: Caps
-  readonly dshGo: DshGoService
-  /** Callbacks waiting for services the host does not provide (e.g. dshGo with `bridge: false`). */
+  readonly xrkGo: DshGoService
+  /** Callbacks waiting for services the host does not provide (e.g. xrkGo with `bridge: false`). */
   readonly pending: Array<{ missing: string[]; callback: (ctx: any) => void }>
   readonly logs: unknown[][]
   readonly violations: unknown[]
-  /** The plugin's row in GET /dsh-go/v1/contributions. */
+  /** The plugin's row in GET /xrk-mobile/v1/contributions. */
   contributions(caps?: Partial<Caps>): ContributionsPlugin
-  /** POST /dsh-go/v1/invoke; rejects with HostError where the bridge answers an error. */
+  /** POST /xrk-mobile/v1/invoke; rejects with HostError where the bridge answers an error. */
   invoke(id: string, request?: {
     surface?: 'composer.actions' | 'message.actions' | 'composer.strip' | 'panel' | 'composer.tools' | 'session.actions'
     action?: string
@@ -62,7 +62,7 @@ export interface TestHost {
   media(id: string, scope?: Scope, options?: { key?: string; locale?: string; signal?: AbortSignal }): Promise<{ body: Uint8Array; contentType: string }>
   subscribeMicro(id: string, scope?: Scope): TestFeed<MicroData>
   capabilityEvent(scope: Scope, event: Omit<CapabilityEvent, 'signal'>): Promise<void>
-  /** GET /dsh-go/v1/views/<pkg>/<id>. */
+  /** GET /xrk-mobile/v1/views/<pkg>/<id>. */
   view(id: string, scope?: Scope, caps?: Partial<Caps>): Promise<{ view: View; stats: { bytes: number; nodes: number; depth: number } }>
   /** Start the data function of a panel, strip or turn note. Removing or replacing its registration stops the feed. */
   subscribe<D = any>(id: string, scope?: Scope): TestFeed<D>
@@ -79,7 +79,7 @@ export function createTestHost(options?: {
   /** Other cordis services by name, e.g. { sessions }. */
   services?: Record<string, unknown>
   caps?: Partial<Caps>
-  /** false: a host without dsh-go-bridge (the dshGo service never appears). */
+  /** false: a host without xrk-bridge (the xrkGo service never appears). */
   bridge?: boolean
 }): TestHost
 

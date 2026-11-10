@@ -7617,10 +7617,25 @@ class L10nZh extends L10n {
   String get featuresExportSaveDownloads => '存到「下载」';
 
   @override
-  String get featuresExportDownloadsHint => '存进 下载/XRK-Harness';
+  String get featuresExportDownloadsHint => '存进 下载/XRK-Harness；可再用其他应用打开';
 
   @override
   String get featuresExportContents => '含这个对话和子代理的全部记录与附件';
+
+  @override
+  String get featuresExportSavedTitle => '日志已保存';
+
+  @override
+  String get featuresExportOpenOther => '用其他应用打开';
+
+  @override
+  String get featuresExportOpenHint => '系统文件管理或解压软件；本应用不内置资源管理器';
+
+  @override
+  String get featuresExportOpenFailed => '没有能打开 ZIP 的应用，可改用分享';
+
+  @override
+  String get featuresExportOverviewHint => '打包成 ZIP，可分享或存到下载';
 
   @override
   String get featuresSkillUseHere => '在对话里用';
@@ -8292,7 +8307,7 @@ class L10nZh extends L10n {
   String get hubAbout => '关于 XRK Harness';
 
   @override
-  String get hubAboutAuthor => 'XRK Harness 原作者';
+  String get hubAboutAuthor => '开源仓库';
 
   @override
   String get hubAboutBilibili => 'B站主页';
@@ -9465,7 +9480,7 @@ class L10nZh extends L10n {
   String get petActionBusy => '这个对话正在忙，请选择「新对话」';
 
   @override
-  String get petActionVoiceMissing => '先到 App 下载离线语音模型';
+  String get petActionVoiceMissing => '手机版暂不支持语音输入，请打字';
 
   @override
   String get petActionVoiceTitle => '语音问一句';
@@ -9762,19 +9777,19 @@ class L10nZh extends L10n {
   String get phoneAppRuleNormal => '照常';
 
   @override
-  String get phoneAppRuleDenyHint => '不读也不点，银行、支付类默认如此';
+  String get phoneAppRuleDenyHint => '立即生效：不读也不点，银行、支付类默认如此';
 
   @override
-  String get phoneAppRuleConfirmHint => '可以读，点按和输入前先问你';
+  String get phoneAppRuleConfirmHint => '立即生效：可以读，点按和输入前先问你';
 
   @override
-  String get phoneAppRuleNormalHint => '只有发送这类敏感操作先问你';
+  String get phoneAppRuleNormalHint => '立即生效：只有发送这类敏感操作先问你';
 
   @override
   String get phoneAppRulesTitle => '应用名单';
 
   @override
-  String get phoneAppRulesSubtitle => '没列出的 App 照常处理，敏感操作仍先问你';
+  String get phoneAppRulesSubtitle => '没列出的 App 照常处理，敏感操作仍先问你；改完立即生效';
 
   @override
   String get phoneAppRulesUnavailable => '读不到应用名单';
@@ -10032,13 +10047,13 @@ class L10nZh extends L10n {
   String get phoneConfirmAlways => '始终免确认';
 
   @override
-  String get phoneConfirmAskHint => '进新 App、发送、删除、付款前先问你';
+  String get phoneConfirmAskHint => '立即生效：进新 App、发送、删除、付款前先问你';
 
   @override
-  String get phoneConfirmTaskHint => '每个任务只问一次';
+  String get phoneConfirmTaskHint => '立即生效：每个任务只问一次';
 
   @override
-  String get phoneConfirmAlwaysHint => '从不询问，直接操作';
+  String get phoneConfirmAlwaysHint => '立即生效：从不询问，直接操作';
 
   @override
   String get phoneConfirmTitle => '确认方式';
@@ -10051,6 +10066,16 @@ class L10nZh extends L10n {
 
   @override
   String get phoneConfirmSaveFailed => '没改成，稍后再试';
+
+  @override
+  String phoneConfirmApplied(String mode) {
+    return '已改为「$mode」，下一步起生效';
+  }
+
+  @override
+  String phoneAppRuleApplied(String app, String rule) {
+    return '「$app」已改为「$rule」，下一步起生效';
+  }
 
   @override
   String get phoneEnableFailed => '没能开启，稍后再试';
@@ -16463,7 +16488,7 @@ class L10nZh extends L10n {
 
   @override
   String shellSkillInstallDirectory(String skill) {
-    return '1. 目标目录是 `\$DSH_HOME/skills/$skill/`（没有设置 DSH_HOME 时是 `~/.dsh/skills/$skill/`），不存在就先建。';
+    return '1. 目标目录是 `\$XRK_HOME/skills/$skill/`（没有设置 XRK_HOME 时是 `~/.dsh/skills/$skill/`），不存在就先建。';
   }
 
   @override

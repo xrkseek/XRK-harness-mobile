@@ -1,6 +1,6 @@
 // Development entry point (plugin seats end to end): the real app, with its
-// on-device engine swapped for a DSH reached through `adb reverse` — a staged
-// runtime (route guard + dsh-go-bridge) running on the build machine. Not part
+// on-device engine swapped for a XRK reached through `adb reverse` — a staged
+// runtime (route guard + xrk-bridge) running on the build machine. Not part
 // of any release.
 //
 //   tooling/build-apk.sh --debug -f x64 -t lib/dev/seams_e2e_main.dart
@@ -56,7 +56,7 @@ Future<RuntimeStatus?> _readStatus() async {
       abi: 'x86_64',
       bundledVersion: version,
       installedVersion: version,
-      dshVersion: '0.2.1-rc.2',
+      engineVersionAlias: '0.2.1-rc.2',
       nodeVersion: '24.22.1',
       baseUrl: url,
       token: token,
@@ -74,7 +74,7 @@ Future<void> main() async {
   runApp(
     ProviderScope(
       overrides: [if (status != null) localRuntimeProvider.overrideWith(() => _HostEngine(status))],
-      child: const DshApp(),
+      child: const XrkApp(),
     ),
   );
 }

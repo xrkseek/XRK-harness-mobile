@@ -1,7 +1,7 @@
 // Regression based on the independent W1 review reproducer.
 import 'dart:async';
 
-import 'package:dsh_app/state/bots_state.dart';
+import 'package:xrk_app/state/bots_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

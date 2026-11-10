@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,7 +33,7 @@ void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final fixture =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_truncated_post.json').readAsStringSync()) as Map;
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_truncated_post.json').readAsStringSync()) as Map;
   final full = {
     'text': ((fixture['unit'] as String) * (fixture['inputRepeats'] as int)).substring(0, fixture['textLength'] as int),
     'whole': fixture['whole'],

@@ -681,7 +681,7 @@
       "type": "boolean",
       "meta": {
         "default": true,
-        "description": "Target voice dictation and numeric choices to active DSH structured prompt modals."
+        "description": "Target voice dictation and numeric choices to active XRK structured prompt modals."
       }
     },
     "543": {

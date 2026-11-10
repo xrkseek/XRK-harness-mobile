@@ -1,4 +1,4 @@
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import 'engine_settings_state.dart' show InventoryStatus, inventoryStatus;
 

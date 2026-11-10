@@ -1,9 +1,9 @@
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/pets/pet_mood.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/pets/pet_mood.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +27,7 @@ class _Rpc extends DshRpc {
   }
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   late final _petMux = _Mux(carrier);
   late final _petRpc = _Rpc(carrier);

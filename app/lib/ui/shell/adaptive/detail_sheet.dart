@@ -31,7 +31,7 @@ Future<void> showDetailSheet(
       builder: builder,
       label: label ?? context.l10n.shellChatDetails,
       onWide: onWide,
-      barrier: DshSurfaces.of(context).scrim,
+      barrier: XrkSurfaces.of(context).scrim,
       inDuration: reduced ? Duration.zero : AppMotion.sheetIn,
       outDuration: reduced ? Duration.zero : AppMotion.sheetOut,
     ),

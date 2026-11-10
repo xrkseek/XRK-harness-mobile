@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' hide SettingsSection;
+import 'package:xrk_client/xrk_client.dart' hide SettingsSection;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -193,7 +193,7 @@ class _VoiceScribeSettingsPageState extends ConsumerState<VoiceScribeSettingsPag
                         : data.hotwordsPath.isEmpty
                         ? null
                         : data.hotwordsPath,
-                    subtitleColor: data.hotwordsError.isNotEmpty ? DshColors.of(context).danger : null,
+                    subtitleColor: data.hotwordsError.isNotEmpty ? XrkColors.of(context).danger : null,
                   ),
                 ],
               ),

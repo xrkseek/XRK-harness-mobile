@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_formula.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_formula.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,15 +23,15 @@ void main() {
           'value': {'=': sample.formula},
         }),
       );
-      final number = evaluateDshUiFormula(sample.formula, data);
+      final number = evaluateXrkUiFormula(sample.formula, data);
       expect(number, sample.value);
 
       // Exercise the public consumer entry used by plugin views, including
       // formula resolution, missing-value rendering and parser diagnostics.
       final result = parsePluginView(source, data: data);
-      expect(result, isA<DshUiParsed>());
-      final parsed = (result as DshUiParsed).view;
-      final metric = parsed.root as DshUiMetric;
+      expect(result, isA<XrkUiParsed>());
+      final parsed = (result as XrkUiParsed).view;
+      final metric = parsed.root as XrkUiMetric;
       expect(metric.label, 'Count');
       expect(metric.value, sample.value == null ? '—' : '2');
       final formulaIssues = parsed.issues.where((issue) => issue.message == appL10n.plugInputFormula).toList();

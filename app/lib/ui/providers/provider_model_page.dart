@@ -207,7 +207,7 @@ class _ProviderModelPageState extends State<ProviderModelPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = theme.colorScheme;
     final defaults = widget.defaults;
 
@@ -455,7 +455,7 @@ class _LevelList extends StatelessWidget {
                     liveRegion: true,
                     child: Text(
                       error!,
-                      style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).danger),
+                      style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).danger),
                     ),
                   ),
                 ),

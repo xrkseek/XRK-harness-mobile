@@ -4,9 +4,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/session_attention_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/session_attention_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 
 import '../workspace/support.dart';

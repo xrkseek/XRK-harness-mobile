@@ -230,7 +230,7 @@ class _MermaidPreviewPageState extends State<MermaidPreviewPage> {
                                 : Text(
                                     _problem!,
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: DshColors.of(context).textTertiary,
+                                      color: XrkColors.of(context).textTertiary,
                                     ),
                                   ),
                           ),

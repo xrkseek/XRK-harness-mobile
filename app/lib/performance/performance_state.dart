@@ -17,8 +17,8 @@ class PerformanceChannel {
   @visibleForTesting
   static PerformanceChannel Function() create = PerformanceChannel.new;
 
-  static const _methods = MethodChannel('dsh/performance');
-  static const _events = EventChannel('dsh/performance/events');
+  static const _methods = MethodChannel('xrk/performance');
+  static const _events = EventChannel('xrk/performance/events');
   Future<PerformanceSnapshot>? _initial;
 
   Future<PerformanceSnapshot> snapshot() => _initial ??= _read();

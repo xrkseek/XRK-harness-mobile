@@ -37,7 +37,7 @@ python3 app/tool/l10n_catalog.py snapshot --output catalog-v2.json
 
 ## 数据契约 v1
 
-来源快照标识：`format: dsh-go-i18n-catalog`、`schemaVersion: 1`、`sourceHashAlgorithm: sha256-canonical-source-v1`。每条来源的 hash 计算对象严格为：
+来源快照标识：`format: xrk-mobile-i18n-catalog`、`schemaVersion: 1`、`sourceHashAlgorithm: sha256-canonical-source-v1`。每条来源的 hash 计算对象严格为：
 
 ```python
 payload = {"area": area, "zh": chinese_text,
@@ -55,7 +55,7 @@ source_hash = sha256(json.dumps(payload, ensure_ascii=False,
 
 ```json
 {
-  "format": "dsh-go-i18n-translations",
+  "format": "xrk-mobile-i18n-translations",
   "schemaVersion": 1,
   "locale": "ru",
   "entries": {

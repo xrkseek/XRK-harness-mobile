@@ -1,11 +1,11 @@
 // Portions derived from PiPilot (https://github.com/CikeSeven/pi_pilot), MIT, Copyright (c) 2026 CikeSeven. See THIRD_PARTY_NOTICES.md.
-// Local changes: rewritten for dsh_client / Riverpod state; keeps the
+// Local changes: rewritten for xrk_client / Riverpod state; keeps the
 // floating-composer height sync and the "content scrolls under glass" layout.
 
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,9 +41,6 @@ import '../../state/session_modes.dart';
 import '../../state/sessions_state.dart';
 import '../../state/settings_state.dart';
 import '../../state/usage_state.dart';
-import '../../state/voice_state.dart';
-import '../../state/voice_model_state.dart';
-import '../../state/voice_settings.dart';
 import '../../state/workspaces_state.dart' show selectedWorkspaceProvider, workspaceTitle;
 import '../../usage/usage_stats.dart';
 import '../common/app_sheet.dart';
@@ -70,7 +67,6 @@ import '../shell/adaptive/adaptive_layout.dart' show WindowClass;
 import '../shell/drawer/folder_sheets.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import '../wallpaper/wallpaper_backdrop.dart';
 import '../workspace/workspace_switcher.dart' show showWorkspaceSheet;
 import '../workspace/workspaces_page.dart';
 import 'balance_widgets.dart';
@@ -93,7 +89,6 @@ import 'model_sheet.dart';
 import 'slash_palette.dart';
 import 'trajectory_sheet.dart';
 import 'usage_sheet.dart';
-import 'voice/voice_controller.dart';
 import 'widgets/activity_strip.dart';
 import 'widgets/attachments.dart';
 import 'widgets/notice_row.dart';
@@ -176,13 +171,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     recents: ref.read(mentionRecentsProvider),
   );
 
-  /// Dictation into [_input]. Made in [initState], not on first use: a
-  /// read-only conversation never builds the composer, and [dispose] must not
-  /// create it from an unmounted ref.
-  late final VoiceInputController _voice;
-
-  /// Where [_voice] says it is on, for what waits for a quiet moment.
-  late final VoiceInputActiveController _voiceFlag;
+  // Mobile product: no ASR (VoicePlugin / SenseVoice removed).
   final _focus = FocusNode();
 
   /// 底色遮罩的实心高度:页面布局排好输入条时写入(见 [_ChatLayout])。
@@ -227,7 +216,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     );
   }
 
-  void _reportVoice() => _voiceFlag.set(_voice.active);
 
   void _switchDraft(String? sessionId) {
     final key = sessionId ?? 'new';
@@ -236,7 +224,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     _creating = null;
     _syncWait = null;
     _composerToastWait?.cancel();
-    if (_voice.active) unawaited(_voice.cancel());
     _mentions.dismiss();
     _saveDraft();
     _draftKey = key;
@@ -254,29 +241,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     WidgetsBinding.instance.addObserver(this);
     _scheduleInteraction();
     ref.listenManual(currentSessionProvider, (_, _) => _scheduleInteraction());
-    _voice = VoiceInputController(
-      input: _input,
-      bridge: ref.read(voiceBridgeProvider),
-      mode: () => ref.read(voiceSettingsProvider.notifier).ready(),
-      // The voice model lives in the on-device engine: it counts for that host only.
-      modelReady: () =>
-          mounted &&
-          (ref.read(activeConnectionProvider).value?.isLocal ?? false) &&
-          ref.read(voiceModelProvider).status == VoiceModelStatus.ready,
-      // The capability probe is async and can finish after this page is gone.
-      client: () => mounted ? ref.read(activeConnectionProvider).value?.client : null,
-      onRecognized: () {
-        if (mounted) ref.read(usageStatsProvider.notifier).count(UsageCount.voice);
-      },
-    );
-    // A download or deletion changes capabilities without replacing the host.
-    ref.listenManual(voiceModelProvider.select((s) => s.status == VoiceModelStatus.ready), (_, _) {
-      if (mounted && (ref.read(activeConnectionProvider).value?.isLocal ?? false)) {
-        unawaited(_voice.refreshAfterModelChange());
-      }
-    });
-    _voiceFlag = ref.read(voiceInputActiveProvider.notifier);
-    _voice.addListener(_reportVoice);
     _draftKey = ref.read(currentSessionProvider) ?? 'new';
     _draftStore = ref.read(draftStoreProvider.notifier);
     // Start reading what earlier sessions still owe before the first send.
@@ -388,11 +352,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     _composerToastWait?.cancel();
     _input.removeListener(_saveDraft);
     _mentions.dispose();
-    _voice.removeListener(_reportVoice);
-    _voice.dispose();
-    // The page is gone, and its dictation with it.
-    final flag = _voiceFlag;
-    scheduleMicrotask(() => flag.set(false));
     _input.dispose();
     _focus.dispose();
     _scrolledUnder.dispose();
@@ -510,7 +469,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
         } finally {
           container.invalidate(permissionStateProvider(sessionId));
         }
-        if (!result.success) throw DshRemoteException('permission', result.text ?? permission);
+        if (!result.success) throw XrkRemoteException('permission', result.text ?? permission);
         setups.settled(host, sessionId, permission: permission);
         if (!current()) return false;
       }
@@ -637,7 +596,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   // A failed send belongs to the Host that accepted it. The controller may
   // retire its continuation after reconnect; do not restore its draft into a
   // replacement Host merely because it uses the same session id.
-  bool _sameConnection(DshClient client, MuxGeneration? generation) =>
+  bool _sameConnection(XrkClient client, MuxGeneration? generation) =>
       mounted &&
       identical(ref.read(activeConnectionProvider).value?.client, client) &&
       identical(client.mux.generation, generation);
@@ -740,10 +699,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
         setState(() => _drafts = merged.attachments);
         _compose(merged.text, quoteChip: false, focus: !request.voice);
         _saveDraft();
-        if (request.voice) {
-          _focus.unfocus();
-          unawaited(_voice.start());
-        }
+        // Voice shortcut requests are ignored: mobile ASR is removed.
         if (merged.problem ?? request.note case final line?) {
           showComposerToast(context, line, composerHeight: _veilHeight.value + _ChatLayout.overlap);
         }
@@ -1357,7 +1313,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     );
   }
 
-  /// 「换模型」 after the engine refused the model. DSH follows the official
+  /// 「换模型」 after the engine refused the model. XRK follows the official
   /// model listing, so the catalog read earlier may be stale: read it again.
   void _switchModel() {
     ref.invalidate(modelCatalogProvider);
@@ -1544,7 +1500,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final workspace =
         ref.watch(selectedWorkspaceProvider) ?? (newChat ? ref.watch(recentWorkspaceForNewChatProvider) : null);
     final inHostDefault = newChat && workspace == null && ref.watch(newChatInHostDefaultProvider);
-    // A one-shot subagent takes no messages: DSH Web shows it read-only.
+    // A one-shot subagent takes no messages: XRK Web shows it read-only.
     final readOnly =
         sessionId != null &&
         ref.watch(subagentParentProvider(sessionId).select((p) => p?.address.mode == SubagentMode.oneShot));
@@ -1599,7 +1555,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     );
     final headerHeight = typing ? MediaQuery.paddingOf(context).top + AppSpace.sm : ChatHeader.heightOf(context);
 
-    Widget backdrop(Widget child) => widget.backdrop ? WallpaperBackdrop(child: child) : child;
+    Widget backdrop(Widget child) => widget.backdrop ? AppBackdrop(child: child) : child;
     final screen = AnnotatedRegion<SystemUiOverlayStyle>(
       value: dshSystemOverlay(Theme.of(context).brightness),
       child: backdrop(
@@ -1981,7 +1937,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                         : l10n.mediaHintImage,
                                     onSend: _send,
                                     onSendOptions: chat?.controlReady ?? true ? _sendOptions : null,
-                                    voice: _voice,
+                                    voice: null,
                                     onKeyEvent: _mentions.handleKey,
                                     onContentInserted: connected ? _pasteContent : null,
                                     onStop: _stop,

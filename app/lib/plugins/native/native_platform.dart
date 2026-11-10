@@ -9,8 +9,8 @@ abstract interface class NativeMediaPlatform {
 }
 
 class MethodNativeMediaPlatform implements NativeMediaPlatform {
-  static const _methods = MethodChannel('dsh/native-media');
-  static const _events = EventChannel('dsh/native-media/events');
+  static const _methods = MethodChannel('xrk/native-media');
+  static const _events = EventChannel('xrk/native-media/events');
   @override
   Future<Set<String>> capabilities() async {
     try {

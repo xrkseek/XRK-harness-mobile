@@ -3,10 +3,10 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_controls.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_controls_state.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_controls.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_controls_state.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -124,7 +124,7 @@ void main() {
           },
         ],
       };
-      final parsed = parsePluginView(source, data: {'count': scenario.start}) as DshUiParsed;
+      final parsed = parsePluginView(source, data: {'count': scenario.start}) as XrkUiParsed;
       expect(parsed.view.issues.where((i) => i.path != 'view.accent'), isEmpty);
       await tester.pumpWidget(
         _bed(
@@ -138,8 +138,8 @@ void main() {
       );
       await tester.tap(_step('view.children[0]', up: scenario.up));
       await tester.pump();
-      final node = tester.widget<DshUiInputView>(find.byType(DshUiInputView)).node;
-      final state = PluginControlsScope.maybeOf(tester.element(find.byType(DshUiInputView)))!;
+      final node = tester.widget<XrkUiInputView>(find.byType(XrkUiInputView)).node;
+      final state = PluginControlsScope.maybeOf(tester.element(find.byType(XrkUiInputView)))!;
       final actual = state.value(node);
       expect(actual, scenario.up ? scenario.max : scenario.min);
       expect(node.validate(actual), isNull);
@@ -167,8 +167,8 @@ void main() {
       if (button.onPressed == null) break;
       await tester.tap(_step('view', up: true));
       await tester.pump();
-      final node = tester.widget<DshUiInputView>(find.byType(DshUiInputView)).node;
-      final next = PluginControlsScope.maybeOf(tester.element(find.byType(DshUiInputView)))!.value(node) as num;
+      final node = tester.widget<XrkUiInputView>(find.byType(XrkUiInputView)).node;
+      final next = PluginControlsScope.maybeOf(tester.element(find.byType(XrkUiInputView)))!.value(node) as num;
       expect(next, greaterThan(previous));
       expect(next, inInclusiveRange(-.3, .3));
       expect(node.validate(next), isNull);
@@ -190,8 +190,8 @@ void main() {
       for (final button in tester.widgetList<OutlinedButton>(find.byType(OutlinedButton))) {
         expect(button.onPressed, isNull);
       }
-      final node = tester.widget<DshUiInputView>(find.byType(DshUiInputView)).node;
-      final state = PluginControlsScope.maybeOf(tester.element(find.byType(DshUiInputView)))!;
+      final node = tester.widget<XrkUiInputView>(find.byType(XrkUiInputView)).node;
+      final state = PluginControlsScope.maybeOf(tester.element(find.byType(XrkUiInputView)))!;
       expect(state.value(node), start);
       expect(state.dirty(node.bind!), isFalse);
       expect(node.validate(start), isNull);
@@ -201,7 +201,7 @@ void main() {
   for (final scale in [1.0, 2.0]) {
     testWidgets('a real 80 dp stepper stacks targets at scale $scale', (tester) async {
       _phone(tester, scale: scale);
-      const node = DshUiInput(
+      const node = XrkUiInput(
         path: 'view',
         kind: 'stepper',
         label: 'Count',
@@ -222,14 +222,14 @@ void main() {
                 width: 80,
                 child: PluginControlsScope(
                   controller: state,
-                  child: const DshUiInputView(node: node),
+                  child: const XrkUiInputView(node: node),
                 ),
               ),
             ),
           ),
         ),
       );
-      final parent = tester.getRect(find.byType(DshUiInputView));
+      final parent = tester.getRect(find.byType(XrkUiInputView));
       expect(parent.width, 80);
       final targets = find.byType(OutlinedButton);
       final first = tester.getRect(targets.at(0)), second = tester.getRect(targets.at(1));
@@ -246,7 +246,7 @@ void main() {
     testWidgets('maximum-depth mixed containers preserve controls at 320 dp scale $scale', (tester) async {
       _phone(tester, scale: scale);
       final view = _deepView();
-      final parsed = parsePluginView(view, data: {'count': 1, 'enabled': false, 'name': 'A'}) as DshUiParsed;
+      final parsed = parsePluginView(view, data: {'count': 1, 'enabled': false, 'name': 'A'}) as XrkUiParsed;
       expect(
         parsed.view.issues.where((i) => i.path != 'view.accent'),
         isEmpty,
@@ -255,7 +255,7 @@ void main() {
       final semantics = tester.ensureSemantics();
       await tester.pumpWidget(_bed(view, data: {'count': 1, 'enabled': false, 'name': 'A'}));
       await tester.pump();
-      expect(find.byType(DshUiInputView), findsNWidgets(3));
+      expect(find.byType(XrkUiInputView), findsNWidgets(3));
       expect(find.byType(SelectableText), findsOneWidget);
       final parent = tester.getRect(find.byType(PluginView));
       for (final finder in [find.byType(OutlinedButton), find.byType(TextField)]) {
@@ -287,7 +287,7 @@ void main() {
       expect(toggleNode.rect.height, greaterThanOrEqualTo(48));
       expect(toggleNode.getSemanticsData().hasAction(ui.SemanticsAction.tap), isTrue);
       debugPrint(
-        'F2_REPAIR_DEEP scale=$scale inputs=${tester.getRect(find.byType(DshUiInputView).first).width} buttons=${find.byType(OutlinedButton).evaluate().map((e) => tester.getSize(find.byWidget(e.widget))).toList()}',
+        'F2_REPAIR_DEEP scale=$scale inputs=${tester.getRect(find.byType(XrkUiInputView).first).width} buttons=${find.byType(OutlinedButton).evaluate().map((e) => tester.getSize(find.byWidget(e.widget))).toList()}',
       );
       semantics.dispose();
       expect(tester.takeException(), isNull);

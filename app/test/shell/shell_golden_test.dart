@@ -5,20 +5,20 @@
 // Platform channels don't exist here, so every provider that would touch the
 // native runtime, secure storage or the network is replaced by a fake.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/engine/engine_screen.dart';
-import 'package:dsh_app/ui/onboarding/api_key_page.dart';
-import 'package:dsh_app/ui/onboarding/onboarding_scaffold.dart';
-import 'package:dsh_app/ui/onboarding/runtime_setup_page.dart';
-import 'package:dsh_app/ui/onboarding/welcome_page.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_app/ui/web/local_web_screen.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/engine/engine_screen.dart';
+import 'package:xrk_app/ui/onboarding/api_key_page.dart';
+import 'package:xrk_app/ui/onboarding/onboarding_scaffold.dart';
+import 'package:xrk_app/ui/onboarding/runtime_setup_page.dart';
+import 'package:xrk_app/ui/onboarding/welcome_page.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/web/local_web_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -204,7 +204,7 @@ class _FakeChat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     Widget line(double width) => Container(
       margin: const EdgeInsets.only(bottom: 10),
       width: width,
@@ -236,7 +236,7 @@ class _FakeChat extends StatelessWidget {
             const SizedBox(height: 16),
             Container(
               height: 120,
-              decoration: ShapeDecoration(color: DshColors.of(context).codeWellBg, shape: AppShape.card),
+              decoration: ShapeDecoration(color: XrkColors.of(context).codeWellBg, shape: AppShape.card),
             ),
             const SizedBox(height: 16),
             line(310),

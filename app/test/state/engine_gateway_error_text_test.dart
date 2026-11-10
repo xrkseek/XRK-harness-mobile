@@ -1,8 +1,8 @@
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/chat_error_text.dart';
-import 'package:dsh_app/state/engine_error_text.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/chat_error_text.dart';
+import 'package:xrk_app/state/engine_error_text.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,7 +21,7 @@ void main() {
   // error for session/create. HTTP login had succeeded. No credentials or
   // workspace paths are needed to preserve this response's error semantics.
   test('real unavailable session controller is not a version failure', () {
-    final error = DshRemoteException.fromJson({
+    final error = XrkRemoteException.fromJson({
       'code': 'gateway/service-unavailable',
       'message': 'typert gateway: session/create: active Service "sessionController" is unavailable',
       'details': {'endpoint': 'session/create'},
@@ -37,7 +37,7 @@ void main() {
     'gateway/lookup-unavailable',
   ]) {
     test('$code takes precedence over private settings message guesses', () {
-      final error = DshRemoteException(code, privateMessage, {'token': 'test-secret'});
+      final error = XrkRemoteException(code, privateMessage, {'token': 'test-secret'});
       expect(engineErrorReason(error), serviceReason);
       expect(chatErrorText(error, action: '提交失败'), '提交失败：$serviceReason');
       expect(describeSettingsError(error), serviceReason);
@@ -52,7 +52,7 @@ void main() {
     'gateway/method-unavailable',
   ]) {
     test('$code does not guess the engine version or a transient network failure', () {
-      final error = DshRemoteException(code, privateMessage);
+      final error = XrkRemoteException(code, privateMessage);
       expect(engineErrorReason(error), operationReason);
       expect(chatErrorText(error, action: '提交失败'), '提交失败：$operationReason');
       expect(describeSettingsError(error), operationReason);
@@ -61,15 +61,15 @@ void main() {
 
   for (final code in const ['gateway/method-not-found', 'gateway/not-found']) {
     test('$code retains the explicit legacy unsupported response', () {
-      final error = DshRemoteException(code, 'no such method');
+      final error = XrkRemoteException(code, 'no such method');
       expect(engineErrorReason(error), appL10n.stateEngineUnsupported);
       expect(describeSettingsError(error), appL10n.stateEngineUnsupported);
     });
   }
 
   test('cancelled and disposed requests never become version failures', () {
-    const cancelled = DshRemoteException('gateway/cancelled', privateMessage);
-    const disposed = DshRemoteException('gateway/peer-disposed', privateMessage);
+    const cancelled = XrkRemoteException('gateway/cancelled', privateMessage);
+    const disposed = XrkRemoteException('gateway/peer-disposed', privateMessage);
     expect(engineErrorReason(cancelled), appL10n.commonCancelled);
     expect(describeSettingsError(cancelled), appL10n.commonCancelled);
     expect(engineErrorReason(disposed), appL10n.commonEngineUnreachable);
@@ -87,7 +87,7 @@ void main() {
     'gateway/internal',
   ]) {
     test('$code keeps the neutral page fallback without exposing raw details', () {
-      final error = DshRemoteException(code, 'unclassified private-value');
+      final error = XrkRemoteException(code, 'unclassified private-value');
       expect(engineErrorReason(error), isNull);
       expect(chatErrorText(error, action: '提交失败'), '提交失败');
       expect(describeSettingsError(error), appL10n.stateSettingsRejected);
@@ -96,24 +96,24 @@ void main() {
 
   test('existing settings and credential validation remains useful', () {
     expect(
-      describeSettingsError(const DshRemoteException('settings/conflict', privateMessage)),
+      describeSettingsError(const XrkRemoteException('settings/conflict', privateMessage)),
       appL10n.stateSettingsRefreshed,
     );
     expect(
-      describeSettingsError(const DshRemoteException('credential/rejected', privateMessage)),
+      describeSettingsError(const XrkRemoteException('credential/rejected', privateMessage)),
       appL10n.stateCredentialFromEnvironment,
     );
     expect(
-      describeSettingsError(const DshRemoteException('gateway/internal', 'expected number >= 2')),
+      describeSettingsError(const XrkRemoteException('gateway/internal', 'expected number >= 2')),
       appL10n.stateSettingsMinimum('2'),
     );
     // A bound that is not a number is never copied into the sentence.
     expect(
-      describeSettingsError(const DshRemoteException('gateway/internal', privateMessage)),
+      describeSettingsError(const XrkRemoteException('gateway/internal', privateMessage)),
       isNot(contains('private-key')),
     );
     expect(
-      describeSettingsError(const DshRemoteException('settings/rejected', 'read-only')),
+      describeSettingsError(const XrkRemoteException('settings/rejected', 'read-only')),
       appL10n.stateSettingsReadOnly,
     );
   });
@@ -126,17 +126,17 @@ void main() {
       engineErrorReason(const DshCarrierRefusedException('AUTH_DENIED', 'private-value')),
       appL10n.stateEngineAuthFailed,
     );
-    expect(engineErrorReason(const DshRemoteException('session/not-found', 'private-value')), appL10n.stateChatMissing);
+    expect(engineErrorReason(const XrkRemoteException('session/not-found', 'private-value')), appL10n.stateChatMissing);
   });
 
   test('the two new reasons have matching English copy', () {
     AppLocale.use(AppLocale.en);
     expect(
-      engineErrorReason(const DshRemoteException('gateway/service-unavailable', privateMessage)),
+      engineErrorReason(const XrkRemoteException('gateway/service-unavailable', privateMessage)),
       'The required engine service is not ready. Check the engine logs or export diagnostics.',
     );
     expect(
-      describeSettingsError(const DshRemoteException('gateway/invocation-unavailable', privateMessage)),
+      describeSettingsError(const XrkRemoteException('gateway/invocation-unavailable', privateMessage)),
       'The engine cannot run this operation right now. Check the engine logs.',
     );
   });

@@ -1,15 +1,15 @@
 // 设置 → 手机操控 → 悬浮条 (lib/ui/phone/phone_control_screen.dart): 闲置时不透明度
 // (30–100 %, 70 % by default, sent to the native side on every step so a showing
-// pill follows), 闲置时自动收起 (off by default) and 完成后返回 DSH Go, shown
+// pill follows), 闲置时自动收起 (off by default) and 完成后返回 XRK Go, shown
 // once phone control is on.
 
 import 'dart:ui' show Tristate;
 
-import 'package:dsh_app/phone/phone_channel.dart';
-import 'package:dsh_app/state/phone_overlay_prefs.dart';
-import 'package:dsh_app/state/phone_turn_end.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/phone/phone_control_screen.dart';
+import 'package:xrk_app/phone/phone_channel.dart';
+import 'package:xrk_app/state/phone_overlay_prefs.dart';
+import 'package:xrk_app/state/phone_turn_end.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/phone/phone_control_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,7 +23,7 @@ import 'support.dart';
 const _group = '悬浮条';
 const _opacity = '闲置时不透明度';
 const _auto = '闲置时自动收起';
-const _return = '完成后返回 DSH Go';
+const _return = '完成后返回 XRK Go';
 
 Finder _row(String title) => find.ancestor(of: find.text(title), matching: find.byType(ListPageRow)).first;
 
@@ -113,7 +113,7 @@ void main() {
       expect(h.native!.overlay['autoCollapse'], isFalse);
     });
 
-    testWidgets('完成后返回 DSH Go: toggled and kept in the app', (tester) async {
+    testWidgets('完成后返回 XRK Go: toggled and kept in the app', (tester) async {
       await pumpPhone(tester, const PhoneControlScreen(), native: FakePhoneNative(status: phoneStatus()));
       await _reveal(tester);
       await tester.tap(find.text(_return));

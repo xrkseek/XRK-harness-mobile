@@ -1,8 +1,8 @@
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/chat/render/markdown_image.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/chat/render/markdown_image.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +34,7 @@ class _Files extends Notifier<ArtifactFiles> {
 
 ArtifactFiles _filesOn(String base) => ArtifactFiles(
   connection: HostConnection(
-    client: DshClient.withCarrier(DshHttpCarrier(DshConnection(Uri.parse(base)))),
+    client: XrkClient.withCarrier(DshHttpCarrier(DshConnection(Uri.parse(base)))),
     isLocal: true,
   ),
   channel: const FilesChannel(),

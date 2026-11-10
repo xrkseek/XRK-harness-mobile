@@ -9,13 +9,13 @@
 
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/links/app_links.dart';
-import 'package:dsh_app/links/page_links.dart';
-import 'package:dsh_app/state/cot_translation_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/chat/widgets/thinking_pill.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/links/app_links.dart';
+import 'package:xrk_app/links/page_links.dart';
+import 'package:xrk_app/state/cot_translation_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/chat/widgets/thinking_pill.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -137,7 +137,7 @@ void main() {
                 const LinkHost(),
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: ThinkingPill(reasoning: '先看看[打开手机操控](dshgo://open/phone)再决定。\n\n第二段。'),
+                  child: ThinkingPill(reasoning: '先看看[打开手机操控](xrkharness://open/phone)再决定。\n\n第二段。'),
                 ),
               ],
             ),

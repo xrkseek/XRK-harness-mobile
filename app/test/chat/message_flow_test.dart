@@ -5,16 +5,16 @@
 // composer, sent as a blockquote, shown as a quote in the bubble, split back
 // out on 编辑后重发); and 保存到相册 on a picture in a message.
 
-import 'package:dsh_app/state/attachments.dart' show sessionImageProvider;
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/widgets/assistant_message.dart';
-import 'package:dsh_app/ui/chat/widgets/quote_chip.dart';
-import 'package:dsh_app/ui/chat/widgets/user_bubble.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsTile;
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/attachments.dart' show sessionImageProvider;
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/widgets/assistant_message.dart';
+import 'package:xrk_app/ui/chat/widgets/quote_chip.dart';
+import 'package:xrk_app/ui/chat/widgets/user_bubble.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart' show SettingsTile;
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -249,12 +249,12 @@ void main() {
 
   testWidgets('long-press a sent picture: 保存到相册', (tester) async {
     final saved = <MethodCall>[];
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(const MethodChannel('dsh/media'), (call) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(const MethodChannel('xrk/media'), (call) async {
       saved.add(call);
-      return 'Pictures/DSH Go/截图.png';
+      return 'Pictures/XRK Go/截图.png';
     });
     addTearDown(
-      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(const MethodChannel('dsh/media'), null),
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(const MethodChannel('xrk/media'), null),
     );
     await _pump(
       tester,

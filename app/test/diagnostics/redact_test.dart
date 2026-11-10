@@ -2,7 +2,7 @@
 // `redactDiagnostics` (launch tokens as the engine log masks them, API-key
 // shapes, Bearer credentials, secret-named assignments).
 
-import 'package:dsh_app/diagnostics/redact.dart';
+import 'package:xrk_app/diagnostics/redact.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _sk = 'sk-4c1f0e7b9a2d4e6f8a1b3c5d7e9fa3f9';
@@ -12,15 +12,15 @@ void main() {
   group('launch token (as the native log masks it)', () {
     test('query, fragment and bare forms', () {
       expect(
-        redactDiagnostics('dsh web: http://127.0.0.1:3080/?token=Zx9.k_~-%2Fq'),
-        'dsh web: http://127.0.0.1:3080/?token=•••',
+        redactDiagnostics('xrkh serve: http://127.0.0.1:3080/?token=Zx9.k_~-%2Fq'),
+        'xrkh serve: http://127.0.0.1:3080/?token=•••',
       );
       expect(redactDiagnostics('open http://127.0.0.1:3080/#token=abc123'), 'open http://127.0.0.1:3080/#token=•••');
-      expect(redactDiagnostics('[dsh-app] launching dsh web token=abc'), '[dsh-app] launching dsh web token=•••');
+      expect(redactDiagnostics('[dsh-app] launching xrkh serve token=abc'), '[dsh-app] launching xrkh serve token=•••');
     });
 
     test('an already masked line stays as it is', () {
-      const line = 'dsh web: http://127.0.0.1:3080/?token=•••';
+      const line = 'xrkh serve: http://127.0.0.1:3080/?token=•••';
       expect(redactDiagnostics(line), line);
     });
   });

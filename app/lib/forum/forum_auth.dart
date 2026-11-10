@@ -4,9 +4,9 @@
 // ```text
 // signIn() ─► key pair (made once, kept in secure storage) + nonce
 //          ─► Custom Tab: <forum>/user-api-key/new?public_key=…&nonce=…
-//               &auth_redirect=dshgo://forum/auth&scopes=…&padding=oaep
+//               &auth_redirect=xrkharness://forum/auth&scopes=…&padding=oaep
 //             the user logs in (GitHub / LINUX DO / Gitee / e-mail) and approves
-//          ─► dshgo://forum/auth?payload=<base64 RSA>   (lib/links router)
+//          ─► xrkharness://forum/auth?payload=<base64 RSA>   (lib/links router)
 // handleRedirect() ─► decrypt, check the nonce, keep the key ─► /session/current.json
 // signOut() ─► POST /user-api-key/revoke, forget the key
 // ```
@@ -200,7 +200,7 @@ class ForumAuthController extends Notifier<ForumAuthState> {
     }
   }
 
-  /// `dshgo://forum/auth?payload=…`. True when it signed the user in.
+  /// `xrkharness://forum/auth?payload=…`. True when it signed the user in.
   Future<bool> handleRedirect(Uri uri) async {
     final payload = uri.queryParameters['payload'];
     if (payload == null || payload.isEmpty) return false;

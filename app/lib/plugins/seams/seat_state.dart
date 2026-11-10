@@ -3,7 +3,7 @@
 // runtime and ui.json plug into. Nothing here runs until a PluginSeat is on
 // screen.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -76,7 +76,7 @@ final slotAdapterRegistryProvider = Provider<SlotAdapterRegistry>((ref) => SlotA
 final islandBudgetProvider = Provider<IslandBudget>((ref) => ref.watch(liveIslandBudgetProvider));
 
 /// What [host]'s bridge says about its route guard (`routeGuard` in
-/// `/dsh-go/v1/inventory`); null for a host other than the active one, or
+/// `/xrk-mobile/v1/inventory`); null for a host other than the active one, or
 /// without the bridge. The islands' security gate reads it
 /// (`islandRouteGuardReportProvider`).
 final seatRouteGuardReportProvider = Provider.family<bool?, HostRef>((ref, host) {
@@ -97,7 +97,7 @@ typedef IslandSeatBuilder = Widget Function(
   WidgetBuilder fallback,
 );
 
-/// Draws one "open in DSH Web" entry.
+/// Draws one "open in XRK Web" entry.
 typedef WebLinkSeatBuilder = Widget Function(BuildContext context, SeatContext seat, SeatItem item);
 
 /// How seats draw what is not native. Unset parts draw nothing: an island
@@ -111,7 +111,7 @@ class SeatRenderers {
 }
 
 /// `island` → the islands runtime's `IslandView`, `webLink` → the entry that
-/// opens DSH Web at the occupant.
+/// opens XRK Web at the occupant.
 final seatRenderersProvider = Provider<SeatRenderers>(
   (ref) => SeatRenderers(
     island: (context, spec, items, fallback) => SeatIslandView(spec: spec, items: items, fallback: fallback),

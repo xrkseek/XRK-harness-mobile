@@ -4,14 +4,14 @@
 //
 //   flutter test --update-goldens test/onboarding/parallel_setup_golden_test.dart
 
-import 'package:dsh_app/performance/performance_state.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/onboarding/appearance_step.dart';
-import 'package:dsh_app/ui/onboarding/connect_page.dart';
-import 'package:dsh_app/ui/onboarding/onboarding_scaffold.dart';
-import 'package:dsh_app/ui/onboarding/runtime_setup_page.dart';
+import 'package:xrk_app/performance/performance_state.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/onboarding/appearance_step.dart';
+import 'package:xrk_app/ui/onboarding/connect_page.dart';
+import 'package:xrk_app/ui/onboarding/onboarding_scaffold.dart';
+import 'package:xrk_app/ui/onboarding/runtime_setup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';

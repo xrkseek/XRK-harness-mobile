@@ -199,7 +199,7 @@ class _ShareCodePanelState extends ConsumerState<ShareCodePanel> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final hasLink = _web != null;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -340,7 +340,7 @@ class _GistLinkState extends ConsumerState<_GistLink> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = theme.colorScheme;
     final duration = AppMotion.of(context, AppMotion.standard);
     return DiscardGuard(

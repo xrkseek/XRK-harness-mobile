@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -56,8 +56,8 @@ void main() {
     testWidgets('old $mode sheet cannot write newly selected host', (tester) async {
       final a = FakeSettingsHost(describe: affinityDescribe('alpha', 1, credential: mode == 'credential'));
       final b = FakeSettingsHost(describe: affinityDescribe('beta', 10, credential: mode == 'credential'));
-      final aClient = DshClient.withCarrier(a);
-      final bClient = DshClient.withCarrier(b);
+      final aClient = XrkClient.withCarrier(a);
+      final bClient = XrkClient.withCarrier(b);
       await pumpPage(
         tester,
         const EngineSettingsPage(ns: 'affinity'),
@@ -88,8 +88,8 @@ void main() {
   test('late old describe cannot replace current write revision', () async {
     final a = DelayedDescribeHost();
     final b = FakeSettingsHost(describe: affinityDescribe('beta', 10));
-    final aClient = DshClient.withCarrier(a);
-    final bClient = DshClient.withCarrier(b);
+    final aClient = XrkClient.withCarrier(a);
+    final bClient = XrkClient.withCarrier(b);
     final container = ProviderContainer(
       overrides: [
         ...engineOverrides(aClient).skip(1),
@@ -109,7 +109,7 @@ void main() {
     await container.read(engineSettingsProvider.notifier).set(const FieldRef('affinity', ['name']), 'new beta');
     expect(b.mutates().first['expectedRevision'], 10);
   });
-  Future<ProviderContainer> startContainer(DshClient client) async {
+  Future<ProviderContainer> startContainer(XrkClient client) async {
     final container = ProviderContainer(
       overrides: [
         ...engineOverrides(client).skip(1),
@@ -124,7 +124,7 @@ void main() {
     return container;
   }
 
-  Future<void> switchTo(ProviderContainer container, DshClient client) async {
+  Future<void> switchTo(ProviderContainer container, XrkClient client) async {
     container.read(testHostProvider.notifier).state = fakeConnection(client, local: false);
     await container.read(engineSettingsProvider.future);
   }
@@ -132,8 +132,8 @@ void main() {
   test('old queued writes do not start after host switch and old completion cannot publish', () async {
     final a = FakeSettingsHost(describe: affinityDescribe('alpha', 1))..gate = Completer<void>();
     final b = FakeSettingsHost(describe: affinityDescribe('beta', 10));
-    final aClient = DshClient.withCarrier(a);
-    final bClient = DshClient.withCarrier(b);
+    final aClient = XrkClient.withCarrier(a);
+    final bClient = XrkClient.withCarrier(b);
     final container = await startContainer(aClient);
     final controller = container.read(engineSettingsProvider.notifier);
     const field = FieldRef('affinity', ['name']);
@@ -157,10 +157,10 @@ void main() {
   test('A-B-A using the same client still invalidates the old editor generation', () async {
     final a = FakeSettingsHost(describe: affinityDescribe('alpha', 1));
     final b = FakeSettingsHost(describe: affinityDescribe('beta', 10));
-    final aClient = DshClient.withCarrier(a);
+    final aClient = XrkClient.withCarrier(a);
     final container = await startContainer(aClient);
     final old = container.read(engineSettingsProvider.notifier).edit(container.read(engineSettingsProvider).value!);
-    await switchTo(container, DshClient.withCarrier(b));
+    await switchTo(container, XrkClient.withCarrier(b));
     await switchTo(container, aClient);
     expect(await old.set(const FieldRef('affinity', ['name']), 'stale alpha'), isFalse);
     expect(a.mutates(), isEmpty);
@@ -169,10 +169,10 @@ void main() {
   test('loading retains old value but cannot acquire the new host writer', () async {
     final a = FakeSettingsHost(describe: affinityDescribe('alpha', 1));
     final b = DelayedDescribeHost();
-    final aClient = DshClient.withCarrier(a);
+    final aClient = XrkClient.withCarrier(a);
     final container = await startContainer(aClient);
     final old = container.read(engineSettingsProvider).value!;
-    container.read(testHostProvider.notifier).state = fakeConnection(DshClient.withCarrier(b), local: false);
+    container.read(testHostProvider.notifier).state = fakeConnection(XrkClient.withCarrier(b), local: false);
     await Future<void>.delayed(const Duration(milliseconds: 10));
     final loading = container.read(engineSettingsProvider);
     expect(loading.isLoading, isTrue);

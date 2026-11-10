@@ -4,11 +4,11 @@
 
 | Version | Where | Who | Now |
 |---|---|---|---|
-| Protocol `v` | `dshGo.v` | Major version, bumped only for breaking changes | `1` |
+| Protocol `v` | `xrkGo.v` | Major version, bumped only for breaking changes | `1` |
 | View format `v` | The view root's `v` (optional) | Style and component language, separate from NA | `1` and `2`; omitted means `1` |
-| `minApp` | `dshGo.minApp` | You, when you need something only newer apps have | unset |
+| `minApp` | `xrkGo.minApp` | You, when you need something only newer apps have | unset |
 
-Also declare the DSH versions you support in `package.json` `engines.dsh` (DSH checks it on install).
+Also declare the XRK versions you support in `package.json` `engines.dsh` (XRK checks it on install).
 
 ## How v1 evolves
 
@@ -68,7 +68,7 @@ A view function's `caps.features` lists what the app asked for in this request, 
 The second argument of a view function, `caps`, says what the app can draw:
 
 ```js
-import { hasComponent, adaptView, localize } from '@dsh-go/plugin-kit'
+import { hasComponent, adaptView, localize } from '@xrkseek/plugin-kit'
 
 view: (scope, caps) => {
   const v = buildView(scope)
@@ -88,16 +88,16 @@ Tool cards have no `caps` (they are stored in the log and future apps must draw 
 
 ## Tool cards stay drawable
 
-Cards live in the conversation log; a chat opened a year later must still draw. The app only adds to `meta["dsh-go/view"]`, never removes, and draws old formats forever. On your side:
+Cards live in the conversation log; a chat opened a year later must still draw. The app only adds to `meta["xrk-mobile/view"]`, never removes, and draws old formats forever. On your side:
 
 - When you change a card's structure, keep what old fields meant;
 - Don't put expiring things in a card (temporary links, time-limited image URLs).
 
-## DSH versions
+## XRK versions
 
-| DSH | Status |
+| XRK | Status |
 |---|---|
-| 0.2.2-rc.1 | The engine DSH Go ships: the slot catalog (109 slots) and the web island recipes are checked against it |
+| 0.2.2-rc.1 | The engine XRK Go ships: the slot catalog (109 slots) and the web island recipes are checked against it |
 | 0.2.1-rc.4 | Development baseline: the slot catalog (103 slots) and the web island recipes are checked against it |
 | 0.2.1-rc.2 | Verified (tool card path, plugin install, bridge) |
 | Other 0.2.x | Declare in `engines.dsh`; `presentationMeta` exists since 0.2.0 |

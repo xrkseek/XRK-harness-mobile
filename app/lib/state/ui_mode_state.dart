@@ -1,11 +1,11 @@
 // The two ways to use the app, side by side — the native interface and the
-// official DSH Web in the app (网页模式). The choice is kept and the next
+// official XRK Web in the app (网页模式). The choice is kept and the next
 // launch opens straight into it (lib/ui/web/mode_home.dart).
 //
 // Both modes share one idea of "where you are": the active host
 // (hosts_state.dart) and the current conversation (currentSessionProvider),
 // which the web page keeps up to date while it is on screen
-// (assets/web/dsh_web_state.js). Switching therefore lands on the same
+// (assets/web/xrk_web_state.js). Switching therefore lands on the same
 // conversation on the same host.
 
 import 'dart:async';

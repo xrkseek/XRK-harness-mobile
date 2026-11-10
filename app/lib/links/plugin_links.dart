@@ -1,12 +1,9 @@
-// A plugin's page in the official market: `https://go.dshtui.com/p/<name>`
-// (docs/design/plugin-market.md §6). The page itself is the share host's;
-// its 「用 DSH Go 打开」 hands over `dshgo://go.dshtui.com/p/<name>`, the
-// same scheme as hosted conversation links, and both open the plugin's
-// detail sheet here.
+// Official-market plugin pages on the share host: `$shareHostOrigin/p/<name>`.
+// Off when [shareHostOrigin] is empty.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show MarketIndexException;
+import 'package:xrk_client/xrk_client.dart' show MarketIndexException;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,15 +16,19 @@ import 'app_links.dart';
 final _packageName = RegExp(r'^(?:@[a-z0-9][a-z0-9._~-]*/)?[a-z0-9][a-z0-9._~-]*$');
 
 /// The page of [name] in the official market, the package name encoded as
-/// one path segment (`/p/%40dsh-go%2Fmedia`).
-String marketPluginLink(String name) => '$shareHostOrigin/p/${Uri.encodeComponent(name)}';
+/// one path segment (`/p/%40scope%2Fname`). Empty host → empty string.
+String marketPluginLink(String name) =>
+    shareHostOrigin.isEmpty ? '' : '$shareHostOrigin/p/${Uri.encodeComponent(name)}';
 
-/// The package a plugin link names — https or `dshgo://`, on the share host,
-/// the name encoded or not (`/p/@dsh-go/media`); null for anything else.
+/// The package a plugin link names — https or app-link scheme on the share
+/// host; null when no share host or the URI is something else.
 String? marketPluginLinkName(Uri uri) {
+  if (shareHostOrigin.isEmpty) return null;
+  final host = Uri.tryParse(shareHostOrigin)?.host;
+  if (host == null || host.isEmpty) return null;
   final scheme = uri.scheme.toLowerCase();
   if (scheme != 'https' && scheme != appLinkScheme) return null;
-  if (uri.host.toLowerCase() != Uri.parse(shareHostOrigin).host || uri.userInfo.isNotEmpty || uri.hasPort) {
+  if (uri.host.toLowerCase() != host || uri.userInfo.isNotEmpty || uri.hasPort) {
     return null;
   }
   final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
@@ -74,11 +75,13 @@ Future<bool> openMarketPluginLink(BuildContext context, Uri uri) async {
   return true;
 }
 
-/// Registers `<share host>/p` with [router] (https and `dshgo://` alike).
-/// [LinkHost] calls it. Returns the unregister function.
-VoidCallback registerPluginLinks(LinkRouter router) =>
-    router.registerLinkHandler('${Uri.parse(shareHostOrigin).host}/p', (uri) async {
-      final context = router.context;
-      if (context == null) return false;
-      return openMarketPluginLink(context, uri);
-    });
+/// Registers `<share host>/p` with [router]. No-op when share host is unset.
+VoidCallback registerPluginLinks(LinkRouter router) {
+  final host = Uri.tryParse(shareHostOrigin)?.host;
+  if (host == null || host.isEmpty) return () {};
+  return router.registerLinkHandler('$host/p', (uri) async {
+    final context = router.context;
+    if (context == null) return false;
+    return openMarketPluginLink(context, uri);
+  });
+}

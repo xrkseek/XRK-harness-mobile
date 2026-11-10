@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// device credentials. Never SharedPreferences.
 ///
 /// Injectable so state and tests can swap in [MemorySecretStore], and so the
-/// relay package (`dsh_remote`) can be handed the same store.
+/// relay package (`xrk_remote`) can be handed the same store.
 abstract class SecretStore {
   Future<String?> read(String key);
   Future<void> write(String key, String value);

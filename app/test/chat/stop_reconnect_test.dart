@@ -1,23 +1,23 @@
 // Regressions integrated from independent P12 probes (baseline d2abfb6).
 // The original same-byte evidence is retained in stop-investigation/.
 // Only event delivery and the transport are scripted. ChatController and
-// DshClient.cancel/updateQueue/prompt retain their real implementations.
+// XrkClient.cancel/updateQueue/prompt retain their real implementations.
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/links/launcher_entries.dart';
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/provider_keys.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/shell/system_entry_host.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/links/launcher_entries.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/provider_keys.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/shell/system_entry_host.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +29,7 @@ import '../remote/support/ready_mux.dart';
 class _Connection extends Notifier<AsyncValue<HostConnection?>> {
   @override
   AsyncValue<HostConnection?> build() => const AsyncData(null);
-  void use(DshClient? client, {String label = 'probe'}) =>
+  void use(XrkClient? client, {String label = 'probe'}) =>
       state = AsyncData(client == null ? null : HostConnection(client: client, label: label, isLocal: true));
 }
 
@@ -65,7 +65,7 @@ class _Carrier extends DshCarrier {
         lists.add(done);
         return done.future;
       default:
-        throw StateError('Unexpected real DshClient endpoint: $endpoint $args');
+        throw StateError('Unexpected real XrkClient endpoint: $endpoint $args');
     }
   }
 
@@ -78,7 +78,7 @@ class _Carrier extends DshCarrier {
   }
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client(this.wire) : super.withCarrier(wire);
   final _Carrier wire;
   final _mux = ReadyMux();
@@ -209,7 +209,7 @@ class _LocalHarness {
         providerKeyVaultProvider.overrideWithValue(_EmptyKeys()),
         recentShortcutsProvider.overrideWithValue(const []),
         localClientConnectorProvider.overrideWithValue(({required baseUri, required token}) {
-          final done = Completer<DshClient>();
+          final done = Completer<XrkClient>();
           connects.add((token, done));
           return done.future;
         }),
@@ -219,7 +219,7 @@ class _LocalHarness {
     c.listen(chatProvider('S'), (_, _) {});
   }
   late final ProviderContainer c;
-  final connects = <(String, Completer<DshClient>)>[];
+  final connects = <(String, Completer<XrkClient>)>[];
   final clients = <_Client>[];
   _Runtime get runtime => c.read(localRuntimeProvider.notifier) as _Runtime;
   ChatController get chat => c.read(chatProvider('S').notifier);
@@ -307,7 +307,7 @@ void main() {
     final newCancel = h.chat.cancel();
     expect(b.wire.cancels, hasLength(1));
     expect(h.state.stopping, isTrue);
-    a.wire.cancels.single.complete(const RpcError(DshRemoteException('probe/old-engine', 'old engine failed')));
+    a.wire.cancels.single.complete(const RpcError(XrkRemoteException('probe/old-engine', 'old engine failed')));
     await oldCancel;
     final observed = {
       'sameController': identical(original, h.chat),
@@ -447,7 +447,7 @@ void main() {
     await current.use(b);
     await current.running(b);
     final currentCancel = current.chat.cancel();
-    a.wire.cancels.single.complete(const RpcError(DshRemoteException('probe/old-engine', 'old engine failed')));
+    a.wire.cancels.single.complete(const RpcError(XrkRemoteException('probe/old-engine', 'old engine failed')));
     await oldCancel;
     expect(current.state.stopping, isTrue);
     expect(current.state.error, isNull);
@@ -487,7 +487,7 @@ void main() {
     await h.use(a);
     await h.running(a);
     final newCancel = h.chat.cancel();
-    a.wire.cancels.first.complete(const RpcError(DshRemoteException('probe/old-generation', 'old generation')));
+    a.wire.cancels.first.complete(const RpcError(XrkRemoteException('probe/old-generation', 'old generation')));
     await oldCancel;
     final stopping = h.state.stopping;
     trace('B3-ABA', {'watchA': a.watched.length, 'stopping': stopping, 'error': h.state.error, 'callsA': a.wire.calls});
@@ -513,7 +513,7 @@ void main() {
     await flush();
     final newCancel = h.chat.cancel();
     expect(a.wire.closed, isTrue, reason: 'Real LocalConnectionController must close the superseded client');
-    a.wire.cancels.single.complete(const RpcError(DshRemoteException('probe/old-engine', 'late old engine failure')));
+    a.wire.cancels.single.complete(const RpcError(XrkRemoteException('probe/old-engine', 'late old engine failure')));
     await oldCancel;
     final stopping = h.state.stopping;
     trace('B4-real-local-controller', {
@@ -569,7 +569,7 @@ void main() {
   });
 
   testWidgets('P12 C9 actual launcher channel selects session without reconnecting same host', (tester) async {
-    const channel = MethodChannel('dsh/shortcuts');
+    const channel = MethodChannel('xrk/shortcuts');
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (_) async => true);
     final h = _LocalHarness();
     await tester.pumpWidget(

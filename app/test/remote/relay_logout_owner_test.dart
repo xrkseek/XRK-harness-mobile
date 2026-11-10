@@ -4,16 +4,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/remote/relay/dsh_remote_backend.dart';
-import 'package:dsh_app/remote/secret_store.dart' as app_secrets;
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/remote/relay_login_sheet.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_remote/dsh_remote.dart' as remote;
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/remote/relay/xrk_remote_backend.dart';
+import 'package:xrk_app/remote/secret_store.dart' as app_secrets;
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/remote/relay_login_sheet.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_remote/xrk_remote.dart' as remote;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,7 +21,7 @@ import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../packages/dsh_remote/test/support/fake_remote.dart';
+import '../../../packages/xrk_remote/test/support/fake_remote.dart';
 import '../shell/golden_harness.dart' show FakeRuntime, runningStatus, usePhoneSurface;
 
 const _guard = Duration(seconds: 8);
@@ -94,7 +94,7 @@ class _Secrets implements app_secrets.SecretStore, remote.SecretStore {
 
 // Calls delegate unchanged to the real adapter. Zone values only attribute
 // subsequent store operations; they do not intercept timers or scheduling.
-class _ObservedBackend extends DshRemoteRelayBackend {
+class _ObservedBackend extends XrkRemoteRelayBackend {
   _ObservedBackend({required super.secrets, required super.account}) : super(direct: false);
 
   final logouts = <Future<void>>[];

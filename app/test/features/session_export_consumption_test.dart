@@ -3,11 +3,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/session_export.dart';
-import 'package:dsh_app/ui/features/session_export_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/session_export.dart';
+import 'package:xrk_app/ui/features/session_export_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,7 +48,7 @@ void main() {
   group('isolated Downloads sources', () {
     late HttpServer server;
     late Directory cache;
-    late DshClient client;
+    late XrkClient client;
     var payload = <int>[];
     var status = 200;
     setUp(() async {
@@ -62,7 +62,7 @@ void main() {
           await request.response.close();
         });
         cache = await Directory.systemTemp.createTemp('session-save');
-        client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
+        client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
       }, RealSyncHttp());
     });
     tearDown(() async {
@@ -134,7 +134,7 @@ void main() {
           consumed = true;
           return 'unexpected';
         }).saveToDownloads('S'),
-        throwsA(isA<DshRemoteException>().having((e) => e.code, 'code', 'session-export/http-500')),
+        throwsA(isA<XrkRemoteException>().having((e) => e.code, 'code', 'session-export/http-500')),
       );
       expect(consumed, isFalse);
       expect(await Directory('${cache.path}/exports').exists(), isFalse);
@@ -149,11 +149,11 @@ void main() {
       (tester) async {
         late HttpServer server;
         late Directory cache;
-        late DshClient client;
+        late XrkClient client;
         var payload = <int>[0x50, 0x4b, 1, 1];
         var requests = 0;
         final saves = <_Save>[];
-        const channel = MethodChannel('dsh/files');
+        const channel = MethodChannel('xrk/files');
         await tester.runAsync(
           () => HttpOverrides.runWithHttpOverrides(() async {
             server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
@@ -164,7 +164,7 @@ void main() {
               await request.response.close();
             });
             cache = await Directory.systemTemp.createTemp('session-consume');
-            client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
+            client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
           }, RealSyncHttp()),
         );
         final connection = HostConnection(client: client, isLocal: true, label: 'same Host');

@@ -21,7 +21,7 @@ class AutoApprovePill extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final fg = dsh.onWarningContainer;
     final style = theme.textTheme.labelMedium?.copyWith(color: fg);
     return Semantics(

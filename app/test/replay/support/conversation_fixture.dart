@@ -3,9 +3,9 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/share_code/conversation_export.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/conversation_export.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 final t0 = DateTime.utc(2026, 10, 24, 14, 0, 0);
 DateTime at(int ms) => t0.add(Duration(milliseconds: ms));

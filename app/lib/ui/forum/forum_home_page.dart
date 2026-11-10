@@ -263,7 +263,7 @@ class _SearchEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final fill = theme.colorScheme.onSurface.withValues(alpha: theme.brightness == Brightness.dark ? 0.08 : 0.05);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
@@ -304,7 +304,7 @@ class _UnreadBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final text = count > 99 ? '99+' : '$count';
     return Container(
       constraints: const BoxConstraints(minWidth: 16),

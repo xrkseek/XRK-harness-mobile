@@ -1,13 +1,13 @@
 // 插件详情 › 网页版界面 (docs/design/plugin-ui-v3.md §3.5): where a plugin's web
-// part lives that the app has no seat for, each a way to DSH Web. Goldens
+// part lives that the app has no seat for, each a way to XRK Web. Goldens
 // (light + dark) and behaviour. Regenerate with
 // `flutter test --update-goldens test/plugins/seats/plugin_web_places_test.dart`.
 
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_app/ui/plugins/seats/plugin_web_places.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_app/ui/plugins/seats/plugin_web_places.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -34,7 +34,7 @@ final _spread = <String, List<SlotOccupant>>{
 
 List<Override> _pluginHost() {
   final carrier = FakePluginCarrier();
-  final client = DshClient.withCarrier(carrier);
+  final client = XrkClient.withCarrier(carrier);
   carrier.handlers['pluginManager/listBundles'] = (_) => const <Object?>[];
   addTearDown(client.close);
   return pluginOverrides(fakeHost(client), selectHost: false);
@@ -81,7 +81,7 @@ void main() {
       },
     );
 
-    test('without the occupancy table one row for the whole web part; without DSH Web or a browser half, none', () {
+    test('without the occupancy table one row for the whole web part; without XRK Web or a browser half, none', () {
       expect(pluginWebPlaces(seatInventory(tier: ClientInventoryTier.boot), probe), [WebPlace.unknown]);
       expect(
         pluginWebPlaces(
@@ -114,7 +114,7 @@ void main() {
           probe,
         ),
         isEmpty,
-        reason: 'a switched-off plugin shows nothing in DSH Web either',
+        reason: 'a switched-off plugin shows nothing in XRK Web either',
       );
     });
 
@@ -143,7 +143,7 @@ void main() {
   });
 
   group('section', () {
-    testWidgets('rows open DSH Web where the place is', (tester) async {
+    testWidgets('rows open XRK Web where the place is', (tester) async {
       await _openProbe(tester, seatInventory(occupancy: _spread));
       final section = find.byKey(const ValueKey('plugin-web-places'));
       await tester.scrollUntilVisible(section, 200, scrollable: find.byType(Scrollable).last);

@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../diagnostics/diagnostics_publish.dart';
 import '../../diagnostics/redact.dart';
 import '../../diagnostics/system_ime_diagnostics.dart';
 import '../../runtime/runtime_state.dart';
@@ -45,7 +44,7 @@ class DiagnosticsPage extends ConsumerWidget {
         'abi': s.abi,
         'bundledVersion': s.bundledVersion,
         'installedVersion': s.installedVersion,
-        'dshVersion': s.dshVersion,
+        'engineVersion': s.engineVersionAlias,
         'nodeVersion': s.nodeVersion,
         'baseUrl': s.baseUrl,
         'token': s.token == null ? null : '<redacted>',
@@ -55,10 +54,8 @@ class DiagnosticsPage extends ConsumerWidget {
       },
       'connection': connection,
       'settings': {
-        'hasApiKey': settings.hasApiKey,
         'themeMode': settings.themeMode.name,
         'autoStartLocal': settings.autoStartLocal,
-        'autoApproveCommands': settings.autoApproveCommands,
       },
     };
   }
@@ -92,15 +89,6 @@ class DiagnosticsPage extends ConsumerWidget {
       }
     }
 
-    Future<void> publishForAi() async {
-      final published = await ref.read(diagnosticsPublisherProvider).publish(includeSystemIme: true);
-      if (!context.mounted) return;
-      showBriefNotice(
-        context,
-        published == null ? l10n.diagnosticsForAiFailed : l10n.diagnosticsForAiDone,
-      );
-    }
-
     return AppPage.list(
       title: l10n.pluginsDiagnostics,
       subtitle: Text(l10n.pluginsDiagnosticsDescription),
@@ -117,7 +105,7 @@ class DiagnosticsPage extends ConsumerWidget {
               mono: true,
             ),
             RuntimeLaunchFacts(status: status),
-            InfoRow(label: l10n.hubSettingsEngine, value: status.dshVersion ?? '—', mono: true),
+            InfoRow(label: 'xrkh', value: status.engineVersionAlias ?? '—', mono: true),
             InfoRow(label: 'Node.js', value: status.nodeVersion ?? '—', mono: true),
             if (status.error case final error?) InfoRow(label: l10n.pluginsErrorLabel, value: error, mono: true),
           ],
@@ -127,7 +115,6 @@ class DiagnosticsPage extends ConsumerWidget {
           children: [
             InfoRow(label: l10n.pluginsAddress, value: status.baseUrl ?? '—', mono: true),
             InfoRow(label: l10n.pluginsClient, value: connection),
-            InfoRow(label: 'API Key', value: settings.hasApiKey ? l10n.pluginsConfigured : l10n.commonNotSet),
           ],
         ),
         const SystemImeDiagnosticsSection(),
@@ -140,17 +127,12 @@ class DiagnosticsPage extends ConsumerWidget {
               subtitle: l10n.pluginsDiagnosticsContents,
               onTap: copyReport,
             ),
-            ListPageRow(
-              icon: AppIcons.bot,
-              title: l10n.diagnosticsForAi,
-              subtitle: l10n.diagnosticsForAiHint,
-              onTap: publishForAi,
-            ),
           ],
         ),
         // The note belongs to the export card; the next group starts 24 below
         // it, as groups do.
         const DiagnosticsBundleNote(),
+        // Direct vs compat launch is a phone-shell / xrkh runtime choice.
         const SizedBox(height: 24),
         const DirectEngineSettings(),
       ],

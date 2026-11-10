@@ -1,10 +1,10 @@
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/state/cordis_state.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/state/cordis_state.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -159,14 +159,14 @@ void main() {
 
   group('P2 skeletons', () {
     test('dsh-ui-panel matches native panel cells only; pet matches nothing yet', () {
-      // Native panels occupy `dsh-go:<id>` cells (test/plugins/native/native_panel_test.dart).
-      for (final slot in [Slots.dshGoPanel, Slots.rightPaneTab, Slots.main]) {
-        final native = SlotOccupant(slot: slot, package: 'dsh-cost', cell: 'dsh-go:cost');
+      // Native panels occupy `xrk-mobile:<id>` cells (test/plugins/native/native_panel_test.dart).
+      for (final slot in [Slots.xrkGoPanel, Slots.rightPaneTab, Slots.main]) {
+        final native = SlotOccupant(slot: slot, package: 'dsh-cost', cell: 'xrk-mobile:cost');
         final web = SlotOccupant(slot: slot, package: 'dsh-cost', cell: 'cost');
-        expect(const DshUiPanelAdapter().slots, contains(slot));
-        expect(const DshUiPanelAdapter().canRender(native, const PluginClientInfo(package: 'dsh-cost')), isTrue);
+        expect(const XrkUiPanelAdapter().slots, contains(slot));
+        expect(const XrkUiPanelAdapter().canRender(native, const PluginClientInfo(package: 'dsh-cost')), isTrue);
         expect(
-          const DshUiPanelAdapter().canRender(web, const PluginClientInfo(package: 'dsh-cost', panels: ['cost'])),
+          const XrkUiPanelAdapter().canRender(web, const PluginClientInfo(package: 'dsh-cost', panels: ['cost'])),
           isFalse,
         );
       }

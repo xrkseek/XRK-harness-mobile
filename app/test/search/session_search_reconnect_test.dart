@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/session_search.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/session_search.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -45,7 +45,7 @@ class _Mux extends ReadyMux {
   Future<MuxGeneration> ready({Duration? timeout}) => gate?.future ?? super.ready(timeout: timeout);
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client({Completer<MuxGeneration>? readyGate})
     : _ready = _Mux(readyGate),
       super(DshConnection(Uri.parse('http://127.0.0.1:9')));
@@ -59,7 +59,7 @@ class _Client extends DshClient {
   @override
   Future<({List<ContentHit> items, bool hasMore})> searchSessionsPage(String query) {
     queries.add(query);
-    if (closed) return Future.error(const DshTransportException('closed client'));
+    if (closed) return Future.error(const XrkTransportException('closed client'));
     return response.future;
   }
 
@@ -79,7 +79,7 @@ class _RemoteHost extends ActiveHostController {
 
 class _Link extends HostLink {
   _Link(this.currentClient, {this.openGate});
-  final Completer<DshClient>? openGate;
+  final Completer<XrkClient>? openGate;
   @override
   final _Client currentClient;
   @override
@@ -87,9 +87,9 @@ class _Link extends HostLink {
   @override
   Stream<HostLinkStatus> get statuses => const Stream.empty();
   @override
-  Stream<DshClient> get clients => const Stream.empty();
+  Stream<XrkClient> get clients => const Stream.empty();
   @override
-  Future<DshClient> open() async => openGate == null ? currentClient : await openGate!.future;
+  Future<XrkClient> open() async => openGate == null ? currentClient : await openGate!.future;
 
   @override
   void kick() {}
@@ -100,21 +100,21 @@ class _Link extends HostLink {
 }
 
 class _RetryLink extends HostLink {
-  final firstOpen = Completer<DshClient>();
-  final retryOpen = Completer<DshClient>();
+  final firstOpen = Completer<XrkClient>();
+  final retryOpen = Completer<XrkClient>();
   int opens = 0;
-  DshClient? _client;
+  XrkClient? _client;
 
   @override
-  DshClient? get currentClient => _client;
+  XrkClient? get currentClient => _client;
   @override
   HostLinkStatus get status => const HostLinkStatus(HostLinkPhase.connecting);
   @override
   Stream<HostLinkStatus> get statuses => const Stream.empty();
   @override
-  Stream<DshClient> get clients => const Stream.empty();
+  Stream<XrkClient> get clients => const Stream.empty();
   @override
-  Future<DshClient> open() async {
+  Future<XrkClient> open() async {
     final gate = ++opens == 1 ? firstOpen : retryOpen;
     return _client = await gate.future;
   }
@@ -138,7 +138,7 @@ void main() {
       testWidgets('$transition retires ${inFlight ? 'in-flight' : 'debounced'} search', (tester) async {
         final old = _Client();
         final next = _Client();
-        final connector = Completer<DshClient>();
+        final connector = Completer<XrkClient>();
         var attempts = 0;
         final c = ProviderContainer(
           retry: (_, _) => null,
@@ -193,7 +193,7 @@ void main() {
         expect(next.queries, isEmpty);
 
         if (transition == 'error') {
-          connector.completeError(const DshTransportException('reconnect failed'));
+          connector.completeError(const XrkTransportException('reconnect failed'));
           await tester.pump(Duration.zero);
           expect(c.read(localConnectionProvider).hasError, isTrue);
           expect(c.read(localConnectionProvider).value?.client, same(old));
@@ -281,7 +281,7 @@ void main() {
   });
   testWidgets('remote name update while opening appears on the eventual connection', (tester) async {
     final client = _Client();
-    final opening = Completer<DshClient>();
+    final opening = Completer<XrkClient>();
     final link = _Link(client, openGate: opening);
     overrides(String name) => [
       activeHostProvider.overrideWith(_RemoteHost.new),

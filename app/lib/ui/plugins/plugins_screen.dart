@@ -20,7 +20,7 @@ enum PluginsTab { installed, market }
 /// market (dshfind's format-1 index) to install from.
 ///
 /// Installs go to the host picked in the host switcher, into the `web`
-/// profile its `dsh web` runs with. Over the relay only switching works;
+/// profile its `xrkh serve` runs with. Over the relay only switching works;
 /// installs show the command to run on that computer.
 class PluginsScreen extends ConsumerStatefulWidget {
   const PluginsScreen({super.key, this.initialTab = PluginsTab.installed});

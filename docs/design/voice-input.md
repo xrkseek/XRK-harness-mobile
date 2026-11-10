@@ -1,10 +1,10 @@
 # 语音输入：本机语音模型
 
-> 2026-10-28。调研基于 main `2e37d13`（§1 的行号指它），实现 rebase 到 main `722ae3f`（含生图 App 端和 S6 的语音「更换」）；本机构建的运行时 `r11-direct-r4-dsh0.2.1-rc.2`（`runtime/out/*`），以及 DSH 0.2.1-rc.2 安装包（`~/.dsh-runtime/npm/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/`，只读）。
+> 2026-10-28。调研基于 main `2e37d13`（§1 的行号指它），实现 rebase 到 main `722ae3f`（含生图 App 端和 S6 的语音「更换」）；本机构建的运行时 `r11-direct-r4-dsh0.2.1-rc.2`（`runtime/out/*`），以及 XRK 0.2.1-rc.2 安装包（`~/.xrk-runtime/npm/lib/node_modules/@xrkseek/harness-cli/node_modules/@deepseek-ai/`，只读）。
 >
 > 标记：**〔源码〕** 读过源码；**〔实测〕** 本机跑过；**〔推断〕** 没有实测。外部资料按附录 A 标 **V**（官方页面或源码已抓取）、**S**（只看到搜索摘要）、**U**（未核实），日期均为 2026-10-28。
 
-**结论**：手机上的语音输入改用 DSH 自带的语音套件。它在引擎里用 sherpa-onnx 跑 SenseVoiceSmall INT8，模型约 241 MB，下载一次后离线可用。当前链路依赖 Android `SpeechRecognizer`，无 GMS 的国产 ROM 上不能用，再怎么调也解决不了（§1）。
+**结论**：手机上的语音输入改用 XRK 自带的语音套件。它在引擎里用 sherpa-onnx 跑 SenseVoiceSmall INT8，模型约 241 MB，下载一次后离线可用。当前链路依赖 Android `SpeechRecognizer`，无 GMS 的国产 ROM 上不能用，再怎么调也解决不了（§1）。
 
 套件已经打进我们的运行时，接口齐全，启用时热生效（§2）。真正的障碍有两个，这次一并解决：
 
@@ -62,7 +62,7 @@ App 一直用的就是群友推荐的 `android.speech.SpeechRecognizer`（`Voice
 
 | 问题 | 结论 | 依据 |
 |---|---|---|
-| 依赖锁里有没有 | 有。`@deepseek-ai/dsh-experimental-voice-input-bundle` 带四个包：`speech-to-text`、`speech-to-text-sensevoice`（依赖 `sherpa-onnx-node` 1.13.8）、`api-speech-to-text`、`client-ui-voice-input` | `runtime/locks/dsh-0.2.1-rc.2/package-lock.json:540,2351,2433,9016-9042` |
+| 依赖锁里有没有 | 有。`@xrkseek/harness-cli-experimental-voice-input-bundle` 带四个包：`speech-to-text`、`speech-to-text-sensevoice`（依赖 `sherpa-onnx-node` 1.13.8）、`api-speech-to-text`、`client-ui-voice-input` | `runtime/locks/dsh-0.2.1-rc.2/package-lock.json:540,2351,2433,9016-9042` |
 | 构建时有没有被裁掉 | 没有。裁剪只去掉文档、`*.d.ts`、`*.map`、其他平台的预编译库和 musl 库（`rtbuild.py:718-745`）。arm64 构建报告里 sherpa 的 ELF 都在：`libonnxruntime.so` 34.6 MB、`libsherpa-onnx-c-api.so` 4.6 MB、`sherpa-onnx.node` 0.8 MB，64 KiB 对齐 | `runtime/out/arm64-v8a/build-report.json`〔实测〕 |
 | 解开的 x86_64 rootfs | 五个语音包和 `sherpa-onnx-linux-x64` 都在 `/opt/dsh/node_modules` 下 | 〔实测〕 |
 | 默认开没开 | 没开。插件管理里是可选 bundle（`optional: true`，`enabled: false`）。`pluginManager/setBundleEnabled` 打开后 `application: "applied"`，约 0.26 s 热生效，不用重启 | 〔实测〕 |
@@ -85,7 +85,7 @@ App 一直用的就是群友推荐的 `android.speech.SpeechRecognizer`（`Voice
 | 项目 | 结论 | 依据 |
 |---|---|---|
 | 文件 | `model.int8.onnx` 239,233,841 B；`tokens.txt` 315,894 B；`silero_vad.onnx` 1,807,522 B。合计 241,357,257 B（约 241 MB），修订和 SHA-256 都写死在锁文件里 | `sensevoice/runtime/assets.json` |
-| 位置 | `$DSH_HOME/speech-to-text/sensevoice/models/{sensevoice-onnx,silero}/`。手机上对应 `filesDir/runtime/rootfs/root/.dsh/...` | `sensevoice/lib/index.js:209-216`；bundle `cordis.patch.yml` |
+| 位置 | `$XRK_HOME/speech-to-text/sensevoice/models/{sensevoice-onnx,silero}/`。手机上对应 `filesDir/runtime/rootfs/root/.xrk/...` | `sensevoice/lib/index.js:209-216`；bundle `cordis.patch.yml` |
 | 校验 | 先比大小，再对整个文件算 SHA-256。每次启用 bundle（也就是每次引擎启动）都会把 239 MB 全量哈希一遍（本机 0.2 s） | `index.js:186-199,337-338` |
 | 断点 | 官方下载的临时文件名是 `.<uuid>.part`，失败后**整文件重下**。已经校验通过的文件会复用 | `index.js:258-316` |
 | 超时 | 下载没有停滞检测，只有准备阶段的总时限 `prepareTimeoutMs`，默认 1 小时 | `index.js:902` |
@@ -94,7 +94,7 @@ App 一直用的就是群友推荐的 `android.speech.SpeechRecognizer`（`Voice
 | 官方插件能否换成 ModelScope | 不能直接换：`modelOrigins` 只接受 HF 兼容的源站（`^https?://host/?$`），ModelScope 的路径格式不同 | `index.js:893` |
 | 和第三方插件的关系 | 见 §1 最后一行：engine 模式只走官方 speech 服务 | — |
 
-**办法：App 先把文件放进引擎的缓存。** App 按锁文件从 ModelScope 下载，支持断点续传（`*.dsh-go.part` + Range），在后台 isolate 里边下边算 SHA-256，校验通过后改成最终文件名。然后打开 bundle 并调用 `speech/prepare`。插件发现文件已在、哈希一致，就跳过下载，直接校验和加载。
+**办法：App 先把文件放进引擎的缓存。** App 按锁文件从 ModelScope 下载，支持断点续传（`*.xrk-mobile.part` + Range），在后台 isolate 里边下边算 SHA-256，校验通过后改成最终文件名。然后打开 bundle 并调用 `speech/prepare`。插件发现文件已在、哈希一致，就跳过下载，直接校验和加载。
 
 本机全链路实测：预置文件后 `speech/prepare`，约 0.9 s 走完 model 步骤（只算哈希），校验约 0.7 s，加载约 4.6 s，然后 `ready`。
 
@@ -102,7 +102,7 @@ App 一直用的就是群友推荐的 `android.speech.SpeechRecognizer`（`Voice
 
 ## 3. 实测：资源占用与发热
 
-本机测试：x86_64 rootfs（与 App 打包的同一份），bwrap 里运行 `dsh web`。机器是 Ryzen 7 7745HX，`threads = 2`。音频用 ModelScope 上 SenseVoice 自带的 `zh.wav` 和 `en.wav` 拼成 10 s、30 s 两段。
+本机测试：x86_64 rootfs（与 App 打包的同一份），bwrap 里运行 `xrkh serve`。机器是 Ryzen 7 7745HX，`threads = 2`。音频用 ModelScope 上 SenseVoice 自带的 `zh.wav` 和 `en.wav` 拼成 10 s、30 s 两段。
 
 | 项目 | 实测（x86_64） | 手机估算〔推断〕 |
 |---|---|---|
@@ -126,7 +126,7 @@ App 一直用的就是群友推荐的 `android.speech.SpeechRecognizer`（`Voice
 | `idleTimeoutMs` | 90 s（默认 300 s） | 冷唤醒在手机上估计 3–8 s。一段对话里的几次口述，间隔大多在 1–2 分钟以内，90 s 能覆盖，又能在 1.5 分钟后释放约 400 MB |
 | `threads` | 2（不变） | 本机 RTF 0.03–0.05，没有数据说明需要改。多开线程只会更热 |
 
-实现方式：`SpeechGuest.kt` 每次启动引擎时写 `/opt/dsh-app/speech.patch.yml`，用 `--patch` 传给 `dsh web`。这和消息搜索、登录桥接两个覆盖层的做法相同。
+实现方式：`SpeechGuest.kt` 每次启动引擎时写 `/opt/dsh-app/speech.patch.yml`，用 `--patch` 传给 `xrkh serve`。这和消息搜索、登录桥接两个覆盖层的做法相同。
 
 - **整块替换**：patch 会整块替换这一项的 `config`，所以要带上 bundle 原来的 `dataRoot`。
 - **bundle 关着时**：这条 patch 匹配不到条目，只记一条告警后跳过（`cordis-plugin-include/lib/index.js:50`）。
@@ -156,8 +156,8 @@ ready → configure(providerId=sensevoice-local) → 「语音输入已就绪」
 | 状态机（下载、取消、删除、续传、首启） | `app/lib/state/voice_model_state.dart` |
 | 设置页的模型卡片 | `app/lib/ui/settings/voice_settings_page.dart` |
 | 轻提示、通知文案、前后台切换 | `app/lib/ui/notify/voice_model_host.dart`（挂在 `home_shell.dart`） |
-| speech 接口补全 | `packages/dsh_client/lib/src/speech_api.dart` |
-| 通知进度行、覆盖层 | `DshService.kt`、`RuntimePlugin.kt`（`voiceModelLine`）、`SpeechGuest.kt`、`DshProcess.kt`、`RuntimeController.kt` |
+| speech 接口补全 | `packages/xrk_client/lib/src/speech_api.dart` |
+| 通知进度行、覆盖层 | `XrkService.kt`、`RuntimePlugin.kt`（`voiceModelLine`）、`SpeechGuest.kt`、`XrkProcess.kt`、`RuntimeController.kt` |
 
 ### 4.2 交互
 
@@ -167,10 +167,10 @@ ready → configure(providerId=sensevoice-local) → 「语音输入已就绪」
 | 下载中 | 语音设置页显示进度条、百分比和「108 MB / 241 MB」。引擎的常驻通知换成「正在下载语音模型 44%」，带进度条，App 在后台也看得到。通知行最多每 0.5 秒换一次（中间来的只留最新一条，到点再发），和上一条一样就不发：下载每 0.25 秒报一次进度，Android 一个 App 每秒超过 5 条就丢 |
 | 完成 | 轻提示「语音输入已就绪」。App 在后台时，通知行显示同一句，回到前台后恢复原样 |
 | 失败 | 底部提示「语音模型下载失败：网络连接失败」，带「重试」按钮，8 秒后自己消失。设置页一直显示原因和「重试」。失败后不会自己重试，不会循环 |
-| 被杀或重启 | 下次引擎就绪时接着下，轻提示「继续下载语音模型 · 还剩约 X MB」。已完成的文件和 `.dsh-go.part` 都会保留 |
+| 被杀或重启 | 下次引擎就绪时接着下，轻提示「继续下载语音模型 · 还剩约 X MB」。已完成的文件和 `.xrk-mobile.part` 都会保留 |
 | 手动下载（设置页的下载、继续下载、重试、重新下载，以及失败提示的「重试」） | 在计费网络（移动数据，没有 Wi-Fi 或以太网）上先弹窗「用移动数据下载？语音模型约 X MB」，确认后才下。所有手动入口走同一个确认（`downloadVoiceModel`）。半途的下载显示「继续下载」，弹窗里是剩余大小 |
 | 就绪后 | 「重新下载」和「删除」两个等宽按钮，放不下（窄屏、大字号）时上下排列、依旧等宽。删除前要确认，删除时先停下文件下载（等它报告已停，最多 10 秒；之前取消过、还没报告已停的旧下载一并等，新下载完成不代替旧的）、关 bundle，再删文件。10 秒内没报告已停就什么都不动、不删，提示「下载还在停止，请稍后再删」，等到超时不算已停。引擎没确认关掉 bundle（报错或不是 `applied`）也不删，提示「没能删除语音模型，请重试」 |
-| 重新下载 | 新文件先下到 `speech-to-text/sensevoice/dsh-go-staging`（和模型同一个文件系统），每个文件按引擎锁文件核对大小和 SHA-256，全部到齐才逐个改名替换原文件；引擎不用关 bundle，语音输入全程可用。中途取消或失败，原模型原样保留，失败提示的「重试」再来一次重新下载。staging 里的临时副本也算「可能还在写」：要等所有下载（包括之前取消过、还没报告已停的）都报告已停才删；没停下就留着，这时删除照上一行不放行，再点重新下载也先等它们停（最多 10 秒，等不到就提示失败、什么都不动）。磁盘要放得下第二份。有文件没有镜像时只能由引擎下进自己的缓存，这时照旧先删后下 |
+| 重新下载 | 新文件先下到 `speech-to-text/sensevoice/xrk-mobile-staging`（和模型同一个文件系统），每个文件按引擎锁文件核对大小和 SHA-256，全部到齐才逐个改名替换原文件；引擎不用关 bundle，语音输入全程可用。中途取消或失败，原模型原样保留，失败提示的「重试」再来一次重新下载。staging 里的临时副本也算「可能还在写」：要等所有下载（包括之前取消过、还没报告已停的）都报告已停才删；没停下就留着，这时删除照上一行不放行，再点重新下载也先等它们停（最多 10 秒，等不到就提示失败、什么都不动）。磁盘要放得下第二份。有文件没有镜像时只能由引擎下进自己的缓存，这时照旧先删后下 |
 | 空间不足 | 下载前就拦下：「存储空间不足，还需要约 X MB」 |
 
 文案没有「实验」字样。中英两套都在 `app/lib/l10n/parts/voice_{zh,en}.arb`。
@@ -200,7 +200,7 @@ ready → configure(providerId=sensevoice-local) → 「语音输入已就绪」
 
 | 方案 | 中文效果 | 流式 | 体积 | 许可 | 结论 |
 |---|---|---|---|---|---|
-| **DSH 套件：SenseVoice-Small INT8**（本方案） | AISHELL-1 CER 2.96，WenetSpeech net 7.84（附录 A10） | 否，整段识别 | 241 MB 下载；原生库已在运行时里 | 运行库 Apache-2.0 + MIT；权重 FunASR 协议，可商用，须署名（A11） | 采用 |
+| **XRK 套件：SenseVoice-Small INT8**（本方案） | AISHELL-1 CER 2.96，WenetSpeech net 7.84（附录 A10） | 否，整段识别 | 241 MB 下载；原生库已在运行时里 | 运行库 Apache-2.0 + MIT；权重 FunASR 协议，可商用，须署名（A11） | 采用 |
 | App 内嵌 sherpa-onnx + 流式模型（如 X-ASR zh-en 134 MB、paraformer 双语 226 MB） | 有流式出字 | 是 | APK 多约 20 MB（arm64 原生库）+ 模型 | 同上 | 以后要边说边出字再考虑，要另做一套引擎外的推理（V2） |
 | Vosk small-cn | SpeechIO-02 23.5（较差），无标点 | 是 | 42 MB | Apache-2.0 | 不采用 |
 | whisper.cpp tiny/base | AISHELL 远差于 SenseVoice，繁简不定，静音处会编句子 | 否 | 32–60 MB | MIT | 不采用 |

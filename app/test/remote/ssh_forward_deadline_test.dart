@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/remote/ssh/local_forward.dart';
-import 'package:dsh_app/remote/ssh/ssh_host_config.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_app/remote/ssh/local_forward.dart';
+import 'package:xrk_app/remote/ssh/ssh_host_config.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_ssh.dart';

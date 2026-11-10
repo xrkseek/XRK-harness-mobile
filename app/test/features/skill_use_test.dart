@@ -4,18 +4,18 @@
 // Goldens: the skill sheet, light and dark. Regenerate with
 // `flutter test --update-goldens test/features/skill_use_test.dart`.
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/agents_state.dart';
-import 'package:dsh_app/state/composer_insert.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/features_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/engine_settings/field_sheets.dart' show SheetActions;
-import 'package:dsh_app/ui/features/skill_use.dart';
-import 'package:dsh_app/ui/features/skills_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/agents_state.dart';
+import 'package:xrk_app/state/composer_insert.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/features_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/engine_settings/field_sheets.dart' show SheetActions;
+import 'package:xrk_app/ui/features/skill_use.dart';
+import 'package:xrk_app/ui/features/skills_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,12 +27,12 @@ import '../chat/support/harness.dart';
 const _workspaceRoot = '/root/workspace/dsh-app';
 
 const _skills = [
-  SkillInfo(name: 'code-review', description: '按团队规范审查改动，列出问题和修改建议。', path: '/root/.dsh/skills/code-review/SKILL.md'),
+  SkillInfo(name: 'code-review', description: '按团队规范审查改动，列出问题和修改建议。', path: '/root/.xrk/skills/code-review/SKILL.md'),
   SkillInfo(
     name: 'pdf',
     description: '读取、拆分、合并 PDF，提取表格和文字。',
     whenToUse: '用户给了 PDF 文件时',
-    path: '$_workspaceRoot/.dsh/skills/pdf/SKILL.md',
+    path: '$_workspaceRoot/.xrk/skills/pdf/SKILL.md',
   ),
 ];
 
@@ -182,7 +182,7 @@ void main() {
     String? target(SkillInfo skill, {String session = 's1', String? selected}) =>
         skillWorkspaceSwitch(skill: skill, sessionId: session, workspaces: const [_app, _notes], selected: selected);
 
-    const project = SkillInfo(name: 'pdf', description: '', path: '$_workspaceRoot/.dsh/skills/pdf/SKILL.md');
+    const project = SkillInfo(name: 'pdf', description: '', path: '$_workspaceRoot/.xrk/skills/pdf/SKILL.md');
 
     test('a project skill takes the conversation\'s workspace', () {
       expect(target(project), 'w-app', reason: 'from 全部对话');
@@ -194,13 +194,13 @@ void main() {
     });
 
     test('global and plugin skills work anywhere', () {
-      expect(target(const SkillInfo(name: 'a', description: '', path: '/root/.dsh/skills/a/SKILL.md')), isNull);
+      expect(target(const SkillInfo(name: 'a', description: '', path: '/root/.xrk/skills/a/SKILL.md')), isNull);
       expect(target(const SkillInfo(name: 'b', description: '')), isNull);
     });
 
     test('a sibling folder with the same prefix is not inside', () {
       expect(
-        target(const SkillInfo(name: 'c', description: '', path: '${_workspaceRoot}2/.dsh/skills/c/SKILL.md')),
+        target(const SkillInfo(name: 'c', description: '', path: '${_workspaceRoot}2/.xrk/skills/c/SKILL.md')),
         isNull,
       );
     });

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,7 +15,7 @@ abstract interface class NativeFileTransport {
 
 class ClientNativeFileTransport implements NativeFileTransport {
   ClientNativeFileTransport(this.client);
-  final DshClient client;
+  final XrkClient client;
   @override
   Future<void> upload(String request, String stream, NativeSelectedFile file, Uint8List bytes) =>
       client.uploadDshGoPickedFile(request, bytes, stream: stream, name: file.name, mediaType: file.mediaType);

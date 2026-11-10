@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_formula.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_formula.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-DshUiView view(Object source, {Object? data, PluginViewBudget budget = PluginViewBudget.panel}) {
-  final result = parseDshUiPluginUncached(source, data: data, profile: budget.profile);
-  expect(result, isA<DshUiParsed>());
-  return (result as DshUiParsed).view;
+XrkUiView view(Object source, {Object? data, PluginViewBudget budget = PluginViewBudget.panel}) {
+  final result = parseXrkUiPluginUncached(source, data: data, profile: budget.profile);
+  expect(result, isA<XrkUiParsed>());
+  return (result as XrkUiParsed).view;
 }
 
 Map<String, Object?> field(String type, String bind, [Map<String, Object?> props = const {}]) => {
@@ -20,15 +20,15 @@ Map<String, Object?> field(String type, String bind, [Map<String, Object?> props
 
 // F1 separately reports correction of its default accent; control assertions
 // below inspect input diagnostics. The shared corpus retains every issue.
-Iterable<DshUiIssue> controlIssues(DshUiView view) => view.issues.where((issue) => issue.path != 'view.accent');
+Iterable<XrkUiIssue> controlIssues(XrkUiView view) => view.issues.where((issue) => issue.path != 'view.accent');
 
 void main() {
   test('v2 owns the new catalog; model and plugin v1 remain unchanged', () {
     final source = field('textField', 'data.name');
-    expect(parseDshUiPluginUncached(source), isA<DshUiInvalid>());
-    expect(parseDshUiUncached(jsonEncode({'v': 2, ...source})), isA<DshUiInvalid>());
+    expect(parseXrkUiPluginUncached(source), isA<XrkUiInvalid>());
+    expect(parseXrkUiUncached(jsonEncode({'v': 2, ...source})), isA<XrkUiInvalid>());
     expect(view({'v': 2, ...source}).version, 2);
-    expect(dshUiPluginComponents, hasLength(42));
+    expect(xrkUiPluginComponents, hasLength(42));
   });
 
   test('all eleven inputs parse; binding wins over literal value', () {
@@ -36,7 +36,7 @@ void main() {
       'v': 2,
       'type': 'stack',
       'children': [
-        for (final type in dshUiPluginInputTypes)
+        for (final type in xrkUiPluginInputTypes)
           field(type, 'data.$type', {
             'value': 'ignored',
             if (['select', 'segmented', 'chips'].contains(type)) 'options': ['one', 'two'],
@@ -44,17 +44,17 @@ void main() {
       ],
     };
     final parsed = view(source, data: {'textField': 'actual', 'number': 3, 'toggle': true});
-    expect(parsed.nodes.whereType<DshUiInput>(), hasLength(11));
+    expect(parsed.nodes.whereType<XrkUiInput>(), hasLength(11));
     expect(controlIssues(parsed), isEmpty);
-    expect(parsed.nodes.whereType<DshUiInput>().first.value, 'actual');
+    expect(parsed.nodes.whereType<XrkUiInput>().first.value, 'actual');
   });
 
   test('read-only tool cards and strip rejection are profile decisions', () {
     final source = {'v': 2, ...field('textField', 'data.name')};
     final card = view(source, budget: PluginViewBudget.toolCard);
-    expect((card.root as DshUiInput).readOnly, isTrue);
-    expect(parseDshUiPluginUncached(source, profile: DshUiProfile.strip), isA<DshUiInvalid>());
-    expect((view({'v': 2, 'type': 'textField', 'label': 'Fixed', 'value': 'x'}).root as DshUiInput).readOnly, isTrue);
+    expect((card.root as XrkUiInput).readOnly, isTrue);
+    expect(parseXrkUiPluginUncached(source, profile: XrkUiProfile.strip), isA<XrkUiInvalid>());
+    expect((view({'v': 2, 'type': 'textField', 'label': 'Fixed', 'value': 'x'}).root as XrkUiInput).readOnly, isTrue);
   });
 
   test('an absent number stays empty and cannot satisfy required by a fabricated zero', () {
@@ -63,10 +63,10 @@ void main() {
               'v': 2,
               ...field('number', 'data.n', {'required': true}),
             }).root
-            as DshUiInput;
+            as XrkUiInput;
     expect(number.value, '');
     expect(number.validate(number.value), isNotNull);
-    final optional = view({'v': 2, ...field('number', 'data.n')}, data: {'n': null}).root as DshUiInput;
+    final optional = view({'v': 2, ...field('number', 'data.n')}, data: {'n': null}).root as XrkUiInput;
     expect(optional.submitted(optional.value), isNull);
   });
 
@@ -80,7 +80,7 @@ void main() {
       {'bind': 'data.rows[99999999]'},
       {'bind': 'data.constructor.name'},
     ]) {
-      expect(parseDshUiPluginUncached({'v': 2, ...field('textField', 'data.name', props)}), isA<DshUiInvalid>());
+      expect(parseXrkUiPluginUncached({'v': 2, ...field('textField', 'data.name', props)}), isA<XrkUiInvalid>());
     }
     for (final second in ['data.a', 'data.a.b']) {
       final parsed = view({
@@ -88,7 +88,7 @@ void main() {
         'type': 'stack',
         'children': [field('textField', 'data.a'), field('textField', second)],
       });
-      expect(parsed.nodes.whereType<DshUiPlaceholder>(), hasLength(1));
+      expect(parsed.nodes.whereType<XrkUiPlaceholder>(), hasLength(1));
       expect(controlIssues(parsed).single.path, 'view.children[1].bind');
     }
   });
@@ -105,20 +105,20 @@ void main() {
           },
       ],
     });
-    expect(parsed.nodes.whereType<DshUiInput>(), hasLength(32));
-    expect(parsed.nodes.whereType<DshUiPlaceholder>(), hasLength(8));
+    expect(parsed.nodes.whereType<XrkUiInput>(), hasLength(32));
+    expect(parsed.nodes.whereType<XrkUiPlaceholder>(), hasLength(8));
     final choices = view({
       'v': 2,
       ...field('select', 'data.selected', {'options': List.generate(30, (i) => '$i')}),
     });
-    expect((choices.root as DshUiInput).options, hasLength(24));
+    expect((choices.root as XrkUiInput).options, hasLength(24));
     expect(controlIssues(choices).single.path, 'view.options');
     final sections = view({
       'v': 2,
       'type': 'tabs',
       'items': List.generate(12, (i) => {'label': '$i', 'children': []}),
     });
-    expect((sections.root as DshUiControlContainer).sections, hasLength(8));
+    expect((sections.root as XrkUiControlContainer).sections, hasLength(8));
     final tree = view({
       'v': 2,
       'type': 'timeline',
@@ -130,12 +130,12 @@ void main() {
         },
       ),
     });
-    final container = tree.root as DshUiControlContainer;
+    final container = tree.root as XrkUiControlContainer;
     expect(tree.nodes.length + container.sections.length, lessThanOrEqualTo(120));
   });
 
   test('forms reject nesting and require an action', () {
-    expect(parseDshUiPluginUncached({'v': 2, 'type': 'form', 'children': []}), isA<DshUiInvalid>());
+    expect(parseXrkUiPluginUncached({'v': 2, 'type': 'form', 'children': []}), isA<XrkUiInvalid>());
     final parsed = view({
       'v': 2,
       'type': 'form',
@@ -145,8 +145,8 @@ void main() {
         {'type': 'form', 'submit': 'inner', 'children': []},
       ],
     });
-    expect((parsed.root as DshUiControlContainer).inputs, hasLength(1));
-    expect(parsed.nodes.whereType<DshUiPlaceholder>(), hasLength(1));
+    expect((parsed.root as XrkUiControlContainer).inputs, hasLength(1));
+    expect(parsed.nodes.whereType<XrkUiPlaceholder>(), hasLength(1));
   });
 
   test('finite validation covers value types, bounds, lengths and named patterns', () {
@@ -160,7 +160,7 @@ void main() {
                 'pattern': 'slug',
               }),
             }).root
-            as DshUiInput;
+            as XrkUiInput;
     expect(text.validate(''), isNotNull);
     expect(text.validate('A space'), isNotNull);
     expect(text.validate(true), isNotNull);
@@ -170,7 +170,7 @@ void main() {
               'v': 2,
               ...field('number', 'data.n', {'min': -2, 'max': 3}),
             }).root
-            as DshUiInput;
+            as XrkUiInput;
     for (final bad in [double.nan, double.infinity, 'no', 4, -3]) {
       expect(numeric.validate(bad), isNotNull);
     }
@@ -181,7 +181,7 @@ void main() {
               'v': 2,
               ...field('slider', 'data.range', {'range': true}),
             }).root
-            as DshUiInput;
+            as XrkUiInput;
     expect(range.validate([80, 20]), isNotNull);
     expect(range.validate([10, 20, 30]), isNotNull);
     expect(range.validate([10, 20]), isNull);
@@ -193,38 +193,38 @@ void main() {
                 'options': ['a', 'b'],
               }),
             }).root
-            as DshUiInput;
+            as XrkUiInput;
     expect(chips.validate('a'), isNotNull);
     expect(chips.validate(['unknown']), isNotNull);
     expect(chips.validate(['a']), isNull);
   });
 
   test('dates and times are strict and bounded', () {
-    expect(dshUiInputDate('2024-02-29'), isNotNull);
+    expect(xrkUiInputDate('2024-02-29'), isNotNull);
     for (final bad in ['2023-02-29', '2024-13-01', '2024-01-32', '2024-1-1', '1899-12-31']) {
-      expect(dshUiInputDate(bad), isNull);
+      expect(xrkUiInputDate(bad), isNull);
     }
-    expect(dshUiInputTime('23:59'), (23, 59));
+    expect(xrkUiInputTime('23:59'), (23, 59));
     for (final bad in ['24:00', '12:60', '1:02', '12:03Z']) {
-      expect(dshUiInputTime(bad), isNull);
+      expect(xrkUiInputTime(bad), isNull);
     }
     expect(
-      parseDshUiPluginUncached({
+      parseXrkUiPluginUncached({
         'v': 2,
         ...field('date', 'data.date', {'minDate': '2025-01-01', 'maxDate': '2024-01-01'}),
       }),
-      isA<DshUiInvalid>(),
+      isA<XrkUiInvalid>(),
     );
   });
 
   test('avatar reuses the image allowlist and code is bounded', () {
     final unsafe = view({'v': 2, 'type': 'avatar', 'src': 'https://tracker.example/a.png'});
-    expect((unsafe.root as DshUiControlDisplay).image!.source, isNull);
+    expect((unsafe.root as XrkUiControlDisplay).image!.source, isNull);
     expect(controlIssues(unsafe).single.path, 'view.src');
     final image = view({'v': 2, 'type': 'avatar', 'src': 'asset:icons/a.png', 'alt': 'A'});
-    expect((image.root as DshUiControlDisplay).image!.source, isA<DshUiAssetImage>());
+    expect((image.root as XrkUiControlDisplay).image!.source, isA<XrkUiAssetImage>());
     final code = view({'v': 2, 'type': 'codeBlock', 'code': 'x' * 9000, 'language': 'js'});
-    expect((code.root as DshUiControlDisplay).text!.length, 8001);
+    expect((code.root as XrkUiControlDisplay).text!.length, 8001);
     expect(controlIssues(code).single.path, 'view.code');
   });
 
@@ -234,10 +234,10 @@ void main() {
       'b': 4,
       'rows': [2],
     };
-    expect(evaluateDshUiFormula('data.a + data.b * data.rows[0]', data), 11);
-    expect(evaluateDshUiFormula('data.b-data.a', data), 1);
-    expect(evaluateDshUiFormula('clamp(abs(-8), 0, max(2, 5))', data), 5);
-    expect(evaluateDshUiFormula('-5 % 3', data), 1);
+    expect(evaluateXrkUiFormula('data.a + data.b * data.rows[0]', data), 11);
+    expect(evaluateXrkUiFormula('data.b-data.a', data), 1);
+    expect(evaluateXrkUiFormula('clamp(abs(-8), 0, max(2, 5))', data), 5);
+    expect(evaluateXrkUiFormula('-5 % 3', data), 1);
     for (final invalid in [
       '1/0',
       '1e999',
@@ -250,7 +250,7 @@ void main() {
       '1' * 257,
       '${'(' * 20}1${')' * 20}',
     ]) {
-      expect(evaluateDshUiFormula(invalid, data), isNull, reason: invalid);
+      expect(evaluateXrkUiFormula(invalid, data), isNull, reason: invalid);
     }
     final parsed = view({
       'v': 2,
@@ -258,7 +258,7 @@ void main() {
       'label': 'Total',
       'value': {'=': 'data.a*2'},
     }, data: data);
-    expect((parsed.root as DshUiMetric).value, '6');
+    expect((parsed.root as XrkUiMetric).value, '6');
     final unresolved = view({
       'v': 2,
       'type': 'metric',
@@ -266,6 +266,6 @@ void main() {
       'value': {'=': '1/0'},
     });
     expect(controlIssues(unresolved).single.path, 'view.value');
-    expect((unresolved.root as DshUiMetric).value, '—');
+    expect((unresolved.root as XrkUiMetric).value, '—');
   });
 }

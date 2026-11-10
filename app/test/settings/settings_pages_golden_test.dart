@@ -4,14 +4,14 @@
 //
 //   flutter test --update-goldens test/settings
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/balance_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/settings/background_guide_page.dart';
-import 'package:dsh_app/ui/settings/diagnostics_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/balance_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/settings/background_guide_page.dart';
+import 'package:xrk_app/ui/settings/diagnostics_page.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -101,7 +101,7 @@ const _runningCompatible = RuntimeStatus(
   abi: 'arm64-v8a',
   bundledVersion: 'r1-dsh0.2.0-rc.2-node24.22.1-ubuntu24.04.5-a45b1e8964a3',
   installedVersion: 'r1-dsh0.2.0-rc.2-node24.22.1-ubuntu24.04.5-a45b1e8964a3',
-  dshVersion: '0.2.0-rc.2',
+  engineVersionAlias: '0.2.0-rc.2',
   nodeVersion: '24.22.1',
   baseUrl: 'http://127.0.0.1:3080',
   token: 'golden-token',

@@ -3,21 +3,21 @@
 // failed refresh, one being read again, an optimistic switch not yet
 // answered, or one from another connection grants nothing: no detail GET, no
 // write, no credential call. Over the real providers, controller,
-// BridgePluginConfigApi and DshClient, against the HTTP fake bridge.
+// BridgePluginConfigApi and XrkClient, against the HTTP fake bridge.
 //
 // The first two cases are the review's counterexample (a17797b let the GET
 // and the POST through after a failed refresh) and its control.
 
 import 'dart:async';
 
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/hosts_state.dart' show HostKind;
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/read_list_cache.dart';
-import 'package:dsh_app/state/read_list_identity.dart' show readListIdentityProvider;
-import 'package:dsh_app/ui/plugins/config/plugin_config_entries.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/hosts_state.dart' show HostKind;
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/read_list_cache.dart';
+import 'package:xrk_app/state/read_list_identity.dart' show readListIdentityProvider;
+import 'package:xrk_app/ui/plugins/config/plugin_config_entries.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -26,7 +26,7 @@ import 'fake_bridge.dart';
 
 const _ns = 'speech-to-text-sensevoice';
 const _language = FieldRef(_ns, ['language']);
-const _voice = '@deepseek-ai/dsh-experimental-voice-input-bundle';
+const _voice = '@xrkseek/harness-cli-experimental-voice-input-bundle';
 
 typedef _Rig = ({FakeBridgeHost host, ProviderContainer c, PluginConfigController controller});
 
@@ -51,7 +51,7 @@ Future<_Rig> _rig({bool routes = true, bool listFails = false, bool voiceOn = tr
       for (final b in bridgeBundles().cast<Map<String, Object?>>()) {...b, 'enabled': b['name'] != _voice || voiceOn},
     ];
   host.entries[_ns] = sensevoiceEntry();
-  final client = await DshClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
+  final client = await XrkClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
   addTearDown(client.close);
   final c = ProviderContainer(overrides: engineOverrides(client));
   addTearDown(c.dispose);
@@ -72,7 +72,7 @@ PluginConfigApi _api(_Rig rig) => rig.c.read(pluginConfigApiProvider)!;
 /// Requests that named [_ns]'s own route, since [from].
 List<String> _touched(_Rig rig, [int from = 0]) => [
   for (final (method, path, _) in rig.host.requests.skip(from))
-    if (path == dshGoPluginConfigEntryPath(_ns)) '$method $path',
+    if (path == xrkGoPluginConfigEntryPath(_ns)) '$method $path',
 ];
 
 List<String> _credentialCalls(_Rig rig, [int from = 0]) => [
@@ -91,7 +91,7 @@ void main() {
       await rig.controller.load(_ns);
       expect(_state(rig.c)[_ns], isNotNull);
       rig.host.failListBundles = true;
-      await expectLater(_refreshPlugins(rig), throwsA(isA<DshRemoteException>()));
+      await expectLater(_refreshPlugins(rig), throwsA(isA<XrkRemoteException>()));
       expect(rig.c.read(installedPluginsProvider).value, isNotNull, reason: 'the list stays on screen');
       expect(rig.c.read(pluginListViewProvider).readOnly, isTrue);
       final before = rig.host.requests.length;
@@ -216,8 +216,8 @@ void main() {
     }
 
     test('a list read over another connection grants nothing', () async {
-      final current = DshClient.withCarrier(FakeSettingsHost());
-      final other = DshClient.withCarrier(FakeSettingsHost());
+      final current = XrkClient.withCarrier(FakeSettingsHost());
+      final other = XrkClient.withCarrier(FakeSettingsHost());
       final c = container(
         host: PluginHost(client: current, label: 'pc', kind: HostKind.local),
         listedBy: other,
@@ -228,7 +228,7 @@ void main() {
     });
 
     test('the same list over this connection does', () async {
-      final current = DshClient.withCarrier(FakeSettingsHost());
+      final current = XrkClient.withCarrier(FakeSettingsHost());
       final c = container(
         host: PluginHost(client: current, label: 'pc', kind: HostKind.local),
         listedBy: current,
@@ -281,7 +281,7 @@ void main() {
       final rig = await _rig();
       await rig.controller.load(_ns);
       rig.host.failListBundles = true;
-      await expectLater(_refreshPlugins(rig), throwsA(isA<DshRemoteException>()));
+      await expectLater(_refreshPlugins(rig), throwsA(isA<XrkRemoteException>()));
       await _until(() => _state(rig.c).scope.status == PluginScopeStatus.failed, what: 'the failed list');
       final before = rig.host.requests.length;
       await expectLater(_api(rig).setCredential('SENSEVOICE_KEY', 'sk'), throwsA(isA<PluginConfigFailure>()));

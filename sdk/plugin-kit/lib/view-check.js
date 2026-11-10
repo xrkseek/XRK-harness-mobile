@@ -1,5 +1,5 @@
-// Twin of the app's plugin-view parser (app/lib/ui/chat/dsh_ui/: dsh_ui_model.dart,
-// dsh_ui_plugin_model.dart, dsh_ui_bind.dart — parseDshUiPluginUncached): the same
+// Twin of the app's plugin-view parser (app/lib/ui/chat/xrk_ui/: xrk_ui_model.dart,
+// xrk_ui_plugin_model.dart, xrk_ui_bind.dart — parseXrkUiPluginUncached): the same
 // lenient rules, the same paths (`view.children[2].items[0].action`) and the same
 // words (lib/messages.json is copied from the app's ARB files). When the app's
 // parser changes, change this file the same way; test/parity/ holds the shared
@@ -15,7 +15,7 @@ const VIEW_SCHEMA = JSON.parse(readFileSync(new URL('../schema/view.schema.json'
 /** Icon names the app knows (the ui.json whitelist). */
 const ICONS = new Set(VIEW_SCHEMA.$defs.icon.anyOf[0].enum)
 
-// ── limits (DshUiLimits, DshUiProfile) ────────────────────────────────────
+// ── limits (XrkUiLimits, XrkUiProfile) ────────────────────────────────────
 
 const L = {
   nodes: 40, depth: 6, children: 16, series: 6, points: 60, compareItems: 4, compareRows: 8,
@@ -113,7 +113,7 @@ function messages(lang) {
   }
 }
 
-// ── bindings (dsh_ui_bind.dart) ───────────────────────────────────────────
+// ── bindings (xrk_ui_bind.dart) ───────────────────────────────────────────
 
 /** A binding that found nothing. */
 const MISSING = Object.freeze({ missing: true })
@@ -190,7 +190,7 @@ function resolveBindings(value, data, maxDepth = 64) {
   return walk(value, 0)
 }
 
-// ── size and nesting (measureDshUiJson) ───────────────────────────────────
+// ── size and nesting (measureXrkUiJson) ───────────────────────────────────
 
 function stringBytes(s, room) {
   if (s.length > room) return s.length + 2
@@ -247,7 +247,7 @@ export function measureJson(value, maxBytes, maxDepth = 64) {
   return { bytes, overBytes: !ok && !tooDeep, tooDeep, ok: ok }
 }
 
-// ── value formatting (formatDshUiValue) ───────────────────────────────────
+// ── value formatting (formatXrkUiValue) ───────────────────────────────────
 
 function group(digits) {
   const negative = digits.startsWith('-')
@@ -301,7 +301,7 @@ class Ctx {
   }
 }
 
-/** A value quoted in a problem: short JSON, never throws (dsh_ui_model.dart `_show`). */
+/** A value quoted in a problem: short JSON, never throws (xrk_ui_model.dart `_show`). */
 function show(value) {
   if (isMissing(value)) return MISSING_TEXT
   if (isMap(value)) return '{…}'
@@ -916,7 +916,7 @@ function parseActions(raw, path, ctx) {
 }
 
 const DATA_IMAGE = /^data:image\/(png|jpeg|jpg|webp|gif);base64,/i
-/** `asset:icons/a.png`: a file in the plugin's `dshGo.assets` directory. */
+/** `asset:icons/a.png`: a file in the plugin's `xrkGo.assets` directory. */
 const ASSET_REF = /^asset:([A-Za-z0-9_~-][A-Za-z0-9._~-]*(\/[A-Za-z0-9_~-][A-Za-z0-9._~-]*)*)$/
 const ASSET_EXT = /\.(png|jpe?g|webp|gif)$/i
 
@@ -959,7 +959,7 @@ function dataSource(src, path, ctx) {
   if (w <= 0 || h <= 0 || w > P.imageSide || h > P.imageSide || w * h > P.imagePixels) ctx.note(path, m('plugViewImagePixels'))
 }
 
-/** PNG / GIF / JPEG / WebP width and height from the header (dshUiImageSize). */
+/** PNG / GIF / JPEG / WebP width and height from the header (xrkUiImageSize). */
 export function imageSize(b) {
   const u16be = (i) => (b[i] << 8) | b[i + 1]
   const u16le = (i) => b[i] | (b[i + 1] << 8)

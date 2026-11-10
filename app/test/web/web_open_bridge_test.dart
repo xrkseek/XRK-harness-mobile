@@ -1,4 +1,4 @@
-// The open bridge's conversation hop (assets/web/dsh_web_open.js), run in a
+// The open bridge's conversation hop (assets/web/xrk_web_open.js), run in a
 // minimal page under node (test/web/support/open_bridge_harness.mjs).
 // location.reload() with a fragment in the URL is a same-document jump in
 // the WebView: nothing loads, and a fresh profile hung on its first 「打开
@@ -25,7 +25,7 @@ void main() {
   Future<Map<String, Object?>> page(Map<String, Object?> scenario) async {
     final result = await Process.run(node!, [
       'test/web/support/open_bridge_harness.mjs',
-      'assets/web/dsh_web_open.js',
+      'assets/web/xrk_web_open.js',
       jsonEncode(scenario),
     ]);
     expect(result.exitCode, 0, reason: '${result.stderr}');
@@ -45,7 +45,7 @@ void main() {
     expect(replaced, hasLength(1));
     final url = Uri.parse(replaced.single as String);
     expect(url.queryParameters['token'], 't');
-    expect(url.queryParameters['dsh-go-hop'], isNotNull);
+    expect(url.queryParameters['xrk-mobile-hop'], isNotNull);
     expect(url.fragment, '/chat');
     // The selection the client restores at boot, and the rest for the next load.
     expect(jsonDecode(out['stored'] as String), {'sessionId': 's2'});
@@ -54,7 +54,7 @@ void main() {
 
   test('back from the hop: the query leaves the address and the conversation is reported', () async {
     final out = await page({
-      'href': 'http://127.0.0.1:3080/?token=t&dsh-go-hop=123#/chat',
+      'href': 'http://127.0.0.1:3080/?token=t&xrk-mobile-hop=123#/chat',
       'stored': 's2',
       'pending': {'session': 's2', 'hopped': true},
       'shown': true,
@@ -69,7 +69,7 @@ void main() {
 
   test('at most one hop: still not on screen after it, it says so and stays', () async {
     final out = await page({
-      'href': 'http://127.0.0.1:3080/?token=t&dsh-go-hop=123#/chat',
+      'href': 'http://127.0.0.1:3080/?token=t&xrk-mobile-hop=123#/chat',
       'stored': 's2',
       'pending': {'session': 's2', 'hopped': true},
       'shown': false,

@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://go.dshtui.com/schema/plugin-kit/v1/contributions.schema.json",
-  "title": "GET /dsh-go/v1/contributions response, protocol v1",
-  "description": "docs/design/native-plugins-protocol.md §4.1. $defs.viewResponse is GET /dsh-go/v1/views/<pkg>/<id> (§4.2); $defs.error the JSON error body of every route (§3.2); $defs.issue one problem entry (§3.3). Both sides ignore unknown fields.",
+  "$id": "https://xrkseek.com/schema/plugin-kit/v1/contributions.schema.json",
+  "title": "GET /xrk-mobile/v1/contributions response, protocol v1",
+  "description": "docs/design/native-plugins-protocol.md §4.1. $defs.viewResponse is GET /xrk-mobile/v1/views/<pkg>/<id> (§4.2); $defs.error the JSON error body of every route (§3.2); $defs.issue one problem entry (§3.3). Both sides ignore unknown fields.",
   "type": "object",
   "required": [
     "v",
@@ -17,7 +17,7 @@
     },
     "bridge": {
       "type": "string",
-      "description": "dsh-go-bridge version"
+      "description": "xrk-bridge version"
     },
     "rev": {
       "type": "string",

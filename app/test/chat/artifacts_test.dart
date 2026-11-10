@@ -1,14 +1,14 @@
 // Which files a turn delivered or generated (lib/state/artifacts.dart) and
 // where their card sits among the chat rows, over a synthetic session in the
-// DSH 0.2.1 wire shape (test/chat/fixtures/follow_artifacts.jsonl) and the
-// presented-files fixture of packages/dsh_client.
+// XRK 0.2.1 wire shape (test/chat/fixtures/follow_artifacts.jsonl) and the
+// presented-files fixture of packages/xrk_client.
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/ui/chat/chat_rows.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/ui/chat/chat_rows.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 ChatTranscript _load(String path) {
@@ -164,7 +164,7 @@ void main() {
     });
 
     test('presented-files fixture: latest description, relative path resolved', () {
-      final presented = _load('../packages/dsh_client/test/fixtures/follow_presented.jsonl');
+      final presented = _load('../packages/xrk_client/test/fixtures/follow_presented.jsonl');
       final groups = _derive(presented);
       expect(groups.map((g) => g.turn), [1]);
       expect(

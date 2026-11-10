@@ -1,5 +1,5 @@
-import 'package:dsh_app/state/ui_mode_state.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
+import 'package:xrk_app/state/ui_mode_state.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

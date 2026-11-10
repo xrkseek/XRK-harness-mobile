@@ -6,16 +6,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_app/state/onboarding_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/shell/root_gate.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_app/state/onboarding_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/shell/root_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -168,7 +168,7 @@ Future<GateRig> pumpGate(
   return GateRig(fake, account, ProviderScope.containerOf(tester.element(find.byType(RootGate))), starts);
 }
 
-/// 外观's 继续, then 跳过 on 想让 DSH Go 帮你做哪些事: on to what comes next.
+/// 外观's 继续, then 跳过 on 想让 XRK Go 帮你做哪些事: on to what comes next.
 Future<void> pastAppearance(WidgetTester tester) async {
   await tester.tap(find.widgetWithText(FilledButton, '继续'));
   await frames(tester);

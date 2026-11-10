@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "title": { "en": "DSH Go plugin market", "zh": "DSH Go 插件市场" },
-  "description": { "en": "Plugins checked for DSH Go", "zh": "为 DSH Go 检查过的插件" },
+  "title": { "en": "XRK Go plugin market", "zh": "XRK Go 插件市场" },
+  "description": { "en": "Plugins checked for XRK Go", "zh": "为 XRK Go 检查过的插件" },
   "metadata": {
     "categories": {
       "media": { "title": { "en": "Media", "zh": "媒体" } },
@@ -10,22 +10,22 @@
   },
   "plugins": [
     {
-      "name": "@dsh-go/media",
+      "name": "@xrk-mobile/media",
       "title": { "en": "Images & video", "zh": "生图生视频" },
       "description": { "en": "Generate images and video in chat", "zh": "在对话里生成图片和视频" },
-      "author": "DSH Go",
-      "homepage": "https://go.dshtui.com/p/%40dsh-go%2Fmedia",
-      "repository": { "url": "https://github.com/ccch1mneyyy/dsh-media" },
+      "author": "XRK Go",
+      "homepage": "https://xrkseek.com/p/%40xrk-mobile%2Fmedia",
+      "repository": { "url": "https://github.com/xrkseek/xrk-media" },
       "metadata": { "category": "media", "keywords": ["生图", "视频", "image", "video"] },
       "versions": [
         { "version": "0.2.0", "publishTimestamp": 1793350000, "source": { "type": "npm" }, "engines": { "dsh": ">=0.2.1" } }
       ]
     },
     {
-      "name": "@dsh-go/translate",
+      "name": "@xrk-mobile/translate",
       "title": { "en": "Live translate", "zh": "同声翻译" },
       "description": { "en": "Translate replies as they stream", "zh": "回复一边生成一边翻译" },
-      "author": "DSH Go",
+      "author": "XRK Go",
       "metadata": { "category": "tools" },
       "versions": [
         { "version": "1.0.0", "publishTimestamp": 1793350000, "source": { "type": "npm" } }

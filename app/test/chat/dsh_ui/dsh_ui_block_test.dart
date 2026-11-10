@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -71,14 +71,14 @@ class Outbox {
 Widget host(
   String source, {
   Outbox? outbox,
-  DshUiState state = DshUiState.live,
+  XrkUiState state = XrkUiState.live,
   bool scope = true,
   bool streaming = false,
   bool closed = true,
 }) {
-  Widget block = DshUiBlock(source: source, streaming: streaming, closed: closed);
+  Widget block = XrkUiBlock(source: source, streaming: streaming, closed: closed);
   if (scope) {
-    block = DshUiScope(
+    block = XrkUiScope(
       sessionId: 's',
       messageId: 'a1',
       state: state,
@@ -193,7 +193,7 @@ void main() {
 
   testWidgets('while the turn runs, nothing can be picked', (tester) async {
     final outbox = Outbox();
-    await tester.pumpWidget(host(choose, outbox: outbox, state: DshUiState.running));
+    await tester.pumpWidget(host(choose, outbox: outbox, state: XrkUiState.running));
     await tester.tap(find.text('方案 A'));
     await tester.pump();
     expect(outbox.sent, isEmpty);
@@ -202,7 +202,7 @@ void main() {
 
   testWidgets('answered views highlight the choice; others expire', (tester) async {
     final outbox = Outbox();
-    final answered = DshUiState(DshUiInteraction.answered, reply: parseDshUiReply('[dsh-ui reply] 选一个方案\n选择：方案 B'));
+    final answered = XrkUiState(XrkUiInteraction.answered, reply: parseXrkUiReply('[dsh-ui reply] 选一个方案\n选择：方案 B'));
     await tester.pumpWidget(host(choose, outbox: outbox, state: answered));
     expect(find.byIcon(AppIcons.radioOn), findsOneWidget);
     expect(find.text('已失效'), findsNothing);
@@ -210,13 +210,13 @@ void main() {
     expect(outbox.sent, isEmpty);
 
     // A reply to another card does not mark this one.
-    final other = DshUiState(DshUiInteraction.answered, reply: parseDshUiReply('[dsh-ui reply] 别的卡\n选择：方案 B'));
+    final other = XrkUiState(XrkUiInteraction.answered, reply: parseXrkUiReply('[dsh-ui reply] 别的卡\n选择：方案 B'));
     await tester.pumpWidget(host(choose, outbox: outbox, state: other));
     await pumpFrames(tester, 12);
     expect(find.byIcon(AppIcons.radioOn), findsNothing);
     expect(find.text('已失效'), findsOneWidget);
 
-    await tester.pumpWidget(host(choose, outbox: outbox, state: DshUiState.expired));
+    await tester.pumpWidget(host(choose, outbox: outbox, state: XrkUiState.expired));
     expect(find.text('已失效'), findsOneWidget);
   });
 
@@ -239,7 +239,7 @@ void main() {
     expect(outbox.resent.single, startsWith('上一个 dsh-ui 视图无法显示：view：不是合法的 JSON'));
     expect(find.text('让它重发'), findsNothing, reason: 'asked once');
 
-    await tester.pumpWidget(host('{"type":"nope"}', outbox: outbox, state: DshUiState.running));
+    await tester.pumpWidget(host('{"type":"nope"}', outbox: outbox, state: XrkUiState.running));
     expect(find.text('这个视图格式有误'), findsOneWidget);
     expect(find.text('让它重发'), findsNothing);
     await tester.pumpWidget(host('{"type":"nope"}', scope: false));
@@ -362,7 +362,7 @@ void main() {
     await tester.pumpWidget(host(deploy, outbox: Outbox()));
     final cancel = tester.getRect(find.ancestor(of: find.text('再等等'), matching: find.byType(InkWell)));
     final go = tester.getRect(find.ancestor(of: find.text('开始部署'), matching: find.byType(InkWell)));
-    final card = tester.getRect(find.byType(DshUiCard));
+    final card = tester.getRect(find.byType(XrkUiCard));
     expect(cancel.width, moreOrLessEquals(go.width));
     expect(cancel.height, 44);
     expect(go.left - cancel.right, 12);
@@ -372,7 +372,7 @@ void main() {
 
   testWidgets('option rows sit 16 in from the card on both sides', (tester) async {
     await tester.pumpWidget(host(choose, outbox: Outbox()));
-    final card = tester.getRect(find.byType(DshUiCard));
+    final card = tester.getRect(find.byType(XrkUiCard));
     final row = tester.getRect(find.ancestor(of: find.text('方案 A'), matching: find.byType(InkWell)));
     expect(row.left - card.left, 16);
     expect(card.right - row.right, 16);

@@ -2,8 +2,8 @@
 // optimistic (masked, no eye), and each mask shape (prefixed key, address
 // password, private key block, JWT).
 
-import 'package:dsh_app/ui/chat/widgets/user_bubble.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/chat/widgets/user_bubble.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

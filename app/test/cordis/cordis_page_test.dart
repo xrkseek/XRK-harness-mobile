@@ -1,16 +1,16 @@
 // 「Cordis」: the native mirror of the official Cordis panel. Grouping and
-// states, the plugin sheet and its Remote calls, the DSH Web hand-off, and
+// states, the plugin sheet and its Remote calls, the XRK Web hand-off, and
 // goldens (light + dark). Regenerate the goldens with
 // `flutter test --update-goldens test/cordis`.
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/cordis_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/cordis/cordis_page.dart';
-import 'package:dsh_app/ui/cordis/cordis_plugin_sheet.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/cordis_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/cordis/cordis_page.dart';
+import 'package:xrk_app/ui/cordis/cordis_plugin_sheet.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -36,14 +36,14 @@ Future<void> _openSheet(WidgetTester tester, String name) async {
 /// A Host serving the sample inventory through the real providers.
 class _Host {
   _Host() : carrier = FakePluginCarrier() {
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     carrier.handlers['dynamicCordisRunner/inventory'] = (_) => rows;
     carrier.handlers['dynamicCordisRunner/stopFromPanel'] = (_) => {'ok': true};
     carrier.handlers['dynamicCordisRunner/undefineFromPanel'] = (_) => {'ok': true, 'wasRunning': true};
   }
 
   final FakePluginCarrier carrier;
-  late final DshClient client;
+  late final XrkClient client;
   List<Object?> rows = [...sampleCordisRows];
 
   List<Override> get overrides => [
@@ -101,7 +101,7 @@ void main() {
     });
 
     test('the relay tunnel cannot reach Cordis', () {
-      final client = DshClient.withCarrier(_RelayCarrier());
+      final client = XrkClient.withCarrier(_RelayCarrier());
       addTearDown(client.close);
       final container = ProviderContainer(
         overrides: [activeConnectionProvider.overrideWithValue(AsyncData(fakeHost(client, kind: HostKind.relay)))],
@@ -226,7 +226,7 @@ void main() {
       final host = _Host();
       addTearDown(host.client.close);
       host.carrier.handlers['dynamicCordisRunner/stopFromPanel'] = (_) =>
-          throw const DshRemoteException('session/not-found', 'session "s1" not found');
+          throw const XrkRemoteException('session/not-found', 'session "s1" not found');
       await _pump(tester, host.overrides);
       await _openSheet(tester, '桌面时钟');
       await tester.tap(find.widgetWithText(OutlinedButton, '停止'));

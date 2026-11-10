@@ -1,19 +1,19 @@
 # 图像与视频生成
 
-> 2026-10-28。基于 0.9.7 的代码和 npm 包 `@deepseek-ai/dsh@0.2.1-rc.2`（只读）。本文写作时只做研究和设计；之后的决定和修订见 §8，冲突时以 §8 和 §4.6 为准。配合 [page-design.md](page-design.md)（骨架、间距）、[polish-guide.md](polish-guide.md)（对称、文案）、[settings-ia.md](settings-ia.md)（设置结构、＋ 面板）、[native-plugins-views.md](native-plugins-views.md)（工具卡）和 [plugin-seams.md](plugin-seams.md) 一起看。
+> 2026-10-28。基于 0.9.7 的代码和 npm 包 `@xrkseek/harness-cli@0.2.1-rc.2`（只读）。本文写作时只做研究和设计；之后的决定和修订见 §8，冲突时以 §8 和 §4.6 为准。配合 [page-design.md](page-design.md)（骨架、间距）、[polish-guide.md](polish-guide.md)（对称、文案）、[settings-ia.md](settings-ia.md)（设置结构、＋ 面板）、[native-plugins-views.md](native-plugins-views.md)（工具卡）和 [plugin-seams.md](plugin-seams.md) 一起看。
 >
 > 标记：**〔源码〕** 是读过源码或仓库文档确认的；**〔推断〕** 是设计推断，没有实测；外部资料按附录 A 标 **V**（官方页面已抓取）/ **S**（只看到搜索摘要）/ **U**（未核实），抓取日期都是 2026-10-28。
 
-**结论**：能接，而且大半基础设施已经在了。推荐把生成放在**主机**上：做一个 DSH 插件（暂名 `dsh-media`），API Key、调用、排队、计费都在插件里。它给模型三个工具（`generate_image`、`edit_image`、`generate_video`），也给人两个不经模型的斜杠命令（`/image`、`/video`）。App 不持有任何生成服务的 Key，只做原生的部分：生成模式和参数弹层、媒体卡、全屏查看、作品库、保存到相册。
+**结论**：能接，而且大半基础设施已经在了。推荐把生成放在**主机**上：做一个 XRK 插件（暂名 `xrk-media`），API Key、调用、排队、计费都在插件里。它给模型三个工具（`generate_image`、`edit_image`、`generate_video`），也给人两个不经模型的斜杠命令（`/image`、`/video`）。App 不持有任何生成服务的 Key，只做原生的部分：生成模式和参数弹层、媒体卡、全屏查看、作品库、保存到相册。
 
 这样选，理由有三条：
 
-- **哪种主机都能跑完**。远程主机、中转主机、手机息屏，生成都在主机上继续。视频一跑就是几分钟，DSH 现成的后台任务（`ctx.jobs`）和「做完叫醒 Agent」正好接得住。
+- **哪种主机都能跑完**。远程主机、中转主机、手机息屏，生成都在主机上继续。视频一跑就是几分钟，XRK 现成的后台任务（`ctx.jobs`）和「做完叫醒 Agent」正好接得住。
 - **第一步零 App 改动就能用**。回复里写 `![](generated/cat.png)`，App 今天就会原生画出工作区里的图片，所有主机都行。插件先上，App 再逐步换成专门的媒体卡。
-- **只写一份**。同一个插件在 DSH 网页版、dsh-TUI 里也能用。Agent 还能把生成的图接着用：放进网页、PPT，或者交给定时任务每天出一张。
+- **只写一份**。同一个插件在 XRK 网页版、dsh-TUI 里也能用。Agent 还能把生成的图接着用：放进网页、PPT，或者交给定时任务每天出一张。
 
 App 侧真正缺的有四样：
-1. 媒体卡：读工具结果里的 `dsh-go/media` 元数据。
+1. 媒体卡：读工具结果里的 `xrk-mobile/media` 元数据。
 2. 视频：播放器，以及保存视频（现在的 `MediaPlugin` 只收图片字节）。
 3. 生成模式和参数弹层。
 4. 作品库。
@@ -39,16 +39,16 @@ App 侧真正缺的有四样：
 
 ## 1. 现状：已经有什么
 
-### 1.1 DSH 引擎
+### 1.1 XRK 引擎
 
 | 问题 | 结论 | 依据〔源码〕 |
 |---|---|---|
 | 有没有生图 / 生视频的工具或输出类型 | **没有**。模型适配层只发聊天请求；目录里只有生图模型、没有聊天模型的服务商，不算可用路由。模型的模态只声明输入（`text`、`image`），没有输出模态 | `dsh-llm-pi-ai/lib/index.js:282-285`（`MODALITIES`）、`:343-353`（`servesChat`） |
 | 模型能不能「输出」图片 | 不能。`ImageBlock` 在类型上不分角色，但注释写明现有适配器只声明文字输出，所以只有用户消息会带图 | `dsh-llm/lib/types/types.d.ts:56-71` |
-| 工具结果怎么带图片 | 工具的 `output.render` 返回 `ContentBlock[]`，可以带 `image` 块。块里只有附件引用 `{attachmentId, mediaType, bytes, width, height, name}`，字节存在附件服务里；客户端用 `session/attachment` 取字节。`read_image` 就是这么做的 | `dsh-tools/lib/types/schema.d.ts:186-193`；`dsh-tool-fs/lib/types/read-image.d.ts`；App 侧 `packages/dsh_client/lib/src/session_api.dart:446-456` |
+| 工具结果怎么带图片 | 工具的 `output.render` 返回 `ContentBlock[]`，可以带 `image` 块。块里只有附件引用 `{attachmentId, mediaType, bytes, width, height, name}`，字节存在附件服务里；客户端用 `session/attachment` 取字节。`read_image` 就是这么做的 | `dsh-tools/lib/types/schema.d.ts:186-193`；`dsh-tool-fs/lib/types/read-image.d.ts`；App 侧 `packages/xrk_client/lib/src/session_api.dart:446-456` |
 | 附件能放什么 | 图片只收 png / jpeg / webp / gif，**入库时会规整**，可能缩小（`originalDimensions` 只在缩过时出现）。文件原样存储，但 `file` 块只在用户消息里有效。**没有视频附件** | `dsh-attachment/lib/types/types.d.ts:5-42`；`dsh-llm/lib/types/types.d.ts:72-83` |
 | 工具结果里的图会不会进模型上下文 | 会。纯文字模型拿到的是占位文字；DeepSeek 路由支持图片输入，按图片计费 | `dsh-llm/lib/types/content.d.ts`（`textOnlyImageText`、`projectOffloadedImages`）；`dsh-llm-deepseek/lib/types/images.d.ts` |
-| 给 App 的展示元数据 | `output.presentationMeta(args, value)` 的返回值原样写进 `tool/result` 事件的 `data.meta`，随对话记录持久化，模型看不到。App 已经读其中的 `dsh-go/view` 键画工具卡 | `dsh-tools/lib/types/schema.d.ts:191-192`；`native-plugins-views.md` §8.2 |
+| 给 App 的展示元数据 | `output.presentationMeta(args, value)` 的返回值原样写进 `tool/result` 事件的 `data.meta`，随对话记录持久化，模型看不到。App 已经读其中的 `xrk-mobile/view` 键画工具卡 | `dsh-tools/lib/types/schema.d.ts:191-192`；`native-plugins-views.md` §8.2 |
 | 官方展示类型里有没有媒体 | 没有。`ToolResultView` 只有 generic / terminal / diff / search / read / web。官方网页版的图片画廊只认 `read_image` | `dsh-tools/lib/types/presentation.d.ts:130`；`dsh-client-ui-tool/lib/client.js`（`name !== "read_image"`） |
 | 交付文件 | `present` 工具声明最终交付的文件，插件随后 `session.append("deliverables/presented", …)`。**插件可以往对话记录里追加自己的事件类型** | `dsh-tool-present/lib/index.js:119`；`dsh-tool-present/lib/types/types.d.ts` |
 | 后台任务 | `ctx.jobs` 是通用的后台任务注册表，插件可以加自己的 `kind`。状态有 `running / stopping / completed / killed / failed`，另有一行 `progress`（如「3/10」）。任务结束时，`tool-jobs` 把完成通知送给所属 Agent：Agent 空闲就开一轮（默认 `wakeup`），忙就塞进下一步。**有人 `wait` 过的任务不再通知** | `dsh-jobs/lib/types/view.d.ts:15,26,72`；`dsh-jobs/lib/types/index.d.ts:128`（`wait`）；`dsh-jobs/lib/types/types.d.ts:249-253`（`awaited`）；`dsh-tool-jobs/lib/index.js:73-91,255-295` |
@@ -63,21 +63,21 @@ App 侧真正缺的有四样：
 |---|---|---|
 | 回复里的图片 | `![…](chart.png)` 指向工作区文件时原生显示：本机原地读，远程主机下载一次进缓存。单图上限 20 MiB，最高画 480，点开全屏 | `app/lib/ui/chat/render/markdown_image.dart:1-4,27-33` |
 | 工具结果里的图片 | `ToolView.images` 取结果里的 `ImagePart`（手机截图、`read_image` 都走这里），缩略图高 144，一张占满宽、多张两列，间距 8。**只在展开工具行的详情里显示** | `app/lib/ui/chat/tool_view.dart:243-255`；`app/lib/ui/chat/widgets/tool_images.dart:14-51` |
-| 插件工具卡 | `meta["dsh-go/view"]` → 原生卡片，默认展开，一轮折叠后卡片留在折叠外面。`image` 组件只收插件资源或 ≤ 64 KiB 的 `data:`，工具卡总预算 8 KiB，**放不下一张生成图** | `native-plugins-views.md` §2.2、§5、§8.3 |
+| 插件工具卡 | `meta["xrk-mobile/view"]` → 原生卡片，默认展开，一轮折叠后卡片留在折叠外面。`image` 组件只收插件资源或 ≤ 64 KiB 的 `data:`，工具卡总预算 8 KiB，**放不下一张生成图** | `native-plugins-views.md` §2.2、§5、§8.3 |
 | 产物 | 有 `ArtifactKind.video` 和图标、MIME 表，但预览页没有视频播放。`pubspec.yaml` 里没有任何视频播放依赖 | `app/lib/state/artifacts.dart:17-58`；`app/lib/ui/chat/widgets/artifact_card.dart:388` |
-| 远程读文件 | `workspaceFiles/stat` + `workspaceFiles/readBytes` 分块读取，**所有通道都能用**（中转走 base64）。单个产物上限 300 MiB，缩略图上限 8 MiB | `packages/dsh_client/lib/src/files_api.dart:1-13`；`app/lib/state/artifact_files.dart:19-22` |
+| 远程读文件 | `workspaceFiles/stat` + `workspaceFiles/readBytes` 分块读取，**所有通道都能用**（中转走 base64）。单个产物上限 300 MiB，缩略图上限 8 MiB | `packages/xrk_client/lib/src/files_api.dart:1-13`；`app/lib/state/artifact_files.dart:19-22` |
 | 全屏看图 | 黑底，左上返回 + 标题，右上「保存到相册」，双指缩放到 8 倍。一次只看一张，不能左右滑 | `app/lib/ui/chat/artifact_preview.dart:1372-1487` |
-| 保存到相册 | `dsh/media` 的 `saveImage {bytes, name, mime}` 写进 `Pictures/DSH Go`，只收 png / jpeg / gif / webp，**字节整块走 MethodChannel**。文件图片按原字节保存，不重新编码 | `MediaPlugin.kt:27-40,214-233`；`app/lib/media/gallery.dart:101-125` |
+| 保存到相册 | `dsh/media` 的 `saveImage {bytes, name, mime}` 写进 `Pictures/XRK Go`，只收 png / jpeg / gif / webp，**字节整块走 MethodChannel**。文件图片按原字节保存，不重新编码 | `MediaPlugin.kt:27-40,214-233`；`app/lib/media/gallery.dart:101-125` |
 | 保存到下载 | `dsh/files` 的 `saveToDownloads {path, name, mime}` 按路径走 MediaStore Downloads，任何类型都行 | `FilesPlugin.kt:32-49` |
-| 斜杠命令 | `commands/execute` 现在总是发 `submittedAttachments: []`，但已经解析了命令是否接收附件 | `packages/dsh_client/lib/src/session_api.dart:693-696`；`app/lib/state/commands_state.dart:132` |
+| 斜杠命令 | `commands/execute` 现在总是发 `submittedAttachments: []`，但已经解析了命令是否接收附件 | `packages/xrk_client/lib/src/session_api.dart:693-696`；`app/lib/state/commands_state.dart:132` |
 | 后台任务完成 | 完成通知作为一条「后台任务」消息显示（`BackgroundTaskNotice`） | `app/lib/ui/chat/widgets/background_task_notice.dart` |
 | 系统通知 | 只认主机 `$events` 的空闲 / 运行边沿、审批和提问，分完成、出错、停止、审批、提问五类 | `app/lib/notify/chat_alerts.dart:1-55` |
-| 本机引擎后台 | 前台服务 + 唤醒锁保住 DSH 进程。vivo 会在后台断网，要打开「允许后台高耗电」 | `runtime/DshService.kt`；记忆里的引擎怪癖 |
+| 本机引擎后台 | 前台服务 + 唤醒锁保住 XRK 进程。vivo 会在后台断网，要打开「允许后台高耗电」 | `runtime/XrkService.kt`；记忆里的引擎怪癖 |
 | 插件自带能力和设置（先例） | 朗读插件：主机生成音频，App 从桥接的媒体路由取回后播放（≤ 16 MiB、30 秒）。`dsh-voice-scribe`：Key 存在主机的插件配置里，App 只看到 `hasKey`，原生设置页走插件自己的 `/voice-input` 路由，**中转主机不可用** | `docs/plugins/voice.md`；`native-plugins-protocol.md` §11；`app/lib/state/voice_scribe_settings.dart:1-30,103-130`；`app/lib/ui/plugins/voice_scribe_settings_page.dart:79` |
 | 引擎设置里的密钥字段 | `settings/describe` 的 schema 里有只写的密钥字段，App 原生画成「已配置 / 未配置」，替换或清除都走弹层 | `app/lib/ui/engine_settings/schema_form.dart:296,406-457` |
-| 桥接覆盖 | 工具卡随对话记录走，哪里都有；面板、胶囊、媒体路由只在装了桥接的主机上有。现在只有本机引擎有桥接，中转主机不放行 `/dsh-go/*` | `docs/plugins/hosts.md` |
+| 桥接覆盖 | 工具卡随对话记录走，哪里都有；面板、胶囊、媒体路由只在装了桥接的主机上有。现在只有本机引擎有桥接，中转主机不放行 `/xrk-mobile/*` | `docs/plugins/hosts.md` |
 
-**小结**：DSH 没有「生成」这个概念，但积木是全的：
+**小结**：XRK 没有「生成」这个概念，但积木是全的：
 - 工具结果可以带图片块，也可以带展示元数据；
 - 插件可以追加对话事件、跑后台任务、注册不经模型的命令；
 - 密钥有只写的存储；
@@ -89,7 +89,7 @@ App 能画工作区里的图片，不能播视频，也不能把视频存进相�
 
 ### 2.1 三个方案
 
-| | a. DSH 插件 | b. App 直连 | c. 混合（App 直连图片，插件跑视频） |
+| | a. XRK 插件 | b. App 直连 | c. 混合（App 直连图片，插件跑视频） |
 |---|---|---|---|
 | 生成在哪跑 | 当前主机（本机引擎或远程） | 手机上的 App 进程 | 图片在手机，视频在主机 |
 | Key 在哪 | 主机的 `ctx.credentials`；App 只写不读 | 手机的安全存储 | 两边各一份 |
@@ -112,20 +112,20 @@ App（生成模式 / 对话）
   ├─ 对话：「画一张…」 ─▶ session/prompt ─▶ Agent ─▶ 工具 generate_image / edit_image / generate_video
   └─ 生成模式：发送 ─────▶ commands/execute「/image …」+ 参考图 ─▶ 命令处理函数（不经模型）
                                          │
-                              dsh-media 插件（主机）
+                              xrk-media 插件（主机）
                                 ├─ 服务商适配器：OpenAI 兼容 · 方舟 · 百炼 · 可灵 …
                                 ├─ 密钥：ctx.credentials（只写）
                                 ├─ 账本：额度、用量、作品索引（主机上一个目录）
                                 ├─ 图片：同步调用（≤ 3 分钟），文件写进工作区
                                 └─ 视频：ctx.jobs（kind = media），按任务有效期续查，断点可恢复
                                          │
-                 tool/result.meta["dsh-go/media"] · 事件 media/request、media/result · job/list 的 progress
+                 tool/result.meta["xrk-mobile/media"] · 事件 media/request、media/result · job/list 的 progress
                                          │
 App：媒体卡（读工作区文件）· 全屏查看 · 作品库 · 保存到相册 · 完成通知
 ```
 
 **为什么不选 b**：
-- dsh-go 的身份是「Agent 的客户端」。把生成做成 App 里的一个孤岛，Agent 用不上，远程主机上的工作区也拿不到图。
+- xrk-mobile 的身份是「Agent 的客户端」。把生成做成 App 里的一个孤岛，Agent 用不上，远程主机上的工作区也拿不到图。
 - 手机进程管不住几分钟的视频任务：vivo 后台断网的问题已经踩过。
 - 适配器要用 Dart 再写一遍，网页版和 TUI 又用不上。
 
@@ -146,7 +146,7 @@ App：媒体卡（读工作区文件）· 全屏查看 · 作品库 · 保存到
 | 环节 | 规定 |
 |---|---|
 | 填写 | 设置 › 能力 › 图像与视频 › 某个服务 › API Key。走插件设置的只写密钥字段（`settings/mutate`），App 画成「已配置 / 未配置」，复用 `SecretFieldTile` |
-| 传输 | 本机引擎：进程内。SSH：SSH 隧道。中转：DSH Remote 的 Noise 端到端加密（`packages/dsh_remote/`）。**都不经过 dsh-go 自己的服务器**（我们也没有这样的服务器） |
+| 传输 | 本机引擎：进程内。SSH：SSH 隧道。中转：XRK Remote 的 Noise 端到端加密（`packages/xrk_remote/`）。**都不经过 xrk-mobile 自己的服务器**（我们也没有这样的服务器） |
 | 存放 | 主机的 `ctx.credentials`。App 不落盘、不缓存、读不回来 |
 | 绝不出现在 | 对话记录、工具参数、`presentationMeta`、命令参数、诊断包、分享链接、通知 |
 | 服务商的结果地址 | 方舟、百炼、BFL 返回的是带签名的临时地址（10 分钟到 30 天不等，附录 A）。插件**拿到就下载**，记录里只写工作区路径，不写地址 |
@@ -171,9 +171,9 @@ App：媒体卡（读工作区文件）· 全屏查看 · 作品库 · 保存到
 
 ### 2.5 插件和 App 之间的约定（v1；② 已作废，见 §8 的修订）
 
-App 只认三样东西，全部随对话记录或 DSH 自带的 RPC 走，中转主机也有。不经桥接，所以不受 `hosts.md` 那张表的限制。
+App 只认三样东西，全部随对话记录或 XRK 自带的 RPC 走，中转主机也有。不经桥接，所以不受 `hosts.md` 那张表的限制。
 
-**① 工具结果的 `meta["dsh-go/media"]`**（`presentationMeta` 写入，≤ 8 KiB，不含字节）
+**① 工具结果的 `meta["xrk-mobile/media"]`**（`presentationMeta` 写入，≤ 8 KiB，不含字节）
 
 ```jsonc
 {
@@ -181,7 +181,7 @@ App 只认三样东西，全部随对话记录或 DSH 自带的 RPC 走，中转
   "rid": "m_7f3a9c",                 // 一次请求的 id；视频完成时靠它原地更新卡片
   "kind": "image",                   // image | video
   "status": "done",                  // running | done | failed（图片通常直接 done）
-  "job": "media-1c2d",               // 视频：DSH 任务 id，App 用 job/list 看进度、job/kill 取消
+  "job": "media-1c2d",               // 视频：XRK 任务 id，App 用 job/list 看进度、job/kill 取消
   "items": [{
     "path": "/root/proj/generated/2026-10-28/cat-1.png",   // 主机上的绝对路径
     "mime": "image/png", "width": 2048, "height": 2048, "bytes": 3145728,
@@ -209,7 +209,7 @@ App 只认三样东西，全部随对话记录或 DSH 自带的 RPC 走，中转
 
 **工具的模型侧返回**只有文字：路径、尺寸、用时、改写后的描述。生成的图不进模型上下文，省掉图片输入费。模型要看，自己调 `read_image`。有一个可选的升级方向：把图以 `offloaded: true` 的图片块写进结果，这样能持久显示又不发给模型（§7 R1）。
 
-**网页版与旧 App**：网页版不认 `dsh-go/media`，显示通用工具卡。插件的技能同时让模型在回复里写 `![](路径)`，所以网页版和没有媒体卡的旧 App 一样能看到图。新 App 看到媒体卡后，回复里指向同一路径的图片会去重，不画第二遍（〔推断〕：按路径去重，规则同产物卡）。
+**网页版与旧 App**：网页版不认 `xrk-mobile/media`，显示通用工具卡。插件的技能同时让模型在回复里写 `![](路径)`，所以网页版和没有媒体卡的旧 App 一样能看到图。新 App 看到媒体卡后，回复里指向同一路径的图片会去重，不画第二遍（〔推断〕：按路径去重，规则同产物卡）。
 
 ## 3. 服务与模型
 
@@ -275,7 +275,7 @@ App 只认三样东西，全部随对话记录或 DSH 自带的 RPC 走，中转
 | SiliconFlow | ✅ | — | 官方示例用 OpenAI SDK |
 | 火山方舟 | 路径和字段同形 | — | 「OpenAI SDK 兼容」页只有聊天示例，直接用 SDK 生图未核实（U） |
 | 智谱 | 同形，但前缀是 `/api/paas/v4` | — | — |
-| OpenRouter | 自己的 `POST /api/v1/images` | — | 聊天接口带 `modalities: ["image","text"]` 也能出图（S）；DSH 的模型适配器只收文字输出，用不上 |
+| OpenRouter | 自己的 `POST /api/v1/images` | — | 聊天接口带 `modalities: ["image","text"]` 也能出图（S）；XRK 的模型适配器只收文字输出，用不上 |
 | 百炼、MiniMax、BFL、可灵、Runway、Luma | ❌ 各有私有协议 | — | — |
 
 **视频没有通用标准了**。OpenAI 的 `/v1/videos` 是：创建 → 查状态（`queued / in_progress / completed / failed`）→ `GET …/content` 取 MP4。它最接近标准，但已经下线。各家现在都是「提交 → 任务 id → 轮询（有的有回调）→ 临时地址」，插件必须自己统一。
@@ -449,10 +449,10 @@ App 只认三样东西，全部随对话记录或 DSH 自带的 RPC 走，中转
   price: { unit: "image" | "second", amount, currency }, promptLang }
 ```
 
-App 读目录的方式（2026-10-28，与 `runtime/media/dsh-media/MEDIA-CATALOG-CONTRACT.md` 一致）：
+App 读目录的方式（2026-10-28，与 `runtime/media/xrk-media/MEDIA-CATALOG-CONTRACT.md` 一致）：
 
-- **在哪**：`settings/describe` 里，某个 namespace 的 schema 中 `fields["services"].meta.extra["dsh-go/media/catalog"]`。按这个元数据找 namespace，不按名字找：主机可以给插件实例改名。目录不是配置值，`value.catalog` 不算数。
-- **认不认**：`v` 必须是 1，`contract` 有的话必须是 `dsh-go/media/catalog`，`models` 必须是列表，每个模型的 `id`、`label`、`kind` 类型要对。`kind` 不认识的模型跳过，留给以后的版本。
+- **在哪**：`settings/describe` 里，某个 namespace 的 schema 中 `fields["services"].meta.extra["xrk-mobile/media/catalog"]`。按这个元数据找 namespace，不按名字找：主机可以给插件实例改名。目录不是配置值，`value.catalog` 不算数。
+- **认不认**：`v` 必须是 1，`contract` 有的话必须是 `xrk-mobile/media/catalog`，`models` 必须是列表，每个模型的 `id`、`label`、`kind` 类型要对。`kind` 不认识的模型跳过，留给以后的版本。
   - 目录缺失、损坏或版本未知时，专用生成模式不可用：「生成」弹出说明，普通对话照常。
   - App 里没有内置的模型表可以兜底。
 - **能用哪些**：目录 ∩ `value.services` 里 `enabled` 为真、`keyRef` 的凭据在 `credentials/describe` 里为 configured 的服务各自允许的模型 ∩ `capabilities[kind]` 不为 false。
@@ -465,12 +465,12 @@ App 读目录的方式（2026-10-28，与 `runtime/media/dsh-media/MEDIA-CATALOG
 
 | 场景 | 怎么做 |
 |---|---|
-| 图生图 | 生成模式里先从相册、拍照或文件选图，进托盘，再写描述。命令收到的是 DSH 已经入库的图片块（`input.attachments`），插件在主机上读它的只读路径，转给服务商 |
+| 图生图 | 生成模式里先从相册、拍照或文件选图，进托盘，再写描述。命令收到的是 XRK 已经入库的图片块（`input.attachments`），插件在主机上读它的只读路径，转给服务商 |
 | 图生视频 | 托盘第一张是首帧，第二张是尾帧 |
 | 用生成过的图 | 卡片 ⋯ › 「做成视频」：进视频模式，首帧是这张图。传的是主机上的路径，**不再从手机上传一遍** |
 | 对话里 | 「把这张做成油画」：附件已经在对话里，Agent 用它的只读路径调 `edit_image` |
 | 远程主机 | 和发普通图片一样，从手机传到主机，再由主机发给服务商 |
-| 上限 | 每张 ≤ 20 MiB（DSH 默认的图片上限）。服务商有自己的上限时插件压缩，不改原图 |
+| 上限 | 每张 ≤ 20 MiB（XRK 默认的图片上限）。服务商有自己的上限时插件压缩，不改原图 |
 
 第一次把参考图发给某个服务时要先确认，见 §6。
 
@@ -489,7 +489,7 @@ App 读目录的方式（2026-10-28，与 `runtime/media/dsh-media/MEDIA-CATALOG
 
 ### 4.6 参数头语法 v1
 
-> 2026-10-28 定稿。以插件的早期候选实现（`runtime/media/dsh-media/HEADER-V1.md`、`src/header.js`、`test/fixtures/header-v1.json`）为基础，只做最小修正，差异见 §4.6.8。两端共用一份 golden 集 `app/test/media/fixtures/header_grammar_v1.json`：插件和 App 都要逐条跑通，改语法先改它。
+> 2026-10-28 定稿。以插件的早期候选实现（`runtime/media/xrk-media/HEADER-V1.md`、`src/header.js`、`test/fixtures/header-v1.json`）为基础，只做最小修正，差异见 §4.6.8。两端共用一份 golden 集 `app/test/media/fixtures/header_grammar_v1.json`：插件和 App 都要逐条跑通，改语法先改它。
 
 生成模式发的是一条普通用户消息：第一行是参数头，第二行起是描述（§8 的 R3 修订）。只有**当前用户消息**的第一行算数；引用、助手消息、工具结果、网页和文件里同样的文字都不算生成指令。
 
@@ -589,7 +589,7 @@ NZ = %x31-39   DIGIT = %x30-39   LOWER = %x61-7A   ALNUM = DIGIT / %x41-5A / LOW
 
 - 只有**合法**消息才隐藏参数头。描述按原文显示，不 trim，也不改写。参数小字只读合法头里的值。
 - 「编辑后重发」和卡片上的「修改」按同一套语法往返：参数头变回生成模式（模型按 §4.6.5 找回），描述放回输入框。当前主机用不了生成模式时，整条原文（连同参数头）原样留在输入框，照常可以发。
-- **对话标题**：DSH 的默认标题取首条消息，把连续空白压成一个空格，再截断。App 只在两种情况下去掉参数头：
+- **对话标题**：XRK 的默认标题取首条消息，把连续空白压成一个空格，再截断。App 只在两种情况下去掉参数头：
   1. 以 `〔生成图像` / `〔生成视频` 开头，后面是文本结尾、` ·`，或者 ` · …` 并且后面再没有 `〕`（标题在头里被截断）。这时显示「生成图像」或「生成视频」。
   2. 后面是 ` · …〕` 或 `〕`，从开头到第一个 `〕` 是合法头行，并且 `〕` 后面是文本结尾或一个空格。这时显示空格后面的部分；后面没有内容就显示「生成图像」或「生成视频」。
   - 其他情况一律原样显示，比如 `〔生成图像的方法〕示例`、`〔生成图像〕这个词是什么意思`。
@@ -612,7 +612,7 @@ NZ = %x31-39   DIGIT = %x30-39   LOWER = %x61-7A   ALNUM = DIGIT / %x41-5A / LOW
 #### 4.6.8 和插件早期候选实现的差异
 
 ```text
-【dsh-media 参数头 v1：定稿与插件早期候选实现的差异】
+【xrk-media 参数头 v1：定稿与插件早期候选实现的差异】
 规范：docs/design/media-generation.md §4.6
 golden：app/test/media/fixtures/header_grammar_v1.json
         （含候选 header-v1.json 全部样例，结果不变）
@@ -647,8 +647,8 @@ golden：app/test/media/fixtures/header_grammar_v1.json
 6. namespace：v1 的头不带。(serviceId, modelId) 在多个 namespace 里重名时，
    App 不提供这些条目。多实例真要并存，v2 再把 namespace 放进标记。
 7. App 读目录的方式
-   只认 schema.fields.services.meta.extra["dsh-go/media/catalog"]；
-   v 必须是 1；contract 有的话必须是 "dsh-go/media/catalog"。
+   只认 schema.fields.services.meta.extra["xrk-mobile/media/catalog"]；
+   v 必须是 1；contract 有的话必须是 "xrk-mobile/media/catalog"。
    目录缺失、损坏、v 未知 → 专用生成模式不可用，普通对话照常。
    可选项 = 目录 ∩ value.services
             （enabled=true、id 合法、keyRef 的 credentials/describe 为 configured、
@@ -986,7 +986,7 @@ n = 4：2 × 2
 | 系统字号 1.3 | 元信息行省略模型名，不折行；分段换行；胶囊文字省略「· 2 张」之外的部分（类型永远在） |
 | 横屏手机（915 × 412） | 单列居中（page-design §7）；卡片高度上限 `0.6 × 412 ≈ 247`；查看器的顶栏和底部胶囊让开左右安全区，胶囊最宽 400 居中；参数弹层按矮窗规则长高、超出滚动 |
 | 平板 / 大屏 | 卡片在 720 阅读列里，图片最宽 688；作品库每行 6 列；查看器不变 |
-| 深色 / 浅色 | 卡片占位、描边、元信息都从主题取（`DshColors`、`codeWell*`）；查看器永远黑底；压在图上的标签用 60% 黑底白字，不随主题变；没有任何十六进制写死的颜色 |
+| 深色 / 浅色 | 卡片占位、描边、元信息都从主题取（`XrkColors`、`codeWell*`）；查看器永远黑底；压在图上的标签用 60% 黑底白字，不随主题变；没有任何十六进制写死的颜色 |
 | 动画 | 占位到成品交叉淡变 200ms；进度条和小环是唯一的循环动画；系统关闭动画时直接切 |
 | 旋转 | 正在播放的视频不中断；查看器保留当前页和缩放 |
 
@@ -1000,7 +1000,7 @@ n = 4：2 × 2
 | **成人内容** | App 不加开关，不替用户放宽服务商的审核（OpenAI 的 `moderation: low` 不开放）。服务商标为不安全的图不显示。App 自己不做识别 | 〔推断〕 |
 | **显式标识** | 每张卡的元信息都以「AI 生成」开头，查看器里有同样的角标。插件同时让模型在回复里写明是生成的图 | 《人工智能生成合成内容标识办法》第 4、6 条（V） |
 | **隐式标识与来源** | 保存、分享一律用原文件字节，不重新编码，所以 C2PA、SynthID、GB 45438 元数据都原样保留。插件在主机上检查有没有 C2PA 清单，写进 `provenance`，详情里显示「来源标识」 | Google：Gemini 图片和 Omni 视频都带 SynthID（V）；OpenAI：C2PA + SynthID（S）；智谱、SiliconFlow 加隐式标识（V）；`gallery.dart:101-125` 文件按原字节保存〔源码〕 |
-| **我们算不算服务提供者** | 用户自带 Key 直连服务商时，生成服务由服务商提供（备案和标识义务在它们）。dsh-go 是客户端，也不托管内容（community.md：v1 不托管任何用户内容）。**一旦我们自己转售或托管生成，就成了服务提供者**，要走备案、实名、审核（§9 不做） | 〔推断，非法律意见〕 |
+| **我们算不算服务提供者** | 用户自带 Key 直连服务商时，生成服务由服务商提供（备案和标识义务在它们）。xrk-mobile 是客户端，也不托管内容（community.md：v1 不托管任何用户内容）。**一旦我们自己转售或托管生成，就成了服务提供者**，要走备案、实名、审核（§9 不做） | 〔推断，非法律意见〕 |
 | **应用商店** | 第 7 条：上架审核时，应用商店会问是否提供生成服务、看标识材料。要准备一段说明（用户自带 Key，标识由服务商加，App 内常显「AI 生成」）。第 8 条：用户协议要写明标识方式。上架 Google Play 的话，AI 生成内容政策要求有应用内举报入口 | 第 7、8 条（V）；Play 政策（U，本轮未核原文） |
 | **不帮人去标识** | 第 10 条禁止提供去除标识的工具。「服务商水印」开关只映射到服务商自己公开的参数；需要签免责协议才能关的服务（如智谱）不显示这个开关。App 不提供任何去水印、去元数据功能 | 第 10 条（V）；智谱、SiliconFlow 的水印参数（V） |
 | **参考图要先同意** | 第一次把参考图发给某个服务时弹确认，标题「发送参考图」，正文「参考图会发送给火山方舟，用于这次生成」，按钮「发送」「取消」。按主机 + 服务记住，在服务详情里可以撤回 | 〔推断〕 |
@@ -1016,11 +1016,11 @@ n = 4：2 × 2
 
 | 步 | 内容 | 主要文件 | 风险 | 测试 | 在哪 | 依赖 |
 |---|---|---|---|---|---|---|
-| **M0** 插件骨架 + 通用图像 | 新包 `runtime/media/dsh-media`（和 `runtime/bridge/dsh-go-bridge` 并列）。包含：<br>• 设置 schema（服务、只写密钥、默认值、上限）<br>• 模型目录（JSON 数据）<br>• OpenAI 兼容适配器<br>• `generate_image`（同步），文件写进 `<cwd>/generated/<日期>/`<br>• 作品索引，`presentationMeta` 写 `dsh-go/media`<br>• 系统提示段落：让模型在回复里写 `![](路径)`<br>**App 零改动** | 新目录 `runtime/media/` | 低 | Node 单测（模拟 HTTP 服务器）。用 `dsh headless` 跑一次，存一份对话记录夹具 `app/test/media/fixtures/live_image.jsonl`，做法同 native-plugins-views §8.2 | 插件 | — |
+| **M0** 插件骨架 + 通用图像 | 新包 `runtime/media/xrk-media`（和 `runtime/bridge/xrk-bridge` 并列）。包含：<br>• 设置 schema（服务、只写密钥、默认值、上限）<br>• 模型目录（JSON 数据）<br>• OpenAI 兼容适配器<br>• `generate_image`（同步），文件写进 `<cwd>/generated/<日期>/`<br>• 作品索引，`presentationMeta` 写 `xrk-mobile/media`<br>• 系统提示段落：让模型在回复里写 `![](路径)`<br>**App 零改动** | 新目录 `runtime/media/` | 低 | Node 单测（模拟 HTTP 服务器）。用 `xrkh run` 跑一次，存一份对话记录夹具 `app/test/media/fixtures/live_image.jsonl`，做法同 native-plugins-views §8.2 | 插件 | — |
 | **M1** 国内服务、视频、命令 | 方舟（Seedream、Seedance）和百炼（千问图像、万相）适配器。`ctx.jobs` 的 `kind: media`：任务落盘、重启续查。`/image`、`/video` 命令带附件；`media/request`、`media/result` 事件。另有每日上限、视频审批、参考图三类校验、错误统一、`edit_image` | `runtime/media/**` | 中：服务商接口常变 | 用录好的响应测各适配器；测任务恢复、额度、审核失败、参考图校验；出视频和命令两份夹具 | 插件 | M0 |
-| **M2** 图片卡 | 在 `dsh_client` 里解析 `MediaMeta`；`ToolView.media`。新增 `MediaCard`：网格、元信息、操作行。按 `cardOnly` 放进对话行；和回复里同一路径的图片去重。保存用原文件 | `packages/dsh_client/lib/src/models.dart`；`app/lib/ui/chat/tool_view.dart`；新增 `app/lib/ui/chat/media/media_card.dart`、`media_grid.dart`；`app/lib/ui/chat/chat_rows.dart`；`render/markdown_image.dart` | 中：动到对话行 | 网格几何测试（320 / 390 / 横屏 915×412，n = 1–4，各种比例，`H` 上限）；浅色、深色 golden；用 M0 的夹具走 `ChatTranscript` → 卡片 | App | M0 |
+| **M2** 图片卡 | 在 `dsh_client` 里解析 `MediaMeta`；`ToolView.media`。新增 `MediaCard`：网格、元信息、操作行。按 `cardOnly` 放进对话行；和回复里同一路径的图片去重。保存用原文件 | `packages/xrk_client/lib/src/models.dart`；`app/lib/ui/chat/tool_view.dart`；新增 `app/lib/ui/chat/media/media_card.dart`、`media_grid.dart`；`app/lib/ui/chat/chat_rows.dart`；`render/markdown_image.dart` | 中：动到对话行 | 网格几何测试（320 / 390 / 横屏 915×412，n = 1–4，各种比例，`H` 上限）；浅色、深色 golden；用 M0 的夹具走 `ChatTranscript` → 卡片 | App | M0 |
 | **M3** 视频 | 加 `video_player` 依赖。视频卡、查看器里的播放器；封面（`MediaMetadataRetriever`）；按 `codec` 判断能不能播，播不了就退回外部应用。`MediaPlugin.kt` 新增 `saveVideo {path, name, mime}`：从文件流式写进 `Movies/DSH`，**不经 MethodChannel 传字节**；远程主机的视频先进缓存再存 | `app/pubspec.yaml`；新增 `app/lib/ui/chat/media/video_card.dart`、`media_viewer.dart`；`MediaPlugin.kt`；`app/lib/media/gallery.dart` | 中高：新原生方法、新依赖、真机解码差异 | 播放器假实现的组件测试；`saveVideo` 在 Android 9 / 10+ 两条路径上的真机测试；真机放一段 10-bit HEVC | App | M2 |
-| **M4** 进度与失败 | `dsh_client` 加 `job/list` 订阅和 `job/kill`。卡片的状态机（§5.3），按 `rid` 原地更新，错误文案 | `packages/dsh_client/lib/src/`（新 `jobs_api.dart`）；`media_card.dart` | 中 | 状态机单测；回放夹具：运行中 → 完成、失败、取消；进后台再回来 | App | M1、M2 |
+| **M4** 进度与失败 | `dsh_client` 加 `job/list` 订阅和 `job/kill`。卡片的状态机（§5.3），按 `rid` 原地更新，错误文案 | `packages/xrk_client/lib/src/`（新 `jobs_api.dart`）；`media_card.dart` | 中 | 状态机单测；回放夹具：运行中 → 完成、失败、取消；进后台再回来 | App | M1、M2 |
 | **M5** 生成模式 | ＋ 面板的「生成」磁贴、模式胶囊、参数弹层（目录从 `settings/describe` 读）。`commands/execute` 带 `submittedAttachments`；`media/request` 画成用户气泡；参考图确认 | `app/lib/ui/chat/widgets/attachments.dart`；`chat_screen.dart`；`composer.dart`；新增 `app/lib/ui/chat/media/generate_mode.dart`、`generate_sheet.dart`；`session_api.dart:693` | **高**：改的是输入区 | `composer_geometry_test` 加模式胶囊（左缘对齐、左右内边距相等、和权限圆钮同高）；命令拼装单测；附件编码；对话页 golden；中转主机实测 | App | M1；和 settings-ia S6 协调 |
 | **M6** 设置与用量 | 设置 › 能力 › 图像与视频；服务表单、测试连接、用量页。在这之前插件 schema 由 `schema_form` 自动画，已经能用 | 新增 `app/lib/ui/settings/media/`；`settings_screen.dart`；settings-ia 的索引（S1）登记新行，同义词加「生图、画图、文生图、视频生成、AI 绘画」 | 低到中 | 页面 golden；`index_sync_test`；密钥字段只写 | App | M1 |
 | **M7** 预装与分发 | 本机运行时打进插件，没配服务时不注册工具和命令。插件上架插件市场，远程主机一键装。当前主机没装插件时，入口显示「在此主机上安装」 | `runtime/build-runtime.sh`；`runtime/media/`；`app/lib/ui/plugins/` | 中：运行时体积、插件和 App 的发版节奏 | 运行时构建报告；新装、升级、卸载各走一遍 | 插件、运行时构建 + App 入口 | M1 |
@@ -1052,7 +1052,7 @@ n = 4：2 × 2
 >
 > §2.5 的约定冻结为 **v1**：App 按它开发，插件按它实现。确实要改时追加 `v: 2` 并写明迁移，不能悄悄改字段。
 >
-> **修订（2026-10-28，依据插件侧的实测）**：DSH rc.2 不支持插件写自定义对话事件（R3），中转主机上的命令也有 60 秒时限，所以 §2.5 ② 的 `media/request` / `media/result` **作废**，生成模式不走命令通道。生成模式改为发一条普通用户消息，第一行是参数头，例如「〔生成图像 · 3:4 · 2 张 · Seedream 5.0〕」，第二行起是描述（语法见 §4.6）。插件的系统提示让模型按参数头直接调用工具；如果 rc.2 能指定本轮必须调用某个工具，就优先用它。App 隐藏参数头，用户气泡下面显示参数小字。工具结果仍是 v1 的 `meta["dsh-go/media"]`，所有主机都能用，结果也留在对话记录里。代价是多一次很便宜的模型调用。
+> **修订（2026-10-28，依据插件侧的实测）**：XRK rc.2 不支持插件写自定义对话事件（R3），中转主机上的命令也有 60 秒时限，所以 §2.5 ② 的 `media/request` / `media/result` **作废**，生成模式不走命令通道。生成模式改为发一条普通用户消息，第一行是参数头，例如「〔生成图像 · 3:4 · 2 张 · Seedream 5.0〕」，第二行起是描述（语法见 §4.6）。插件的系统提示让模型按参数头直接调用工具；如果 rc.2 能指定本轮必须调用某个工具，就优先用它。App 隐藏参数头，用户气泡下面显示参数小字。工具结果仍是 v1 的 `meta["xrk-mobile/media"]`，所有主机都能用，结果也留在对话记录里。代价是多一次很便宜的模型调用。
 
 
 | # | 问题 | 建议 | 反对它最有力的理由 |
@@ -1060,7 +1060,7 @@ n = 4：2 × 2
 | D1 | 生成放在**主机上的插件**里，App 不持有生成服务的 Key（§2） | 采用 | 每台主机都要装插件、引擎要在线。只想「画一张」的人走对话，会多一轮模型调用和几秒等待。命令通道和本机预装能缓解，但缓解不了「远程主机没装插件」的第一次 |
 | D2 | 先上**对话入口**（M0–M2），生成模式放到 M5 | 采用：插件先上、零 App 改动，先验证有没有人用 | 大众用户找的是「生图按钮」，未必会想到直接说。生成模式晚上线，第一批体验就要靠「会说」。备选：M5 提到 M2 之后、视频之前 |
 | D3 | 首发服务：**火山方舟 + 阿里云百炼 + OpenAI 兼容** | 采用：国内能用、人民币计费，兼容层顺带覆盖 SiliconFlow 和海外服务 | 可灵的视频口碑最好，却要等第二批。海外用户首选的 Gemini（Nano Banana）不在首发。OpenAI 兼容里的海外服务，国内用户多半要海外卡 |
-| D4 | 作品文件放在**对话的工作区** `generated/`，主机另记索引 | 采用：Agent 能直接接着用，产物卡也认得出来 | 代码项目里会混进图片，git 状态变脏。本机引擎「重置运行环境」会把没存到相册的作品一起删掉。备选：主机统一目录 `~/.dsh/media/`，Agent 照样能读，作品库也更干净 |
+| D4 | 作品文件放在**对话的工作区** `generated/`，主机另记索引 | 采用：Agent 能直接接着用，产物卡也认得出来 | 代码项目里会混进图片，git 状态变脏。本机引擎「重置运行环境」会把没存到相册的作品一起删掉。备选：主机统一目录 `~/.xrk/media/`，Agent 照样能读，作品库也更干净 |
 | D5 | 「服务商水印」默认**跟服务商**（方舟默认开，百炼默认关）；App 内的「AI 生成」标注始终显示 | 采用：不替用户决定，也不把标识义务全压在 App 上 | 用户最烦水印，方舟默认在图上印「AI 生成」。全关画面最干净，但那样在国内分发时，标识就只剩 App 里那行字 |
 | D6 | 花费护栏：**每日上限默认 ¥20**；对话入口的视频，每个对话第一次要审批 | 采用：防提示注入和手滑，能把损失兜在一天之内 | 多一道确认，和「产品不啰嗦」的取向冲突。上限会挡住正经大量出图的人，他们得先去改设置 |
 | D7 | 本机运行时**预装**插件，没配服务时不注册工具 | 采用：本机用户零安装，生成入口一直在 | 运行时变大，插件的修复要跟着 App 发版。不用生成的人也背着它 |
@@ -1068,7 +1068,7 @@ n = 4：2 × 2
 
 ### 8.1 插件 0.2.0 实施记录（2026-10-31）
 
-`@ccch1mneyyy/dsh-media`（原计划名 `@dsh-go/media`）已实现原生方舟、百炼、硅基流动图片与视频，保留 OpenAI 兼容图片，支持已核模型的单图编辑。目录仍为 `dsh-go/media/catalog` v1，结果仍为冻结的媒体 v1；无新命令、自定义事件或 App 改动。按 10-30 市场任务决定，**不预装**，由市场安装；已按用户授权使用备用组织；旧 `0.2.0` 被 staging 占用，改以 `0.2.1` 正常自动直发，npm 正式版本与公开下载哈希已核验，市场上线验收见 `market/VERIFICATION.md`。
+`@xrkseek/xrk-media`（原计划名 `@xrk-mobile/media`）已实现原生方舟、百炼、硅基流动图片与视频，保留 OpenAI 兼容图片，支持已核模型的单图编辑。目录仍为 `xrk-mobile/media/catalog` v1，结果仍为冻结的媒体 v1；无新命令、自定义事件或 App 改动。按 10-30 市场任务决定，**不预装**，由市场安装；已按用户授权使用备用组织；旧 `0.2.0` 被 staging 占用，改以 `0.2.1` 正常自动直发，npm 正式版本与公开下载哈希已核验，市场上线验收见 `market/VERIFICATION.md`。
 
 视频采用 rc.4 的真实 `ctx.jobs`，完成后通过现有 tool-jobs 唤醒 Agent，再调用 `get_media_result` 输出终态媒体元数据。v1 取消以 failed/error.code=cancelled 表达；查询未确认取消时必须说明远端可能继续计费。方舟和百炼只支持排队取消，硅基流动无已核取消接口。
 
@@ -1076,24 +1076,24 @@ n = 4：2 × 2
 
 持久账本保存原请求、task ID 与输出日期。Host 重启后，原会话通过 `resume_media(rid)` 显式续查，绝不重复创建；费用已结算但原件尚未提交的窗口也可恢复。尚未实现自动扫描并重建全部 jobs；无 task ID 的不确定提交只能由用户核对服务商记录。恢复需要原服务配置身份保持一致。
 
-验收为真实本地 HTTP mocks 与未改动的 DSH rc.4 headless CLI：图片和后台视频分别产生实际 Session/V4 日志、原件、预算审批与完成通知。headless 单次运行不等待普通 jobs，测试让第二轮本地模拟 LLM 响应保持打开直至 job 完成，不调用会抑制通知的 jobs.wait。未做真实付费调用或 Android/PRoot 验证。详细复现入口见 `runtime/media/dsh-media/VERIFICATION.md`。
+验收为真实本地 HTTP mocks 与未改动的 XRK rc.4 headless CLI：图片和后台视频分别产生实际 Session/V4 日志、原件、预算审批与完成通知。headless 单次运行不等待普通 jobs，测试让第二轮本地模拟 LLM 响应保持打开直至 job 完成，不调用会抑制通知的 jobs.wait。未做真实付费调用或 Android/PRoot 验证。详细复现入口见 `runtime/media/xrk-media/VERIFICATION.md`。
 
 ### 8.2 设置体验升级：插件 0.3.0 + App 策展页（2026-11-01）
 
 用户反馈集中在设置：自动表单把服务 ID、协议、API 根地址、模型 ID、凭据引用全摊开；4 个固定密钥槽和「已知引用」让人反复填 Key；图片和视频同服务商也要各配一次。0.3.0 与 App 策展页一起改：
 
-- 目录 `meta.extra["dsh-go/media/catalog"].presets[]` 新增 provider 模板：`id`、`label`/`labelEn`、`provider`、`profile`、`baseUrl`、`responseFormat`、`models`、`kind`、`keyGroup`。App 的「添加服务」直接用它们填好服务；旧目录没有这个字段时用 App 内置的同名兜底表，模型仍以目录为准。
+- 目录 `meta.extra["xrk-mobile/media/catalog"].presets[]` 新增 provider 模板：`id`、`label`/`labelEn`、`provider`、`profile`、`baseUrl`、`responseFormat`、`models`、`kind`、`keyGroup`。App 的「添加服务」直接用它们填好服务；旧目录没有这个字段时用 App 内置的同名兜底表，模型仍以目录为准。
 - 服务的凭据名不再要求来自固定槽：任意 `[A-Za-z_][A-Za-z0-9_]{0,127}` 的已配置凭据都可以。App 给每个 provider 组自动生成 `DSH_MEDIA_<GROUP>_API_KEY`，同组图片/视频复用同一个；旧四槽继续可用，不迁移、不清除。
 - `value.defaults` 增加 `imageServiceId/imageModelId` 与 `videoServiceId/videoModelId`；插件按工具种类取默认，旧 `serviceId/modelId` 只作回落。App 设置页分别提供「图像」「视频」默认模型。
 - App 设置页改成策展形态：默认（图像/视频；旧插件只有一个通用默认）、服务列表（启用开关、模型摘要、Key 状态）、添加服务（provider presets）、服务详情（只写 Key、复用密钥、模型开关、高级、删除）、费用保护（每日预算与未知价预留）、请求上限子页（沿用旧自动表单的五项上限）。仍不提供「测试连接」和用量/作品：前者会真实计费且需要额外的主机通道，后者还没有可读的账本接口，不先用假数据填。
-- 目录仍是 `dsh-go/media/catalog` v1，媒体结果仍是冻结的 `meta["dsh-go/media"]` v1，生成模式和参数头不变。旧 App 读新插件时忽略 `presets` 和新 defaults 字段；新 App 读 0.2.x 插件时用兜底 presets、照常编辑旧服务，默认值退化成单个通用默认（不写旧 schema 没有的字段）。
+- 目录仍是 `xrk-mobile/media/catalog` v1，媒体结果仍是冻结的 `meta["xrk-mobile/media"]` v1，生成模式和参数头不变。旧 App 读新插件时忽略 `presets` 和新 defaults 字段；新 App 读 0.2.x 插件时用兜底 presets、照常编辑旧服务，默认值退化成单个通用默认（不写旧 schema 没有的字段）。
 
 ## 9. 不做
 
 - **App 直连服务商**（方案 b）、**一半直连一半插件**（方案 c）：理由见 §2.2。
-- **我们自己托管、转售生成额度**：那样 dsh-go 就成了生成式 AI 服务提供者，要走备案、实名、审核，和 community.md「不托管用户内容」的定位相反。
+- **我们自己托管、转售生成额度**：那样 xrk-mobile 就成了生成式 AI 服务提供者，要走备案、实名、审核，和 community.md「不托管用户内容」的定位相反。
 - **蒙版涂抹式的局部重绘、图层、画布编辑**：编辑只做「用一句话改」。
-- **Midjourney**（没有官方 API）、**OpenRouter 的聊天出图**（DSH 的模型适配器只收文字输出）。
+- **Midjourney**（没有官方 API）、**OpenRouter 的聊天出图**（XRK 的模型适配器只收文字输出）。
 - **App 内的成人内容开关**，以及任何放宽服务商审核的选项。
 - **自建推送服务**来保证远程主机的完成通知：和现有的完成通知同等可达。
 - **服务商回调**：手机和多数主机没有公网地址。

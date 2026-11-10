@@ -5,6 +5,7 @@ import '../../l10n/l10n.dart';
 import '../../state/phone_state.dart';
 import '../common/app_dialog.dart';
 import '../common/app_sheet.dart';
+import '../common/brief_notice.dart';
 import '../common/list_page_row.dart';
 import '../common/risk_notice.dart';
 import '../common/segmented_pill.dart';
@@ -116,9 +117,14 @@ class PhoneAppRulesPage extends ConsumerWidget {
     final added = await showAppDialog<(String, AppRule)>(context: context, builder: (_) => const _AddAppDialog());
     if (added == null) return;
     final ok = await ref.read(phoneProvider.notifier).setRule(added.$1, added.$2);
-    if (!ok && context.mounted) {
+    if (!context.mounted) return;
+    if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.phoneAppRulesSaveFailed)));
+      return;
     }
+    final policies = ref.read(phoneProvider).policies;
+    final label = policies?.labelFor(added.$1) ?? added.$1;
+    showBriefNotice(context, context.l10n.phoneAppRuleApplied(label, added.$2.label));
   }
 }
 
@@ -137,7 +143,7 @@ class _AppRow extends ConsumerWidget {
     final changed = fallback != null && fallback != rule;
     return ListPageRow(
       icon: rule.icon,
-      iconColor: rule == AppRule.deny ? DshColors.of(context).danger : null,
+      iconColor: rule == AppRule.deny ? XrkColors.of(context).danger : null,
       title: label,
       subtitle: [
         if (label != package) package,
@@ -182,9 +188,12 @@ class _AppRow extends ConsumerWidget {
       if (!ok || !context.mounted) return;
     }
     final saved = await ref.read(phoneProvider.notifier).setRule(package, next);
-    if (!saved && context.mounted) {
+    if (!context.mounted) return;
+    if (!saved) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.phoneAppRulesSaveFailed)));
+      return;
     }
+    showBriefNotice(context, context.l10n.phoneAppRuleApplied(label, next.label));
   }
 }
 
@@ -242,6 +251,7 @@ class _AddAppDialogState extends State<_AddAppDialog> {
               segments: [
                 PillSegment(AppRule.deny, l10n.phoneAppRuleDeny),
                 PillSegment(AppRule.confirmEachStep, l10n.phoneAppRuleConfirm),
+                PillSegment(AppRule.normal, l10n.phoneAppRuleNormal),
               ],
               selected: _rule,
               onChanged: (rule) => setState(() => _rule = rule),

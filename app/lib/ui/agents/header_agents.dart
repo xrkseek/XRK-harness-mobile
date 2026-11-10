@@ -1,4 +1,4 @@
-// The chat header's multi-agent pieces (DSH Web shows
+// The chat header's multi-agent pieces (XRK Web shows
 // them in its session header: the lineage breadcrumb, 「N 个子代理」 and the
 // Agent Teams action).
 //
@@ -44,7 +44,7 @@ class HeaderLeadSlot extends ConsumerWidget {
 }
 
 /// The title pill's first line: a subagent conversation is named by the task
-/// its parent gave it (its creation label, as DSH Web's breadcrumb does).
+/// its parent gave it (its creation label, as XRK Web's breadcrumb does).
 class HeaderTitleText extends ConsumerWidget {
   const HeaderTitleText(this.title, {super.key, this.style});
 
@@ -139,7 +139,7 @@ class HeaderBackKey extends ConsumerWidget {
 }
 
 /// The agents capsule: the team (members) when the Agent Teams bundle is on,
-/// else the subagents (「N 个子代理」; on a phone the compact form DSH Web
+/// else the subagents (「N 个子代理」; on a phone the compact form XRK Web
 /// also uses in a narrow header: glyph + count). A breathing dot on the glyph
 /// while any of them runs.
 class HeaderAgentsKey extends StatelessWidget {

@@ -57,7 +57,7 @@ SQLite正常highlight是否产生“仅尾空白marker”或完全无marker，�
 
 ## 可迁移测试草稿与现有实测边界
 
-runtime/tests/search-snippet-window.test.mjs为真实Context/SessionStore/SQLite公开searchEvents，lazy DSH_TEST_PREFIX??DSH_PREFIX缺失时逐测试skip，不在模块顶层加载前缀，不依赖CLI/Python/外部二进制。当前18案：12个已测原版golden，4个短文本大cap，cap1短全文优先，真实tab/newline/Unicode尾空白的near-end控制。
+runtime/tests/search-snippet-window.test.mjs为真实Context/SessionStore/SQLite公开searchEvents，lazy XRK_TEST_PREFIX??XRK_PREFIX缺失时逐测试skip，不在模块顶层加载前缀，不依赖CLI/Python/外部二进制。当前18案：12个已测原版golden，4个短文本大cap，cap1短全文优先，真实tab/newline/Unicode尾空白的near-end控制。
 
 12个golden从原版实际完整结果中提取，原controls使用真实tab/newline；新6案补极大预算等相邻控制，不重新实现算法充当oracle。最终原版18/18、候选18/18；与完整query-open-retry六案合计候选24/24。首次测试移植把工具输出的转义展示误读为字面字符，并手算错一条near-end期望，造成准备失败；raw保留，不计功能红。
 

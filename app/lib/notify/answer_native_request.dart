@@ -1,8 +1,8 @@
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 /// Answers a displayed native request only in the generation that presented it.
 Future<bool> answerNativeRequest({
-  required DshClient client,
+  required XrkClient client,
   required MuxGeneration generation,
   required String eventId,
   required Map<String, Object?> outcome,

@@ -6,10 +6,10 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/phone/phone_channel.dart';
-import 'package:dsh_app/usage/usage_ledger.dart';
-import 'package:dsh_app/usage/usage_net.dart';
-import 'package:dsh_app/usage/usage_stats.dart';
+import 'package:xrk_app/phone/phone_channel.dart';
+import 'package:xrk_app/usage/usage_ledger.dart';
+import 'package:xrk_app/usage/usage_net.dart';
+import 'package:xrk_app/usage/usage_stats.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -319,7 +319,7 @@ void main() {
     now = DateTime(2026, 10, 29, 9);
     await c.comeBack();
 
-    expect(http.urls.single, Uri.parse('https://go.dshtui.com/api/usage/v1'));
+    expect(http.urls.single, Uri.parse('https://xrkseek.com/api/usage/v1'));
     final body = http.requests.single;
     expect(body.keys.toSet(), usagePayloadKeys);
     final counts = body['counts']! as Map<String, Object?>;

@@ -39,7 +39,7 @@ test('English wording comes from the app too', () => {
 })
 
 test('examples: clean, statically and with the host half loaded', async () => {
-  for (const name of ['dsh-go-example-weather', 'dsh-go-example-usage', 'dsh-go-example-quick']) {
+  for (const name of ['xrk-example-weather', 'xrk-example-usage', 'xrk-example-quick']) {
     for (const load of [false, true]) {
       const report = await checkPlugin(join(examples, name), { load })
       assert.equal(exitCode(report), 0, `${name} load=${load}\n${formatReport(report)}`)
@@ -54,29 +54,29 @@ test('a broken plugin: bridge issues, app issues, loading issues, view issues', 
   assert.equal(exitCode(report), 1)
   const codes = report.manifest.issues.map((i) => `${i.code} ${i.path}`)
   for (const want of [
-    'unknown-field /dshGo/extra',
-    'invalid-field /dshGo/wants/1',
-    'duplicate-id /dshGo/contributes/composer.actions/1/id',
-    'too-many /dshGo/contributes/composer.actions/3',
-    'invalid-field /dshGo/contributes/message.actions/0/effect',
-    'invalid-field /dshGo/contributes/composer.strip/0/panel',
-    'invalid-field /dshGo/contributes/panels/0/placement/1',
-    'unknown-surface /dshGo/contributes/pets',
-    'too-long /dshGo/contributes/composer.actions/0/label',
-    'unknown-icon /dshGo/icon',
-    'no-handler /dshGo/contributes/composer.actions/0',
+    'unknown-field /xrkGo/extra',
+    'invalid-field /xrkGo/wants/1',
+    'duplicate-id /xrkGo/contributes/composer.actions/1/id',
+    'too-many /xrkGo/contributes/composer.actions/3',
+    'invalid-field /xrkGo/contributes/message.actions/0/effect',
+    'invalid-field /xrkGo/contributes/composer.strip/0/panel',
+    'invalid-field /xrkGo/contributes/panels/0/placement/1',
+    'unknown-surface /xrkGo/contributes/pets',
+    'too-long /xrkGo/contributes/composer.actions/0/label',
+    'unknown-icon /xrkGo/icon',
+    'no-handler /xrkGo/contributes/composer.actions/0',
   ]) assert.ok(codes.includes(want), `missing ${want}\n${codes.join('\n')}`)
   assert.deepEqual(report.package.map((i) => i.path), ['/dsh/bundle/patch', '/engines/dsh'])
-  assert.equal(report.load.notes.length, 2, 'top-level dshGo inject and dshGo?')
+  assert.equal(report.load.notes.length, 2, 'top-level xrkGo inject and xrkGo?')
   assert.equal(report.views.length, 1)
   assert.equal(report.views[0].placeholders, 2)
   const text = formatReport(report)
-  assert.match(text, /错误 \/dshGo\/wants\/1：unknown want telepathy/)
+  assert.match(text, /错误 \/xrkGo\/wants\/1：unknown want telepathy/)
   assert.match(text, /错误 view\.children\[1\]\.value：应该是字符串或数字/)
 })
 
 test('view files: tool-card meta picks the tool-card budget and flags bindings and buttons', () => {
-  const meta = { 'dsh-go/view': { type: 'stack', children: [{ type: 'metric', label: 'a', value: { $: 'data.a' } }, { type: 'actions', items: [{ label: 'x', action: 'y' }] }] } }
+  const meta = { 'xrk-mobile/view': { type: 'stack', children: [{ type: 'metric', label: 'a', value: { $: 'data.a' } }, { type: 'actions', items: [{ label: 'x', action: 'y' }] }] } }
   const r = checkViewText(JSON.stringify(meta), { target: 'card.json' })
   assert.equal(r.views[0].budget, 'toolCard')
   assert.deepEqual(r.views[0].issues.map((i) => i.path), ['view.children[0].value', 'view'])
@@ -86,9 +86,9 @@ test('view files: tool-card meta picks the tool-card budget and flags bindings a
 })
 
 test('CLI: text, --json, stdin, exit codes', () => {
-  const ok = cli([join(examples, 'dsh-go-example-quick')])
+  const ok = cli([join(examples, 'xrk-example-quick')])
   assert.equal(ok.status, 0)
-  assert.match(ok.stdout, /^dsh-go-example-quick 0\.1\.0\n {2}原生界面能显示（胶囊 2 · 菜单 2）/)
+  assert.match(ok.stdout, /^xrk-example-quick 0\.1\.0\n {2}原生界面能显示（胶囊 2 · 菜单 2）/)
   const json = cli([broken, '--json'])
   assert.equal(json.status, 1)
   assert.equal(JSON.parse(json.stdout).manifest.state, 'ok')
@@ -100,22 +100,22 @@ test('CLI: text, --json, stdin, exit codes', () => {
 
 test('--load waits for async data functions, and not for ever', async (t) => {
   const plugin = (name, contributes, body) => {
-    const dir = mkdtempSync(join(tmpdir(), 'dsh-go-check-async-'))
+    const dir = mkdtempSync(join(tmpdir(), 'xrk-mobile-check-async-'))
     t.after(() => rmSync(dir, { recursive: true, force: true }))
     mkdirSync(join(dir, 'lib'))
-    writeFileSync(join(dir, 'package.json'), JSON.stringify({ name, version: '1.0.0', type: 'module', main: 'lib/index.js', dshGo: { v: 1, contributes } }))
-    writeFileSync(join(dir, 'lib', 'index.js'), `export const name = '${name}'\nexport function apply(ctx) { ctx.inject(['dshGo'], (ctx) => { ${body} }) }\n`)
+    writeFileSync(join(dir, 'package.json'), JSON.stringify({ name, version: '1.0.0', type: 'module', main: 'lib/index.js', xrkGo: { v: 1, contributes } }))
+    writeFileSync(join(dir, 'lib', 'index.js'), `export const name = '${name}'\nexport function apply(ctx) { ctx.inject(['xrkGo'], (ctx) => { ${body} }) }\n`)
     return dir
   }
   const failing = await checkPlugin(plugin('async-failing', { 'turn.note': [{ id: 'fails' }], 'composer.strip': [{ id: 'late' }] }, `
-    ctx.dshGo.turnNote('fails', async () => { await null; throw new Error('boom') })
-    ctx.dshGo.strip('late', async (scope, emit) => { await null; emit('not an object') })
+    ctx.xrkGo.turnNote('fails', async () => { await null; throw new Error('boom') })
+    ctx.xrkGo.strip('late', async (scope, emit) => { await null; emit('not an object') })
   `), { load: true })
   const messages = failing.load.notes.map((n) => `${n.path} ${n.message}`).join('\n')
   assert.match(messages, /\/runtime\/fails .*boom/)
   assert.match(messages, /\/runtime\/late .*non-object/)
   const stuck = await checkPlugin(plugin('async-stuck', { 'composer.strip': [{ id: 'never' }] }, `
-    ctx.dshGo.strip('never', () => new Promise(() => {}))
+    ctx.xrkGo.strip('never', () => new Promise(() => {}))
   `), { load: true })
   assert.equal(stuck.load.ok, true)
   assert.deepEqual(stuck.load.notes, [])

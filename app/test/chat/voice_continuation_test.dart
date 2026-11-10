@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/voice_settings.dart';
-import 'package:dsh_app/ui/chat/voice/voice_bridge.dart';
-import 'package:dsh_app/ui/chat/voice/voice_controller.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/voice_settings.dart';
+import 'package:xrk_app/ui/chat/voice/voice_bridge.dart';
+import 'package:xrk_app/ui/chat/voice/voice_controller.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,7 +30,7 @@ class _Carrier extends DshCarrier {
   }
 
   @override
-  Future<DshMuxLink> openLink(MuxOptions options) => Future.error(const DshTransportException('unused'));
+  Future<DshMuxLink> openLink(MuxOptions options) => Future.error(const XrkTransportException('unused'));
   @override
   Future<void> close() async {}
 }
@@ -76,7 +76,7 @@ Future<void> _flush(WidgetTester tester) async {
 class _Rig {
   _Rig({VoiceMode mode = VoiceMode.auto, _Carrier? carrier, Future<VoiceMode> Function()? choose})
     : wire = carrier ?? _Carrier() {
-    host = DshClient.withCarrier(wire);
+    host = XrkClient.withCarrier(wire);
     voice = VoiceInputController(
       input: input,
       bridge: bridge,
@@ -94,7 +94,7 @@ class _Rig {
   final bridge = _Bridge()..recording = silentWav(1);
   final input = TextEditingController();
   final messages = <String>[];
-  late DshClient? host;
+  late XrkClient? host;
   late VoiceInputController voice;
 }
 
@@ -192,7 +192,7 @@ void main() {
   });
 
   testWidgets('no engine fallback provides both configuration routes and preserves draft', (tester) async {
-    final rig = _Rig(carrier: _Carrier(catalog: () => throw const DshTransportException('unavailable')));
+    final rig = _Rig(carrier: _Carrier(catalog: () => throw const XrkTransportException('unavailable')));
     rig.input.text = 'keep';
     await rig.voice.start();
     rig.bridge.emit(const VoicePartial('temporary'));
@@ -262,7 +262,7 @@ void main() {
     await rig.voice.start();
     rig.bridge.emit(const VoiceError(5));
     await _flush(tester);
-    rig.host = DshClient.withCarrier(replacement);
+    rig.host = XrkClient.withCarrier(replacement);
     catalog.complete(readySpeechCatalog());
     await _flush(tester);
     expect(rig.voice.phase, VoicePhase.idle);
@@ -356,7 +356,7 @@ void main() {
     final stopped = rig.voice.stop();
     await _flush(tester);
     final replacement = _Carrier();
-    rig.host = DshClient.withCarrier(replacement);
+    rig.host = XrkClient.withCarrier(replacement);
     wav.complete(silentWav(1));
     await stopped;
     expect(rig.voice.phase, VoicePhase.idle);

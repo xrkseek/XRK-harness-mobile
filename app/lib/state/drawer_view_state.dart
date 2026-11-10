@@ -2,7 +2,7 @@
 // colour or emoji mark, collapsible, reorderable), a sort order, quiet status
 // filters and multi-select.
 //
-// The official DSH has nothing to hang folders on: `session/*` carries
+// The official XRK has nothing to hang folders on: `session/*` carries
 // titles, `workspace/*` directory workspaces, pins and the archived set, and
 // the settings document is a validated schema. So folders live on this phone,
 // per host, in shared preferences — like the workspace pins and groups in
@@ -11,7 +11,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart' show StringCharacters;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +28,7 @@ import 'workspaces_state.dart';
 
 // ── Folders ──────────────────────────────────────────────────────────────────
 
-/// One user folder. [tint] indexes `DshColors.identity` (0–7); [emoji]
+/// One user folder. [tint] indexes `XrkColors.identity` (0–7); [emoji]
 /// replaces the folder glyph. Neither: the plain folder glyph.
 class DrawerFolder {
   const DrawerFolder({

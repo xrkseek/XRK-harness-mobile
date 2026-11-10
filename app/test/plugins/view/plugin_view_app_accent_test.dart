@@ -2,9 +2,9 @@
 // person's palette, still corrected to ≥ 4.5:1 on every painted background,
 // and parses again when the palette changes.
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -45,37 +45,37 @@ Map<String, Object?> _view() => {
 };
 
 void main() {
-  tearDown(() => DshUiAppAccent.set(DshUiAppAccent.fallback));
+  tearDown(() => XrkUiAppAccent.set(XrkUiAppAccent.fallback));
 
   test("the default is the app's default palette, 雾蓝", () {
-    expect(DshUiAppAccent.fallback, _rgb(AppAccent.mist.seed));
-    final view = (parsePluginView(_view()) as DshUiParsed).view;
+    expect(XrkUiAppAccent.fallback, _rgb(AppAccent.mist.seed));
+    final view = (parsePluginView(_view()) as XrkUiParsed).view;
     expect(view.styles[view.root.path]!.accent.light, _rgb(AppAccent.mist.seed), reason: 'already ≥ 4.5:1 on the light surface');
   });
 
   test('a palette change re-parses the same view object with the new accent', () {
     final json = _view();
-    final before = (parsePluginView(json) as DshUiParsed).view;
-    DshUiAppAccent.set(_rgb(AppAccent.amber.seed));
-    final after = (parsePluginView(json) as DshUiParsed).view;
+    final before = (parsePluginView(json) as XrkUiParsed).view;
+    XrkUiAppAccent.set(_rgb(AppAccent.amber.seed));
+    final after = (parsePluginView(json) as XrkUiParsed).view;
     expect(identical(before, after), isFalse);
     expect(after.styles[after.root.path]!.accent.light, isNot(before.styles[before.root.path]!.accent.light));
   });
 
   test('the same colour twice is no change (the cache stays)', () {
     final json = _view();
-    final first = (parsePluginView(json) as DshUiParsed).view;
-    DshUiAppAccent.set(DshUiAppAccent.fallback);
-    expect(identical((parsePluginView(json) as DshUiParsed).view, first), isTrue);
+    final first = (parsePluginView(json) as XrkUiParsed).view;
+    XrkUiAppAccent.set(XrkUiAppAccent.fallback);
+    expect(identical((parsePluginView(json) as XrkUiParsed).view, first), isTrue);
   });
 
   test('every preset stays readable: accent ≥ 4.5:1 on the light and the dark surface', () {
     for (final preset in AppAccent.presets) {
-      DshUiAppAccent.set(_rgb(preset.seed));
-      final view = (parsePluginView(_view()) as DshUiParsed).view;
+      XrkUiAppAccent.set(_rgb(preset.seed));
+      final view = (parsePluginView(_view()) as XrkUiParsed).view;
       final accent = view.styles[view.root.path]!.accent;
       for (final dark in [false, true]) {
-        final ratio = dshUiContrast(accent.at(dark), DshUiPluginPalette.surface.at(dark));
+        final ratio = xrkUiContrast(accent.at(dark), XrkUiPluginPalette.surface.at(dark));
         expect(ratio, greaterThanOrEqualTo(4.5), reason: '${preset.id} dark=$dark');
       }
     }
@@ -89,7 +89,7 @@ void main() {
                   'text': 'x',
                   'style': {'color': 'app'},
                 })
-                as DshUiParsed)
+                as XrkUiParsed)
             .view;
     expect(view.issues.map((i) => i.path), contains('view.style.color'));
   });
@@ -98,7 +98,7 @@ void main() {
     setUpAll(loadTestFonts);
     for (final brightness in Brightness.values) {
       testWidgets('follows 黛青 (${brightness.name})', (tester) async {
-        DshUiAppAccent.set(_rgb(AppAccent.daiqing.seed));
+        XrkUiAppAccent.set(_rgb(AppAccent.daiqing.seed));
         usePhoneView(tester);
         tester.view.physicalSize = const Size(780, 760);
         await tester.pumpWidget(

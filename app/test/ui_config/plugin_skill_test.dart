@@ -1,12 +1,12 @@
-// The dsh-go-plugin skill (built from sdk/plugin-kit by scripts/sync-skill.mjs): it loads
+// The xrk-plugin skill (built from sdk/plugin-kit by scripts/sync-skill.mjs): it loads
 // from its own asset folder, installs into its own skills folder with the same managed-line
-// rules as dsh-go-ui, and the engine-start auto-install puts both skills in place.
+// rules as xrk-ui, and the engine-start auto-install puts both skills in place.
 
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -28,7 +28,7 @@ void main() {
     if (root.existsSync()) root.deleteSync(recursive: true);
   });
 
-  Directory dirOf(String name) => Directory('${root.path}/root/.dsh/skills/$name');
+  Directory dirOf(String name) => Directory('${root.path}/root/.xrk/skills/$name');
 
   test('the plugin skill bundle: checker, schemas, template; SKILL.md last and managed', () {
     expect(plugin.name, pluginSkillName);
@@ -50,7 +50,7 @@ void main() {
     expect(isManagedUiSkill(plugin.skillMd), isTrue);
   });
 
-  test('installs into skills/dsh-go-plugin, next to dsh-go-ui, with the same rules', () async {
+  test('installs into skills/xrk-plugin, next to xrk-ui, with the same rules', () async {
     expect(await installUiSkill(root, plugin), UiSkillInstallResult.installed);
     for (final MapEntry(key: path, value: text) in plugin.files.entries) {
       expect(File('${dirOf(pluginSkillName).path}/$path').readAsStringSync(), text, reason: path);
@@ -60,14 +60,14 @@ void main() {
 
     final skill = File('${dirOf(pluginSkillName).path}/SKILL.md');
     skill.writeAsStringSync(
-      skill.readAsStringSync().replaceFirst(RegExp(r'^# dsh-go:managed.*\n', multiLine: true), ''),
+      skill.readAsStringSync().replaceFirst(RegExp(r'^# xrk-mobile:managed.*\n', multiLine: true), ''),
     );
     expect(await installUiSkill(root, plugin), UiSkillInstallResult.userOwned);
   });
 
   test('the SSH script writes the plugin skill into its own folder', () {
     final script = uiSkillShellScript(plugin);
-    expect(script, contains('/skills/dsh-go-plugin"'));
+    expect(script, contains('/skills/xrk-plugin"'));
     expect(script, contains('"\$d/kit/lib/bridge"'));
   });
 

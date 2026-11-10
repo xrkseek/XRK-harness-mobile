@@ -1,27 +1,27 @@
-// dsh-go web island runtime (docs/design/plugin-seams.md §6). Injected by the
+// xrk-mobile web island runtime (docs/design/plugin-seams.md §6). Injected by the
 // app's IslandController after every load, right after the read-only
-// `assets/web/dsh_web_open.js` (its __dshAppOpen does the session hop and the
+// `assets/web/xrk_web_open.js` (its __dshAppOpen does the session hop and the
 // settings / panel / right-sidebar clicks). Idempotent per document.
 //
-//   window.__dshGoIsland.init(cfg)     once per load: navigate, find the slot,
+//   window.__xrkGoIsland.init(cfg)     once per load: navigate, find the slot,
 //                                      hide everything else, report `ready`
-//   window.__dshGoIsland.setTheme(t)   App light/dark, accent, tokens
-//   window.__dshGoIsland.setInsets(i)  {top, bottom} CSS px the frame keeps clear
+//   window.__xrkGoIsland.setTheme(t)   App light/dark, accent, tokens
+//   window.__xrkGoIsland.setInsets(i)  {top, bottom} CSS px the frame keeps clear
 //
 // Messages go to the app's `DshGoIsland` channel as JSON, `t` is the type:
 //   ready {slot, cell, release, found}     empty / error {slot, code, detail}
 //   size {h}     hit {rects, dpr}     link {url}     session {id}
 //
-// Only marks official nodes with data-dsh-go-island attributes (island.css
+// Only marks official nodes with data-xrk-mobile-island attributes (island.css
 // reacts to them) and clicks official controls; never removes, moves or
 // restyles them otherwise. The channel is visible to every frame on the page:
 // the app treats whatever arrives as untrusted.
 (function () {
-  if (window.__dshGoIsland) return;
+  if (window.__xrkGoIsland) return;
 
   var CHANNEL = 'DshGoIsland';
-  var MARK = 'data-dsh-go-island';
-  var FORM = 'data-dsh-go-island-form';
+  var MARK = 'data-xrk-mobile-island';
+  var FORM = 'data-xrk-mobile-island-form';
 
   var st = {
     cfg: null,
@@ -109,7 +109,7 @@
     return names;
   }
 
-  // Same matching as dsh_web_open.js: a name equal to a label, or starting
+  // Same matching as xrk_web_open.js: a name equal to a label, or starting
   // with it and a space.
   function byName(root, selector, labels) {
     if (!root || !labels || !labels.length) return null;
@@ -168,12 +168,12 @@
     return found.length > 1 ? 'two' : found[0];
   }
 
-  // Whether dsh-go-bridge reports another entry of [slot] than this
+  // Whether xrk-bridge reports another entry of [slot] than this
   // island's cell under one of [names]: a name that doesn't tell the two
   // apart, even when only one of them is drawn. Without the bridge (or its
   // labels) only the controls on the page are compared.
   function namedElsewhere(slot, names) {
-    var bridge = window.__dshGoBridge;
+    var bridge = window.__xrkBridge;
     var cell = st.cfg && st.cfg.cell;
     if (!bridge || !bridge.occupants || !cell) return false;
     try {
@@ -435,8 +435,8 @@
       st.frame = frame;
       markMany(all, frame);
       uninert();
-      frame.style.setProperty('--dsh-go-island-pad-x', (cfg.pad && cfg.pad[0] != null ? cfg.pad[0] : 16) + 'px');
-      frame.style.setProperty('--dsh-go-island-pad-y', (cfg.pad && cfg.pad[1] != null ? cfg.pad[1] : 16) + 'px');
+      frame.style.setProperty('--xrk-mobile-island-pad-x', (cfg.pad && cfg.pad[0] != null ? cfg.pad[0] : 16) + 'px');
+      frame.style.setProperty('--xrk-mobile-island-pad-y', (cfg.pad && cfg.pad[1] != null ? cfg.pad[1] : 16) + 'px');
       return true;
     }
     var slotEl = findSlot(cfg.slot);
@@ -448,8 +448,8 @@
     mark(slotEl, frame);
     uninert();
     if (frame) {
-      frame.style.setProperty('--dsh-go-island-pad-x', (cfg.pad && cfg.pad[0] != null ? cfg.pad[0] : 16) + 'px');
-      frame.style.setProperty('--dsh-go-island-pad-y', (cfg.pad && cfg.pad[1] != null ? cfg.pad[1] : 16) + 'px');
+      frame.style.setProperty('--xrk-mobile-island-pad-x', (cfg.pad && cfg.pad[0] != null ? cfg.pad[0] : 16) + 'px');
+      frame.style.setProperty('--xrk-mobile-island-pad-y', (cfg.pad && cfg.pad[1] != null ? cfg.pad[1] : 16) + 'px');
     }
     return true;
   }
@@ -633,10 +633,10 @@
   // ---- theme -----------------------------------------------------------------
 
   function themeStyle() {
-    var s = document.getElementById('dsh-go-island-theme');
+    var s = document.getElementById('xrk-mobile-island-theme');
     if (!s) {
       s = document.createElement('style');
-      s.id = 'dsh-go-island-theme';
+      s.id = 'xrk-mobile-island-theme';
       document.head.appendChild(s);
     }
     return s;
@@ -655,13 +655,13 @@
     });
     var scheme = theme.dark ? 'dark' : 'light';
     themeStyle().textContent =
-      'html[data-dsh-go-island]{color-scheme:' + scheme + '!important}' +
-      'html[data-dsh-go-island] body,html[data-dsh-go-island] body[data-ds-dark-theme]{' + decl.join(';') + '}';
+      'html[data-xrk-mobile-island]{color-scheme:' + scheme + '!important}' +
+      'html[data-xrk-mobile-island] body,html[data-xrk-mobile-island] body[data-ds-dark-theme]{' + decl.join(';') + '}';
     enforceScheme();
   }
 
-  // DSH picks its light / dark tokens with body[data-ds-dark-theme]; a user
-  // who set DSH Web to a fixed mode still gets the App's here.
+  // XRK picks its light / dark tokens with body[data-ds-dark-theme]; a user
+  // who set XRK Web to a fixed mode still gets the App's here.
   function enforceScheme() {
     if (!st.theme || !document.body) return;
     var want = !!st.theme.dark;
@@ -674,16 +674,16 @@
   function applyInsets(insets) {
     st.insets = insets || st.insets;
     var root = document.documentElement.style;
-    root.setProperty('--dsh-go-island-top', Math.max(0, +st.insets.top || 0) + 'px');
-    root.setProperty('--dsh-go-island-bottom', Math.max(0, +st.insets.bottom || 0) + 'px');
+    root.setProperty('--xrk-mobile-island-top', Math.max(0, +st.insets.top || 0) + 'px');
+    root.setProperty('--xrk-mobile-island-bottom', Math.max(0, +st.insets.bottom || 0) + 'px');
   }
 
   function installCss(css) {
     if (!css) return;
-    var s = document.getElementById('dsh-go-island-css');
+    var s = document.getElementById('xrk-mobile-island-css');
     if (!s) {
       s = document.createElement('style');
-      s.id = 'dsh-go-island-css';
+      s.id = 'xrk-mobile-island-css';
       document.head.appendChild(s);
     }
     s.textContent = css;
@@ -783,7 +783,7 @@
     return pressUntilCurrent('panel', row, function () { return allByExactName(sidebar(), 'nav button', names); }, 'main');
   }
 
-  // A right pane tab (rc.4). dsh-go-bridge opens it by its type id (our
+  // A right pane tab (rc.4). xrk-bridge opens it by its type id (our
   // cell) through the client's own sidebarRight service and answers once
   // that kind is the active tab: that is the identity, and a bridge that
   // can't is not second-guessed by name. Without the bridge's openTab (an
@@ -792,7 +792,7 @@
   // active tab. Either way the island shows that tab's own outlet
   // ([ownTab]), not another pane's.
   async function openRightbarTab(names) {
-    var bridge = window.__dshGoBridge;
+    var bridge = window.__xrkBridge;
     var cell = st.cfg && st.cfg.cell;
     if (bridge && bridge.openTab) {
       if (!cell) return miss('tab', 'no id');
@@ -860,7 +860,7 @@
   // stored there. So the view counts as open only when that id is the cell
   // asked for, the slot draws something new (or did already, under that
   // id), and the row's selected tab, if any, is the one by its name.
-  // Anything less is a miss, and the island falls back to DSH Web: never
+  // Anything less is a miss, and the island falls back to XRK Web: never
   // another view shown under this one's name.
   async function openView(view) {
     var id = view && typeof view.id === 'string' ? view.id : '';
@@ -937,7 +937,7 @@
     return false;
   }
 
-  // Picking a view makes DSH Web remember it for the conversation
+  // Picking a view makes XRK Web remember it for the conversation
   // (localStorage `dsh.conversation.<id>`): the person's own choice goes
   // back once ours is on screen, and again on the way out.
   var VIEW_STORE = 'dsh.conversation.';
@@ -968,7 +968,7 @@
 
   // Once the view is on screen, only the id it went by goes back (the
   // client writes it again with the rest of its state); a different choice
-  // stored since (another DSH Web on the same storage) stays.
+  // stored since (another XRK Web on the same storage) stays.
   function restoreViewPreference() {
     var kept = st.viewPref;
     if (!kept) return;
@@ -983,7 +983,7 @@
   }
 
   // target: {session?, web?: <__dshAppOpen target>, then?: {settings|plugin|panel|rightbar|view}}
-  var HOP = 'dsh-go-island-hop';
+  var HOP = 'xrk-mobile-island-hop';
 
   function storedSession() {
     try {
@@ -1011,7 +1011,7 @@
     step('hop');
     st.leaving = true;
     var url = new URL(location.href);
-    url.searchParams.set('dsh-go-hop', String(Date.now()));
+    url.searchParams.set('xrk-mobile-hop', String(Date.now()));
     location.replace(url.toString());
     return true;
   }
@@ -1065,7 +1065,7 @@
 
   // ---- probe -------------------------------------------------------------------
 
-  // A probe island (no slot shown): load the page so dsh-go-bridge's browser
+  // A probe island (no slot shown): load the page so xrk-bridge's browser
   // half reports this boot graph's occupancy, then let the app destroy it.
   // The bridge reports on its own shortly after boot; report() only makes
   // it sooner, so neither its absence nor a slow answer holds the probe up.
@@ -1076,7 +1076,7 @@
   async function probe(cfg) {
     // No dependence on the client's layout (the probe is laid out off
     // screen): the bridge's API, or the boot graph, is all it needs.
-    var bridge = await waitFor(function () { return window.__dshGoBridge; }, 8000);
+    var bridge = await waitFor(function () { return window.__xrkBridge; }, 8000);
     if (bridge && bridge.report) {
       step('report');
       try { await capped(bridge.report(), 4000); } catch (e) {}
@@ -1102,7 +1102,7 @@
   }
 
   function thirdParty(slot) {
-    var bridge = window.__dshGoBridge;
+    var bridge = window.__xrkBridge;
     if (!bridge || !bridge.occupants) return -1;
     try {
       return bridge.occupants(slot).filter(function (o) { return !o.masked && !o.official; }).length;
@@ -1222,8 +1222,8 @@
     // List slots in a panel island: the official entries are the native
     // UI's already. The URL fragment asked the bridge at boot; ask again in
     // case the fragment got lost on the way.
-    if (cfg.mask && window.__dshGoBridge && window.__dshGoBridge.mask) {
-      try { window.__dshGoBridge.mask(slotsOf(cfg)); } catch (e) {}
+    if (cfg.mask && window.__xrkBridge && window.__xrkBridge.mask) {
+      try { window.__xrkBridge.mask(slotsOf(cfg)); } catch (e) {}
     }
     // Navigate, then look for the slot; a transient popup (the client's own
     // onboarding card, a toast) can swallow a click, so try again twice.
@@ -1296,7 +1296,7 @@
     restoreViewPreference();
   });
 
-  window.__dshGoIsland = {
+  window.__xrkGoIsland = {
     init: function (cfg) {
       init(cfg).catch(function (e) {
         st.phase = 'failed';

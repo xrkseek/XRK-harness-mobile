@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -35,7 +35,7 @@ class HeldDescribeHost extends FakeSettingsHost {
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
     if (endpoint == 'settings/describe' && failNext) {
       failNext = false;
-      return RpcError(DshRemoteException('test/failure', 'description unavailable'));
+      return RpcError(XrkRemoteException('test/failure', 'description unavailable'));
     }
     final gate = endpoint == heldEndpoint ? holdNext : null;
     if (gate != null) holdNext = null;
@@ -53,7 +53,7 @@ void main() {
   for (final later in ['refresh', 'acknowledged-write']) {
     test('late same-host describe cannot roll back $later', () async {
       final host = HeldDescribeHost();
-      final container = ProviderContainer(overrides: engineOverrides(DshClient.withCarrier(host)));
+      final container = ProviderContainer(overrides: engineOverrides(XrkClient.withCarrier(host)));
       addTearDown(container.dispose);
       final sub = container.listen(engineSettingsProvider, (_, _) {});
       addTearDown(sub.close);
@@ -80,7 +80,7 @@ void main() {
   }
 
   Future<ProviderContainer> start(HeldDescribeHost host) async {
-    final container = ProviderContainer(overrides: engineOverrides(DshClient.withCarrier(host)));
+    final container = ProviderContainer(overrides: engineOverrides(XrkClient.withCarrier(host)));
     addTearDown(container.dispose);
     final sub = container.listen(engineSettingsProvider, (_, _) {});
     addTearDown(sub.close);
@@ -138,7 +138,7 @@ void main() {
     final old = controller.refresh();
     await waitCaptured(host);
     host.failNext = true;
-    await expectLater(controller.refresh(), throwsA(isA<DshRemoteException>()));
+    await expectLater(controller.refresh(), throwsA(isA<XrkRemoteException>()));
     gate.complete();
     await old;
     expect(container.read(engineSettingsProvider).value!.valueOf(field), 'initial');
@@ -218,7 +218,7 @@ void main() {
     await waitCaptured(host);
     expect(await controller.set(field, 'acknowledged'), isTrue);
     host.failNext = true;
-    final failure = expectLater(old, throwsA(isA<DshRemoteException>()));
+    final failure = expectLater(old, throwsA(isA<XrkRemoteException>()));
     gate.complete();
     await failure;
     expect(container.read(engineSettingsProvider).value!.valueOf(field), 'acknowledged');
@@ -268,7 +268,7 @@ void main() {
   test('refresh during initial build finishes after that build and retains newer data', () async {
     final host = HeldDescribeHost();
     final gate = host.holdNext = Completer<void>();
-    final container = ProviderContainer(overrides: engineOverrides(DshClient.withCarrier(host)));
+    final container = ProviderContainer(overrides: engineOverrides(XrkClient.withCarrier(host)));
     addTearDown(container.dispose);
     final sub = container.listen(engineSettingsProvider, (_, _) {});
     addTearDown(sub.close);

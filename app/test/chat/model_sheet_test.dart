@@ -3,18 +3,18 @@
 // (light + dark). Regenerate with
 // `flutter test --update-goldens test/chat/model_sheet_test.dart`.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart';
-import 'package:dsh_app/ui/chat/model_sheet.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/segmented_pill.dart';
-import 'package:dsh_app/ui/common/sheet_title_bar.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart';
+import 'package:xrk_app/ui/chat/model_sheet.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/segmented_pill.dart';
+import 'package:xrk_app/ui/common/sheet_title_bar.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

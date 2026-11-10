@@ -1,20 +1,20 @@
-// 全部功能 logic: deep-link targets (what the DSH Web bridge receives), the
+// 全部功能 logic: deep-link targets (what the XRK Web bridge receives), the
 // feature catalog's invariants, and the Chinese wording of schedule rules,
 // job states and presets.
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/commands_state.dart';
-import 'package:dsh_app/ui/chat/slash_palette.dart';
-import 'package:dsh_app/ui/engine_settings/runtime_settings_pages.dart';
-import 'package:dsh_app/links/page_links.dart';
-import 'package:dsh_app/ui/features/feature_catalog.dart';
-import 'package:dsh_app/ui/features/feature_format.dart';
-import 'package:dsh_app/ui/settings/index/spots.dart';
-import 'package:dsh_app/ui/terminal/terminal_page.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/commands_state.dart';
+import 'package:xrk_app/ui/chat/slash_palette.dart';
+import 'package:xrk_app/ui/engine_settings/runtime_settings_pages.dart';
+import 'package:xrk_app/links/page_links.dart';
+import 'package:xrk_app/ui/features/feature_catalog.dart';
+import 'package:xrk_app/ui/features/feature_format.dart';
+import 'package:xrk_app/ui/settings/index/spots.dart';
+import 'package:xrk_app/ui/terminal/terminal_page.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 ScheduleTask task(
@@ -84,7 +84,7 @@ void main() {
     });
 
     test('the bridge script knows every key the app sends', () {
-      final js = File('assets/web/dsh_web_open.js').readAsStringSync();
+      final js = File('assets/web/xrk_web_open.js').readAsStringSync();
       for (final p in DshWebPanel.values) {
         expect(js, contains("${p.key}: ["), reason: 'panel ${p.key}');
       }
@@ -253,7 +253,7 @@ void main() {
       kind: SlashCommandKind.skill,
     );
     final host = parseCommandList([
-      {'name': 'compact', 'definitionId': '@deepseek-ai/dsh-command-compact'},
+      {'name': 'compact', 'definitionId': '@xrkseek/harness-cli-command-compact'},
       {'name': 'deploy', 'description': 'Ship it'},
     ]);
 

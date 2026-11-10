@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/ssh/remote_shell.dart';
-import 'package:dsh_app/remote/ssh/ssh_host_config.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/ssh/remote_shell.dart';
+import 'package:xrk_app/remote/ssh/ssh_host_config.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_client/xrk_client.dart';
 
-/// Imitates the remote machine: dsh-app's managed `dsh web` and its log.
+/// Imitates the remote machine: dsh-app's managed `xrkh serve` and its log.
 class FakeRemote {
   int launches = 0;
   int? pid;
   int port = 40100;
   String token = 'tok-0';
 
-  /// What `dsh` does when started.
+  /// What `xrkh` does when started.
   bool dshInstalled = true;
   final List<Object> tunnelErrors = [];
 
@@ -31,7 +31,7 @@ class FakeRemote {
       return RemoteExecResult(
         0,
         'DSHAPP home /home/me\nDSHAPP dsh /usr/bin/dsh\nDSHAPP started $pid\n'
-            'DSHAPP url dsh web: http://127.0.0.1:$port/?token=$token\n',
+            'DSHAPP url xrkh serve: http://127.0.0.1:$port/?token=$token\n',
         '',
       );
     }
@@ -42,7 +42,7 @@ class FakeRemote {
         alive == null
             ? 'DSHAPP home /home/me\n'
             : 'DSHAPP home /home/me\nDSHAPP alive $alive\nDSHAPP samecmd\n'
-                  'DSHAPP url dsh web: http://127.0.0.1:$port/?token=$token\n',
+                  'DSHAPP url xrkh serve: http://127.0.0.1:$port/?token=$token\n',
         '',
       );
     }
@@ -150,14 +150,14 @@ class FakeSshServer {
 /// Records connector calls and hands out unconnected clients.
 class FakeConnector {
   final List<({Uri baseUri, String token, String hostHeader})> calls = [];
-  final List<DshClient> clients = [];
+  final List<XrkClient> clients = [];
   final List<Object> failNext = [];
 
-  Future<DshClient> call({required Uri baseUri, required String token, required String hostHeader}) async {
+  Future<XrkClient> call({required Uri baseUri, required String token, required String hostHeader}) async {
     calls.add((baseUri: baseUri, token: token, hostHeader: hostHeader));
     if (failNext.isNotEmpty) throw failNext.removeAt(0);
     // Never connected: points at a closed port. Only identity matters here.
-    final client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
+    final client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
     clients.add(client);
     return client;
   }

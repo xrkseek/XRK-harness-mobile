@@ -1,8 +1,8 @@
 // Portions derived from PiPilot (https://github.com/CikeSeven/pi_pilot), MIT, Copyright (c) 2026 CikeSeven. See THIRD_PARTY_NOTICES.md.
-// Layout after DSH Web's ApprovalPanel (warning hairline, warning strip, title,
+// Layout after XRK Web's ApprovalPanel (warning hairline, warning strip, title,
 // monospace command, right-aligned buttons).
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -95,7 +95,7 @@ class _ApprovalCardState extends State<ApprovalCard> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final view = widget.view;
     final code = view?.command ?? (view?.path == null ? null : view!.path);
     final description = view?.arg('description')?.trim();
@@ -193,7 +193,7 @@ class _CommandWell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final style = AppType.mono(color: dsh.codeWellFg);
     return DecoratedBox(
       decoration: ShapeDecoration(

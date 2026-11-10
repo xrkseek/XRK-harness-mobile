@@ -6,9 +6,9 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/share/share_card.dart';
-import 'package:dsh_app/ui/share/share_content.dart';
-import 'package:dsh_app/ui/share/share_export.dart';
+import 'package:xrk_app/ui/share/share_card.dart';
+import 'package:xrk_app/ui/share/share_content.dart';
+import 'package:xrk_app/ui/share/share_export.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

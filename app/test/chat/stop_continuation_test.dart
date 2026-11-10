@@ -1,15 +1,15 @@
 // Regressions integrated from the independent review of P12 a07b2d4.
 // Original same-byte evidence remains in independent-dart-review/.
-// The transport controls response timing; DshClient and ChatController are real.
+// The transport controls response timing; XrkClient and ChatController are real.
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -155,7 +155,7 @@ class _Peer {
   }
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client(String name) : this._(_Wire(name));
   _Client._(this.wire) : super.withCarrier(wire);
   final _Wire wire;
@@ -266,7 +266,7 @@ Future<void> until(bool Function() predicate) async {
   expect(predicate(), isTrue, reason: 'Independent setup must reach the requested await boundary');
 }
 
-RpcError oldFailure() => const RpcError(DshRemoteException('independent/old-failure', 'retired operation'));
+RpcError oldFailure() => const RpcError(XrkRemoteException('independent/old-failure', 'retired operation'));
 void _trace(String scenario, _Harness h, _Client a, [_Client? b]) => debugPrint(
   'P12_REVIEW ${jsonEncode({'scenario': scenario, 'stopping': h.state.stopping, 'error': h.state.error, 'pending': h.state.pending.map((p) => p.requestId).toList(), 'callsA': a.wire.calls.map((c) => c.json).toList(), if (b != null) 'callsB': b.wire.calls.map((c) => c.json).toList()})}',
 );

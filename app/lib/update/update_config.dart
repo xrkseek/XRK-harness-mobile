@@ -1,27 +1,21 @@
 /// Where in-app updates come from. Everything network-facing about updates is
 /// configured here; the conventions and trade-offs are in `docs/release.md`.
 ///
-/// Every build asks our own copy of the release files first
-/// ([updateDownloadOrigin]: `/update.json`, `/download/<version>/<file>`), then
-/// GitHub and the public accelerators, and the rate-limited GitHub API last.
-/// Beta builds carry a channel token (`--dart-define=DSH_BETA_CHANNEL_TOKEN`,
-/// put in by `tooling/build-apk.sh`): they ask the beta channel before all of
-/// that ([UpdateChannel], `go.dshtui.com/beta/update.json`,
-/// docs/design/share-links.md) and download from it with the token.
+/// Product default: GitHub Releases for [updateRepo]
+/// (`xrkseek/XRK-harness-mobile`), with public accelerators ordered by device
+/// timezone (CN / SEA prefer proxy first). Optional self-hosted copy / beta
+/// channel stay available via `--dart-define` for private builds — they are
+/// **off** by default.
 ///
-/// Build-time overrides (no code change needed):
-/// - `--dart-define=DSH_BETA_CHANNEL_ORIGIN=https://example.com` moves the beta
-///   channel;
-/// - `--dart-define=DSH_UPDATE_MIRROR=https://example.com` moves the copy of
-///   the release files (empty string = none);
-/// - `--dart-define=DSH_UPDATE_FEED=https://example.com/dsh/update.json`
-///   asks another manifest in place of the copy's (empty string = none);
-/// - `--dart-define=DSH_UPDATE_MIRRORS=https://a.example/,https://b.example/`
-///   replaces the public GitHub accelerator list (empty string = none).
+/// Build-time overrides:
+/// - `--dart-define=XRK_UPDATE_MIRROR=` optional release-file mirror (empty = none);
+/// - `--dart-define=XRK_UPDATE_FEED=` another manifest URL (empty = none);
+/// - `--dart-define=XRK_UPDATE_MIRRORS=` comma list replacing public accelerators;
+/// - `--dart-define=XRK_BETA_CHANNEL_TOKEN=` / `XRK_BETA_CHANNEL_ORIGIN=` private beta.
 library;
 
 /// GitHub repository the releases live in.
-const updateRepo = 'ccch1mneyyy/dsh-go';
+const updateRepo = 'xrkseek/XRK-harness-mobile';
 
 /// `releases/latest` of the REST API: tag, notes, assets with sizes and
 /// SHA-256 digests. Unauthenticated: 60 requests per hour per IP.
@@ -38,14 +32,11 @@ Uri githubLatestAsset(String name) => Uri.parse('https://github.com/$updateRepo/
 Uri githubReleaseAsset(String tag, String name) =>
     Uri.parse('https://github.com/$updateRepo/releases/download/$tag/$name');
 
-/// The share host (services/share-worker). It serves the beta channel under
-/// `/beta/`; public files come from [updateDownloadOrigin].
-const updateMirrorOrigin = 'https://go.dshtui.com';
+/// Optional beta-channel origin (`…/beta/update.json`). Empty in product builds.
+const updateMirrorOrigin = '';
 
-/// Our public copy of the release files (an R2 bucket): `/update.json`, the
-/// latest public manifest with absolute asset URLs, and
-/// `/download/<version>/<file>` for every file of every release.
-const updateDownloadOrigin = 'https://dl.dshtui.com';
+/// Optional self-hosted release-file origin. Empty in product builds.
+const updateDownloadOrigin = '';
 
 /// The beta channel: `<origin>/beta/update.json` and `<origin>/beta/<version>/<file>`,
 /// both behind `Authorization: Bearer <token>`. The token is compiled into beta
@@ -104,10 +95,10 @@ class UpdateMirror {
 
   static const github = UpdateMirror(id: 'github', label: 'GitHub');
 
-  /// The app's own mirror at [origin] (default [updateDownloadOrigin]).
-  static UpdateMirror selfHosted([String origin = updateDownloadOrigin]) {
+  /// A self-hosted mirror at [origin] (must be non-empty HTTPS origin).
+  static UpdateMirror selfHosted(String origin) {
     final base = origin.endsWith('/') ? origin.substring(0, origin.length - 1) : origin;
-    return UpdateMirror(id: 'dshgo', label: Uri.tryParse(base)?.host ?? base, releases: '$base/download/');
+    return UpdateMirror(id: 'self', label: Uri.tryParse(base)?.host ?? base, releases: '$base/download/');
   }
 
   /// Rewrites a github.com URL to go through this mirror. URLs on other hosts
@@ -134,30 +125,50 @@ class UpdateMirror {
   }
 }
 
-/// Public GitHub accelerators, tried in order after our copy and GitHub
-/// itself. They come and go (domains change every few months, and some answer
-/// 403 to whole networks); everything they serve is checked against the
-/// release's SHA-256 and, at install time, against the installed app's
-/// signing key.
+/// Public GitHub accelerators. Order vs raw GitHub depends on timezone
+/// ([preferGithubProxyByTimezone]). Domains come and go; everything they serve
+/// is checked against the release's SHA-256 and, at install time, against the
+/// installed app's signing key.
 const publicMirrors = [
   UpdateMirror(id: 'ghfast', label: 'ghfast.top', prefix: 'https://ghfast.top/'),
   UpdateMirror(id: 'gh-proxy', label: 'gh-proxy.com', prefix: 'https://gh-proxy.com/'),
 ];
 
+/// True when this device's timezone offset suggests GitHub direct is often
+/// slow or blocked (roughly India … Australia east, covering CN / SEA).
+bool preferGithubProxyByTimezone([Duration? offset]) {
+  final minutes = (offset ?? DateTime.now().timeZoneOffset).inMinutes;
+  const lo = 5 * 60 + 30; // UTC+5:30
+  const hi = 10 * 60; // UTC+10
+  return minutes >= lo && minutes <= hi;
+}
+
+/// GitHub + accelerators in timezone order (proxy-first in CN/SEA).
+List<UpdateMirror> orderedGithubMirrors({
+  List<UpdateMirror> accelerators = publicMirrors,
+  Duration? timezoneOffset,
+}) {
+  if (preferGithubProxyByTimezone(timezoneOffset)) {
+    return <UpdateMirror>[...accelerators, UpdateMirror.github];
+  }
+  return <UpdateMirror>[UpdateMirror.github, ...accelerators];
+}
+
 const _unset = '\u0000';
-const _mirrorDefine = String.fromEnvironment('DSH_UPDATE_MIRROR', defaultValue: updateDownloadOrigin);
-const _feedDefine = String.fromEnvironment('DSH_UPDATE_FEED', defaultValue: _unset);
-const _mirrorsDefine = String.fromEnvironment('DSH_UPDATE_MIRRORS', defaultValue: _unset);
-const _betaTokenDefine = String.fromEnvironment('DSH_BETA_CHANNEL_TOKEN');
-const _betaOriginDefine = String.fromEnvironment('DSH_BETA_CHANNEL_ORIGIN', defaultValue: updateMirrorOrigin);
+const _mirrorDefine = String.fromEnvironment('XRK_UPDATE_MIRROR', defaultValue: '');
+const _feedDefine = String.fromEnvironment('XRK_UPDATE_FEED', defaultValue: _unset);
+const _mirrorsDefine = String.fromEnvironment('XRK_UPDATE_MIRRORS', defaultValue: _unset);
+const _betaTokenDefine = String.fromEnvironment('XRK_BETA_CHANNEL_TOKEN');
+const _betaOriginDefine = String.fromEnvironment('XRK_BETA_CHANNEL_ORIGIN', defaultValue: updateMirrorOrigin);
 
 /// The configuration the app ships with (see the library comment for overrides).
-UpdateSources defaultUpdateSources() => buildUpdateSources(
+UpdateSources defaultUpdateSources({Duration? timezoneOffset}) => buildUpdateSources(
   mirror: _mirrorDefine,
   feed: _feedDefine == _unset ? null : _feedDefine,
   accelerators: _mirrorsDefine == _unset ? null : _mirrorsDefine,
   channelToken: _betaTokenDefine,
   channelOrigin: _betaOriginDefine,
+  timezoneOffset: timezoneOffset,
 );
 
 /// [defaultUpdateSources] from the defines' values: [mirror] is the origin of
@@ -165,12 +176,16 @@ UpdateSources defaultUpdateSources() => buildUpdateSources(
 /// (null = the mirror's, '' = none); [accelerators] a comma list replacing
 /// [publicMirrors] (null = keep them); [channelToken] turns on the beta
 /// channel at [channelOrigin] ('' = off).
+///
+/// Pass [timezoneOffset] in tests for deterministic mirror order; production
+/// reads `DateTime.now().timeZoneOffset`.
 UpdateSources buildUpdateSources({
-  String mirror = updateDownloadOrigin,
+  String mirror = '',
   String? feed,
   String? accelerators,
   String channelToken = '',
   String channelOrigin = updateMirrorOrigin,
+  Duration? timezoneOffset,
 }) {
   final origin = mirror.trim().replaceFirst(RegExp(r'/+$'), '');
   final own = origin.isEmpty ? null : UpdateMirror.selfHosted(origin);
@@ -184,7 +199,10 @@ UpdateSources buildUpdateSources({
   return UpdateSources(
     channel: UpdateChannel.tryCreate(token: channelToken, origin: channelOrigin),
     feed: feedUrl.isEmpty ? null : Uri.tryParse(feedUrl),
-    mirrors: [?own, UpdateMirror.github, ...public],
+    mirrors: [
+      ?own,
+      ...orderedGithubMirrors(accelerators: public, timezoneOffset: timezoneOffset),
+    ],
   );
 }
 

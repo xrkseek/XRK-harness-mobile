@@ -97,7 +97,7 @@ class MediaInlineError extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
     child: Text(
       message,
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).danger, height: 1.5),
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).danger, height: 1.5),
     ),
   );
 }

@@ -7,7 +7,7 @@
 //   〔生成视频 · 16:9 · 5 秒 · 720p · Seedance 2.0〈ark/doubao-seedance-2-0〉〕
 //   镜头缓慢推近，猫抬头看向窗外
 //
-// The host's dsh-media plugin reads the same grammar (its src/header.js); both
+// The host's xrk-media plugin reads the same grammar (its src/header.js); both
 // ends run app/test/media/fixtures/header_grammar_v1.json case by case. The
 // checks below go in the spec's order (§4.6.3) so both give the same error
 // code for the same input. The words are wire format, not UI copy: an English
@@ -407,7 +407,7 @@ class GenerateHeader {
 
   /// A conversation title that starts with a request's header (§4.6.6): its
   /// kind and what follows the header ('' when the title was cut inside the
-  /// header or nothing follows). DSH's fallback title is the first message,
+  /// header or nothing follows). XRK's fallback title is the first message,
   /// whitespace runs folded to one space, cut short. Null for any other
   /// title, which shows as it is.
   static ({GenerateKind kind, String rest})? splitTitle(String title) {

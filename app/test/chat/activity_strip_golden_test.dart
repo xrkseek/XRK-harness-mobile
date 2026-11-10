@@ -5,14 +5,14 @@
 // Regenerate with
 // `flutter test --update-goldens test/chat/activity_strip_golden_test.dart`.
 
-import 'package:dsh_app/state/run_pulse.dart';
-import 'package:dsh_app/ui/chat/activity_copy.dart';
-import 'package:dsh_app/ui/chat/run_info.dart';
-import 'package:dsh_app/ui/chat/widgets/activity_strip.dart';
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/run_pulse.dart';
+import 'package:xrk_app/ui/chat/activity_copy.dart';
+import 'package:xrk_app/ui/chat/run_info.dart';
+import 'package:xrk_app/ui/chat/widgets/activity_strip.dart';
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

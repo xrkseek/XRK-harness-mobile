@@ -478,7 +478,7 @@ class _Placeholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return ColoredBox(
       color: color,
       child: glyph

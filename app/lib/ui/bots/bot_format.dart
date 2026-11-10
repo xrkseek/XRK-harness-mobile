@@ -1,7 +1,7 @@
 // Words and numbers the Bot pages share: what a Bot is doing, short times,
 // token counts, the DS Bot error lines.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:intl/intl.dart';
 
 import '../../l10n/l10n.dart';

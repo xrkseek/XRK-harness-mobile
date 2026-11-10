@@ -1,11 +1,11 @@
 // Parameter header v1 (docs/design/media-generation.md §4.6): the shared
-// golden set, case by case, both ways — the dsh-media plugin runs the same
+// golden set, case by case, both ways — the xrk-media plugin runs the same
 // file. Then what the app writes from its own values.
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/chat/media/generate_header.dart';
+import 'package:xrk_app/ui/chat/media/generate_header.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 final _golden =

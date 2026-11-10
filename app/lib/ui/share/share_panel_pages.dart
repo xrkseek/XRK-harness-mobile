@@ -161,7 +161,7 @@ class SharePanelHome extends StatelessWidget {
                 error,
                 key: const ValueKey('share-status'),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).danger),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).danger),
               ),
             ),
           const SizedBox(height: 12),
@@ -180,7 +180,7 @@ class _Placeholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return SizedBox(
       height: 240,
       child: Center(
@@ -213,7 +213,7 @@ class _Summary extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final model = SharePanelScope.of(context);
     final style = AppType.tabular(theme.textTheme.bodySmall!.copyWith(color: colors.textTertiary));
     final String text;
@@ -374,8 +374,8 @@ class _ShareLinkPageState extends State<ShareLinkPage> {
           FilledButton(
             key: const ValueKey('share-link-stop-confirm'),
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(l10n.viewShareStop),
@@ -390,7 +390,7 @@ class _ShareLinkPageState extends State<ShareLinkPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final model = SharePanelScope.of(context);
     final link = model.link;
     final stopped = model.stopped;
@@ -528,7 +528,7 @@ class _ShareLinkPageState extends State<ShareLinkPage> {
 
 // ── 文件 ───────────────────────────────────────────────────────────────────
 
-/// 「文件」: a conversation as a dsh-go file, a web page or Markdown; a
+/// 「文件」: a conversation as a xrk-mobile file, a web page or Markdown; a
 /// delivered file as itself. Then 「保存」 / 「分享」.
 class ShareFilePage extends StatefulWidget {
   const ShareFilePage({super.key});
@@ -552,7 +552,7 @@ class _ShareFilePageState extends State<ShareFilePage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final model = SharePanelScope.of(context);
     final artifact = model.artifact;
     final built = model.built;

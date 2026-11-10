@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'composer_quote.dart';
@@ -15,16 +15,16 @@ import 'sessions_state.dart';
 /// Test seam; production always uses the authenticated Host bridge, never
 /// direct phone filesystem access or archive as a substitute for deletion.
 abstract interface class SessionDeletionBackend {
-  Future<bool> supported(DshClient client);
-  Future<void> delete(DshClient client, String sessionId);
+  Future<bool> supported(XrkClient client);
+  Future<void> delete(XrkClient client, String sessionId);
 }
 
 class _HostSessionDeletion implements SessionDeletionBackend {
   const _HostSessionDeletion();
   @override
-  Future<bool> supported(DshClient client) => client.supportsSessionDeletion();
+  Future<bool> supported(XrkClient client) => client.supportsSessionDeletion();
   @override
-  Future<void> delete(DshClient client, String sessionId) => client.deleteSessionPermanently(sessionId);
+  Future<void> delete(XrkClient client, String sessionId) => client.deleteSessionPermanently(sessionId);
 }
 
 final sessionDeletionBackendProvider = Provider<SessionDeletionBackend>((ref) => const _HostSessionDeletion());
@@ -198,13 +198,13 @@ class SessionDeletionController extends Notifier<bool> {
 }
 
 String _failureCode(Object error) => switch (error) {
-  DshRemoteException(:final code) =>
+  XrkRemoteException(:final code) =>
     const {'session-active', 'session-related', 'writer-held', 'not-found', 'unavailable', 'busy'}.contains(code)
         ? code
         : 'failed',
   DshProtocolException() => 'protocol-error',
   DshHttpException() ||
-  DshTransportException() ||
+  XrkTransportException() ||
   DshCarrierLostException() ||
   DshClosedException() => 'connection-lost',
   _ => 'failed',

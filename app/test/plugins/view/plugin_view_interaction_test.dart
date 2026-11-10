@@ -4,10 +4,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_blocks.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_widgets.dart' show DshUiOptionRow;
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_blocks.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_widgets.dart' show XrkUiOptionRow;
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -91,7 +91,7 @@ void main() {
       final r = _Recorder()..answer = false;
       await pumpView(tester, choiceView, data: {'range': '30d'}, onAction: r.call);
       bool picked(String label) => tester
-          .widget<DshUiOptionRow>(find.ancestor(of: find.text(label), matching: find.byType(DshUiOptionRow)))
+          .widget<XrkUiOptionRow>(find.ancestor(of: find.text(label), matching: find.byType(XrkUiOptionRow)))
           .selected;
       expect(picked('近 30 天'), isTrue);
       await tester.tap(find.text('今年'));
@@ -278,31 +278,31 @@ void main() {
   group('geometry', () {
     testWidgets('two buttons: equal widths, mirrored edges', (tester) async {
       await pumpView(tester, actionsView, onAction: (_) async => true, frame: false);
-      final block = tester.getRect(find.byType(DshUiActionsBlock).first);
-      final a = tester.getRect(find.byType(DshUiActionButton).at(0));
-      final b = tester.getRect(find.byType(DshUiActionButton).at(1));
+      final block = tester.getRect(find.byType(XrkUiActionsBlock).first);
+      final a = tester.getRect(find.byType(XrkUiActionButton).at(0));
+      final b = tester.getRect(find.byType(XrkUiActionButton).at(1));
       expect(a.width, moreOrLessEquals(b.width, epsilon: 0.01));
-      expect(a.height, DshUiActionsBlock.height);
+      expect(a.height, XrkUiActionsBlock.height);
       expect(a.left - block.left, moreOrLessEquals(block.right - b.right, epsilon: 0.01));
       expect(b.left - a.right, moreOrLessEquals(12, epsilon: 0.01));
       expect(a.top, b.top);
       // Three or more: stacked, full width, 8 apart.
-      final rows = find.byType(DshUiActionButton);
+      final rows = find.byType(XrkUiActionButton);
       final c = tester.getRect(rows.at(2));
       final d = tester.getRect(rows.at(3));
-      final stack = tester.getRect(find.byType(DshUiActionsBlock).last);
+      final stack = tester.getRect(find.byType(XrkUiActionsBlock).last);
       expect(c.width, stack.width);
       expect(d.top - c.bottom, moreOrLessEquals(8, epsilon: 0.01));
     });
 
     testWidgets('list rows: 52 single, 64 two lines; icons and titles in columns', (tester) async {
       await pumpView(tester, listView, onAction: (_) async => true, frame: false);
-      final well = tester.getRect(find.byType(DshUiListBlock));
+      final well = tester.getRect(find.byType(XrkUiListBlock));
       final single = tester.getRect(find.ancestor(of: find.text('单行'), matching: find.byType(ConstrainedBox)).first);
       final twoLine = tester.getRect(find.ancestor(of: find.text('两行'), matching: find.byType(ConstrainedBox)).first);
-      expect(single.height, DshUiListBlock.rowHeight);
-      expect(twoLine.height, DshUiListBlock.twoLineHeight);
-      expect(well.height, DshUiListBlock.rowHeight * 2 + DshUiListBlock.twoLineHeight);
+      expect(single.height, XrkUiListBlock.rowHeight);
+      expect(twoLine.height, XrkUiListBlock.twoLineHeight);
+      expect(well.height, XrkUiListBlock.rowHeight * 2 + XrkUiListBlock.twoLineHeight);
       final titles = ['单行', '两行', '可点'].map((t) => tester.getRect(find.text(t)).left).toSet();
       expect(titles, hasLength(1), reason: 'a row without an icon keeps the title column');
       final icon = tester.getRect(find.byType(Icon).first);
@@ -323,11 +323,11 @@ void main() {
 
     testWidgets('progress: a 6-high bar the width of the block', (tester) async {
       await pumpView(tester, progressView, frame: false);
-      final block = tester.getRect(find.byType(DshUiProgressBlock).first);
+      final block = tester.getRect(find.byType(XrkUiProgressBlock).first);
       final bar = tester.getRect(
-        find.descendant(of: find.byType(DshUiProgressBlock).first, matching: find.byType(DecoratedBox)).first,
+        find.descendant(of: find.byType(XrkUiProgressBlock).first, matching: find.byType(DecoratedBox)).first,
       );
-      expect(bar.height, DshUiProgressBlock.barHeight);
+      expect(bar.height, XrkUiProgressBlock.barHeight);
       expect(bar.width, block.width);
     });
   });

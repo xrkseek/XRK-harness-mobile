@@ -1,13 +1,13 @@
-import 'package:dsh_app/pets/pet_overlay_actions.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/session_modes.dart';
-import 'package:dsh_app/ui/chat/widgets/plus_panel.dart';
-import 'package:dsh_app/ui/features/permission_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/pets/pet_overlay_actions.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/session_modes.dart';
+import 'package:xrk_app/ui/chat/widgets/plus_panel.dart';
+import 'package:xrk_app/ui/features/permission_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,8 +26,8 @@ void main() {
         usePhoneView(tester);
         final remoteCarrier = FakePluginCarrier();
         final localCarrier = FakePluginCarrier();
-        final remote = DshClient.withCarrier(remoteCarrier);
-        final local = DshClient.withCarrier(localCarrier);
+        final remote = XrkClient.withCarrier(remoteCarrier);
+        final local = XrkClient.withCarrier(localCarrier);
         addTearDown(remote.close);
         addTearDown(local.close);
         for (final carrier in [remoteCarrier, localCarrier]) {

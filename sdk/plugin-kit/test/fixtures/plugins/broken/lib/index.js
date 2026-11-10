@@ -1,7 +1,7 @@
 export const name = 'broken-demo'
-export const inject = ['dshGo']
+export const inject = ['xrkGo']
 export function apply(ctx) {
-  ctx.inject(['dshGo?'], (ctx) => {
-    ctx.dshGo.on('a', () => ({ insert: 'x' }))
+  ctx.inject(['xrkGo?'], (ctx) => {
+    ctx.xrkGo.on('a', () => ({ insert: 'x' }))
   })
 }

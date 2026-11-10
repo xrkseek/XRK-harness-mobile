@@ -1,7 +1,7 @@
-import 'package:dsh_app/remote/relay/dsh_remote_backend.dart';
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_remote/dsh_remote.dart' as remote;
+import 'package:xrk_app/remote/relay/xrk_remote_backend.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_remote/xrk_remote.dart' as remote;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +28,7 @@ void main() {
   });
 
   test('a lost compact capability has an actionable terminal error', () {
-    final error = DshRemoteRelayBackend.describe(
+    final error = XrkRemoteRelayBackend.describe(
       const remote.RemoteFailure('HISTORY_MODE_CHANGED', 'The Host history mode changed.', retryable: false),
     );
     expect(error.retryable, isFalse);
@@ -40,7 +40,7 @@ void main() {
     SharedPreferences.setMockInitialValues({RemoteCompactHistoryController.prefsKey: true});
     final container = ProviderContainer(overrides: [secretStoreProvider.overrideWithValue(MemorySecretStore())]);
     addTearDown(container.dispose);
-    final backend = container.read(relayBackendProvider) as DshRemoteRelayBackend;
+    final backend = container.read(relayBackendProvider) as XrkRemoteRelayBackend;
     final preference = container.read(remoteCompactHistoryProvider.notifier);
     await preference.ready;
     expect(backend.account.compactHistory, isTrue);

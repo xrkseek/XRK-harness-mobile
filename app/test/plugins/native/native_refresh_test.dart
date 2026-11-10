@@ -3,13 +3,13 @@
 // again (a 304 when nothing changed), and when they come back changed the
 // installed list (设置 › 插件) reads again too.
 
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/plugins/native/composer_capsules.dart';
-import 'package:dsh_app/ui/plugins/native/native_composer_bar.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/plugins/native/composer_capsules.dart';
+import 'package:xrk_app/ui/plugins/native/native_composer_bar.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

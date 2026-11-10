@@ -34,8 +34,8 @@ ThemeData buildLightTheme({
   bool fluid = false,
 }) => _build(
   DshPalette.lightScheme(accent),
-  DshColors.forAccent(Brightness.light, accent),
-  DshSurfaces.light(accent, blurEnabled: glassBlur),
+  XrkColors.forAccent(Brightness.light, accent),
+  XrkSurfaces.light(accent, blurEnabled: glassBlur),
   accent,
   glyphLocale,
   instantPages,
@@ -51,8 +51,8 @@ ThemeData buildDarkTheme({
   bool fluid = false,
 }) => _build(
   DshPalette.darkScheme(accent),
-  DshColors.forAccent(Brightness.dark, accent),
-  DshSurfaces.dark(accent, blurEnabled: glassBlur),
+  XrkColors.forAccent(Brightness.dark, accent),
+  XrkSurfaces.dark(accent, blurEnabled: glassBlur),
   accent,
   glyphLocale,
   instantPages,
@@ -88,8 +88,8 @@ SystemUiOverlayStyle dshSystemOverlay(Brightness brightness) {
 /// 3. **连续圆角。** 全部走 `AppShape` 的五档 + 胶囊,不手写半径。
 ThemeData _build(
   ColorScheme scheme,
-  DshColors colors,
-  DshSurfaces surfaces,
+  XrkColors colors,
+  XrkSurfaces surfaces,
   AppAccent accent,
   Locale? glyphLocale,
   bool instantPages,

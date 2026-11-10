@@ -1,4 +1,4 @@
-// First run's 「想让 DSH Go 帮你做哪些事」 end to end with a fake phone: the
+// First run's 「想让 XRK Go 帮你做哪些事」 end to end with a fake phone: the
 // pick (and what picking asks first), the walk (dialogs answer at once,
 // pages on coming back, a maker's switch on the person's word, the
 // restricted-settings steps), the summary, a walk resumed after the app was
@@ -7,14 +7,14 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/access_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/access/access_walk.dart';
-import 'package:dsh_app/ui/onboarding/access_step.dart';
-import 'package:dsh_app/ui/settings/system_access_page.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/access_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/access/access_walk.dart';
+import 'package:xrk_app/ui/onboarding/access_step.dart';
+import 'package:xrk_app/ui/settings/system_access_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -68,11 +68,12 @@ void main() {
     testWidgets('nothing picked to begin with; 跳过 goes on and writes nothing', (tester) async {
       var done = 0;
       await _pump(tester, AccessStepPage(onDone: () => done++), FakeAccessDriver(offPhone));
-      expect(find.text('想让 DSH Go 帮你做哪些事'), findsOneWidget);
-      for (final name in ['读写手机里的文件', '桌宠与悬浮窗', '手机操控', '后台持续运行', '语音输入']) {
+      expect(find.text('想让 XRK Go 帮你做哪些事'), findsOneWidget);
+      for (final name in ['读写手机里的文件', '桌宠与悬浮窗', '手机操控', '后台持续运行']) {
         expect(find.text(name), findsOneWidget);
         expect(tester.getSemantics(find.text(name)), isSemantics(isChecked: false, hasCheckedState: true));
       }
+      expect(find.text('语音输入'), findsNothing);
       expect(tester.widget<FilledButton>(find.byKey(_primary)).onPressed, isNull);
 
       await _tapText(tester, '跳过');
@@ -82,17 +83,10 @@ void main() {
       expect(prefs.containsKey(AccessSetupController.prefsKey), isFalse);
     });
 
-    testWidgets('voice says its download before it is picked', (tester) async {
+    testWidgets('voice model is not offered on first-run pick', (tester) async {
       await _pump(tester, AccessStepPage(onDone: () {}), FakeAccessDriver(offPhone));
-      expect(find.text('需要麦克风权限'), findsOneWidget);
-      expect(find.text('离线识别，需下载约 241 MB 语音模型'), findsOneWidget);
-      expect(find.text('当前是移动数据，下载会消耗流量'), findsNothing);
-    });
-
-    testWidgets('…and that it would use mobile data, when on it', (tester) async {
-      await _pump(tester, AccessStepPage(onDone: () {}), FakeAccessDriver(readingsWith(offPhone, metered: true)));
-      expect(find.text('离线识别，需下载约 241 MB 语音模型'), findsOneWidget);
-      expect(find.text('当前是移动数据，下载会消耗流量'), findsOneWidget);
+      expect(find.text('语音输入'), findsNothing);
+      expect(find.text('离线识别，需下载约 241 MB 语音模型'), findsNothing);
     });
 
     testWidgets('手机操控 shows its disclosure first; not now leaves it unpicked', (tester) async {
@@ -128,14 +122,13 @@ void main() {
   });
 
   group('the walk', () {
-    testWidgets('voice and background on vivo: dialog, page, retry, a maker\'s switch, a skip, the summary', (
+    testWidgets('background on vivo: page, retry, a maker\'s switch, a skip, the summary', (
       tester,
     ) async {
       var batteryAsks = 0;
       final driver = FakeAccessDriver(
         offPhone,
         answer: (item, r) => switch (item) {
-          AccessItem.mic => readingsWith(r, mic: true),
           AccessItem.notifications => readingsWith(r, notifications: true),
           // Dismissed the first time, allowed the second.
           AccessItem.battery => readingsWith(r, battery: ++batteryAsks > 1),
@@ -144,27 +137,20 @@ void main() {
       );
       var done = 0;
       final c = await _pump(tester, AccessStepPage(onDone: () => done++), driver);
-      await _tapText(tester, '语音输入');
-      await _tapText(tester, '后台持续运行');
+      // Defaults already include files/phone/background; keep background only for this walk.
+      await _tapText(tester, '读写手机里的文件');
+      await _tapText(tester, '手机操控');
       await _tapPrimary(tester);
 
-      // 1 / 5: the microphone's dialog answers when the call returns.
-      expect(find.text('允许使用麦克风'), findsOneWidget);
-      expect(find.text('1 / 5'), findsOneWidget);
-      expect(find.text('语音输入要用到'), findsOneWidget);
-      expect(_primaryLabel(tester), '去开启');
-      await _tapPrimary(tester);
-      expect(driver.opened, ['mic']);
-
-      // 2 / 5: notifications' page; on when the person comes back with it on.
+      // 1 / 4: notifications' page; on when the person comes back with it on.
       expect(find.text('允许通知'), findsOneWidget);
-      expect(find.text('2 / 5'), findsOneWidget);
+      expect(find.text('1 / 4'), findsOneWidget);
       await _tapPrimary(tester);
       expect(find.text('允许通知'), findsOneWidget);
       await awayAndBack(tester);
-      expect(driver.opened, ['mic', 'notifications']);
+      expect(driver.opened, ['notifications']);
 
-      // 3 / 5: dismissed: 还没开启, 重试 asks again.
+      // 2 / 4: dismissed: 还没开启, 重试 asks again.
       expect(find.text('允许在后台运行'), findsOneWidget);
       await _tapPrimary(tester);
       expect(find.text('还没开启'), findsOneWidget);
@@ -172,9 +158,9 @@ void main() {
       await _tapPrimary(tester);
       expect(driver.opened.last, 'battery+');
 
-      // 4 / 5: vivo's own switch, with where it lives; the person's word for it.
+      // 3 / 4: vivo's own switch, with where it lives; the person's word for it.
       expect(find.text('允许后台高耗电'), findsOneWidget);
-      expect(find.text('位置：电池 › 后台耗电管理 › DSH Go'), findsOneWidget);
+      expect(find.text('位置：电池 › 后台耗电管理 › XRK Go'), findsOneWidget);
       expect(_primaryLabel(tester), '去设置');
       await _tapPrimary(tester);
       await awayAndBack(tester);
@@ -185,17 +171,15 @@ void main() {
       await _tapPrimary(tester);
       expect(c.read(accessVisitedProvider), {AccessItem.vendorBackground});
 
-      // 5 / 5: skipped.
+      // 4 / 4: skipped.
       expect(find.text('允许自启动'), findsOneWidget);
-      expect(find.text('5 / 5'), findsOneWidget);
+      expect(find.text('4 / 4'), findsOneWidget);
       await _tapText(tester, '跳过');
       expect(c.read(accessSetupProvider).skipped, {AccessItem.autostart});
 
-      // Where everything ended up, and what voice does next.
       expect(find.text('还有 1 项没开'), findsOneWidget);
       expect(find.text('随时可在「设置 › 通用 › 系统权限」补开'), findsOneWidget);
       for (final (title, state) in [
-        ('允许使用麦克风', '已开启'),
         ('允许通知', '已开启'),
         ('允许在后台运行', '已开启'),
         ('允许后台高耗电', '已去设置'),
@@ -207,13 +191,13 @@ void main() {
           reason: title,
         );
       }
-      expect(find.text('语音模型（约 241 MB）会在引擎就绪后开始下载，进度在「设置 › 通用 › 语音输入」里查看'), findsOneWidget);
+      expect(find.textContaining('语音模型'), findsNothing);
 
       await tester.tap(find.byKey(const ValueKey('access-summary-done')));
       await _frames(tester);
       expect(done, 1);
       final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getBool(onboardingWantsVoiceKey), isTrue);
+      expect(prefs.getBool(onboardingWantsVoiceKey), isFalse);
       expect(prefs.containsKey(AccessSetupController.prefsKey), isFalse);
       expect(prefs.getStringList(AccessVisitedController.prefsKey), ['vendorBackground']);
     });
@@ -237,7 +221,7 @@ void main() {
 
       expect(find.text('打开无障碍'), findsOneWidget);
       expect(find.text('先允许受限制的设置'), findsOneWidget);
-      expect(find.text('在无障碍里点一下「DSH 手机操控」，出现「受限制的设置」时点确定'), findsOneWidget);
+      expect(find.text('在无障碍里点一下「XRK 手机操控」，出现「受限制的设置」时点确定'), findsOneWidget);
       expect(find.text('在应用信息里点右上角的三个点，选「允许受限制的设置」'), findsOneWidget);
       expect(find.text('看图示'), findsOneWidget);
       expect(_primaryLabel(tester), '去无障碍');
@@ -418,7 +402,6 @@ void main() {
         (AccessFeature.pet, '桌宠与悬浮窗'),
         (AccessFeature.phone, '手机操控'),
         (AccessFeature.background, '后台持续运行'),
-        (AccessFeature.voice, '语音输入'),
       ]) {
         await tester.scrollUntilVisible(find.byKey(ValueKey('access-section-${feature.name}')), -120, scrollable: list);
         expect(

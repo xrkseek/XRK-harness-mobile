@@ -3,7 +3,7 @@
 // always under the plugin's name (§3.7 署名外框). Taps on its controls go back to
 // the plugin and their data effects land here.
 
-import 'package:dsh_client/dsh_client.dart' show DshGoScope;
+import 'package:xrk_client/xrk_client.dart' show DshGoScope;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,7 +15,7 @@ import '../../../plugins/native/native_surface.dart';
 import '../../../state/hosts_state.dart';
 import '../../common/app_sheet.dart';
 import '../../common/empty_view.dart';
-import '../../chat/dsh_ui/dsh_ui_plugin_controls.dart' show DshUiControlButton;
+import '../../chat/xrk_ui/xrk_ui_plugin_controls.dart' show XrkUiControlButton;
 import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
 import '../view/plugin_view.dart';
@@ -87,7 +87,7 @@ class NativePanelView extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 8),
-                  DshUiControlButton(
+                  XrkUiControlButton(
                     label: l10n.commonRetry,
                     onPressed: () => ref.read(nativeSurfaceProvider(key).notifier).refresh(),
                   ),

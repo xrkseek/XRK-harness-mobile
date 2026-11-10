@@ -1,20 +1,20 @@
 // A plugin's page in the official market: the link the detail sheet shares
-// (`https://go.dshtui.com/p/<encoded name>`), and the same path coming back —
-// as the web page's `dshgo://` hand-over or the https link itself — opening
+// (`https://xrkseek.com/p/<encoded name>`), and the same path coming back —
+// as the web page's `xrkharness://` hand-over or the https link itself — opening
 // the plugin's detail sheet.
 
 import 'dart:io';
 
-import 'package:dsh_app/links/app_links.dart';
-import 'package:dsh_app/links/plugin_links.dart';
-import 'package:dsh_app/share_code/share_net.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_app/ui/plugins/market_tab.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_app/ui/share_code/share_out.dart';
-import 'package:dsh_app/ui/share/share_entry.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/links/app_links.dart';
+import 'package:xrk_app/links/plugin_links.dart';
+import 'package:xrk_app/share_code/share_net.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_app/ui/plugins/market_tab.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_app/ui/share_code/share_out.dart';
+import 'package:xrk_app/ui/share/share_entry.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -26,23 +26,23 @@ import '../share_code/support/sheet_support.dart' show RecordingShareOut;
 void main() {
   group('the link', () {
     test('the package name is one encoded path segment', () {
-      expect(marketPluginLink('@dsh-go/media'), 'https://go.dshtui.com/p/%40dsh-go%2Fmedia');
-      expect(marketPluginLink('dsh-approval-gate'), 'https://go.dshtui.com/p/dsh-approval-gate');
+      expect(marketPluginLink('@xrk-mobile/media'), 'https://xrkseek.com/p/%40xrk-mobile%2Fmedia');
+      expect(marketPluginLink('dsh-approval-gate'), 'https://xrkseek.com/p/dsh-approval-gate');
     });
 
     test('image sharing keeps the official page and pinned install command', () {
       final entry = officialFixtureMarket().byName['@someone/dsh-weather']!;
       final text = pluginShareText(entry, webLink: marketPluginLink(entry.name));
-      expect(text, contains('https://go.dshtui.com/p/%40someone%2Fdsh-weather'));
+      expect(text, contains('https://xrkseek.com/p/%40someone%2Fdsh-weather'));
       expect(text, contains('@someone/dsh-weather@1.2.0'));
       expect(text, contains('天气'));
     });
 
-    test('https and dshgo:// on the share host, encoded or not, name the package', () {
+    test('https and xrkharness:// on the share host, encoded or not, name the package', () {
       for (final (link, name) in [
-        ('https://go.dshtui.com/p/%40dsh-go%2Fmedia', '@dsh-go/media'),
-        ('dshgo://go.dshtui.com/p/%40dsh-go%2Fmedia', '@dsh-go/media'),
-        ('dshgo://go.dshtui.com/p/@dsh-go/media', '@dsh-go/media'),
+        ('https://xrkseek.com/p/%40xrk-mobile%2Fmedia', '@xrk-mobile/media'),
+        ('xrkharness://go.dshtui.com/p/%40xrk-mobile%2Fmedia', '@xrk-mobile/media'),
+        ('xrkharness://go.dshtui.com/p/@xrk-mobile/media', '@xrk-mobile/media'),
         ('https://GO.DSHTUI.COM/p/dsh-approval-gate/', 'dsh-approval-gate'),
         (marketPluginLink('@someone/dsh-weather'), '@someone/dsh-weather'),
       ]) {
@@ -52,15 +52,15 @@ void main() {
 
     test('anything else is not a plugin link', () {
       for (final link in [
-        'http://go.dshtui.com/p/dsh-media',
-        'https://example.com/p/dsh-media',
-        'https://go.dshtui.com/c/a1B2c3D4e5',
-        'https://go.dshtui.com/p',
-        'https://go.dshtui.com/p/a/b/c',
-        'https://go.dshtui.com/p/Not%20A%20Package',
-        'https://me@go.dshtui.com/p/dsh-media',
-        'https://go.dshtui.com:8443/p/dsh-media',
-        'dshgo://share/p/dsh-media',
+        'http://go.dshtui.com/p/xrk-media',
+        'https://example.com/p/xrk-media',
+        'https://xrkseek.com/c/a1B2c3D4e5',
+        'https://xrkseek.com/p',
+        'https://xrkseek.com/p/a/b/c',
+        'https://xrkseek.com/p/Not%20A%20Package',
+        'https://me@go.dshtui.com/p/xrk-media',
+        'https://xrkseek.com:8443/p/xrk-media',
+        'xrkharness://share/p/xrk-media',
       ]) {
         expect(marketPluginLinkName(Uri.parse(link)), isNull, reason: link);
       }
@@ -69,12 +69,12 @@ void main() {
 
   group('sharing', () {
     late FakePluginCarrier carrier;
-    late DshClient client;
+    late XrkClient client;
     late RecordingShareOut out;
 
     setUp(() {
       carrier = FakePluginCarrier();
-      client = DshClient.withCarrier(carrier);
+      client = XrkClient.withCarrier(carrier);
       carrier.handlers['pluginManager/listBundles'] = (_) => sampleBundles;
       out = RecordingShareOut(Directory.systemTemp);
     });
@@ -109,17 +109,17 @@ void main() {
       await openShare(tester, '天气');
       await tester.tap(find.byKey(const ValueKey('share-code-copy')));
       await tester.pumpAndSettle();
-      expect(out.copied, ['https://go.dshtui.com/p/%40someone%2Fdsh-weather']);
+      expect(out.copied, ['https://xrkseek.com/p/%40someone%2Fdsh-weather']);
       await tester.tap(find.byKey(const ValueKey('share-code-share')));
       await tester.pumpAndSettle();
-      expect(out.sharedText.single, endsWith('\nhttps://go.dshtui.com/p/%40someone%2Fdsh-weather'));
+      expect(out.sharedText.single, endsWith('\nhttps://xrkseek.com/p/%40someone%2Fdsh-weather'));
     });
 
     testWidgets('a plugin only dshfind lists keeps the share-code link', (tester) async {
       await openShare(tester, 'novel-writer');
       await tester.tap(find.byKey(const ValueKey('share-code-copy')));
       await tester.pumpAndSettle();
-      expect(out.copied.single, startsWith('https://go.dshtui.com/share/#p='));
+      expect(out.copied.single, startsWith('https://xrkseek.com/share/#p='));
     });
   });
 
@@ -127,11 +127,11 @@ void main() {
     late AppLinks links;
     late LinkRouter router;
     late FakePluginCarrier carrier;
-    late DshClient client;
+    late XrkClient client;
 
     setUp(() {
       carrier = FakePluginCarrier();
-      client = DshClient.withCarrier(carrier);
+      client = XrkClient.withCarrier(carrier);
       carrier.handlers['pluginManager/listBundles'] = (_) => sampleBundles;
     });
     tearDown(() {
@@ -161,31 +161,31 @@ void main() {
 
     testWidgets('the web page hand-over opens the official entry', (tester) async {
       await pumpHome(tester);
-      links.add(Uri.parse('dshgo://go.dshtui.com/p/%40dsh-go%2Fmedia'));
+      links.add(Uri.parse('xrkharness://go.dshtui.com/p/%40xrk-mobile%2Fmedia'));
       await tester.pump();
       await tester.pumpAndSettle();
       expect(find.byType(MarketPluginSheet), findsOneWidget);
-      expect(tester.widget<MarketPluginSheet>(find.byType(MarketPluginSheet)).entry.name, '@dsh-go/media');
+      expect(tester.widget<MarketPluginSheet>(find.byType(MarketPluginSheet)).entry.name, '@xrk-mobile/media');
       expect(find.text('生图生视频'), findsOneWidget);
     });
 
     testWidgets('an https link opens it too; a plugin only dshfind lists opens from dshfind', (tester) async {
       await pumpHome(tester);
-      expect(await router.open(Uri.parse('https://go.dshtui.com/p/novel-writer')), isTrue);
+      expect(await router.open(Uri.parse('https://xrkseek.com/p/novel-writer')), isTrue);
       await tester.pumpAndSettle();
       expect(tester.widget<MarketPluginSheet>(find.byType(MarketPluginSheet)).entry.name, 'novel-writer');
     });
 
     testWidgets('the official index unreachable: dshfind still answers', (tester) async {
       await pumpHome(tester, official: () async => throw const MarketFetchException('offline'));
-      expect(await router.open(Uri.parse('https://go.dshtui.com/p/dsh-memory-lite')), isTrue);
+      expect(await router.open(Uri.parse('https://xrkseek.com/p/dsh-memory-lite')), isTrue);
       await tester.pumpAndSettle();
       expect(tester.widget<MarketPluginSheet>(find.byType(MarketPluginSheet)).entry.name, 'dsh-memory-lite');
     });
 
     testWidgets('a plugin neither market lists: one line, no sheet', (tester) async {
       await pumpHome(tester);
-      expect(await router.open(Uri.parse('dshgo://go.dshtui.com/p/nope')), isTrue);
+      expect(await router.open(Uri.parse('xrkharness://go.dshtui.com/p/nope')), isTrue);
       await tester.pumpAndSettle();
       expect(find.byType(MarketPluginSheet), findsNothing);
       expect(find.text('插件市场里没有 nope'), findsOneWidget);

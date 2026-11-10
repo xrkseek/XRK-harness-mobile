@@ -3,17 +3,17 @@
 // several. Regenerate with
 // `flutter test --update-goldens test/chat/header_schedule_golden_test.dart`.
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/header_schedule_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/schedule_editor_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/chat_header.dart';
-import 'package:dsh_app/ui/chat/model_sheet.dart';
-import 'package:dsh_app/ui/common/status_dot.dart';
-import 'package:dsh_app/ui/features/schedule_editor/time_zones.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/header_schedule_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/schedule_editor_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/chat_header.dart';
+import 'package:xrk_app/ui/chat/model_sheet.dart';
+import 'package:xrk_app/ui/common/status_dot.dart';
+import 'package:xrk_app/ui/features/schedule_editor/time_zones.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/common/overview_card.dart' show OverviewChevron;
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/field_row.dart';
-import 'package:dsh_app/ui/engine_settings/schema_collapsed_groups.dart';
-import 'package:dsh_app/ui/engine_settings/schema_fields.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/common/overview_card.dart' show OverviewChevron;
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/field_row.dart';
+import 'package:xrk_app/ui/engine_settings/schema_collapsed_groups.dart';
+import 'package:xrk_app/ui/engine_settings/schema_fields.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -55,7 +55,7 @@ void main() {
     await pumpPage(
       tester,
       const EngineSettingsPage(ns: 'ears'),
-      overrides: engineOverrides(DshClient.withCarrier(host)),
+      overrides: engineOverrides(XrkClient.withCarrier(host)),
     );
     final general = SchemaNode.fromJson(earsSchema()).fields!['general']!;
     final generalTitle = labelFor('general', general, const FieldCopy());
@@ -86,7 +86,7 @@ void main() {
       await pumpPage(
         tester,
         const EngineSettingsPage(ns: 'ears'),
-        overrides: engineOverrides(DshClient.withCarrier(earsHost())),
+        overrides: engineOverrides(XrkClient.withCarrier(earsHost())),
       );
       tester.view.physicalSize = const Size(320 * 2, 1800 * 2);
       await tester.pump();
@@ -150,7 +150,7 @@ void main() {
       await pumpPage(
         tester,
         const EngineSettingsPage(ns: 'intersect'),
-        overrides: engineOverrides(DshClient.withCarrier(host)),
+        overrides: engineOverrides(XrkClient.withCarrier(host)),
       );
       if (name == 'member') {
         expect(find.byType(SchemaCollapsedGroup), findsOneWidget);
@@ -186,7 +186,7 @@ void main() {
       await pumpPage(
         tester,
         const EngineSettingsPage(ns: 'ears'),
-        overrides: engineOverrides(DshClient.withCarrier(earsHost())),
+        overrides: engineOverrides(XrkClient.withCarrier(earsHost())),
         brightness: brightness,
       );
       tester.view.physicalSize = const Size(640, 1800);

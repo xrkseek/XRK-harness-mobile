@@ -4,7 +4,7 @@
 // https git at a ref, or an official bundle to switch on — and lenient about
 // display text.
 
-import 'package:dsh_client/dsh_client.dart' show isExactSemver;
+import 'package:xrk_client/xrk_client.dart' show isExactSemver;
 import 'package:flutter/foundation.dart';
 
 import 'settings_sanitizer.dart' show isShareableNamespace;
@@ -45,7 +45,7 @@ enum PluginSourceKind {
   github,
   git,
 
-  /// An official optional bundle shipped with DSH: only switched on.
+  /// An official optional bundle shipped with XRK: only switched on.
   official,
 }
 
@@ -74,7 +74,7 @@ class SharedPlugin {
     this.summary,
   });
 
-  /// npm package name (the bundle name DSH lists it under).
+  /// npm package name (the bundle name XRK lists it under).
   final String name;
   final PluginSourceKind source;
 

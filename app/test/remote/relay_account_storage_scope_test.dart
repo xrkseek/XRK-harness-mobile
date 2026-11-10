@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:dsh_app/remote/relay/dsh_remote_backend.dart';
-import 'package:dsh_app/remote/secret_store.dart';
+import 'package:xrk_app/remote/relay/xrk_remote_backend.dart';
+import 'package:xrk_app/remote/secret_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../packages/dsh_remote/test/support/fake_remote.dart';
+import '../../../packages/xrk_remote/test/support/fake_remote.dart';
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
@@ -13,8 +13,8 @@ void main() {
   test('replacement App backends share the inner secret store ownership', () async {
     final server = await FakeRemoteServer.start();
     final secrets = MemorySecretStore();
-    final old = DshRemoteRelayBackend(secrets: secrets, serverUrl: server.url, direct: false);
-    final next = DshRemoteRelayBackend(secrets: secrets, serverUrl: server.url, direct: false);
+    final old = XrkRemoteRelayBackend(secrets: secrets, serverUrl: server.url, direct: false);
+    final next = XrkRemoteRelayBackend(secrets: secrets, serverUrl: server.url, direct: false);
     addTearDown(server.close);
     addTearDown(old.account.close);
     addTearDown(next.account.close);
@@ -31,7 +31,7 @@ void main() {
     release.complete();
     await logout;
     expect(secrets.values, committed);
-    final restored = DshRemoteRelayBackend(secrets: secrets, serverUrl: server.url, direct: false);
+    final restored = XrkRemoteRelayBackend(secrets: secrets, serverUrl: server.url, direct: false);
     addTearDown(restored.account.close);
     expect(await restored.currentUser(), isNotNull);
     expect(await restored.listHosts(), isEmpty);

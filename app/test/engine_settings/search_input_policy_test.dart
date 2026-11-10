@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/web_search_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/web_search_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +30,7 @@ Future<void> _open(WidgetTester tester, FakeSettingsHost host, {Widget? page}) a
   await pumpPage(
     tester,
     page ?? const WebSearchSettingsPage(),
-    overrides: engineOverrides(DshClient.withCarrier(host)),
+    overrides: engineOverrides(XrkClient.withCarrier(host)),
     height: 1100,
     fonts: true,
   );

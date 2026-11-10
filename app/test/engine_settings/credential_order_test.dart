@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -42,7 +42,7 @@ class HeldCredentialHost extends FakeSettingsHost {
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
     if (endpoint == 'credentials/describe' && failNextCredential) {
       failNextCredential = false;
-      return RpcError(DshRemoteException('test/failure', 'credential status unavailable'));
+      return RpcError(XrkRemoteException('test/failure', 'credential status unavailable'));
     }
     final gate = endpoint == 'credentials/describe' ? nextCredential : null;
     if (gate != null) nextCredential = null;
@@ -60,7 +60,7 @@ void main() {
   for (final newer in ['clear', 'full-refresh-environment']) {
     test('old credential status cannot overwrite newer $newer status', () async {
       final host = HeldCredentialHost();
-      final container = ProviderContainer(overrides: engineOverrides(DshClient.withCarrier(host)));
+      final container = ProviderContainer(overrides: engineOverrides(XrkClient.withCarrier(host)));
       addTearDown(container.dispose);
       final sub = container.listen(engineSettingsProvider, (_, _) {});
       addTearDown(sub.close);
@@ -90,7 +90,7 @@ void main() {
   }
 
   Future<ProviderContainer> start(HeldCredentialHost host) async {
-    final container = ProviderContainer(overrides: engineOverrides(DshClient.withCarrier(host)));
+    final container = ProviderContainer(overrides: engineOverrides(XrkClient.withCarrier(host)));
     addTearDown(container.dispose);
     final sub = container.listen(engineSettingsProvider, (_, _) {});
     addTearDown(sub.close);

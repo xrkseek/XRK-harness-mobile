@@ -1,8 +1,8 @@
-import 'package:dsh_app/ui/chat/widgets/attachments.dart';
-import 'package:dsh_app/ui/chat/widgets/image_actions.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart';
+import 'package:xrk_app/ui/chat/widgets/image_actions.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -32,8 +32,8 @@ void main() {
       expect(find.byType(GallerySaveButton), findsOneWidget);
       final context = tester.element(find.byType(GlassIconButton).first);
       expect(Theme.of(context).brightness, Brightness.dark);
-      expect(Theme.of(context).extension<DshSurfaces>(), isNotNull);
-      expect(Theme.of(context).extension<DshColors>(), isNotNull);
+      expect(Theme.of(context).extension<XrkSurfaces>(), isNotNull);
+      expect(Theme.of(context).extension<XrkColors>(), isNotNull);
       await tester.tap(find.byIcon(AppIcons.close));
       await tester.pumpAndSettle();
       expect(find.byType(GallerySaveButton), findsNothing);

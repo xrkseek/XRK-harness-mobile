@@ -31,20 +31,20 @@ class AppSettings {
   final String apiKey;
   final ThemeMode themeMode;
 
-  /// Start the local DSH automatically when the app opens.
+  /// Start the local XRK automatically when the app opens.
   final bool autoStartLocal;
 
   /// A stored user choice. Policy defaults never create this preference.
   final bool autoStartLocalExplicit;
 
-  /// New local sessions use DSH's `danger-full-access` preset (commands run without asking).
+  /// New local sessions use XRK's `danger-full-access` preset (commands run without asking).
   /// Off by default: there is no sandbox on Android, so each command escalation asks first.
   final bool autoApproveCommands;
 
   /// Mount the phone's shared storage at /sdcard in the Linux environment.
   final bool phoneStorage;
 
-  /// Fit the embedded DSH Web to a phone (`assets/web/`). Off shows the
+  /// Fit the embedded XRK Web to a phone (`assets/web/`). Off shows the
   /// official layout untouched, e.g. to check a plugin that restyles it.
   final bool webPhoneLayout;
 
@@ -56,10 +56,10 @@ class AppSettings {
   final double chatTextScale;
 
   /// A normally finished turn folds its thinking, tool calls and interim
-  /// messages into one summary line above the answer (DSH Web's default).
+  /// messages into one summary line above the answer (XRK Web's default).
   final bool foldCompletedTurns;
 
-  /// Tell the local DSH it may answer with ```dsh-ui views (charts, cards,
+  /// Tell the local XRK it may answer with ```dsh-ui views (charts, cards,
   /// options): a section of the managed AGENTS.md, written at engine start.
   /// Off only drops the instructions; views that arrive are still drawn.
   final bool visualReplies;
@@ -234,7 +234,7 @@ class SettingsController extends Notifier<AppSettings> {
   }
 
   /// Takes effect at the next engine start (the instructions live in the
-  /// managed AGENTS.md, written before DSH starts).
+  /// managed AGENTS.md, written before XRK starts).
   Future<void> setVisualReplies(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_visualRepliesKey, value);

@@ -1,4 +1,4 @@
-// The inline reference chip (after DSH's `ReferenceChip`: file / folder /
+// The inline reference chip (after XRK's `ReferenceChip`: file / folder /
 // conversation icon + label), shared by the composer and the sent bubble, and
 // the bubble's text with chips in it.
 

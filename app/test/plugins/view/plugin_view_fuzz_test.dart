@@ -6,8 +6,8 @@
 import 'dart:collection';
 import 'dart:math';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -96,11 +96,11 @@ class _WorkList extends ListBase<Object?> {
   void operator []=(int index, Object? value) => throw UnsupportedError('read only');
 }
 
-DshUiParse _boundedParse(Object? view, {Object? data, DshUiProfile profile = DshUiProfile.panel, int? limit}) {
+XrkUiParse _boundedParse(Object? view, {Object? data, XrkUiProfile profile = XrkUiProfile.panel, int? limit}) {
   // Several passes over a byte-bounded template are allowed. Hostile data
   // gets an explicit linear cap, independent of host scheduling and GC.
   final work = _InputWork(limit ?? profile.bytes * 8);
-  return parseDshUiPluginUncached(work.wrap(view), data: work.wrap(data), profile: profile);
+  return parseXrkUiPluginUncached(work.wrap(view), data: work.wrap(data), profile: profile);
 }
 
 const _types = [
@@ -194,33 +194,33 @@ final _fixtures = <Object?>[
 ];
 
 /// Every invariant a parsed view keeps, whatever went in.
-void _checkBudget(DshUiView view, PluginViewBudget budget) {
+void _checkBudget(XrkUiView view, PluginViewBudget budget) {
   final p = budget.profile;
   expect(view.nodes.length, lessThanOrEqualTo(p.nodes));
-  int depth(DshUiNode n) => n is DshUiLayout && n.children.isNotEmpty ? 1 + n.children.map(depth).reduce(max) : 1;
+  int depth(XrkUiNode n) => n is XrkUiLayout && n.children.isNotEmpty ? 1 + n.children.map(depth).reduce(max) : 1;
   expect(depth(view.root), lessThanOrEqualTo(p.depth));
   for (final node in view.nodes) {
     switch (node) {
-      case DshUiLayout(:final children):
+      case XrkUiLayout(:final children):
         expect(children.length, lessThanOrEqualTo(p.children));
-      case DshUiList(:final items):
-        expect(items.length, lessThanOrEqualTo(DshUiProfile.listItems));
-      case DshUiTable(:final columns, :final rows):
-        expect(columns.length, lessThanOrEqualTo(DshUiProfile.tableColumns));
-        expect(rows.length, lessThanOrEqualTo(DshUiProfile.tableRows));
+      case XrkUiList(:final items):
+        expect(items.length, lessThanOrEqualTo(XrkUiProfile.listItems));
+      case XrkUiTable(:final columns, :final rows):
+        expect(columns.length, lessThanOrEqualTo(XrkUiProfile.tableColumns));
+        expect(rows.length, lessThanOrEqualTo(XrkUiProfile.tableRows));
         expect(rows.every((r) => r.length == columns.length), isTrue);
-      case DshUiKeyValue(:final items):
-        expect(items.length, lessThanOrEqualTo(DshUiProfile.keyValues));
-      case DshUiActions(:final items):
-        expect(items.length, lessThanOrEqualTo(DshUiProfile.actions));
+      case XrkUiKeyValue(:final items):
+        expect(items.length, lessThanOrEqualTo(XrkUiProfile.keyValues));
+      case XrkUiActions(:final items):
+        expect(items.length, lessThanOrEqualTo(XrkUiProfile.actions));
         expect(items.where((b) => b.primary).length, lessThanOrEqualTo(1));
-      case DshUiText(:final text):
+      case XrkUiText(:final text):
         expect(text.length, lessThanOrEqualTo(p.text + 1));
-      case DshUiProgress(:final fraction):
+      case XrkUiProgress(:final fraction):
         if (fraction != null) expect(fraction, inInclusiveRange(0, 1));
-      case DshUiImage(:final source):
-        if (source is DshUiDataImage) {
-          expect(source.width * source.height, lessThanOrEqualTo(DshUiProfile.imagePixels));
+      case XrkUiImage(:final source):
+        if (source is XrkUiDataImage) {
+          expect(source.width * source.height, lessThanOrEqualTo(XrkUiProfile.imagePixels));
         }
       default:
     }
@@ -253,13 +253,13 @@ void main() {
       final data = gen.value(0);
       for (final budget in PluginViewBudget.values) {
         final watch = Stopwatch()..start();
-        final result = parseDshUiPluginUncached(view, data: data, profile: budget.profile);
+        final result = parseXrkUiPluginUncached(view, data: data, profile: budget.profile);
         watch.stop();
         if (watch.elapsed > slowest) slowest = watch.elapsed;
         final bounded = _boundedParse(view, data: data, profile: budget.profile);
         expect(bounded.runtimeType, result.runtimeType, reason: 'seed $seed, ${budget.name}');
-        if (bounded case DshUiParsed(:final view)) _checkBudget(view, budget);
-        if (result case DshUiParsed(:final view)) {
+        if (bounded case XrkUiParsed(:final view)) _checkBudget(view, budget);
+        if (result case XrkUiParsed(:final view)) {
           drawn++;
           _checkBudget(view, budget);
         }
@@ -295,7 +295,7 @@ void main() {
     ];
     for (var i = 0; i < 3000; i++) {
       final text = [for (var k = 0; k < r.nextInt(80); k++) pieces[r.nextInt(pieces.length)]].join();
-      expect(() => parseDshUiUncached(text), returnsNormally);
+      expect(() => parseXrkUiUncached(text), returnsNormally);
     }
   });
 
@@ -314,14 +314,14 @@ void main() {
           'children': [deep],
         };
       }
-      late DshUiParse result;
-      final took = timed(() => result = parseDshUiPluginUncached(deep));
-      expect(result, isA<DshUiInvalid>());
-      expect(_boundedParse(deep, limit: 4096), isA<DshUiInvalid>());
+      late XrkUiParse result;
+      final took = timed(() => result = parseXrkUiPluginUncached(deep));
+      expect(result, isA<XrkUiInvalid>());
+      expect(_boundedParse(deep, limit: 4096), isA<XrkUiInvalid>());
       if (_benchmark) expect(took, lessThan(const Duration(milliseconds: 200)));
       // As fence text too (the model path).
       final text = '${'[' * 6000}${']' * 6000}';
-      expect(() => parseDshUiUncached(text), returnsNormally);
+      expect(() => parseXrkUiUncached(text), returnsNormally);
     });
 
     test('huge arrays and strings in data', () {
@@ -363,15 +363,15 @@ void main() {
           },
         ],
       };
-      late DshUiParse result;
-      final took = timed(() => result = parseDshUiPluginUncached(view, data: data));
-      expect(result, isA<DshUiParsed>());
-      _checkBudget((result as DshUiParsed).view, PluginViewBudget.panel);
+      late XrkUiParse result;
+      final took = timed(() => result = parseXrkUiPluginUncached(view, data: data));
+      expect(result, isA<XrkUiParsed>());
+      _checkBudget((result as XrkUiParsed).view, PluginViewBudget.panel);
       // Invalid list rows are currently scanned until a valid item limit is
       // reached: retain that linear behavior, but reject repeated full walks.
       final bounded = _boundedParse(view, data: data, limit: 4 * 200000 + 32768);
-      expect(bounded, isA<DshUiParsed>());
-      _checkBudget((bounded as DshUiParsed).view, PluginViewBudget.panel);
+      expect(bounded, isA<XrkUiParsed>());
+      _checkBudget((bounded as XrkUiParsed).view, PluginViewBudget.panel);
       if (_benchmark) expect(took, lessThan(const Duration(milliseconds: 500)));
     });
 
@@ -408,13 +408,13 @@ void main() {
           },
         ],
       };
-      final result = parseDshUiPluginUncached(view, data: data);
-      expect(result, isA<DshUiParsed>());
+      final result = parseXrkUiPluginUncached(view, data: data);
+      expect(result, isA<XrkUiParsed>());
       final cyclic = <String, Object?>{'type': 'stack'};
       cyclic['children'] = [cyclic];
-      expect(parseDshUiPluginUncached(cyclic), isA<DshUiInvalid>());
-      expect(_boundedParse(cyclic, limit: 4096), isA<DshUiInvalid>());
-      expect(_boundedParse(view, data: data, limit: 4096), isA<DshUiParsed>());
+      expect(parseXrkUiPluginUncached(cyclic), isA<XrkUiInvalid>());
+      expect(_boundedParse(cyclic, limit: 4096), isA<XrkUiInvalid>());
+      expect(_boundedParse(view, data: data, limit: 4096), isA<XrkUiParsed>());
     });
 
     test('many bindings', () {
@@ -434,8 +434,8 @@ void main() {
             },
         ],
       };
-      final took = timed(() => parseDshUiPluginUncached(view, data: const {}));
-      expect(_boundedParse(view, data: const {}, limit: 32768), isA<DshUiParsed>());
+      final took = timed(() => parseXrkUiPluginUncached(view, data: const {}));
+      expect(_boundedParse(view, data: const {}, limit: 32768), isA<XrkUiParsed>());
       if (_benchmark) expect(took, lessThan(const Duration(milliseconds: 200)));
     });
   });

@@ -98,7 +98,7 @@ class DrawerViewButton extends StatelessWidget {
             onTap: onTap,
             child: SizedBox.square(
               dimension: size,
-              child: Icon(AppIcons.more, size: 20, color: DshColors.of(context).textTertiary),
+              child: Icon(AppIcons.more, size: 20, color: XrkColors.of(context).textTertiary),
             ),
           ),
         ),

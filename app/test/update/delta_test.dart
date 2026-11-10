@@ -1,4 +1,4 @@
-// DSHDLT01 patches: built against synthetic APKs bigger than the applier's
+// XRKDLT01 patches: built against synthetic APKs bigger than the applier's
 // buffers, and refused for any patch that isn't exactly one from this base to
 // this target.
 
@@ -7,7 +7,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/update/delta.dart';
+import 'package:xrk_app/update/delta.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';

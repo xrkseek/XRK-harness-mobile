@@ -1,10 +1,10 @@
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_styles.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart' show dshUiContrast;
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_blocks.dart' show DshUiProgressBlock, DshUiListBlock;
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_widgets.dart' show DshUiOptionRow;
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_styles.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart' show xrkUiContrast;
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_blocks.dart' show XrkUiProgressBlock, XrkUiListBlock;
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_widgets.dart' show XrkUiOptionRow;
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -42,7 +42,7 @@ void main() {
           expect(tester.takeException(), isNull);
           expect(find.byKey(const ValueKey('plugin-v2-attribution')), findsOneWidget);
           final boundary = tester.getRect(find.byKey(const ValueKey('plugin-v2-boundary')));
-          for (final item in find.byType(DshUiStyledText).evaluate()) {
+          for (final item in find.byType(XrkUiStyledText).evaluate()) {
             final rect = tester.getRect(find.byWidget(item.widget));
             expect(rect.left, greaterThanOrEqualTo(boundary.left));
             expect(rect.right, lessThanOrEqualTo(boundary.right + 0.01));
@@ -65,7 +65,7 @@ void main() {
         ],
       }, scale: 2),
     );
-    final buttons = find.byType(DshUiV2ActionButton);
+    final buttons = find.byType(XrkUiV2ActionButton);
     expect(buttons, findsNWidgets(2));
     final sizes = buttons.evaluate().map((e) => tester.getSize(find.byWidget(e.widget))).toList();
     expect(tester.getTopLeft(buttons.at(0)).dy, tester.getTopLeft(buttons.at(1)).dy);
@@ -84,7 +84,7 @@ void main() {
   testWidgets('v2 confirmation shares the plugin outline rather than a grant control', (tester) async {
     usePhoneView(tester);
     await tester.pumpWidget(page({'v': 2, 'type': 'confirm', 'id': 'save', 'confirmLabel': '保存', 'cancelLabel': '返回'}));
-    expect(find.byType(DshUiV2ActionButton), findsNWidgets(2));
+    expect(find.byType(XrkUiV2ActionButton), findsNWidgets(2));
     expect(find.byType(FilledButton), findsNothing);
     expect(find.byType(AlertDialog), findsNothing);
     expect(find.byKey(const ValueKey('plugin-v2-attribution')), findsOneWidget);
@@ -114,7 +114,7 @@ void main() {
           ),
         ),
       );
-      final data = tester.getSemantics(find.byType(DshUiV2ActionButton)).getSemanticsData();
+      final data = tester.getSemantics(find.byType(XrkUiV2ActionButton)).getSemanticsData();
       expect(data.label, 'Copy summary');
       expect(data.hasAction(SemanticsAction.tap), isTrue);
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
@@ -138,7 +138,7 @@ void main() {
         {'label': 'Action', 'action': 'go'},
       ],
     };
-    final style = (parsePluginView(view) as DshUiParsed).view.styles['view']!;
+    final style = (parsePluginView(view) as XrkUiParsed).view.styles['view']!;
     const captureKey = ValueKey('state-capture');
     for (final brightness in Brightness.values) {
       await tester.pumpWidget(
@@ -153,7 +153,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final button = find.byType(DshUiV2ActionButton);
+      final button = find.byType(XrkUiV2ActionButton);
       final boundary = tester.renderObject<RenderRepaintBoundary>(find.byKey(captureKey));
       final rect = tester.getRect(button);
       final point = Offset(rect.center.dx, rect.top + 6) - tester.getTopLeft(find.byKey(captureKey));
@@ -178,12 +178,12 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       await tester.pumpAndSettle();
       expect(borderWidth(), 2, reason: 'keyboard focus stays visible without a colour wash');
-      expect(dshUiContrast(style.accent.at(dark), await backgroundPixel()), greaterThanOrEqualTo(4.5));
+      expect(xrkUiContrast(style.accent.at(dark), await backgroundPixel()), greaterThanOrEqualTo(4.5));
       final gesture = await tester.startGesture(rect.center);
       await tester.pump(const Duration(milliseconds: 150));
       expect(borderWidth(), 2);
       expect(await backgroundPixel(), style.background.at(dark));
-      expect(dshUiContrast(style.accent.at(dark), await backgroundPixel()), greaterThanOrEqualTo(4.5));
+      expect(xrkUiContrast(style.accent.at(dark), await backgroundPixel()), greaterThanOrEqualTo(4.5));
       await gesture.up();
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -213,7 +213,7 @@ void main() {
         'style': {'background': '#000000'},
         'children': [node],
       };
-      final style = (parsePluginView(view) as DshUiParsed).view.styles['view.children[0]']!;
+      final style = (parsePluginView(view) as XrkUiParsed).view.styles['view.children[0]']!;
       const captureKey = ValueKey('row-capture');
       for (final brightness in Brightness.values) {
         var calls = 0;
@@ -236,7 +236,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        final row = kind == 'list' ? find.byType(DshUiListBlock) : find.byType(DshUiOptionRow);
+        final row = kind == 'list' ? find.byType(XrkUiListBlock) : find.byType(XrkUiOptionRow);
         final rect = tester.getRect(row);
         final boundary = tester.renderObject<RenderRepaintBoundary>(find.byKey(captureKey));
         final point = Offset(rect.center.dx, rect.top + 6) - tester.getTopLeft(find.byKey(captureKey));
@@ -256,7 +256,7 @@ void main() {
         expect(await pixel(), style.background.at(dark));
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pumpAndSettle();
-        expect(dshUiContrast(style.muted.at(dark), await pixel()), greaterThanOrEqualTo(4.5));
+        expect(xrkUiContrast(style.muted.at(dark), await pixel()), greaterThanOrEqualTo(4.5));
         final feedback = tester.widget<DecoratedBox>(
           find.descendant(of: row, matching: find.byKey(const ValueKey('plugin-v2-ink-feedback'))),
         );
@@ -264,7 +264,7 @@ void main() {
         final gesture = await tester.startGesture(rect.center);
         await tester.pump(const Duration(milliseconds: 150));
         expect(await pixel(), style.background.at(dark));
-        expect(dshUiContrast(style.muted.at(dark), await pixel()), greaterThanOrEqualTo(4.5));
+        expect(xrkUiContrast(style.muted.at(dark), await pixel()), greaterThanOrEqualTo(4.5));
         await gesture.up();
         await tester.pumpAndSettle();
         expect(calls, 1);
@@ -327,12 +327,12 @@ void main() {
         {'text': 'https://example.com ${'long content ' * 30}', 'color': '#FFFFFF', 'background': 'pink'},
       ],
     };
-    final parsed = (parsePluginView(view) as DshUiParsed).view;
+    final parsed = (parsePluginView(view) as XrkUiParsed).view;
     for (final brightness in Brightness.values) {
       await tester.pumpWidget(page(view, brightness: brightness));
       await tester.pumpAndSettle();
       final widget = tester.widget<Text>(
-        find.descendant(of: find.byType(DshUiStyledText), matching: find.byType(Text)),
+        find.descendant(of: find.byType(XrkUiStyledText), matching: find.byType(Text)),
       );
       expect(widget.maxLines, 1);
       expect(widget.overflow, TextOverflow.ellipsis);
@@ -353,7 +353,7 @@ void main() {
         'style': {'opacity': 0},
       }),
     );
-    expect(find.byType(DshUiStyledNode), findsNothing);
+    expect(find.byType(XrkUiStyledNode), findsNothing);
     expect(find.byKey(const ValueKey('plugin-v2-boundary')), findsNothing);
     await tester.pumpWidget(
       page({
@@ -388,7 +388,7 @@ void main() {
           ],
         }),
       );
-      final rich = find.descendant(of: find.byType(DshUiStyledText), matching: find.byType(RichText));
+      final rich = find.descendant(of: find.byType(XrkUiStyledText), matching: find.byType(RichText));
       final paragraph = tester.renderObject<RenderParagraph>(rich);
       final box = paragraph.getBoxesForSelection(const TextSelection(baseOffset: 0, extentOffset: 5)).single;
       expect(
@@ -413,14 +413,14 @@ void main() {
         }, brightness: brightness),
       );
       await tester.pumpAndSettle();
-      final colors = Theme.of(tester.element(find.byType(DshUiStyledText))).colorScheme;
+      final colors = Theme.of(tester.element(find.byType(XrkUiStyledText))).colorScheme;
       for (final (fg, bg) in [
         (colors.primary, colors.surface),
         (colors.onPrimary, colors.primary),
         (colors.error, colors.surface),
         (colors.onError, colors.error),
       ]) {
-        expect(dshUiContrast(fg.toARGB32() & 0xFFFFFF, bg.toARGB32() & 0xFFFFFF), greaterThanOrEqualTo(4.5));
+        expect(xrkUiContrast(fg.toARGB32() & 0xFFFFFF, bg.toARGB32() & 0xFFFFFF), greaterThanOrEqualTo(4.5));
       }
     }
   });
@@ -468,7 +468,7 @@ void main() {
             if (method == #drawRRect || method == #drawArc) {
               final color = arguments.whereType<Paint>().single.color;
               categories++;
-              return color.a == 1 && dshUiContrast(color.toARGB32() & 0xFFFFFF, background) >= 3;
+              return color.a == 1 && xrkUiContrast(color.toARGB32() & 0xFFFFFF, background) >= 3;
             }
             return true;
           }),
@@ -525,13 +525,13 @@ void main() {
       final track =
           tester
                   .widget<DecoratedBox>(
-                    find.descendant(of: find.byType(DshUiProgressBlock), matching: find.byType(DecoratedBox)).first,
+                    find.descendant(of: find.byType(XrkUiProgressBlock), matching: find.byType(DecoratedBox)).first,
                   )
                   .decoration
               as ShapeDecoration;
       expect(track.color, background);
       expect((track.shape as StadiumBorder).side.width, 1);
-      final option = find.byType(DshUiOptionRow);
+      final option = find.byType(XrkUiOptionRow);
       final opacity = tester.widget<AnimatedOpacity>(
         find.descendant(of: option, matching: find.byType(AnimatedOpacity)),
       );
@@ -573,7 +573,7 @@ void main() {
         ),
       ),
     );
-    expect(find.byType(DshUiStyledText), findsNothing);
+    expect(find.byType(XrkUiStyledText), findsNothing);
     expect(find.byKey(const ValueKey('plugin-v2-attribution')), findsOneWidget);
     expect(find.text('brief'), findsOneWidget);
   });

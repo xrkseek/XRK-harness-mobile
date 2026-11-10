@@ -1,6 +1,6 @@
 """Writes test/chat/fixtures/follow_run_info.jsonl (run from app/:
 `python3 test/chat/fixtures/make_follow_run_info.py test/chat/fixtures/follow_run_info.jsonl`): a synthetic two-turn
-session in DSH 0.2 follow-frame shape with realistic timing (step markers,
+session in XRK 0.2 follow-frame shape with realistic timing (step markers,
 timed assistant streams, an approval wait, todo writes, usage)."""
 import difflib, json, sys
 

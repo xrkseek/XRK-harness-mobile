@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/ui/plugins/native/composer_strip.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/ui/plugins/native/composer_strip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

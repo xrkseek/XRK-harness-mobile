@@ -1,5 +1,5 @@
 // Keeps the live activity (lib/notify/live_activity.dart) fed: the global pet
-// state in words, pushed to `dsh/notify` whenever it changes.
+// state in words, pushed to `xrk/notify` whenever it changes.
 
 import 'dart:async';
 
@@ -33,7 +33,7 @@ final liveActivityProvider = Provider<LiveActivity?>((ref) {
   );
 });
 
-/// What `dsh/notify` is told: off with notifications or the switch, else the
+/// What `xrk/notify` is told: off with notifications or the switch, else the
 /// activity and the pet whose pictures it uses.
 final livePushProvider = Provider<LivePush>((ref) {
   final enabled = ref.watch(notifyPrefsProvider.select((p) => p.enabled && p.live));

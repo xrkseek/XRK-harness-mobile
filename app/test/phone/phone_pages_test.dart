@@ -2,14 +2,14 @@
 // set-ups; the channel picker itself is dnd_channels_test.dart), 应用名单 with
 // its risk notes.
 
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/risk_notice.dart';
-import 'package:dsh_app/ui/phone/app_rules_page.dart';
-import 'package:dsh_app/ui/phone/dnd_mode_page.dart';
-import 'package:dsh_app/ui/phone/phone_widgets.dart';
-import 'package:dsh_app/ui/phone/restricted_settings_guide.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/risk_notice.dart';
+import 'package:xrk_app/ui/phone/app_rules_page.dart';
+import 'package:xrk_app/ui/phone/dnd_mode_page.dart';
+import 'package:xrk_app/ui/phone/phone_widgets.dart';
+import 'package:xrk_app/ui/phone/restricted_settings_guide.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -129,7 +129,7 @@ void main() {
 
       h.native!.push(phoneStatus(shizukuInstalled: true, shizukuRunning: true));
       await settlePhone(tester);
-      await tester.tap(find.text('授权给 DSH Go'));
+      await tester.tap(find.text('授权给 XRK Go'));
       await tester.pump();
       expect(h.native!.callsOf('requestShizukuPermission'), hasLength(1));
 
@@ -158,7 +158,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('打开 Shizuku 官网'), findsNothing);
       expect(find.text('用 Sui 开启'), findsNothing);
-      await tester.tap(find.text('授权给 DSH Go'));
+      await tester.tap(find.text('授权给 XRK Go'));
       await tester.pumpAndSettle();
       expect(h.native!.callsOf('requestShizukuPermission').single.arguments, {'provider': 'sui'});
 
@@ -306,7 +306,7 @@ void main() {
       }
 
       await pick('支付宝', '照常');
-      expect(find.text('让 DSH 操作「支付宝」？'), findsOneWidget);
+      expect(find.text('让 XRK 操作「支付宝」？'), findsOneWidget);
       expect(find.textContaining('冻结账号'), findsOneWidget);
       // Every time, in the danger colour: the cost lands outside the app.
       final notice = tester.widget<RiskNoticeSheet>(find.byType(RiskNoticeSheet)).notice;

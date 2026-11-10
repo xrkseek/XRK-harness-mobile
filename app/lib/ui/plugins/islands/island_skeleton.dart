@@ -2,7 +2,7 @@ import '../../../l10n/l10n.dart';
 
 import 'package:flutter/material.dart';
 
-/// What an island shows while DSH Web starts behind it: quiet grey bars
+/// What an island shows while XRK Web starts behind it: quiet grey bars
 /// where settings rows usually are (nothing loops, like the other list
 /// skeletons).
 class IslandSkeleton extends StatelessWidget {

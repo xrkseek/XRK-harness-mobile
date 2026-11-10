@@ -1,6 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dsh_remote/dsh_remote.dart';
-import 'package:dsh_app/remote/relay/network_route.dart';
+import 'package:xrk_remote/xrk_remote.dart';
+import 'package:xrk_app/remote/relay/network_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

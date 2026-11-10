@@ -4,13 +4,13 @@
 //
 //   flutter test test/workspace/workspace_geometry_test.dart
 
-import 'package:dsh_app/ui/common/breadcrumb_row.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/shell/sessions_drawer.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_app/ui/workspace/directory_picker.dart';
-import 'package:dsh_app/ui/workspace/workspace_switcher.dart';
+import 'package:xrk_app/ui/common/breadcrumb_row.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/shell/sessions_drawer.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/workspace/directory_picker.dart';
+import 'package:xrk_app/ui/workspace/workspace_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

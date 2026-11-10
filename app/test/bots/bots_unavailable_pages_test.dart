@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
-import 'package:dsh_app/ui/bots/bot_details_page.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_app/ui/bots/room_details_page.dart';
-import 'package:dsh_app/ui/features/feature_kit.dart';
-import 'package:dsh_app/ui/features/feature_widgets.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_app/ui/bots/bot_details_page.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/bots/room_details_page.dart';
+import 'package:xrk_app/ui/features/feature_kit.dart';
+import 'package:xrk_app/ui/features/feature_widgets.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -46,7 +46,7 @@ void main() {
         var fail = true;
         if (scenario == 'hello failure') {
           fake.handlers['hello'] = (_) =>
-              fail ? throw const DshTransportException('SYNTHETIC hello failure') : fake.helloAnswer();
+              fail ? throw const XrkTransportException('SYNTHETIC hello failure') : fake.helloAnswer();
         } else if (scenario == 'state failure') {
           fake.handlers['state'] = (_) =>
               fail ? throw const FormatException('SYNTHETIC state failure') : sampleTeam(working: false);

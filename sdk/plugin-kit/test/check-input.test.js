@@ -20,7 +20,7 @@ function fixture(t) {
   return { root, dir, write: value => writeFileSync(join(dir, 'package.json'), JSON.stringify(value)) }
 }
 
-const pkg = panels => ({ name: 'fixture', engines: { dsh: '*' }, dsh: { bundle: { patch: 'patch.yml' } }, dshGo: { v: 1, contributes: { panels } } })
+const pkg = panels => ({ name: 'fixture', engines: { dsh: '*' }, dsh: { bundle: { patch: 'patch.yml' } }, xrkGo: { v: 1, contributes: { panels } } })
 
 test('non-object package JSON yields a readable report, including --json CLI', async t => {
   const f = fixture(t)
@@ -42,7 +42,7 @@ test('malformed panels preserve bridge diagnostics instead of throwing', async t
     f.write(pkg(panels))
     const r = await checkPlugin(f.dir)
     assert.equal(exitCode(r), 1)
-    assert.ok(r.manifest.issues.some(i => i.path === '/dshGo/contributes/panels' && i.code === 'invalid-field'))
+    assert.ok(r.manifest.issues.some(i => i.path === '/xrkGo/contributes/panels' && i.code === 'invalid-field'))
     assert.deepEqual(r.views, [])
   }
 })

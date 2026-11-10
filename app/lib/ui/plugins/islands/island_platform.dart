@@ -89,7 +89,7 @@ abstract class IslandPlatform {
 }
 
 class MethodChannelIslandPlatform extends IslandPlatform {
-  MethodChannelIslandPlatform([MethodChannel? channel]) : _channel = channel ?? const MethodChannel('dsh/islands');
+  MethodChannelIslandPlatform([MethodChannel? channel]) : _channel = channel ?? const MethodChannel('xrk/islands');
 
   final MethodChannel _channel;
   final _events = StreamController<IslandPlatformEvent>.broadcast();

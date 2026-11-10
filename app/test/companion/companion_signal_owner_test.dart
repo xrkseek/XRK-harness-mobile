@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:dsh_app/companion/companion_initiative.dart';
-import 'package:dsh_app/companion/companion_initiative_owner.dart';
+import 'package:xrk_app/companion/companion_initiative.dart';
+import 'package:xrk_app/companion/companion_initiative_owner.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';

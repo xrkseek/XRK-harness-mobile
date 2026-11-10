@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Builds the app's bundled skill app/assets/skills/dsh-go-plugin/ from skill/ (SKILL.md and the
+// Builds the app's bundled skill app/assets/skills/xrk-plugin/ from skill/ (SKILL.md and the
 // plugin template) and the checker (bin/check.mjs, lib/, schema/). Flutter bundles a flat asset
 // directory, so each file is stored under a flat name and manifest.json maps it to its place in
-// the installed skill folder ($DSH_HOME/skills/dsh-go-plugin/…), like the dsh-go-ui skill.
+// the installed skill folder ($XRK_HOME/skills/xrk-plugin/…), like the xrk-ui skill.
 //
 //   node scripts/sync-skill.mjs           write
 //   node scripts/sync-skill.mjs --check   exit 1 when out of date
@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const kit = join(here, '..')
-export const SKILL_DIR = join(kit, '..', '..', 'app', 'assets', 'skills', 'dsh-go-plugin')
+export const SKILL_DIR = join(kit, '..', '..', 'app', 'assets', 'skills', 'xrk-plugin')
 
 /** target path inside the installed skill → source file. */
 export function sources() {
@@ -36,7 +36,7 @@ export function render() {
     files[name] = readFileSync(src, 'utf8')
     map[name] = target
   }
-  files['manifest.json'] = `${JSON.stringify({ name: 'dsh-go-plugin', files: map }, null, 2)}\n`
+  files['manifest.json'] = `${JSON.stringify({ name: 'xrk-plugin', files: map }, null, 2)}\n`
   return files
 }
 
@@ -52,7 +52,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   if (process.argv.includes('--check')) {
     const s = stale()
     if (s.length) {
-      process.stderr.write(`app/assets/skills/dsh-go-plugin is out of date: ${s.join(', ')} — run node scripts/sync-skill.mjs\n`)
+      process.stderr.write(`app/assets/skills/xrk-plugin is out of date: ${s.join(', ')} — run node scripts/sync-skill.mjs\n`)
       process.exit(1)
     }
   } else {

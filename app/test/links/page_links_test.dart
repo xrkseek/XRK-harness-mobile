@@ -1,49 +1,49 @@
-// `dshgo://open/<page>`: only pages from the fixed list open, pushed over the
+// `xrkharness://open/<page>`: only pages from the fixed list open, pushed over the
 // home route; anything else gets the router's toast and nothing else happens.
 
-import 'package:dsh_app/links/app_links.dart';
-import 'package:dsh_app/links/page_links.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/features/feature_catalog.dart';
-import 'package:dsh_app/ui/phone/phone_control_screen.dart';
-import 'package:dsh_app/ui/settings/index/settings_pages.dart';
-import 'package:dsh_app/ui/settings/index/spot_anchor.dart';
+import 'package:xrk_app/links/app_links.dart';
+import 'package:xrk_app/links/page_links.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/features/feature_catalog.dart';
+import 'package:xrk_app/ui/phone/phone_control_screen.dart';
+import 'package:xrk_app/ui/settings/index/settings_pages.dart';
+import 'package:xrk_app/ui/settings/index/spot_anchor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('pageLinkId', () {
-    test('accepts exactly dshgo://open/<known page>', () {
-      expect(pageLinkId(Uri.parse('dshgo://open/engine')), 'engine');
-      expect(pageLinkId(Uri.parse('dshgo://open/engine/')), 'engine');
+    test('accepts exactly xrkharness://open/<known page>', () {
+      expect(pageLinkId(Uri.parse('xrkharness://open/engine')), 'engine');
+      expect(pageLinkId(Uri.parse('xrkharness://open/engine/')), 'engine');
       expect(pageLinkId(Uri.parse('DSHGO://OPEN/phone')), 'phone');
-      expect(pageLinkId(Uri.parse('dshgo://open/appearance')), 'appearance');
+      expect(pageLinkId(Uri.parse('xrkharness://open/appearance')), 'appearance');
     });
 
     test('rejects other schemes, extra parts and unknown pages', () {
       for (final link in [
         'https://open/engine',
-        'dshgo://share/engine',
-        'dshgo://open',
-        'dshgo://open/',
-        'dshgo://open/engine/logs',
-        'dshgo://open/engine?x=1',
-        'dshgo://open/engine#top',
-        'dshgo://me@open/engine',
-        'dshgo://open:8080/engine',
-        'dshgo://open/Engine',
-        'dshgo://open/nope',
+        'xrkharness://share/engine',
+        'xrkharness://open',
+        'xrkharness://open/',
+        'xrkharness://open/engine/logs',
+        'xrkharness://open/engine?x=1',
+        'xrkharness://open/engine#top',
+        'xrkharness://me@open/engine',
+        'xrkharness://open:8080/engine',
+        'xrkharness://open/Engine',
+        'xrkharness://open/nope',
         // 全部功能 entries that are actions, web pages or need a conversation.
-        'dshgo://open/search',
-        'dshgo://open/share-profile',
-        'dshgo://open/cot-translation',
-        'dshgo://open/reference',
-        'dshgo://open/voice-input',
-        'dshgo://open/web',
-        'dshgo://open/files',
-        'dshgo://open/session-detail',
-        'dshgo://open/plugin-panel:pkg%23main',
+        'xrkharness://open/search',
+        'xrkharness://open/share-profile',
+        'xrkharness://open/cot-translation',
+        'xrkharness://open/reference',
+        'xrkharness://open/voice-input',
+        'xrkharness://open/web',
+        'xrkharness://open/files',
+        'xrkharness://open/session-detail',
+        'xrkharness://open/plugin-panel:pkg%23main',
       ]) {
         expect(pageLinkId(Uri.parse(link)), isNull, reason: link);
       }
@@ -126,7 +126,7 @@ void main() {
                   const LinkHost(),
                   Builder(
                     builder: (context) => TextButton(
-                      onPressed: () => openReplyPageLink(context, 'dshgo://open/phone'),
+                      onPressed: () => openReplyPageLink(context, 'xrkharness://open/phone'),
                       child: const Text('reply link'),
                     ),
                   ),
@@ -141,7 +141,7 @@ void main() {
 
     testWidgets('a known page opens over the home route with the open conversation', (tester) async {
       await pumpHome(tester);
-      expect(await router.open(Uri.parse('dshgo://open/engine')), isTrue);
+      expect(await router.open(Uri.parse('xrkharness://open/engine')), isTrue);
       await tester.pumpAndSettle();
       expect(find.text('page engine'), findsOneWidget);
       expect(opened, [('engine', 's1')]);
@@ -149,7 +149,7 @@ void main() {
 
     testWidgets('an unknown page shows one line and opens nothing', (tester) async {
       await pumpHome(tester);
-      expect(await router.open(Uri.parse('dshgo://open/nope')), isFalse);
+      expect(await router.open(Uri.parse('xrkharness://open/nope')), isFalse);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       expect(find.text('无法打开这个链接'), findsOneWidget);
@@ -158,7 +158,7 @@ void main() {
 
     testWidgets('a link that arrives from outside opens the page too', (tester) async {
       await pumpHome(tester, session: null);
-      links.add(Uri.parse('dshgo://open/models'));
+      links.add(Uri.parse('xrkharness://open/models'));
       await tester.pumpAndSettle();
       expect(find.text('page models'), findsOneWidget);
       expect(opened, [('models', null)]);
@@ -172,7 +172,7 @@ void main() {
 
       final context = tester.element(find.byType(LinkHost, skipOffstage: false));
       expect(openReplyPageLink(context, 'https://example.com'), isFalse);
-      expect(openReplyPageLink(context, 'dshgo://share/abc'), isFalse);
+      expect(openReplyPageLink(context, 'xrkharness://share/abc'), isFalse);
       expect(openReplyPageLink(context, 'not a link'), isFalse);
       expect(opened, [('phone', 's1')]);
     });

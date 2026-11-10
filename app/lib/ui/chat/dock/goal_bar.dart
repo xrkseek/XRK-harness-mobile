@@ -1,8 +1,8 @@
-// The goal bar above the composer, after DSH's `dsh-client-ui-goal` GoalBar
+// The goal bar above the composer, after XRK's `dsh-client-ui-goal` GoalBar
 // (`conversation.input.dock#goal`): the session's long-term goal, its state,
 // and a tap for the actions.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
@@ -23,7 +23,7 @@ class GoalBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final colors = Theme.of(context).colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final look = GoalLook.of(goal, colors: colors, dsh: dsh);
     final objective = goalHeadline(goal.goal.objective);
     return Semantics(
@@ -93,7 +93,7 @@ String goalHeadline(String objective) {
 class GoalLook {
   const GoalLook({required this.icon, required this.iconColor, required this.status, this.state, this.stateColor});
 
-  factory GoalLook.of(DockGoal goal, {required ColorScheme colors, required DshColors dsh}) {
+  factory GoalLook.of(DockGoal goal, {required ColorScheme colors, required XrkColors dsh}) {
     if (goal.phase == GoalPhase.blocked) {
       return GoalLook(
         icon: AppIcons.error,

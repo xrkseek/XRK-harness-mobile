@@ -1,4 +1,4 @@
-// Chinese copy for the results of DSH's built-in slash commands. The English
+// Chinese copy for the results of XRK's built-in slash commands. The English
 // strings are the official packages' own (0.2.1-rc.2: command-compact,
 // command-goal, command-feedback, plan-mode, permission-presets); only a
 // whole-result match is replaced, so a plugin command with the same name keeps

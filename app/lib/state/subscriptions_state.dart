@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,7 +11,7 @@ import 'models_state.dart';
 import 'providers_state.dart';
 import 'read_list_epoch.dart';
 
-export 'package:dsh_client/dsh_client.dart' show LoginPhase, LoginStep, Subscription, SubscriptionStatus;
+export 'package:xrk_client/xrk_client.dart' show LoginPhase, LoginStep, Subscription, SubscriptionStatus;
 
 /// 订阅在界面上的名字。
 String subscriptionLabel(Subscription s) => switch (s) {
@@ -22,7 +22,7 @@ String subscriptionLabel(Subscription s) => switch (s) {
 /// One short line for a failure of the bridge itself (not of the provider's
 /// own flow, whose `error` is shown as it comes).
 String describeLoginError(Object error) {
-  if (error is DshRemoteException) {
+  if (error is XrkRemoteException) {
     final code = error.code;
     if (code == 'gateway/method-not-found' || code == 'gateway/not-found') {
       return appL10n.stateSubscriptionUnsupported;
@@ -36,7 +36,7 @@ String describeLoginError(Object error) {
     }
     return appL10n.stateSubscriptionSignInFailed;
   }
-  if (error is DshTransportException || error is TimeoutException) return appL10n.stateSubscriptionTimeout;
+  if (error is XrkTransportException || error is TimeoutException) return appL10n.stateSubscriptionTimeout;
   if (error is DshCarrierLostException || error is DshClosedException) return appL10n.stateSubscriptionDisconnected;
   return describeProviderError(error);
 }
@@ -59,7 +59,7 @@ abstract class SubscriptionBackend {
 class ClientSubscriptionBackend implements SubscriptionBackend {
   ClientSubscriptionBackend(this.client);
 
-  final DshClient client;
+  final XrkClient client;
 
   @override
   Future<List<SubscriptionStatus>> list() => client.subscriptions();

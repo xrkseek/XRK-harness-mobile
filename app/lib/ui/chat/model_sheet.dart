@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -842,7 +842,7 @@ class _ModelCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final dark = theme.brightness == Brightness.dark;
     final description = model.description?.trim();
     final name = shortModelName(model.name);
@@ -977,14 +977,14 @@ class _Loading extends StatelessWidget {
         child: CircularProgressIndicator(
           strokeWidth: 2,
           strokeCap: StrokeCap.round,
-          color: DshColors.of(context).textTertiary,
+          color: XrkColors.of(context).textTertiary,
         ),
       ),
     ),
   );
 }
 
-/// 目录是空的:DSH 0.2.1 在没有可用凭据时不列任何模型。什么都没配就引导去填
+/// 目录是空的:XRK 0.2.1 在没有可用凭据时不列任何模型。什么都没配就引导去填
 /// DeepSeek 的 Key,或者添加别的渠道;配了还是空,多半是 Key 还没同步到引擎或者
 /// 无效,去「模型渠道」看。
 class _EmptyCatalog extends StatelessWidget {

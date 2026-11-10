@@ -71,7 +71,7 @@ enum LaunchFileType {
   }
 }
 
-/// What the native side reads off a clip (`dsh/launch_clip` `probe`).
+/// What the native side reads off a clip (`xrk/launch_clip` `probe`).
 class ClipProbe {
   const ClipProbe({required this.duration, required this.width, required this.height});
 
@@ -276,7 +276,7 @@ class LaunchImport {
 
   static Future<ClipProbe?> _probeClip(String path, String poster) async {
     try {
-      final raw = await const MethodChannel('dsh/launch_clip')
+      final raw = await const MethodChannel('xrk/launch_clip')
           .invokeMapMethod<String, Object?>('probe', {'path': path, 'poster': poster});
       final ms = raw?['durationMs'];
       final width = raw?['width'];

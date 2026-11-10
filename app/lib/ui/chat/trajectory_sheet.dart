@@ -1,11 +1,11 @@
 // Layer 2 of the run information, "本轮轨迹". The timeline reading (bars
 // placed at their real start, model bars split into time-to-first-token and
 // decoding, work in progress without an invented end) follows the official
-// DSH trajectory overview.
+// XRK trajectory overview.
 
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -57,7 +57,7 @@ class TrajectorySheet extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(SheetTitleBar.inset, 8, SheetTitleBar.inset, 32),
               child: Text(
                 l10n.activityTraceNotLoaded,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: DshColors.of(context).textTertiary),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: XrkColors.of(context).textTertiary),
               ),
             ),
           ],
@@ -223,7 +223,7 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final time = trace.running ? formatClock(total) : formatSpan(total);
     final reason = trace.endReason;
     final (String? note, Color? noteColor) = trace.running
@@ -333,7 +333,7 @@ class _Composition extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final parts = [
       (l10n.activityModel, trace.modelTime, colors.primary),
       (l10n.activityTools, trace.toolTime, toolBarColor(context, ToolTone.terminal)),
@@ -399,7 +399,7 @@ class _Composition extends StatelessWidget {
 
 /// 工具类别在时间条上的颜色:容器色与 on-色之间,浅深两色下都看得清。
 Color toolBarColor(BuildContext context, ToolTone tone) {
-  final (bg, fg) = DshColors.of(context).tool(tone);
+  final (bg, fg) = XrkColors.of(context).tool(tone);
   return Color.lerp(bg, fg, 0.42)!;
 }
 
@@ -440,7 +440,7 @@ class _TrajectoryListState extends State<TrajectoryList> {
         padding: EdgeInsets.fromLTRB(widget.inset, 8, widget.inset, 12),
         child: Text(
           l10n.activityTraceNoSteps,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
         ),
       );
     }
@@ -515,7 +515,7 @@ class SpanTile extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final label = spanLabel(span, tool);
     final end = span.end ?? now;
     final duration = end.difference(span.start);
@@ -634,7 +634,7 @@ class SpanGlyph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     if (span.kind == TraceKind.tool) {
       return ToolGlyph(name: span.toolName ?? '', size: size);
     }
@@ -789,7 +789,7 @@ class _GroupTile extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final start = spans.first.start;
     final end = spans.map((s) => s.end ?? now).reduce((a, b) => a.isAfter(b) ? a : b);
     final duration = end.difference(start);
@@ -914,7 +914,7 @@ class _Stack extends StatelessWidget {
       if (names.length == 2) break;
     }
     if (names.length == 1) return ToolGlyph(name: names.single, size: 24);
-    final ring = DshSurfaces.of(context).sheet.fallbackFill;
+    final ring = XrkSurfaces.of(context).sheet.fallbackFill;
     return SizedBox(
       width: 24,
       height: 24,
@@ -951,7 +951,7 @@ class TraceUsageFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final usage = trace.usage;
     final hit = usage.cacheHitRate;
     final ttft = trace.ttft;

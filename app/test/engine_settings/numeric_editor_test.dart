@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/field_sheets.dart';
-import 'package:dsh_app/ui/engine_settings/numeric_edit_math.dart';
-import 'package:dsh_app/ui/engine_settings/schema_fields.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/field_sheets.dart';
+import 'package:xrk_app/ui/engine_settings/numeric_edit_math.dart';
+import 'package:xrk_app/ui/engine_settings/schema_fields.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -35,7 +35,7 @@ Future<FakeSettingsHost> openNumber(WidgetTester tester, String key) async {
   await pumpPage(
     tester,
     const EngineSettingsPage(ns: 'number'),
-    overrides: engineOverrides(DshClient.withCarrier(host)),
+    overrides: engineOverrides(XrkClient.withCarrier(host)),
   );
   await tester.tap(find.text(labelFor(key, node, const FieldCopy())));
   await settle(tester);

@@ -1,24 +1,24 @@
 // Goldens of the regrouped settings (docs/design/settings-ia.md §4.2–4.3):
 // the whole hub on a tall phone, with values in its rows, and the pages it
-// gained — 个性化, 界面, 隐私与分享, 关于 DSH Go — light and dark.
+// gained — 个性化, 界面, 隐私与分享, 关于 XRK Go — light and dark.
 //
 //   flutter test --update-goldens test/settings/settings_ia_golden_test.dart
 
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/balance_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/settings/about_page.dart';
-import 'package:dsh_app/ui/settings/interface_page.dart';
-import 'package:dsh_app/ui/settings/personalization_page.dart';
-import 'package:dsh_app/ui/settings/privacy_page.dart';
-import 'package:dsh_app/ui/settings/reply_prefs_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/balance_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/settings/about_page.dart';
+import 'package:xrk_app/ui/settings/interface_page.dart';
+import 'package:xrk_app/ui/settings/personalization_page.dart';
+import 'package:xrk_app/ui/settings/privacy_page.dart';
+import 'package:xrk_app/ui/settings/reply_prefs_page.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -96,7 +96,7 @@ void main() {
         await engine.pumpPage(
           tester,
           page,
-          overrides: engine.engineOverrides(DshClient.withCarrier(engine.FakeSettingsHost())),
+          overrides: engine.engineOverrides(XrkClient.withCarrier(engine.FakeSettingsHost())),
           brightness: brightness,
           height: name == 'interface' ? 1500 : 844,
           fonts: true,

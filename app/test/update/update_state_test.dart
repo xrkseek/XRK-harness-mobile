@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/state/update_state.dart';
-import 'package:dsh_app/update/installer.dart';
-import 'package:dsh_app/update/release.dart';
-import 'package:dsh_app/update/update_config.dart';
+import 'package:xrk_app/state/update_state.dart';
+import 'package:xrk_app/update/installer.dart';
+import 'package:xrk_app/update/release.dart';
+import 'package:xrk_app/update/update_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,11 +15,11 @@ import 'support.dart';
 
 const _m1 = UpdateMirror(id: 'm1', label: 'mirror-one.example', prefix: 'https://mirror-one.example/');
 const _sources = UpdateSources(mirrors: [UpdateMirror.github, _m1]);
-const _api = 'https://api.github.com/repos/ccch1mneyyy/dsh-go/releases/latest';
-const _manifest = 'https://github.com/ccch1mneyyy/dsh-go/releases/latest/download/update.json';
-const _apkUrl = 'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0/dsh-go-1.2.0-arm64.apk';
+const _api = 'https://api.github.com/repos/xrkseek/XRK-harness-mobile/releases/latest';
+const _manifest = 'https://github.com/xrkseek/XRK-harness-mobile/releases/latest/download/update.json';
+const _apkUrl = 'https://github.com/xrkseek/XRK-harness-mobile/releases/download/v1.2.0/xrk-harness-1.2.0-arm64.apk';
 
-final _apk = utf8.encode('PK pretend this is DSH 1.2.0 for arm64');
+final _apk = utf8.encode('PK pretend this is XRK 1.2.0 for arm64');
 
 Map<String, Object?> _release({String version = '1.2.0', List<int>? apk, String? sha}) => {
   'schema': 1,
@@ -28,11 +28,11 @@ Map<String, Object?> _release({String version = '1.2.0', List<int>? apk, String?
   'notes': '- 应用内更新',
   'assets': {
     'arm64': {
-      'name': 'dsh-go-1.2.0-arm64.apk',
+      'name': 'xrk-harness-1.2.0-arm64.apk',
       'size': (apk ?? _apk).length,
       'sha256': sha ?? sha256.convert(apk ?? _apk).toString(),
     },
-    'x64': {'name': 'dsh-go-1.2.0-x64.apk', 'size': 99, 'sha256': '0' * 64},
+    'x64': {'name': 'xrk-harness-1.2.0-x64.apk', 'size': 99, 'sha256': '0' * 64},
   },
 };
 
@@ -136,7 +136,7 @@ void main() {
       final state = c.read(appUpdateProvider);
       expect(state.check, UpdateCheckPhase.available);
       expect(state.latest!.version.name, '1.2.0');
-      expect(state.asset!.name, 'dsh-go-1.2.0-arm64.apk');
+      expect(state.asset!.name, 'xrk-harness-1.2.0-arm64.apk');
       expect(http.urls, [_manifest, m1]);
 
       now = now.add(const Duration(hours: 5));
@@ -222,7 +222,7 @@ void main() {
 
       await controller.startDownload();
       expect(c.read(appUpdateProvider).task, UpdateTaskPhase.ready);
-      expect(File('${dir.path}/dsh-go-1.2.0-arm64.apk').readAsBytesSync(), _apk);
+      expect(File('${dir.path}/xrk-harness-1.2.0-arm64.apk').readAsBytesSync(), _apk);
 
       await controller.install();
       expect(c.read(appUpdateProvider).task, UpdateTaskPhase.needsPermission);

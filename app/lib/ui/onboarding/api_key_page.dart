@@ -189,7 +189,7 @@ class _ApiKeyPageState extends ConsumerState<ApiKeyPage> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final key = normalizeApiKey(_controller.text);
     final warning = apiKeyWarning(key);
     return [

@@ -92,8 +92,8 @@ class _ProviderDetailPageState extends ConsumerState<ProviderDetailPage> {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(context.l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(context.l10n.commonDelete),
@@ -146,7 +146,7 @@ class _ProviderDetailPageState extends ConsumerState<ProviderDetailPage> {
       );
     }
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final health = snapshot.healthOf(provider);
     final view = ProviderHealthView.of(health);
     final keyStored = snapshot.keyStored(provider);
@@ -295,7 +295,7 @@ class _TestRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final probe = this.probe;
     return ListPageRow(
       icon: AppIcons.testConnection,

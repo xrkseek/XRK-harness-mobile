@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/draft_store.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/draft_store.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,7 +17,7 @@ class _Host extends Notifier<AsyncValue<HostConnection?>> {
   @override
   AsyncValue<HostConnection?> build() => AsyncData(fakeConnection);
 
-  void use(DshClient client) => state = AsyncData(HostConnection(client: client, isLocal: true));
+  void use(XrkClient client) => state = AsyncData(HostConnection(client: client, isLocal: true));
 }
 
 final _host = NotifierProvider<_Host, AsyncValue<HostConnection?>>(_Host.new);
@@ -71,7 +71,7 @@ Future<ProviderContainer> _screen(WidgetTester tester, _LateChat chat) async {
 String _composer(WidgetTester tester) => tester.widget<TextField>(find.byType(TextField)).controller!.text;
 
 Future<void> _replace(WidgetTester tester, ProviderContainer container) async {
-  final replacement = DshClient(DshConnection(Uri.parse('http://127.0.0.1:10')));
+  final replacement = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:10')));
   addTearDown(replacement.close);
   container.read(_host.notifier).use(replacement);
   await pumpFrames(tester);

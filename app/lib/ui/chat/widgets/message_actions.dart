@@ -1,4 +1,4 @@
-// Message actions after DSH Web's `MessageIconActions` (copy, branch).
+// Message actions after XRK Web's `MessageIconActions` (copy, branch).
 // The menu every message opens (long-press, or ⋯ in a reply's row) is in
 // `message_menu.dart`.
 
@@ -82,7 +82,7 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final colors = Theme.of(context).colorScheme;
-    final muted = DshColors.of(context).textTertiary;
+    final muted = XrkColors.of(context).textTertiary;
     // 36 的圆钮、20 的图标:图标四周各 8,和 Bleed 的 8 一起让第一个图标
     // 贴正文左缘、脚注的箭头贴正文右缘。
     final style = IconButton.styleFrom(

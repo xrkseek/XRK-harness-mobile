@@ -1,6 +1,6 @@
 # 非 HMR bundle 更新保留已保存的选择
 
-Refs W17-B。适用于 DSH 0.2.2-rc.1 的公开 PluginManager.updateBundle 非 HMR 覆盖安装路径。
+Refs W17-B。适用于 XRK 0.2.2-rc.1 的公开 PluginManager.updateBundle 非 HMR 覆盖安装路径。
 
 更新版本不构成新的启用请求。registry 检查期间其它公开 setBundleEnabled 调用已成功保存的选择，应由随后覆盖安装保留。未发生选择修改时，原启用 bundle 仍启用，原禁用 bundle 仍禁用。
 

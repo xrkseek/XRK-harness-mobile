@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/features_state.dart';
-import 'package:dsh_app/state/permission_default_repair.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/features_state.dart';
+import 'package:xrk_app/state/permission_default_repair.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,13 +23,13 @@ const _poisoned = '''
   config:
     model: deepseek-chat
 - id: permission
-  name: "@deepseek-ai/dsh-permission-presets"
+  name: "@xrkseek/harness-cli-permission-presets"
   config:
     defaultPreset: auto
 ''';
 
 /// The on-device engine: it reads the profile when it starts, and an Auto
-/// default fails its permission presets (DSH 0.2.1 `PermissionPresetService`).
+/// default fails its permission presets (XRK 0.2.1 `PermissionPresetService`).
 class _Engine extends LocalRuntimeController {
   _Engine(this.patch);
 
@@ -100,7 +100,7 @@ void main() {
     };
     carrier.handlers['permissionPresets/catalog'] = (_) {
       if (engine.presetsFailed) {
-        throw const DshRemoteException(
+        throw const XrkRemoteException(
           'gateway/service-unavailable',
           'permissionPresets/catalog: active Service "permissionPresets" is unavailable',
         );
@@ -122,7 +122,7 @@ void main() {
         networkKicksProvider.overrideWithValue(const Stream.empty()),
         localClientConnectorProvider.overrideWithValue(({required baseUri, required token}) async {
           connects++;
-          return DshClient.withCarrier(carrier);
+          return XrkClient.withCarrier(carrier);
         }),
       ],
     );
@@ -146,7 +146,7 @@ void main() {
   config:
     model: deepseek-chat
 - id: permission
-  name: "@deepseek-ai/dsh-permission-presets"
+  name: "@xrkseek/harness-cli-permission-presets"
 ''');
     expect(carrier.argsOf('settings/mutate'), isEmpty);
 

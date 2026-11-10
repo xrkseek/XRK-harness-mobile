@@ -58,7 +58,7 @@ class HostChip extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 2),
-              Icon(AppIcons.dropdown, size: 16, color: DshColors.of(context).textTertiary),
+              Icon(AppIcons.dropdown, size: 16, color: XrkColors.of(context).textTertiary),
             ],
           ),
         ),
@@ -67,7 +67,7 @@ class HostChip extends ConsumerWidget {
   }
 }
 
-/// "切换主机": 本机, saved SSH hosts and the DSH Remote account's hosts, each
+/// "切换主机": 本机, saved SSH hosts and the XRK Remote account's hosts, each
 /// with its state; picking one makes it active. [onManage] opens the remote
 /// page.
 Future<void> showHostSheet(BuildContext context, {required VoidCallback onManage}) {
@@ -152,7 +152,7 @@ class HostSheet extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(SheetTitleBar.inset + 8, 0, SheetTitleBar.inset + 8, 12),
                   child: Text(
                     l10n.remoteRelaySwitchWarning,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
                   ),
                 ),
               SheetGroup(

@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/links/app_links.dart';
+import 'package:xrk_app/links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -42,7 +42,7 @@ void main() {
     expect(toasts, isEmpty);
 
     // Links are not files: the fallback never sees them.
-    links.add(Uri.parse('dshgo://nowhere'));
+    links.add(Uri.parse('xrkharness://nowhere'));
     await tester.pump();
     expect(others, hasLength(2));
     expect(toasts, ['无法打开这个链接']);

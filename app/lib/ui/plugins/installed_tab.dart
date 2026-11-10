@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +17,7 @@ import 'plugin_detail_sheet.dart';
 import 'plugin_widgets.dart';
 import 'plugins_screen.dart';
 
-/// 「已安装」: third-party bundles of the profile, then DSH's own optional
+/// 「已安装」: third-party bundles of the profile, then XRK's own optional
 /// and on-demand bundles. Infrastructure bundles (dsh-base, web-app, ...)
 /// are not listed.
 class InstalledPluginsSliver extends ConsumerWidget {
@@ -134,7 +134,7 @@ class BundleTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     bool currentBundle() =>
         !readOnly &&
         !ref.read(pluginListViewProvider).readOnly &&
@@ -273,7 +273,7 @@ class _Footnote extends StatelessWidget {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
-      child: Text(text, style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary)),
+      child: Text(text, style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary)),
     );
   }
 }

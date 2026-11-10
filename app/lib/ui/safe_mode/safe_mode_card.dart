@@ -42,7 +42,7 @@ class SafeModeCard extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final hazards = ref.watch(safePreflightProvider).value ?? const <SafeHazard>[];
     final lkg = ref.watch(lastKnownGoodProvider).value;
     final running = status.phase == RuntimePhase.running;

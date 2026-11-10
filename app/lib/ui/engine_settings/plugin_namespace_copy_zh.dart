@@ -11,7 +11,7 @@ const pluginNamespaceTitlesZh = <String, String>{
   'agent-teams': '代理团队',
   'mobile-access': '移动端访问',
   'anime-find': '番剧搜索',
-  'dsh-media': '图像与视频',
+  'xrk-media': '图像与视频',
   'univer': '表格与文档',
   'speech-to-text-sensevoice': 'SenseVoice 本地识别',
 };
@@ -177,8 +177,8 @@ const pluginNamespaceCopyZh = <String, Map<String, FieldCopy>>{
     'streamEnabled': FieldCopy(label: '启用流媒体在线播放'),
     'streamRules': FieldCopy(label: '流媒体规则', hint: 'CSS、XPath 或取址脚本'),
   },
-  // @ccch1mneyyy/dsh-media 0.2.1; bundle row: dsh-media.
-  'dsh-media': {
+  // @xrkseek/xrk-media 0.2.1; bundle row: xrk-media.
+  'xrk-media': {
     'services': FieldCopy(label: '媒体服务'),
     'defaults.serviceId': FieldCopy(label: '默认服务 ID', hint: '留空使用首个已配置服务'),
     'defaults.modelId': FieldCopy(label: '默认模型 ID', hint: '留空使用所选服务首项'),
@@ -201,7 +201,7 @@ const pluginNamespaceCopyZh = <String, Map<String, FieldCopy>>{
     'browserExecutablePath': FieldCopy(label: '浏览器程序路径'),
     'resourceCacheRoot': FieldCopy(label: '资源缓存目录'),
   },
-  // @deepseek-ai/dsh-experimental-speech-to-text-sensevoice 未知（所属bundle为0.2.1-rc.4）; bundle row: speech-to-text-sensevoice.
+  // @xrkseek/harness-cli-experimental-speech-to-text-sensevoice 未知（所属bundle为0.2.1-rc.4）; bundle row: speech-to-text-sensevoice.
   'speech-to-text-sensevoice': {
     'providerId': FieldCopy(label: '识别服务 ID'),
     'dataRoot': FieldCopy(label: '识别服务数据目录'),

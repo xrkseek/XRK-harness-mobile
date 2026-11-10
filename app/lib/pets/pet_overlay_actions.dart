@@ -4,7 +4,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,7 +15,6 @@ import '../state/connection_state.dart';
 import '../state/hosts_state.dart';
 import '../state/notify_state.dart';
 import '../state/sessions_state.dart';
-import '../voice/voice_model_assets.dart';
 import 'overlay_channel.dart';
 import 'pet_signals.dart';
 import 'pet_state.dart';
@@ -152,7 +151,6 @@ class PetOverlayActions {
         : null;
     final offer = _AskOffer(++_next, host, connection, generation, session?.sessionId);
     _offer = offer;
-    final voice = await _voice();
     final label = snippet(connection?.label ?? hostLabel(host.kind, host.name), max: 40)!;
     return {
       'offer': offer.id,
@@ -164,11 +162,8 @@ class PetOverlayActions {
           'line': '${snippet(session.title, max: 20) ?? appL10n.commonUntitledChat} · $label',
         },
       if (connection == null || generation == null) 'problem': appL10n.commonEngineUnreachable,
-      'voice': ref.read(localConnectionProvider).value?.client.mux.generation == null
-          ? 'off'
-          : voice == null
-          ? 'missing'
-          : 'ready',
+      // Product: no mobile ASR (SenseVoice / system dictation for pets).
+      'voice': 'missing',
     };
   }
 
@@ -220,45 +215,9 @@ class PetOverlayActions {
     }
   }
 
-  /// Only the phone's installed SenseVoice model. A remote or cloud selection
-  /// must never silently receive a recording from the floating microphone.
-  Future<(DshClient, SpeechCatalog, MuxGeneration)?> _voice() async {
-    final client = ref.read(localConnectionProvider).value?.client;
-    final generation = client?.mux.generation;
-    if (client == null || generation == null) return null;
-    try {
-      final catalog = await client.speechCatalog().timeout(const Duration(seconds: 4));
-      if (!ref.mounted ||
-          !identical(ref.read(localConnectionProvider).value?.client, client) ||
-          !identical(generation, client.mux.generation)) {
-        return null;
-      }
-      final model = catalog?.providers
-          .where((p) => p.id == voiceModelProviderId && p.location == 'host-local' && p.usable)
-          .firstOrNull;
-      return model == null ? null : (client, catalog!, generation);
-    } catch (_) {
-      return null;
-    }
-  }
-
+  /// Product: no on-device SenseVoice ASR. Overlay mic transcription is gone.
   Future<Map<String, Object?>> _transcribe(Object? wav) async {
-    final voice = await _voice();
-    if (voice == null) return {'problem': appL10n.petActionVoiceMissing};
-    if (wav is! Uint8List || wav.length < 9644 || wav.length > voice.$2.maxAudioBytes) {
-      return {'problem': appL10n.chatVoiceNotHeard};
-    }
-    try {
-      final result = await voice.$1.transcribe(wav, providerId: voiceModelProviderId, language: voice.$2.language);
-      if (!ref.mounted ||
-          !identical(ref.read(localConnectionProvider).value?.client, voice.$1) ||
-          !identical(voice.$3, voice.$1.mux.generation)) {
-        return {'problem': appL10n.commonEngineUnreachable};
-      }
-      return {'text': result.text};
-    } catch (_) {
-      return {'problem': appL10n.chatVoiceNotHeard};
-    }
+    return {'problem': appL10n.petActionVoiceMissing};
   }
 }
 

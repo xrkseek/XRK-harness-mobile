@@ -4,8 +4,8 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:dsh_app/launch/custom_launch.dart';
-import 'package:dsh_app/ui/theme/palette.dart';
+import 'package:xrk_app/launch/custom_launch.dart';
+import 'package:xrk_app/ui/theme/palette.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Color _color(String dir, String name) {

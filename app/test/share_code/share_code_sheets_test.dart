@@ -2,21 +2,21 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/share_code/profile_export.dart';
-import 'package:dsh_app/share_code/share_codec.dart';
-import 'package:dsh_app/share_code/share_link.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/share_code/share_net.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart' show SheetDragHandle;
-import 'package:dsh_app/ui/share_code/import_sheet.dart';
-import 'package:dsh_app/ui/share_code/plugin_share_sheet.dart';
-import 'package:dsh_app/ui/share_code/profile_share_sheet.dart';
-import 'package:dsh_app/ui/share_code/share_code_host.dart';
-import 'package:dsh_app/ui/share_code/share_code_widgets.dart';
-import 'package:dsh_app/ui/share/share_card.dart';
-import 'package:dsh_app/ui/share/share_content.dart';
-import 'package:dsh_app/ui/share/share_image_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/profile_export.dart';
+import 'package:xrk_app/share_code/share_codec.dart';
+import 'package:xrk_app/share_code/share_link.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/share_code/share_net.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart' show SheetDragHandle;
+import 'package:xrk_app/ui/share_code/import_sheet.dart';
+import 'package:xrk_app/ui/share_code/plugin_share_sheet.dart';
+import 'package:xrk_app/ui/share_code/profile_share_sheet.dart';
+import 'package:xrk_app/ui/share_code/share_code_host.dart';
+import 'package:xrk_app/ui/share_code/share_code_widgets.dart';
+import 'package:xrk_app/ui/share/share_card.dart';
+import 'package:xrk_app/ui/share/share_content.dart';
+import 'package:xrk_app/ui/share/share_image_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -82,7 +82,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('share-code-share')));
     await _settle(tester);
-    expect(out.sharedText.single, contains('「读书笔记」· DSH Go 插件'));
+    expect(out.sharedText.single, contains('「读书笔记」· XRK Go 插件'));
     expect(out.sharedText.single, contains(link));
 
     expect(find.byKey(const ValueKey('share-code-save')), findsNothing);
@@ -122,7 +122,7 @@ void main() {
     final fs = await tester.runAsync(() async => sampleGuest());
     addTearDown(() => fs!.root.parent.deleteSync(recursive: true));
     final source = (await tester.runAsync(
-      () => loadProfileExport(DshClient.withCarrier(exportEngine()), hostLabel: '本机', isLocal: true, fs: fs),
+      () => loadProfileExport(XrkClient.withCarrier(exportEngine()), hostLabel: '本机', isLocal: true, fs: fs),
     ))!;
     final out = RecordingShareOut(cache);
     await _pump(tester, showShareProfileSheet, shareOverrides(net: sampleNet(), out: out, export: source));
@@ -176,7 +176,7 @@ void main() {
     await tester.pump();
     final link = ShareLink.parse(Uri.parse(out.copied.single))!;
     expect(link.isGist, isTrue);
-    expect(net.created.single.$2, 'dsh-go-profile-20261024.dshgo');
+    expect(net.created.single.$2, 'xrk-mobile-profile-20261024.dshgo');
     await _settle(tester);
   });
 
@@ -299,7 +299,7 @@ void main() {
     await _pump(
       tester,
       (c) => showShareImportSheet(c, const PluginShare(notesPlugin)),
-      shareOverrides(net: net, targets: [localTarget(DshClient.withCarrier(engine))]),
+      shareOverrides(net: net, targets: [localTarget(XrkClient.withCarrier(engine))]),
     );
     expect(find.text('校验不一致'), findsOneWidget);
     expect(find.text('与分享时的版本不一致'), findsOneWidget);
@@ -328,7 +328,7 @@ void main() {
       (c) => showShareImportSheet(c, profile),
       shareOverrides(
         net: sampleNet(),
-        targets: [localTarget(DshClient.withCarrier(local)), remoteTarget(DshClient.withCarrier(remote))],
+        targets: [localTarget(XrkClient.withCarrier(local)), remoteTarget(XrkClient.withCarrier(remote))],
         fs: fs,
       ),
     );
@@ -395,7 +395,7 @@ void main() {
     await _pump(
       tester,
       (c) => showShareImportSheet(c, profile),
-      shareOverrides(net: sampleNet(), targets: [localTarget(DshClient.withCarrier(engine))]),
+      shareOverrides(net: sampleNet(), targets: [localTarget(XrkClient.withCarrier(engine))]),
     );
     await tester.tap(find.byKey(const ValueKey('share-import-primary')));
     await _settle(tester);

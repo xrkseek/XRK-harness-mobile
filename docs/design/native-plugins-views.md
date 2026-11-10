@@ -68,9 +68,9 @@
 | `progress` | `value`；`max?`（缺省 100）；`label?`；`caption?`；`tone?`：good · warn · bad · info | 一条进度。`caption` 缺省显示百分比；超出 0–`max` 的值按边界画 |
 | `table` | `columns: [文字 \| {label, align?: start \| end}]`；`rows: [[单元格, …], …]` | 表格。整列都是数字时自动右对齐；放不下时横向滑动。单元格收文字或数字 |
 | `actions` | `items: [{label, icon?, style?: primary \| plain, action}]` | 按钮组。1–2 个并排等宽，3–4 个竖排。一张视图里至多一个 `primary`，多的按 `plain` 画 |
-| `image` | `src`；`alt?`；`aspect?`（宽 / 高，0.25–4）；`caption?` | 图片。`src` 只收两种：插件自己的资源 `asset:<路径>`（`dshGo.assets` 目录里的 png / jpg / webp / gif，App 拼成 NA 协议 §4.6 的 `/dsh-go/v1/assets/<包名>/<路径>` 并带凭据去取），和 ≤ 64 KiB 的 `data:image/{png,jpeg,webp,gif};base64,…`。写了 `aspect` 就先按比例占位，不跳动 |
+| `image` | `src`；`alt?`；`aspect?`（宽 / 高，0.25–4）；`caption?` | 图片。`src` 只收两种：插件自己的资源 `asset:<路径>`（`xrkGo.assets` 目录里的 png / jpg / webp / gif，App 拼成 NA 协议 §4.6 的 `/xrk-mobile/v1/assets/<包名>/<路径>` 并带凭据去取），和 ≤ 64 KiB 的 `data:image/{png,jpeg,webp,gif};base64,…`。写了 `aspect` 就先按比例占位，不跳动 |
 
-`icon` 只收 ui.json 的图标名（与 `app/assets/skills/dsh-go-ui/schema.json` 的 `icon` 枚举相同，共 43 个）。不认识的名字画默认图标。
+`icon` 只收 ui.json 的图标名（与 `app/assets/skills/xrk-ui/schema.json` 的 `icon` 枚举相同，共 43 个）。不认识的名字画默认图标。
 
 ### 2.3 色调白名单
 
@@ -262,7 +262,7 @@ defineTool({
   output: {
     schema, render,
     presentationMeta: (args, value) => ({
-      'dsh-go/view': {
+      'xrk-mobile/view': {
         type: 'stack', title: `${value.city} · 未来 3 天`,
         children: [/* metric / chart … */],
       },
@@ -271,38 +271,38 @@ defineTool({
 })
 ```
 
-- `presentationMeta` 的返回值是一个对象，dsh-go 只读其中的 `"dsh-go/view"` 键；同一个对象里放别的键（官方网页版的元数据）互不影响。
-- 必须是纯函数、不抛错：DSH 在工具成功后调用它，**抛错会让这次工具调用失败**。
+- `presentationMeta` 的返回值是一个对象，xrk-mobile 只读其中的 `"xrk-mobile/view"` 键；同一个对象里放别的键（官方网页版的元数据）互不影响。
+- 必须是纯函数、不抛错：XRK 在工具成功后调用它，**抛错会让这次工具调用失败**。
 - 只在工具成功时才有；失败的调用照常显示错误。
 - 视图 ≤ 8 KiB（它会写进对话记录）。工具卡没有数据模型，直接写值；第 0 期不能点。
 - 图片只能用 `data:`：对话记录里只有工具名，App 不知道它属于哪个插件包，`asset:` 取不到。
 
-### 8.2 链路（已查源码，DSH 0.2.1-rc.2）
+### 8.2 链路（已查源码，XRK 0.2.1-rc.2）
 
 ```
 defineTool output.presentationMeta(args, value)
   → ToolRegistry.createSuccessResult：成功后调用，快照成无损 JSON，作为 result.meta
-      @deepseek-ai/dsh-tools  lib/types/schema.d.ts:192，lib/index.js:3637-3667
+      @xrkseek/harness-cli-tools  lib/types/schema.d.ts:192，lib/index.js:3637-3667
   → appendToolResult：session.append("tool/result", { turn, step, message, error?, meta })
-      @deepseek-ai/dsh-agent-loop  lib/index.js:691-707
+      @xrkseek/harness-cli-agent-loop  lib/index.js:691-707
   → 会话日志（jsonl，持久化；重进对话、重放、导出都带着）
   → App：SessionLogEvent.fromJson → ToolResultEvent.meta = data["meta"]
-      packages/dsh_client/lib/src/models.dart:1264、1523
+      packages/xrk_client/lib/src/models.dart:1264、1523
   → ChatTranscript：ToolChatItem.meta = result.meta
-      packages/dsh_client/lib/src/transcript.dart:525
-  → ToolView.pluginView = parsePluginView(meta["dsh-go/view"], budget: toolCard)
+      packages/xrk_client/lib/src/transcript.dart:525
+  → ToolView.pluginView = parsePluginView(meta["xrk-mobile/view"], budget: toolCard)
       app/lib/ui/chat/tool_view.dart
 ```
 
-- 字段名：`tool/result` 事件的 `data.meta` 就是 `presentationMeta` 的返回值本身，没有再包一层。所以 App 读 `meta["dsh-go/view"]`。
-- DSH 不限制 meta 的大小；8 KiB 是我们的规矩，App 超限就降级。
+- 字段名：`tool/result` 事件的 `data.meta` 就是 `presentationMeta` 的返回值本身，没有再包一层。所以 App 读 `meta["xrk-mobile/view"]`。
+- XRK 不限制 meta 的大小；8 KiB 是我们的规矩，App 超限就降级。
 - 官方网页版（`dsh-client-ui-tool`）只对内置工具读 meta，插件工具画通用卡，多出的键不影响它。
 - 中转主机：meta 随对话记录走，不经桥接，理论上可用，待实测。
-- 实测（10-25）：用 `runtime/.work/x86_64/dsh-prefix` 里的 DSH 0.2.1-rc.2 跑 `dsh headless`（一次性 HOME、假模型、一个带 `presentationMeta` 的测试工具），落盘的 `tool/result` 事件里 `data.meta` 就是 `{"dsh-go/view": {…}, "other": "kept"}`。这份日志去掉系统提示和路径后存成 `app/test/plugins/view/fixtures/live_tool_card.jsonl`，`plugin_tool_card_test.dart` 用它走 `ChatTranscript` → `ToolRow` 验证卡片画得出来。
+- 实测（10-25）：用 `runtime/.work/x86_64/engine-prefix` 里的 XRK 0.2.1-rc.2 跑 `xrkh run`（一次性 HOME、假模型、一个带 `presentationMeta` 的测试工具），落盘的 `tool/result` 事件里 `data.meta` 就是 `{"xrk-mobile/view": {…}, "other": "kept"}`。这份日志去掉系统提示和路径后存成 `app/test/plugins/view/fixtures/live_tool_card.jsonl`，`plugin_tool_card_test.dart` 用它走 `ChatTranscript` → `ToolRow` 验证卡片画得出来。
 
 ### 8.3 App 怎么显示
 
-| 位置 | 有 `dsh-go/view` 且能画 | 有但画不了 | 没有 |
+| 位置 | 有 `xrk-mobile/view` 且能画 | 有但画不了 | 没有 |
 |---|---|---|---|
 | 工具行 | **默认展开**：原生卡片（与模型卡同一套卡片）；参数和原始结果收在卡片下的「详情」里，默认收起。行里照常写参数摘要；行收起时摘要换成视图 `title`（没写 `title` 就照旧） | 默认收起；展开是一行「插件界面有误」，下面照常显示参数和结果 | 照旧 |
 | 工具组 | 带卡片的调用不进组：它把连续的调用切开，前后各段照旧（≥ 3 次成组） | 照旧 | 照旧 |
@@ -317,7 +317,7 @@ defineTool output.presentationMeta(args, value)
 ## 9. App 侧 API
 
 ```dart
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 ```
 
 | 名称 | 签名 | 说明 |
@@ -327,12 +327,12 @@ import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
 | `PluginViewBudget` | `toolCard` · `panel` · `strip` | §5 的三档上限 |
 | `PluginActionHandler` | `Future<bool> Function(PluginAction action)` | 发 invoke 并执行效果；返回 false 表示失败（元素复原）。不要在里面抛错 |
 | `PluginAction` | `{String id, Map<String, Object?> args, PluginActionSource source, String path}` | `source`：button · row · option · confirm；`path` 是元素在视图里的路径，调试用 |
-| `PluginImageResolver` | `ImageProvider? Function(String src)` | 收到 `asset:<路径>`，拼成 `/dsh-go/v1/assets/<包名>/<路径>`、带凭据取图；返回 null 画占位（`data:` 图片 App 自己解码，不经它）。也可以在上层放 `PluginImages(resolver:, child:)` |
-| `parsePluginView` | `DshUiParse parsePluginView(Object? view, {Object? data, PluginViewBudget budget = PluginViewBudget.panel})` | 解析 + 求值 + 校验，按对象身份缓存。`DshUiParsed.view.issues` 是带路径的问题列表（插件详情页用） |
+| `PluginImageResolver` | `ImageProvider? Function(String src)` | 收到 `asset:<路径>`，拼成 `/xrk-mobile/v1/assets/<包名>/<路径>`、带凭据取图；返回 null 画占位（`data:` 图片 App 自己解码，不经它）。也可以在上层放 `PluginImages(resolver:, child:)` |
+| `parsePluginView` | `XrkUiParse parsePluginView(Object? view, {Object? data, PluginViewBudget budget = PluginViewBudget.panel})` | 解析 + 求值 + 校验，按对象身份缓存。`XrkUiParsed.view.issues` 是带路径的问题列表（插件详情页用） |
 | `resolvePluginBinding` | `Object? resolvePluginBinding(Object? value, Object? data)` | 纯函数：`value` 是绑定就返回取到的值（取不到为 null），否则原样返回 |
 | `pluginBindingText` | `String pluginBindingText(Object? value, Object? data, {int max = 200})` | 纯函数：求值后转成显示文字，取不到为「—」，超长截断加「…」。状态条用 |
 | `resolvePluginBindings` | `Object? resolvePluginBindings(Object? value, Object? data)` | 纯函数：深度求值整棵 JSON（取不到为 null） |
-| `toolCardViewKey` | `'dsh-go/view'` | 工具 meta 里的键 |
+| `toolCardViewKey` | `'xrk-mobile/view'` | 工具 meta 里的键 |
 | `PluginViewBody` · `PluginViewError` · `PluginToolCard` · `PluginMark` | — | 已解析视图的内容、一行「插件界面有误」、工具行展开区、署名小标记（20 × 20），给需要拆开用的地方 |
 
 - **缓存按对象身份**：`parsePluginView` / `PluginView` 以 `view`、`data` 的对象身份做键（字符串按内容）。数据变了（合并补丁后）请传一个**新的** Map，不要原地改旧的，否则会画旧数据。

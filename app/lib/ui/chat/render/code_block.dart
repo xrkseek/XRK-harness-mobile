@@ -340,7 +340,7 @@ List<String> codeChunks(String code) {
 
 /// 代码井:语言标签 + 复制键的标题条 + 横向滚动的高亮代码,可选行号。
 ///
-/// 所有等宽前景(语法色、行号)只铺在 [DshColors.codeWellBg] 上 —— 那是
+/// 所有等宽前景(语法色、行号)只铺在 [XrkColors.codeWellBg] 上 —— 那是
 /// 唯一对它们做过对比度核查的底色。
 class CodeBlock extends StatefulWidget {
   const CodeBlock({
@@ -411,9 +411,9 @@ class _CodeBlockState extends State<CodeBlock> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final brightness = Theme.of(context).brightness;
-    final accent = DshSurfaces.of(context).accent;
+    final accent = XrkSurfaces.of(context).accent;
     final code = _trimmedCode;
     final style = widget.dense ? AppType.monoSmall(color: dsh.codeWellFg) : AppType.mono(color: dsh.codeWellFg);
 
@@ -622,7 +622,7 @@ class _DiffLines extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final colors = Theme.of(context).colorScheme;
     final lines = parseUnifiedDiff(code);
     Widget row(String text, DiffLineKind kind) {

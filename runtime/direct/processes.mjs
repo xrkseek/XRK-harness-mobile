@@ -18,13 +18,13 @@ export function createCommands(config, paths) {
     const environment = options.env ?? process.env;
     const path = environment.PATH;
     return { ...options, env: { ...environment, ...(path === undefined ? {} : {
-      DSH_GO_GUEST_PATH: path.split(':').filter((entry) => entry !== bin).map(paths.toGuest).join(':'),
+      XRK_GO_GUEST_PATH: path.split(':').filter((entry) => entry !== bin).map(paths.toGuest).join(':'),
     }) } };
   }
   function nodeOptions(options) {
     if (options.env == null) return options;
     const env = { ...options.env };
-    for (const name of ['HOME', 'TMPDIR', 'DSH_HOME', 'DSH_AGENTS_HOME', 'NODE_EXTRA_CA_CERTS', 'SSL_CERT_FILE']) {
+    for (const name of ['HOME', 'TMPDIR', 'XRK_HOME', 'XRK_AGENTS_HOME', 'NODE_EXTRA_CA_CERTS', 'SSL_CERT_FILE']) {
       if (typeof env[name] === 'string') env[name] = paths.toHost(env[name]);
     }
     if (typeof env.SSL_CERT_DIR === 'string') env.SSL_CERT_DIR = env.SSL_CERT_DIR.split(':').map(paths.toHost).join(':');
@@ -77,8 +77,8 @@ export function createCommands(config, paths) {
 }
 
 /**
- * Cover the public APIs used by DSH, execa, plugins, and child Nodes. node-pty
- * calls execvp in native code and uses the separately pinned DSH seam patch.
+ * Cover the public APIs used by XRK, execa, plugins, and child Nodes. node-pty
+ * calls execvp in native code and uses the separately pinned XRK seam patch.
  * Native spawn/execFile retain validation, AbortSignal, timeout, detached PGID,
  * stdio, IPC descriptors, and result/ChildProcess ownership.
  */

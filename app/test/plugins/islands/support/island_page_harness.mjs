@@ -1,6 +1,6 @@
 // Runs assets/islands/island.js for a navigated island (a conversation view,
 // a sidebar panel, a settings section, a right pane tab) against a model of
-// DSH Web 0.2.1-rc.4's page (node, no DOM library) and prints what the
+// XRK Web 0.2.1-rc.4's page (node, no DOM library) and prints what the
 // island said and did, as JSON. Used by
 // test/plugins/islands/island_view_target_test.dart and
 // island_names_test.dart.
@@ -31,7 +31,7 @@
 // Scenario (all):
 //   target    'view' | 'panel' | 'settings' | 'rightbar' (default 'view')
 //   cell      the id asked for;  names  its names (zh, en)
-//   occupants {slot: [{cell, label}]}  what dsh-go-bridge reports (adds the bridge)
+//   occupants {slot: [{cell, label}]}  what xrk-bridge reports (adds the bridge)
 //   run       virtual ms to run (default 60000)
 // view:      views [{id, label, menu?}], stored, persist (false: a pick is
 //            not recorded), rewrites [ms], later {at, view}, pagehide
@@ -395,7 +395,7 @@ if (target === 'settings') {
     // Controls inside the section drawn (a general item's own buttons).
     for (const text of s.sectionButtons || []) box.append(button({}, text, 'in section:' + text, () => {}));
   }
-  // The open bridge (dsh_web_open.js) opens settings on a section: the modal comes up a moment later.
+  // The open bridge (xrk_web_open.js) opens settings on a section: the modal comes up a moment later.
   windowExtra.__dshAppOpen = (web) => {
     if (!web.settings || dialog) return;
     out.clicks.push('open settings:' + web.settings);
@@ -568,7 +568,7 @@ const window = {
 };
 if (windowExtra.__dshAppOpen) window.__dshAppOpen = windowExtra.__dshAppOpen;
 if (s.occupants || windowExtra.openTab) {
-  window.__dshGoBridge = {
+  window.__xrkBridge = {
     version: 1,
     occupants: (slot) => (s.occupants && s.occupants[slot]) || [],
     ...(windowExtra.openTab ? { openTab: windowExtra.openTab } : {}),
@@ -611,7 +611,7 @@ const configs = {
   settings: { slot: 'settings.section', stretch: 'scroller', target: { web: { settings: 'general' }, then: { settings: s.names } } },
   rightbar: { slot: 'sidebar.right.pane.tab', stretch: 'child', target: { session, then: { rightbar: s.names } } },
 };
-window.__dshGoIsland.init({
+window.__xrkGoIsland.init({
   ...configs[target],
   cell: s.cell,
   mode: 'page',
@@ -630,10 +630,10 @@ await runUntil(now + (s.run || 60000));
 if (s.pagehide) for (const fn of windowHandlers.pagehide || []) fn();
 
 out.shown = model.shown();
-const marked = html.descendants().find((e) => (e.getAttribute('data-dsh-go-island') || '').split(' ').includes('shown'));
+const marked = html.descendants().find((e) => (e.getAttribute('data-xrk-mobile-island') || '').split(' ').includes('shown'));
 out.island = marked && marked.firstElementChild ? marked.firstElementChild.model ?? null : null;
 if (model.stored) out.stored = model.stored();
 if (model.layout) out.layout = model.layout();
-out.trace = window.__dshGoIsland.inspect ? window.__dshGoIsland.inspect().trace : [];
+out.trace = window.__xrkGoIsland.inspect ? window.__xrkGoIsland.inspect().trace : [];
 process.stdout.write(JSON.stringify(out));
 process.exit(0);

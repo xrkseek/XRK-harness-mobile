@@ -2,20 +2,20 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/chat_list.dart';
-import 'package:dsh_app/ui/chat/widgets/assistant_message.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/chat_list.dart';
+import 'package:xrk_app/ui/chat/widgets/assistant_message.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 import 'support/harness.dart';
 import 'support/session_sync_host.dart';
 
@@ -24,7 +24,7 @@ class _Connection extends Notifier<HostConnection?> {
   final HostConnection initial;
   @override
   HostConnection? build() => initial;
-  void replace(DshClient client) => state = HostConnection(client: client, isLocal: true, label: 'same Host');
+  void replace(XrkClient client) => state = HostConnection(client: client, isLocal: true, label: 'same Host');
 }
 
 final _connection = NotifierProvider<_Connection, HostConnection?>(() => throw UnimplementedError());
@@ -41,7 +41,7 @@ class _Carrier extends HeldReplyCarrier {
 
 class _Client {
   _Client(this.client, this.carrier, this.hold);
-  final DshClient client;
+  final XrkClient client;
   final _Carrier carrier;
   final ReplyHold hold;
 }
@@ -133,7 +133,7 @@ class _Host {
     final hold = ReplyHold();
     if (holdImage) hold.arm('session/attachment');
     final carrier = _Carrier(DshHttpCarrier(connection), hold);
-    final client = DshClient.withCarrier(
+    final client = XrkClient.withCarrier(
       carrier,
       muxOptions: const MuxOptions(readyTimeout: Duration(seconds: 2), retryCaps: [Duration(milliseconds: 20)]),
     );

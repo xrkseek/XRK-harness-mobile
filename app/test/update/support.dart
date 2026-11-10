@@ -1,5 +1,5 @@
 // Fakes for the updater: HTTP routes keyed by URL, a scripted native installer,
-// fixture loading, DSHDLT01 patches.
+// fixture loading, XRKDLT01 patches.
 
 import 'dart:async';
 import 'dart:convert';
@@ -7,8 +7,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/update/installer.dart';
-import 'package:dsh_app/update/update_http.dart';
+import 'package:xrk_app/update/installer.dart';
+import 'package:xrk_app/update/update_http.dart';
 
 String fixture(String name) => File('test/update/fixtures/$name').readAsStringSync();
 
@@ -76,7 +76,7 @@ class FakeInstaller implements UpdateInstaller {
     this.canInstall = true,
     this.inspection = const ApkInspection(
       valid: true,
-      packageName: 'io.github.ccch1mneyyy.dsh_app',
+      packageName: 'com.xrkseek.harness',
       signatureMatches: true,
     ),
     this.result = const InstallResult(InstallStatus.success),
@@ -145,7 +145,7 @@ class FakeInstaller implements UpdateInstaller {
 
 Uint8List _u64(int value) => (ByteData(8)..setUint64(0, value)).buffer.asUint8List();
 
-/// A DSHDLT01 patch from [base] to [target]: the header, then [ops] as they are.
+/// A XRKDLT01 patch from [base] to [target]: the header, then [ops] as they are.
 List<int> deltaPatch(List<int> base, List<int> target, List<List<int>> ops) => [
   ...ascii.encode('DSHDLT01'),
   ...sha256.convert(base).bytes,

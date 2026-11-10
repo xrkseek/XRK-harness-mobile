@@ -1,7 +1,7 @@
 // A Bot's or a group's memory on its details page: the summary, every entry
 // (tap to edit or remove), and 「添加记忆」.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -172,7 +172,7 @@ class _BotMemoryCardState extends ConsumerState<BotMemoryCard> {
     final l10n = context.l10n;
     final status = ref.watch(dsBotProvider);
     final memory = ref.watch(dsBotMemoryProvider(_key));
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final writable = status.ready && status.readOnly == null;
     final canEdit = writable && status.supports('memory-edit');
     _discardDifferentOwner(status);

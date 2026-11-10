@@ -38,7 +38,7 @@ class AccessHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -114,7 +114,7 @@ class AccessFeatureRow extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final under = lines.isEmpty ? [(text: feature.needs(l10n), color: null)] : lines;
     return MergeSemantics(
       child: Semantics(
@@ -192,7 +192,7 @@ class AccessItemTile extends StatelessWidget {
       title: item.title(l10n, vendor: vendor),
       value: Text(
         state.label(l10n),
-        style: state == AccessState.off ? TextStyle(color: DshColors.of(context).warning) : null,
+        style: state == AccessState.off ? TextStyle(color: XrkColors.of(context).warning) : null,
       ),
       onTap: state == AccessState.on ? null : onTap,
     );

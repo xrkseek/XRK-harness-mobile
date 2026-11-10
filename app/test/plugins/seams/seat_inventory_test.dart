@@ -1,5 +1,5 @@
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 PluginBundle _bundle(String name, {bool official = false, bool installed = true, List<String> rows = const []}) =>
@@ -31,7 +31,7 @@ final _bundles = [
   _bundle('dsh-pet', rows: ['pet', 'pet-voice', 'pet-hidden']),
   _bundle('dsh-cost-meter', rows: ['cost-meter']),
   _bundle('novel-writer', rows: ['novel-writer']),
-  _bundle('@deepseek-ai/dsh-experimental-cot-translation-bundle', official: true, rows: ['cot-translation']),
+  _bundle('@xrkseek/harness-cli-experimental-cot-translation-bundle', official: true, rows: ['cot-translation']),
 ];
 
 final _boot = WebBootGraph.fromJson({
@@ -40,7 +40,7 @@ final _boot = WebBootGraph.fromJson({
   'entries': [
     {'id': 'dsh-pet', 'rev': 'p1'},
     {'id': 'dsh-cost-meter', 'rev': 'c1'},
-    {'id': '@deepseek-ai/dsh-experimental-cot-translation-bundle', 'rev': 'o1'},
+    {'id': '@xrkseek/harness-cli-experimental-cot-translation-bundle', 'rev': 'o1'},
   ],
 })!;
 
@@ -50,7 +50,7 @@ BridgeInventory _bridge({String bootRev = 'g1', bool table = true}) => BridgeInv
   if (table)
     'slots': {
       'settings.section': [
-        {'package': '@deepseek-ai/dsh-client-ui-settings-general', 'cell': 'general'},
+        {'package': '@xrkseek/harness-cli-client-ui-settings-general', 'cell': 'general'},
         {
           'package': 'dsh-pet',
           'cell': 'pet',
@@ -99,7 +99,7 @@ void main() {
         ('cordis-run-7', true, true, false),
       );
       expect(inventory.isOfficial('@deepseek-ai/anything'), isTrue);
-      expect(inventory.isOfficial('@deepseek-ai/dsh-experimental-cot-translation-bundle'), isTrue);
+      expect(inventory.isOfficial('@xrkseek/harness-cli-experimental-cot-translation-bundle'), isTrue);
       expect(inventory.isOfficial('dsh-pet'), isFalse);
     });
 
@@ -107,7 +107,7 @@ void main() {
       final inventory = SeatInventory.from(ClientInventory.combine(bundles: _bundles, boot: _boot, bridge: _bridge()));
       final sections = inventory.occupancy!['settings.section']!;
       expect(sections.map((o) => (o.package, o.label, o.official)), [
-        ('@deepseek-ai/dsh-client-ui-settings-general', null, true),
+        ('@xrkseek/harness-cli-client-ui-settings-general', null, true),
         ('dsh-pet', '桌宠', false),
       ]);
       expect(inventory.routeGuard, isTrue);

@@ -144,7 +144,7 @@
   "hubTableTintFollowHint": "Header tint only, body follows the reply",
   "hubTableTintNoneHint": "Grid lines only, the lightest",
   "hubAbout": "About XRK Harness",
-  "hubAboutAuthor": "Original author of XRK Harness",
+  "hubAboutAuthor": "Source repository",
   "hubAboutBilibili": "Bilibili profile",
   "hubAboutX": "X profile",
   "hubAboutGithub": "GitHub profile",

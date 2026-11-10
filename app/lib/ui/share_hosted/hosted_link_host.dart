@@ -1,8 +1,5 @@
-// Hosted conversation links opened in the app.
-// `https://go.dshtui.com/c/<id>#k=<key>` — an App Link, shared text
-// (lib/links/share_intake.dart → the link router) or the web viewer's
-// `dshgo://go.dshtui.com/c/…` — is fetched, decrypted on the phone and opened
-// in the replay page.
+// Hosted conversation links opened in the app (`$shareHostOrigin/c/<id>#k=`).
+// Off when no share host is configured.
 
 import 'dart:async';
 import 'dart:convert';
@@ -15,6 +12,7 @@ import '../../links/app_links.dart';
 import '../../share_code/conversation_share.dart' show decodeConversationFile;
 import '../../share_code/share_models.dart' show ShareFormatException;
 import '../../share_hosted/hosted_client.dart';
+import '../../share_hosted/hosted_config.dart' show hostedOrigins;
 import '../../share_hosted/hosted_link.dart';
 import '../../share_hosted/hosted_links_state.dart';
 import '../replay/replay_page.dart' show openConversationReplay;
@@ -55,7 +53,7 @@ Future<bool> openHostedLink(BuildContext context, Uri uri) async {
   return true;
 }
 
-/// Registers `<share host>/c` with [router] — https and `dshgo://` links
+/// Registers `<share host>/c` with [router] — https and `xrkharness://` links
 /// alike — so hosted links open in the replay page. [LinkHost] calls it.
 /// Returns the unregister function.
 VoidCallback registerHostedLinks(LinkRouter router) {

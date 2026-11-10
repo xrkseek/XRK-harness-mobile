@@ -2,7 +2,7 @@
 
 [English](en/voice.md)
 
-给朗读这类插件的四样能力：放一段声音，用户一开口就停，字幕每秒更新十次，字幕浮在界面上。全部可选：不声明就什么都不发生，老插件、老 App 都不受影响。完整示例：[`dsh-go-example-readaloud`](../../examples/plugins/dsh-go-example-readaloud/)。规格：[协议 §11](../design/native-plugins-protocol.md#11-可选能力v12)。
+给朗读这类插件的四样能力：放一段声音，用户一开口就停，字幕每秒更新十次，字幕浮在界面上。全部可选：不声明就什么都不发生，老插件、老 App 都不受影响。完整示例：[`xrk-example-readaloud`](../../examples/plugins/xrk-example-readaloud/)。规格：[协议 §11](../design/native-plugins-protocol.md#11-可选能力v12)。
 
 | 能力 | 你得到 | 你做 | App 做 |
 |---|---|---|---|
@@ -27,7 +27,7 @@
 ## 清单
 
 ```jsonc
-"dshGo": {
+"xrkGo": {
   "v": 1,
   "title": { "zh": "朗读", "en": "Read aloud" },
   "wants": ["message"],
@@ -52,18 +52,18 @@
 ## 宿主半侧
 
 ```js
-ctx.inject(['dshGo'], (ctx) => {
-  ctx.dshGo.on('read', (scope) => [
+ctx.inject(['xrkGo'], (ctx) => {
+  ctx.xrkGo.on('read', (scope) => [
     { type: 'audio', op: 'play', instance: 'reading', src: 'media:speech', key: remember(scope.message) },
     { type: 'voice', op: 'start', instance: 'reading' },
     { type: 'overlay', op: 'show', instance: 'reading', id: 'subtitle' },
   ])
-  ctx.dshGo.media('speech', async (scope, { key, signal }) => ({
+  ctx.xrkGo.media('speech', async (scope, { key, signal }) => ({
     body: await tts(textOf(key), { signal }),   // Buffer，≤ 16 MiB
     contentType: 'audio/mpeg',
   }))
-  ctx.dshGo.micro('caption', { data: (scope, emit) => follow(scope, emit) })   // 返回取消函数
-  ctx.dshGo.onCapability((scope, { event, reason }) => { if (event === 'voice.speechStart') stopFollowing(scope) })
+  ctx.xrkGo.micro('caption', { data: (scope, emit) => follow(scope, emit) })   // 返回取消函数
+  ctx.xrkGo.onCapability((scope, { event, reason }) => { if (event === 'voice.speechStart') stopFollowing(scope) })
 })
 ```
 
@@ -109,7 +109,7 @@ ctx.inject(['dshGo'], (ctx) => {
 ## 测
 
 ```js
-import { createTestHost } from '@dsh-go/plugin-kit/testing'
+import { createTestHost } from '@xrkseek/plugin-kit/testing'
 const h = createTestHost({ dir, caps: { features: ['audio', 'voice', 'micro', 'overlay'] } })
 apply(h.ctx)
 const { effects } = await h.invoke('read', { context: { message: '你好。' }, scope: { sessionId: 's1' } })

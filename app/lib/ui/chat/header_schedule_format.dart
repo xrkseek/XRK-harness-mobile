@@ -5,7 +5,7 @@
 
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../l10n/l10n.dart';
 import '../features/schedule_editor/schedule_draft.dart';

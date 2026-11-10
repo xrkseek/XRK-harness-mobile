@@ -1,15 +1,15 @@
-// A fake native side for `dsh/phone` + `dsh/phone/events` (the contract
+// A fake native side for `xrk/phone` + `xrk/phone/events` (the contract
 // PhonePlugin.kt implements), plus a runtime that records restarts. Widget
 // tests run the real PhoneChannel against it, so parsing is exercised too.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const phoneMethods = MethodChannel('dsh/phone');
-const phoneEvents = EventChannel('dsh/phone/events');
+const phoneMethods = MethodChannel('xrk/phone');
+const phoneEvents = EventChannel('xrk/phone/events');
 
 /// A `status` map as the native module sends it.
 Map<String, Object?> phoneStatus({
@@ -399,7 +399,7 @@ class PhoneTestRuntime extends LocalRuntimeController {
     final s = state.status;
     return RuntimeStatus(
       phase: phase,
-      dshVersion: s.dshVersion,
+      engineVersionAlias: s.engineVersionAlias,
       baseUrl: s.baseUrl,
       token: s.token,
       mode: s.mode,
@@ -410,14 +410,14 @@ class PhoneTestRuntime extends LocalRuntimeController {
 
 const runningRuntime = RuntimeStatus(
   phase: RuntimePhase.running,
-  dshVersion: '0.2.1-rc.2',
+  engineVersionAlias: '0.2.1-rc.2',
   baseUrl: 'http://127.0.0.1:3080',
   token: 't',
 );
 
 const safeRuntime = RuntimeStatus(
   phase: RuntimePhase.running,
-  dshVersion: '0.2.1-rc.2',
+  engineVersionAlias: '0.2.1-rc.2',
   baseUrl: 'http://127.0.0.1:3080',
   token: 't',
   mode: EngineMode.safe,

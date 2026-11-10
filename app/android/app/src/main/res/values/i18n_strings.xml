@@ -155,7 +155,7 @@
     <string name="pet_ask_listening">Listening. Let go to finish</string>
     <string name="pet_ask_transcribing">Transcribing</string>
     <string name="pet_ask_not_heard">Didn’t catch that</string>
-    <string name="pet_ask_voice_missing">Download the voice model in the app first</string>
+    <string name="pet_ask_voice_missing">Voice input isn’t available on mobile — type instead</string>
     <string name="pet_ask_voice_off">Voice needs this phone’s engine running</string>
     <string name="pet_ask_mic_permission">Allow the microphone in the app first</string>
     <string name="pet_ask_mic_failed">Couldn’t open the microphone</string>

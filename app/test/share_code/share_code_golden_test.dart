@@ -4,13 +4,13 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/share_code/profile_export.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/ui/share_code/import_sheet.dart';
-import 'package:dsh_app/ui/share_code/plugin_share_sheet.dart';
-import 'package:dsh_app/ui/share_code/profile_share_sheet.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/share_code/profile_export.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/ui/share_code/import_sheet.dart';
+import 'package:xrk_app/ui/share_code/plugin_share_sheet.dart';
+import 'package:xrk_app/ui/share_code/profile_share_sheet.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -45,7 +45,7 @@ ProfileShare _importProfile() => const ProfileShare(
       title: '长文写作',
     ),
     SharedPlugin(
-      name: '@deepseek-ai/dsh-experimental-session-titles-bundle',
+      name: '@xrkseek/harness-cli-experimental-session-titles-bundle',
       source: PluginSourceKind.official,
       title: '对话标题',
     ),
@@ -63,7 +63,7 @@ FakeEngine _importEngine() => FakeEngine()
   ..addSettings('agent-default-model', base: {'provider': 'deepseek', 'model': 'deepseek-v4-flash'})
   ..addBundle('@acme/dsh-notes', version: '1.2.0', source: '@acme/dsh-notes@1.2.0', title: '读书笔记')
   ..addBundle(
-    '@deepseek-ai/dsh-experimental-session-titles-bundle',
+    '@xrkseek/harness-cli-experimental-session-titles-bundle',
     official: true,
     optional: true,
     enabled: false,
@@ -99,7 +99,7 @@ void main() {
   Future<void> loadSource(WidgetTester tester) async {
     await tester.runAsync(() async {
       fs = sampleGuest();
-      source = await loadProfileExport(DshClient.withCarrier(exportEngine()), hostLabel: '本机', isLocal: true, fs: fs);
+      source = await loadProfileExport(XrkClient.withCarrier(exportEngine()), hostLabel: '本机', isLocal: true, fs: fs);
     });
     addTearDown(() => fs!.root.parent.deleteSync(recursive: true));
   }
@@ -159,7 +159,7 @@ void main() {
     testWidgets('import_plugin ($mode)', (tester) async {
       await tester.runAsync(loadGoldenFonts);
       usePhoneSurface(tester);
-      final client = DshClient.withCarrier(FakeEngine());
+      final client = XrkClient.withCarrier(FakeEngine());
       await tester.pumpWidget(
         goldenApp(
           home: SheetHost(open: (c) => showShareImportSheet(c, const PluginShare(notesPlugin))),
@@ -177,8 +177,8 @@ void main() {
       late GuestFs guest;
       await tester.runAsync(() async => guest = sampleGuest(existingOutline: true));
       addTearDown(() => guest.root.parent.deleteSync(recursive: true));
-      final local = DshClient.withCarrier(_importEngine());
-      final remote = DshClient.withCarrier(_importEngine());
+      final local = XrkClient.withCarrier(_importEngine());
+      final remote = XrkClient.withCarrier(_importEngine());
       await tester.pumpWidget(
         goldenApp(
           home: SheetHost(open: (c) => showShareImportSheet(c, _importProfile())),
@@ -203,7 +203,7 @@ void main() {
         goldenApp(
           home: SheetHost(open: (c) => showShareImportSheet(c, _importProfile())),
           brightness: brightness,
-          overrides: shareOverrides(net: sampleNet(), targets: [localTarget(DshClient.withCarrier(engine))], fs: guest),
+          overrides: shareOverrides(net: sampleNet(), targets: [localTarget(XrkClient.withCarrier(engine))], fs: guest),
         ),
       );
       await _open(tester);

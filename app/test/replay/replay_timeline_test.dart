@@ -10,20 +10,20 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/share_code/conversation_export.dart';
-import 'package:dsh_app/share_code/conversation_share.dart';
-import 'package:dsh_app/ui/replay/replay_frame.dart';
-import 'package:dsh_app/ui/replay/replay_timeline.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/conversation_export.dart';
+import 'package:xrk_app/share_code/conversation_share.dart';
+import 'package:xrk_app/ui/replay/replay_frame.dart';
+import 'package:xrk_app/ui/replay/replay_timeline.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:dsh_app/share_code/conversation_html.dart';
+import 'package:xrk_app/share_code/conversation_html.dart';
 
 import 'support/conversation_fixture.dart';
 import 'support/rich_conversation.dart';
 
 ConversationShare _share() =>
-    ConversationExport(fixtureSource()).build(now: DateTime.utc(2026, 10, 25, 3), app: 'dsh-go 1.0.0');
+    ConversationExport(fixtureSource()).build(now: DateTime.utc(2026, 10, 25, 3), app: 'xrk-mobile 1.0.0');
 
 void main() {
   test('long waits shrink, short ones stay, streams keep a reading pace', () {
@@ -155,7 +155,7 @@ void main() {
     final text = richFileText();
     final html = conversationHtml(text, title: '修复登录重复提交');
     expect(decodeConversationFile(text).assets, hasLength(1));
-    expect(html, contains('<title>修复登录重复提交 · DSH Go</title>'));
+    expect(html, contains('<title>修复登录重复提交 · XRK Go</title>'));
     final dir = Platform.environment['WRITE_PREVIEW'];
     if (dir != null && dir.isNotEmpty) {
       Directory(dir).createSync(recursive: true);

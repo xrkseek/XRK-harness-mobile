@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 import 'support/session_sync_host.dart';
 
 // Two real loopback connections with distinct same-named sessions. Equal
@@ -16,7 +16,7 @@ class _Peer {
   _Peer(this.label, this.host, this.client, this.cut);
   String label;
   final FakeDsh host;
-  final DshClient client;
+  final XrkClient client;
   int? cut;
 
   Map<String, Object?> event(String type, int seq, Map<String, Object?> data) => {
@@ -67,7 +67,7 @@ class _Peer {
     final host = await FakeDsh.start();
     final connection = DshConnection(host.baseUri);
     await connection.login(FakeDsh.token);
-    final client = DshClient.withCarrier(
+    final client = XrkClient.withCarrier(
       DshHttpCarrier(connection),
       muxOptions: const MuxOptions(readyTimeout: Duration(seconds: 2), retryCaps: [Duration(milliseconds: 20)]),
     );

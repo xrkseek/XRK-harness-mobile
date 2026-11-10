@@ -3,7 +3,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart' show CotTranslationLimits;
+import 'package:xrk_client/xrk_client.dart' show CotTranslationLimits;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -758,7 +758,7 @@ class _TranslatableReasoningState extends ConsumerState<_TranslatableReasoning> 
       else if (failed) ...[
         Text(
           l10n.chatTranslationUnavailable,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(color: DshColors.of(context).textTertiary),
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(color: XrkColors.of(context).textTertiary),
         ),
         const SizedBox(width: 8),
         _TranslateChip(icon: AppIcons.retry, label: l10n.commonRetry, onTap: controller.retry),
@@ -774,7 +774,7 @@ class _TranslatableReasoningState extends ConsumerState<_TranslatableReasoning> 
           label: l10n.chatTranslating,
           child: SizedBox.square(
             dimension: 12,
-            child: CircularProgressIndicator(strokeWidth: 1.6, color: DshColors.of(context).textTertiary),
+            child: CircularProgressIndicator(strokeWidth: 1.6, color: XrkColors.of(context).textTertiary),
           ),
         ),
       ],

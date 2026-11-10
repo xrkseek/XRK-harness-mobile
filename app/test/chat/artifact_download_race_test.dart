@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -45,7 +45,7 @@ class _Carrier extends DshCarrier {
       onRead?.call(requests.length - 1, session);
       return request.future;
     }
-    return const RpcError(DshRemoteException('gateway/not-found', 'missing'));
+    return const RpcError(XrkRemoteException('gateway/not-found', 'missing'));
   }
 
   void succeed(int index, {List<int> bytes = const [1, 2, 3, 4], String responseVersion = 'v1', bool eof = true}) {
@@ -62,7 +62,7 @@ class _Carrier extends DshCarrier {
   }
 
   void fail(int index) {
-    requests[index].complete(const RpcError(DshRemoteException('workspace-file/not-allowed', 'synthetic failure')));
+    requests[index].complete(const RpcError(XrkRemoteException('workspace-file/not-allowed', 'synthetic failure')));
   }
 
   @override
@@ -77,7 +77,7 @@ class _Rig {
   _Rig(this.cache);
   final Directory cache;
   final carrier = _Carrier();
-  late final client = DshClient.withCarrier(carrier);
+  late final client = XrkClient.withCarrier(carrier);
   late final files = forHost('host-a');
 
   ArtifactFiles forHost(String host) => ArtifactFiles(
@@ -188,7 +188,7 @@ void main() {
     final peer = rig.files.materialize('s1', _artifact);
     await rig.carrier.entered[1].future;
     rig.carrier.fail(0);
-    expect(await failed, isA<DshRemoteException>());
+    expect(await failed, isA<XrkRemoteException>());
     rig.carrier.succeed(1);
     expect(await (await peer).readAsBytes(), [1, 2, 3, 4]);
     await rig.noStagingLeft();
@@ -198,7 +198,7 @@ void main() {
     final failed = _observed(rig.files.materialize('s1', _artifact));
     await rig.carrier.entered[0].future;
     rig.carrier.fail(0);
-    expect(await failed, isA<DshRemoteException>());
+    expect(await failed, isA<XrkRemoteException>());
     await rig.noStagingLeft();
     final retry = rig.files.materialize('s1', _artifact);
     await rig.carrier.entered[1].future;
@@ -233,7 +233,7 @@ void main() {
     final wider = rig.files.materialize('s1', _artifact);
     await rig.carrier.entered[1].future;
     rig.carrier.succeed(0);
-    expect(await strict, isA<DshRemoteException>().having((e) => e.code, 'code', 'workspace-file/too-large'));
+    expect(await strict, isA<XrkRemoteException>().having((e) => e.code, 'code', 'workspace-file/too-large'));
     rig.carrier.succeed(1);
     expect(await (await wider).readAsBytes(), [1, 2, 3, 4]);
     await expectLater(
@@ -268,7 +268,7 @@ void main() {
   });
   for (final openFailure in [false, true]) {
     test('async ${openFailure ? 'open' : 'write'} failure stays in materialize and leaves its peer alive', () async {
-      // The peer already owns a staging directory, and shares the real DshClient.
+      // The peer already owns a staging directory, and shares the real XrkClient.
       final peer = _observed(rig.files.materialize('peer', _artifact));
       await rig.carrier.entered[0].future;
       final outer = Zone.current;

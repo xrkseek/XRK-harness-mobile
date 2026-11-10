@@ -20,7 +20,7 @@ import 'island_messages.dart';
 import 'island_skeleton.dart';
 import 'island_theme.dart';
 
-/// Probe islands: the size DSH Web lays itself out for, off screen.
+/// Probe islands: the size XRK Web lays itself out for, off screen.
 abstract final class IslandProbeMetrics {
   static const width = 360.0;
   static const height = 640.0;
@@ -32,7 +32,7 @@ abstract final class IslandPanelMetrics {
   static const maxHeight = 360.0;
 }
 
-/// A web island in a native seat (§6): DSH Web with only [spec]'s slot
+/// A web island in a native seat (§6): XRK Web with only [spec]'s slot
 /// showing, in one of three forms —
 ///
 /// - [IslandForm.page]: fills the box it gets; the page scrolls itself.
@@ -44,7 +44,7 @@ abstract final class IslandPanelMetrics {
 ///   whatever is underneath.
 ///
 /// Hidden behind a skeleton until the slot is on screen; [fallback] (the
-/// seat's "open in DSH Web" row) when it can't be: no recipe, no room, no
+/// seat's "open in XRK Web" row) when it can't be: no recipe, no room, no
 /// `ready` in time, the slot missing or empty.
 class IslandView extends ConsumerStatefulWidget {
   const IslandView({
@@ -306,7 +306,7 @@ class _IslandViewState extends ConsumerState<IslandView> {
           child: IslandHitRegion(rects: handle.hitRects, child: web),
         ),
       ),
-      // Laid out at a phone's size (DSH Web boots as it would on screen),
+      // Laid out at a phone's size (XRK Web boots as it would on screen),
       // clipped to nothing and see-through.
       IslandForm.probe => SizedBox.square(
         dimension: 1,
@@ -330,7 +330,7 @@ class _IslandViewState extends ConsumerState<IslandView> {
     IslandForm.overlay || IslandForm.probe => const SizedBox.shrink(),
   };
 
-  /// The WebView laid out at its real size from the start (DSH Web lays
+  /// The WebView laid out at its real size from the start (XRK Web lays
   /// itself out for it while hidden), the skeleton over it until ready.
   Widget _stack(Widget web, bool ready, {int skeletonRows = 6}) => Stack(
     fit: StackFit.expand,
@@ -365,7 +365,7 @@ class _Closed extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),

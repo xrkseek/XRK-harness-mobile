@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/diagnostics/app_error_log.dart';
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/diagnostics/app_error_log.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../diagnostics/support/zip_reader.dart';
 import '../remote/support/ready_mux.dart';
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   final _ready = ReadyMux();
   final watches = <StreamController<DshEvent>>[];
@@ -92,14 +92,14 @@ void main() {
     final client = _Client();
     final container = _start(client);
     client.watches.single.addError(
-      const DshRemoteException('gateway/internal', 'synthetic follow failure token=fixture-follow-secret'),
+      const XrkRemoteException('gateway/internal', 'synthetic follow failure token=fixture-follow-secret'),
       StackTrace.fromString('synthetic-follow.dart:41'),
     );
     await tester.pump();
 
     final records = _sessionErrors();
     expect(records, isNotEmpty);
-    expect(records.last.message, contains('DshRemoteException(gateway/internal)'));
+    expect(records.last.message, contains('XrkRemoteException(gateway/internal)'));
     expect(records.last.message, isNot(contains('fixture-follow-secret')));
     expect(records.last.stack, contains('synthetic-follow.dart:41'));
     final state = container.read(chatProvider('S'));
@@ -112,7 +112,7 @@ void main() {
     final client = _Client();
     _start(client);
     final before = _sessionErrors();
-    client.watches.single.addError(const DshRemoteException('session/not-found', 'synthetic deleted session'));
+    client.watches.single.addError(const XrkRemoteException('session/not-found', 'synthetic deleted session'));
     await tester.pump();
     expect(_sessionErrors(), before);
   });
@@ -123,7 +123,7 @@ void main() {
     final old = client.watches.single;
     final before = _sessionErrors();
     old.add(const SessionErrorEvent('S', 'synthetic stale host failure'));
-    old.addError(const DshRemoteException('gateway/internal', 'synthetic stale follow failure'));
+    old.addError(const XrkRemoteException('gateway/internal', 'synthetic stale follow failure'));
     container.invalidate(chatProvider('S'));
     container.read(chatProvider('S'));
     await tester.pump(Duration.zero);

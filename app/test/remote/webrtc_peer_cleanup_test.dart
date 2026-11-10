@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/remote/relay/webrtc_peer.dart';
-import 'package:dsh_remote/dsh_remote.dart';
+import 'package:xrk_app/remote/relay/webrtc_peer.dart';
+import 'package:xrk_remote/xrk_remote.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

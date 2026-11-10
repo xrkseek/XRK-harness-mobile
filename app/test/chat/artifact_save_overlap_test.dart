@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/chat/widgets/artifact_card.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/chat/widgets/artifact_card.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'support/harness.dart';
 
-const _channel = MethodChannel('dsh/files');
+const _channel = MethodChannel('xrk/files');
 const _artifacts = [
   Artifact(path: '/home/me/a.zip', origin: ArtifactOrigin.linked, turn: 1),
   Artifact(path: '/home/me/b.zip', origin: ArtifactOrigin.linked, turn: 1),
@@ -32,7 +32,7 @@ class _Downloads extends DshCarrier {
   @override
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
     final index = _artifacts.indexWhere((artifact) => artifact.path == args['path']);
-    if (index < 0) return const RpcError(DshRemoteException('gateway/not-found', 'unknown path'));
+    if (index < 0) return const RpcError(XrkRemoteException('gateway/not-found', 'unknown path'));
     final bytes = utf8.encode('file-$index');
     final stat = {'absolutePath': _artifacts[index].path, 'version': 'v1', 'bytes': bytes.length};
     if (endpoint == 'workspaceFiles/stat') return RpcOk(stat);
@@ -41,7 +41,7 @@ class _Downloads extends DshCarrier {
       await release[index].future;
       return RpcOk({...stat, 'offset': 0, 'data': base64Encode(bytes), 'eof': true});
     }
-    return const RpcError(DshRemoteException('gateway/not-found', 'unused endpoint'));
+    return const RpcError(XrkRemoteException('gateway/not-found', 'unused endpoint'));
   }
 
   @override
@@ -93,7 +93,7 @@ void main() {
     usePhoneView(tester);
     final cache = Directory.systemTemp.createTempSync('artifact-save-overlap-');
     late _Downloads downloads;
-    late DshClient client;
+    late XrkClient client;
     late HostConnection remote;
     late _ObservedFiles files;
     late List<Completer<Map<String, Object?>>> nativeEntered;
@@ -103,7 +103,7 @@ void main() {
     // the client owning stream-close futures must be created in the real zone.
     await tester.runAsync(() async {
       downloads = _Downloads();
-      client = DshClient.withCarrier(downloads);
+      client = XrkClient.withCarrier(downloads);
       remote = HostConnection(client: client, label: 'remote', isLocal: false, hostId: 'remote');
       nativeEntered = List.generate(2, (_) => Completer<Map<String, Object?>>());
       nativeRelease = List.generate(2, (_) => Completer<void>());

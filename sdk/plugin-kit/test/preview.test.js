@@ -28,7 +28,7 @@ test('panel diagnostics and snapshot use the supplied data, width and text scale
 })
 
 test('wrapped tool cards do not acquire an unsupported data model', t => {
-  const f = files(t, { 'dsh-go/view': { type: 'metric', label: 'Count', value: { $: 'data.count' } } })
+  const f = files(t, { 'xrk-mobile/view': { type: 'metric', label: 'Count', value: { $: 'data.count' } } })
   const job = prepare([f.view, '--data', f.data, '--out', f.out])
   assert.equal(job.request.budget, 'toolCard')
   assert.equal(job.request.data, null)

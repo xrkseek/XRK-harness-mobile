@@ -27,7 +27,7 @@ $$
 /// Headings, paragraphs and mixed CJK / Latin text.
 const headingsReply = '''
 # 一级标题 Heading 1
-正文段落：DeepSeek Harness（DSH）把模型、工具和工作区放在一起，**粗体**、*斜体*、~~删除线~~、`inline code` 混排时行高不跳。
+正文段落：XRK-Harness（DSH）把模型、工具和工作区放在一起，**粗体**、*斜体*、~~删除线~~、`inline code` 混排时行高不跳。
 
 ## 二级标题
 中文与 English 混排，全角标点「引号」、（括号）、——破折号……都不应被挤压。
@@ -89,7 +89,7 @@ const tableReply = '''
 const codeReply = '''
 ```dart
 void main() {
-  final greeting = 'Hello, DSH!'; // 一行很长的注释，用来检查横向滚动是否正常而不会把整个页面撑宽
+  final greeting = 'Hello, XRK!'; // 一行很长的注释，用来检查横向滚动是否正常而不会把整个页面撑宽
   print(greeting);
 }
 ```

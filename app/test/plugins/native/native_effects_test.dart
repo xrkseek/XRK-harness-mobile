@@ -1,8 +1,8 @@
 // The effect whitelist (protocol §5) and the 3 s window (§4.4): what a
 // plugin may ask for, in either written form, and when it may still run.
 
-import 'package:dsh_app/plugins/native/native_effects.dart';
-import 'package:dsh_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/native/native_effects.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 List<NativeEffect> parse(List<Map<String, Object?>> raw, [List<NativeIssue>? issues]) =>

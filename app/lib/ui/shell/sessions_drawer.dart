@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
@@ -59,7 +59,7 @@ export '../../state/drawer_view_state.dart' show SessionDay, sessionDayOf;
 export 'drawer/drawer_destination.dart';
 export 'drawer/session_tile.dart' show SessionTile;
 
-/// Display title for a session: DSH's generated title (a generation
+/// Display title for a session: XRK's generated title (a generation
 /// request's header left out), else a neutral fallback.
 String sessionTitle(SessionSummary s) {
   final t = s.title?.trim();
@@ -946,7 +946,7 @@ class IdentityBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final host = ref.watch(activeHostProvider);
     final name = ref.watch(hostNameProvider(host)) ?? (host.isLocal ? l10n.commonThisPhone : l10n.commonRemoteHost);
     final view = watchHostStatus(ref, host);

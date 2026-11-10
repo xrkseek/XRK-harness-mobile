@@ -2,19 +2,19 @@
 // (未就绪 / safe mode / remote host), permission rows with fixes, the test read,
 // a running task, the recent log and live status events.
 
-import 'package:dsh_app/state/compose_inbox.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/overview_card.dart';
-import 'package:dsh_app/ui/phone/action_log_page.dart';
-import 'package:dsh_app/ui/phone/dnd_mode_page.dart';
-import 'package:dsh_app/ui/phone/phone_control_screen.dart';
-import 'package:dsh_app/ui/phone/phone_background_guide.dart';
-import 'package:dsh_app/ui/phone/phone_widgets.dart';
-import 'package:dsh_app/ui/phone/restricted_settings_guide.dart';
-import 'package:dsh_app/ui/settings/background_guide_page.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/compose_inbox.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/overview_card.dart';
+import 'package:xrk_app/ui/phone/action_log_page.dart';
+import 'package:xrk_app/ui/phone/dnd_mode_page.dart';
+import 'package:xrk_app/ui/phone/phone_control_screen.dart';
+import 'package:xrk_app/ui/phone/phone_background_guide.dart';
+import 'package:xrk_app/ui/phone/phone_widgets.dart';
+import 'package:xrk_app/ui/phone/restricted_settings_guide.dart';
+import 'package:xrk_app/ui/settings/background_guide_page.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,7 +33,7 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   group('问 AI', () {
-    const question = '/dsh-go-guide 手机操控是怎么工作的？有什么风险？';
+    const question = '/xrk-guide 手机操控是怎么工作的？有什么风险？';
     String? queued(WidgetTester tester) =>
         ProviderScope.containerOf(tester.element(find.byType(MaterialApp)))
             .read(composeInboxProvider)
@@ -175,7 +175,7 @@ void main() {
     testWidgets('remote host: explains it only works on the local engine', (tester) async {
       await pumpPhone(tester, const PhoneControlScreen(), host: const HostRef.ssh('lab'));
       expect(find.text('当前连的是远程主机'), findsOneWidget);
-      expect(find.textContaining('「实验室服务器」上的 DSH 操作不了这台手机'), findsOneWidget);
+      expect(find.textContaining('「实验室服务器」上的 XRK 操作不了这台手机'), findsOneWidget);
       expect(find.text('只在本机引擎可用'), findsOneWidget);
     });
   });

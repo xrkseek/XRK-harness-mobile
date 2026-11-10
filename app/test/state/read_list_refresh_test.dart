@@ -1,17 +1,17 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/providers_state.dart';
-import 'package:dsh_app/state/read_list_cache.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/providers_state.dart';
+import 'package:xrk_app/state/read_list_cache.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -68,11 +68,11 @@ class ListHost {
     carrier.handlers['pluginManager/listBundles'] = (_) => request('plugins', bundles(label));
     carrier.handlers['session/modelCatalog'] = (_) => request('models', models(label));
     carrier.handlers['session/list'] = (_) => request('sessions', sessions(label));
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
   }
   final String label;
   final carrier = FakePluginCarrier();
-  late final DshClient client;
+  late final XrkClient client;
   final paused = <String>{};
   final requests = <String, List<Completer<Object?>>>{};
   HostConnection get connection => HostConnection(client: client, isLocal: true);
@@ -197,12 +197,12 @@ void main() {
     await c.read(installedPluginsProvider.future);
     host.paused.add('plugins');
     final old = c.read(installedPluginsProvider.notifier).refresh();
-    final observed = expectLater(old, throwsA(isA<DshRemoteException>()));
+    final observed = expectLater(old, throwsA(isA<XrkRemoteException>()));
     final other = ListHost('B');
     addTearDown(other.client.close);
     c.read(switchConnectionProvider.notifier).set(other.connection);
     await c.read(installedPluginsProvider.future);
-    host.requests['plugins']!.single.completeError(const DshRemoteException('test/failure', 'late'));
+    host.requests['plugins']!.single.completeError(const XrkRemoteException('test/failure', 'late'));
     await observed;
     expect(c.read(installedPluginsProvider).hasError, isFalse);
     expect(c.read(pluginListViewProvider).readOnly, isFalse);

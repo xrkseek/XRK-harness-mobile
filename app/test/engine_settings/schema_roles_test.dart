@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/field_sheets.dart';
-import 'package:dsh_app/ui/engine_settings/schema_fields.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/field_sheets.dart';
+import 'package:xrk_app/ui/engine_settings/schema_fields.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -40,7 +40,7 @@ FakeSettingsHost roleHost(String key, Object? value) {
 Future<void> openRole(WidgetTester tester, String key, Object? value) => pumpPage(
   tester,
   const EngineSettingsPage(ns: 'roles'),
-  overrides: engineOverrides(DshClient.withCarrier(roleHost(key, value))),
+  overrides: engineOverrides(XrkClient.withCarrier(roleHost(key, value))),
 );
 
 void main() {
@@ -143,7 +143,7 @@ void main() {
       await pumpPage(
         tester,
         const EngineSettingsPage(ns: 'roles'),
-        overrides: engineOverrides(DshClient.withCarrier(roleHost('tint', '#336699'))),
+        overrides: engineOverrides(XrkClient.withCarrier(roleHost('tint', '#336699'))),
         brightness: brightness,
       );
       tester.view.physicalSize = const Size(640, 1800);

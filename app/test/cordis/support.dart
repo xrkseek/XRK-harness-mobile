@@ -1,10 +1,10 @@
-// Inventory rows shaped like `dynamicCordisRunner/inventory` on DSH
+// Inventory rows shaped like `dynamicCordisRunner/inventory` on XRK
 // 0.2.1-rc.2 (`DynamicCordisInventoryRow`), and the pages' fixed overrides.
 
-import 'package:dsh_app/state/cordis_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/cordis_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../shell/golden_harness.dart' show FakeCurrentSession, FakeSessions;

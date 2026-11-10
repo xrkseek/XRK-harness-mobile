@@ -1,4 +1,4 @@
-// Where an open lands in DSH Web: the names a plugin card target carries
+// Where an open lands in XRK Web: the names a plugin card target carries
 // (web_target.dart), and that the landing waits out a load that failed
 // (web_view_page.dart): the WebView finishes its own error page too, and the
 // one landing an open gets was spent there, so 重试 came back on the home page.
@@ -7,9 +7,9 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_app/ui/web/web_view_page.dart';
-import 'package:dsh_client/dsh_client.dart' show PluginBundle;
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_app/ui/web/web_view_page.dart';
+import 'package:xrk_client/xrk_client.dart' show PluginBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 

@@ -1,6 +1,6 @@
 // Codex CLI's pet.json (openai/codex 33b3f80a, pets/model.rs) and the
 // OpenAI Work Pets 0.1.6 fixed v2 atlas. Their control/state machines differ:
-// this adapter retains the source tracks but binds them to DSH's states.
+// this adapter retains the source tracks but binds them to XRK's states.
 
 import 'dart:typed_data';
 

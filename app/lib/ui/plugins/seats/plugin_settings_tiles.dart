@@ -1,5 +1,5 @@
 // 设置 › 引擎与扩展, under 「插件」: a row per settings section and general
-// settings item the host's plugins add to DSH Web (`settings.section`,
+// settings item the host's plugins add to XRK Web (`settings.section`,
 // `settings.general.item`; docs/design/plugin-seams.md §3). Nothing without
 // them, so the hub is unchanged.
 

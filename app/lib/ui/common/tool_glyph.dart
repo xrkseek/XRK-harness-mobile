@@ -6,9 +6,9 @@ import '../../l10n/l10n.dart';
 import '../theme/app_icons.dart';
 import '../theme/semantic_colors.dart';
 
-/// DSH 工具名 → 视觉类别 / 图标 / 默认中文动词。
+/// XRK 工具名 → 视觉类别 / 图标 / 默认中文动词。
 ///
-/// 名字来自 `@deepseek-ai/dsh` 0.2.0-rc.2 内置工具包:
+/// 名字来自 `@xrkseek/harness-cli` 0.2.0-rc.2 内置工具包:
 /// dsh-tool-bash、-pwsh、-jobs、-fs、-fs-search、-str-replace-editor、-web、
 /// -todo、-goal、-ask-user、-subagent、-subagent-control、-workflow、-skill、
 /// -present、-ralph。MCP 工具形如 `mcp__server__tool`。
@@ -86,17 +86,17 @@ abstract final class ToolGlyphs {
 /// 工具类别小图标块:连续圆角方块 + 类别色。
 ///
 /// 方块而不是圆:圆形头像是"人"的语言,工具是"操作"。
-/// 尺寸默认 22,对齐 DSH 官方 24px 单行工具行;卡片头可以用 32。
+/// 尺寸默认 22,对齐 XRK 官方 24px 单行工具行;卡片头可以用 32。
 class ToolGlyph extends StatelessWidget {
   const ToolGlyph({super.key, required this.name, this.size = 22});
 
-  /// DSH 工具名(如 `bash`、`str_replace_editor`、`mcp__github__search`)。
+  /// XRK 工具名(如 `bash`、`str_replace_editor`、`mcp__github__search`)。
   final String name;
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    final (background, foreground) = DshColors.of(context).tool(ToolGlyphs.toneFor(name));
+    final (background, foreground) = XrkColors.of(context).tool(ToolGlyphs.toneFor(name));
     return SizedBox.square(
       dimension: size,
       child: DecoratedBox(

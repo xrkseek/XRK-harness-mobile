@@ -1,8 +1,8 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:dsh_app/state/agents_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/agents_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _CountedSessions extends MapView<String, SessionSummary> {

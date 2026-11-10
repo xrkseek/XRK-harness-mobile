@@ -1,6 +1,6 @@
 # 插件界面 v3：兼容网页插件，给原生插件更多位置和组件
 
-> 2026-10-28。基于 main `2e37d13`（DSH Go，内置 DSH 0.2.1-rc.4）。在 [plugin-seams.md](plugin-seams.md)（接缝规格：「原生适配器优先，网页岛兜底」）和 [native-plugins.md](native-plugins.md) / [-protocol.md](native-plugins-protocol.md) / [-views.md](native-plugins-views.md)（原生协议 NA v1.3、视图 v2）上扩展，不另起炉灶。审美规则沿用 [polish-guide.md](polish-guide.md)、[page-design.md](page-design.md) 和作者侧的 [design-rules.md](../plugins/design-rules.md)。
+> 2026-10-28。基于 main `2e37d13`（XRK Go，内置 XRK 0.2.1-rc.4）。在 [plugin-seams.md](plugin-seams.md)（接缝规格：「原生适配器优先，网页岛兜底」）和 [native-plugins.md](native-plugins.md) / [-protocol.md](native-plugins-protocol.md) / [-views.md](native-plugins-views.md)（原生协议 NA v1.3、视图 v2）上扩展，不另起炉灶。审美规则沿用 [polish-guide.md](polish-guide.md)、[page-design.md](page-design.md) 和作者侧的 [design-rules.md](../plugins/design-rules.md)。
 >
 > 调研数据没有入库（复现方法见附录 A）。下载的包逐个放进新建的空目录，只在内存里读 tarball 做文本匹配，不解压、不执行。
 >
@@ -13,7 +13,7 @@
 | 问题 | 结论 |
 |---|---|
 | 网页插件实际在用什么 | 87 个 slot 被用到。前五：设置分区 39 %、全屏浮层 19 %、侧栏底部 12 %、插件配置 9 %、输入框上方 8 %。聊天页那 7 个 slot 合计 31 % 的插件在用，却一个都没接线（§2） |
-| 一处正在发生的故障 | 月下载 4.4 万的 `@changfenhuang/dsh-genui` 也用 ```` ```dsh-ui ```` 围栏，但 JSON 格式不同（根节点没有 `type`）。装了它的主机，App 把每一块都画成「原始 JSON + 让它重发」（`dsh_ui_model.dart:491`、`dsh_ui_block.dart:111`）。一个方言适配器就能修（§3.2） |
+| 一处正在发生的故障 | 月下载 4.4 万的 `@changfenhuang/dsh-genui` 也用 ```` ```dsh-ui ```` 围栏，但 JSON 格式不同（根节点没有 `type`）。装了它的主机，App 把每一块都画成「原始 JSON + 让它重发」（`xrk_ui_model.dart:491`、`xrk_ui_block.dart:111`）。一个方言适配器就能修（§3.2） |
 | 兼容怎么做 | 不加新形态，复用已有的整页岛和面板岛：对话视图（7 %）进对话详情「插件」页签；聊天页 7 个 slot 进一个「插件」弹层，和原生 `chat.panel` 面板放在一起；画不了的位置在插件详情里如实列出并给「在网页版打开」，不再静默丢弃（§3） |
 | 给作者什么 | P1 不改协议：`chat.panel` 落地、4 个新组件、`accent: "app"` 跟随用户配色、图标名从 72 个扩到约 140 个。P2 改桥接：＋ 面板工具、对话操作、回合尾注、弹层面板、插件页面板、工具卡交互，以及附图、打开自己的网页面板、打开对话三个效果（§4） |
 | 覆盖能到多少 | 按插件，全部可见 34 % → P1 57 % → P2 67 %，一处都没有 39 % → 20 % → 12 %；按 slot，9 → 17 → 21 个（共 57 个可追加的），按「插件 × slot」用法算 41 % → 64 % → 73 %（§1.3、§6） |
@@ -27,7 +27,7 @@
 | 路 | 插件写什么 | App 怎么画 | 位置 | 主机 |
 |---|---|---|---|---|
 | 网页 slot（接缝） | 网页半侧的 React 组件 | 座位规划：原生适配器 → 网页岛 → 「在网页版打开」→ 隐藏（`seat_planner.dart:136`） | 9 个 slot（§1.2 A 类） | 本机（路由守卫后）、SSH；中转没有网页 |
-| 原生协议 `dshGo`（NA v1.3） | `package.json` 清单 + `ctx.dshGo` | 原生组件：视图 v1 16 种 + v2 24 种 | 胶囊、消息菜单、状态条、面板（对话详情页签、全部功能）；声音、字幕、文件能力 | 本机（桥接）；SSH 等桥接能装 |
+| 原生协议 `xrkGo`（NA v1.3） | `package.json` 清单 + `ctx.xrkGo` | 原生组件：视图 v1 16 种 + v2 24 种 | 胶囊、消息菜单、状态条、面板（对话详情页签、全部功能）；声音、字幕、文件能力 | 本机（桥接）；SSH 等桥接能装 |
 | 不写 App 代码就原生 | 命令、技能、Config schema、工具、`dsh-ui` 围栏、`presentationMeta` | 原生 | 斜杠菜单、设置表单、工具行、工具卡 | 全部 |
 
 协议里已经声明、App 还没画的：面板 `placement: "chat.panel"`。App 解析清单时只留 `session.tab` 和 `features`（`native_model.dart:457`）〔源码〕。
@@ -84,7 +84,7 @@
 
 | 项 | 值 |
 |---|---|
-| 来源 | dshfind 市场索引 `https://api.dshfind.com/market/dsh-index.json`（DSH 自己的插件市场用的同一份，2026-10-28 取），5781 个包 |
+| 来源 | dshfind 市场索引 `https://api.dshfind.com/market/dsh-index.json`（XRK 自己的插件市场用的同一份，2026-10-28 取），5781 个包 |
 | 取到清单 | 5642 个（139 个取不到，多是已下架），读 npmmirror 上索引所列版本的 `package.json` |
 | 带浏览器半侧 | 4116 个（`dsh.client` 或 `exports["./client"]`），全部下载扫描；92 个跳过（tarball 超过 40 MB 或解不开） |
 | 注册了 slot | 3424 个（去掉 `@deepseek-ai/` 官方包）。判据：`inject("<key>")`、`register("<key>")` 或 `name: "<key>"`，只认 rc.4 目录里的 103 个 key |
@@ -129,7 +129,7 @@
 
 **改官方 DOM**：63 % 调 `querySelector`，25 % 用 `MutationObserver`，249 个包用 `data-slot="…"` 选择器去改官方节点（最多的是侧栏底部、`composer.dock`、侧栏本身）。在岛里这些改动落在被隐藏的官方节点上，无害但失效，这一点和接缝规格 §1.3 的结论一致。
 
-**宿主侧**：62 % 自带 HTTP 路由（岛必须在 G1 守卫之后才开，`plugin-seams.md` §9），48 % 有 schemastery Config，34 % 定义工具，6 % 用 `presentationMeta`。**还没有一个包用 `dshGo`**：原生协议的作者生态是零，兼容层要先扛住。
+**宿主侧**：62 % 自带 HTTP 路由（岛必须在 G1 守卫之后才开，`plugin-seams.md` §9），48 % 有 schemastery Config，34 % 定义工具，6 % 用 `presentationMeta`。**还没有一个包用 `xrkGo`**：原生协议的作者生态是零，兼容层要先扛住。
 
 **声明式 UI 方言**：至少四个包在对话里画生成式界面。`@changfenhuang/dsh-genui`（月 4.4 万，按下载排第 22）用 ```` ```dsh-ui ```` 围栏和自己的约 50 种组件；`dsh-genui`（另一位作者，月 2 万）、`@valuz/dsh-valuz-genui`（A2UI）、`dsh-plugin-genui`（React 小应用）都不用这个围栏名。只有第一个和 App 撞名（§3.2）。
 
@@ -157,15 +157,15 @@
 
 ### 3.2 `dsh-ui` 方言：genui（P1）
 
-**现象**〔源码〕：genui 的围栏是 `{"title"?, "gap"?, "items": [...]}`，根节点没有 `type`；组件叫 `stat`、`card`、`col`、`keyvalue`、`hero`、`image-group`……App 的解析器在根节点报「缺少 type」（`dsh_ui_model.dart:491`），整块降级成 `DshUiFallback`：一行小字、整段原始 JSON、一个「让它重发」（`dsh_ui_block.dart:111`）。用户点了「让它重发」，模型会被要求改格式，而 genui 自己的校验器说这块是对的。
+**现象**〔源码〕：genui 的围栏是 `{"title"?, "gap"?, "items": [...]}`，根节点没有 `type`；组件叫 `stat`、`card`、`col`、`keyvalue`、`hero`、`image-group`……App 的解析器在根节点报「缺少 type」（`xrk_ui_model.dart:491`），整块降级成 `XrkUiFallback`：一行小字、整段原始 JSON、一个「让它重发」（`xrk_ui_block.dart:111`）。用户点了「让它重发」，模型会被要求改格式，而 genui 自己的校验器说这块是对的。
 
 **做法**：
 
 1. 识别：围栏语言是 `dsh-ui`，并且根是没有 `type`、带 `items` 数组的对象，或任一节点的 `type` 只属于 genui 词汇表 → 方言 `genui`。App 自己的格式根节点必有 `type`，两者不会混淆。
-2. 映射成插件视图 v2 的节点树，用插件视图渲染器的**只读档**画（和工具卡一样不能 invoke），不带插件署名（这是模型输出，和原生 `dsh-ui` 卡同级）。卡片本身就是 v2 的不透明内容底色（圆角 20、内边距 16，`dsh_ui_dialect_card.dart`），不再套玻璃卡：套了会在深色下露出第二层底。
+2. 映射成插件视图 v2 的节点树，用插件视图渲染器的**只读档**画（和工具卡一样不能 invoke），不带插件署名（这是模型输出，和原生 `dsh-ui` 卡同级）。卡片本身就是 v2 的不透明内容底色（圆角 20、内边距 16，`xrk_ui_dialect_card.dart`），不再套玻璃卡：套了会在深色下露出第二层底。
 3. 画不了的节点原位一行「在网页版查看」（浅底、次要色，不是错误样式）；整块里一个都画不了才降级，降级时**不出现「让它重发」**。
 4. 上限按面板档（32 KiB、120 节点、8 层）：genui 自己的预算比模型卡大，按模型卡档会大面积截断。
-5. 复制、分享、导出照旧用 `title` 一行摘要（`dshUiPlainText`）。
+5. 复制、分享、导出照旧用 `title` 一行摘要（`xrkUiPlainText`）。
 
 | genui | 原生 | 备注 |
 |---|---|---|
@@ -185,7 +185,7 @@
 | `copy` / `link` | 带复制键的代码块 / 只有文字 | |
 | `echart` `plot` `svg` `diagram` `scene3d` `audio` `video` `file-tree` `blocks` `arrow` `icon` `breadcrumb` | 「在网页版查看」占位；`breadcrumb` 画成一行文字 | |
 
-实现落在新文件 `app/lib/ui/chat/dsh_ui/dsh_ui_dialect_genui.dart`（纯函数 `genuiToPluginView(Object? json) → (Object? view, List<DshUiIssue> issues)`），`parseDshUi` 只多一个分支。夹具用自己按 genui `SKILL.md` 规格写的样例，不拷对方代码。
+实现落在新文件 `app/lib/ui/chat/xrk_ui/xrk_ui_dialect_genui.dart`（纯函数 `genuiToPluginView(Object? json) → (Object? view, List<XrkUiIssue> issues)`），`parseXrkUi` 只多一个分支。夹具用自己按 genui `SKILL.md` 规格写的样例，不拷对方代码。
 
 长期：向 genui 作者提议在根上加 `"dialect": "genui"`，App 优先认这个标记。
 
@@ -231,7 +231,7 @@ rc.4 里，插件可以给对话注册一个「View」（和 Chat、Trajectory �
 | 尺寸 | 圆角 28；内容左右 20（两侧相等）；起始半高，可拉到全高；宽屏最宽 640 居中 |
 | 顺序 | 原生面板按插件名排序；网页一节固定在最后，一个岛装下所有网页插件 |
 | 岛 | 打开弹层才建，关掉后 30 秒回收（`IslandBudgetRules.hiddenGrace`）；预算不够、守卫没生效、8 秒（`IslandTiming.sheetReady`；实测一般 0.8–3.4 s，最慢 11.3 s，弹层只是看一眼，不等更久）没 `ready` → 换成一行「在网页版打开」 |
-| 一个岛怎么装 7 个 slot | App 侧的键 `dsh-go.chat`（不是 DSH 的 slot），配方 `"slots": [7 个]`、`"stretch": "common"`、`"ready": "sheet"`。桥接一次遮掉 7 个 slot 的官方条目（`#dsh-go-island=a,b,…`）；`island.js` 取有内容的那几个 slot 的最近公共盒子当框，框里只留通往它们的路径，其余移出布局，于是条目按页面顺序竖排（先头部的，后输入框的） |
+| 一个岛怎么装 7 个 slot | App 侧的键 `xrk-mobile.chat`（不是 XRK 的 slot），配方 `"slots": [7 个]`、`"stretch": "common"`、`"ready": "sheet"`。桥接一次遮掉 7 个 slot 的官方条目（`#xrk-mobile-island=a,b,…`）；`island.js` 取有内容的那几个 slot 的最近公共盒子当框，框里只留通往它们的路径，其余移出布局，于是条目按页面顺序竖排（先头部的，后输入框的） |
 | 什么时候建岛 | 7 个 slot 的每个第三方条目单独规划都是岛（本机引擎 + 守卫、Tier B）、没有一项被 `ui.json` 改成 `web` 或隐藏，且预算放得下这一个岛；否则整块是一行「在网页版打开」（岛里不能只藏某个插件的条目） |
 | 署名 | 原生面板照旧每张卡带插件名；岛里条目没有逐条标记，所以在岛上方列出来源包名 |
 | 用户控制 | ui.json `plugins.seats` 照旧能隐藏某插件或改成 `web` |
@@ -251,7 +251,7 @@ rc.4 里，插件可以给对话注册一个「View」（和 Chat、Trajectory �
 
 ### 3.6 网页组件的意图 → 原生
 
-能自动接的就是 §3.2–3.4。剩下的靠作者：给网页插件作者一张对照表（新作者文档 `docs/plugins/from-web.md`），告诉他们加几行 `dshGo` 就有原生版本。这张表也是 P2 新插槽的来源。
+能自动接的就是 §3.2–3.4。剩下的靠作者：给网页插件作者一张对照表（新作者文档 `docs/plugins/from-web.md`），告诉他们加几行 `xrkGo` 就有原生版本。这张表也是 P2 新插槽的来源。
 
 | 网页插件在做的事 | slot · 常见组件 | 原生对应 | 作者要写的 |
 |---|---|---|---|
@@ -261,7 +261,7 @@ rc.4 里，插件可以给对话注册一个「View」（和 Chat、Trajectory �
 | 会话头部的按钮 | `session.header.actions` / `utilities` | 对话操作（P2 `session.actions`） | 清单 + `on(id)` |
 | 另一种看对话的方式 | `conversation.view` | 对话详情页签面板 `placement: "session.tab"`（已有） | `panel(id)` |
 | 侧栏面板、右栏页签 | `main` + `panellist`、`sidebar.right.pane.tab` | 面板 `features` / `session.tab`（已有） | `panel(id)` |
-| 工具结果卡 | `tool.call.toolview` | 工具卡（已有） | `presentationMeta` 里加 `"dsh-go/view"` |
+| 工具结果卡 | `tool.call.toolview` | 工具卡（已有） | `presentationMeta` 里加 `"xrk-mobile/view"` |
 | 消息旁的按钮 | `assistant-actions` | 消息菜单（已有） | 清单 + `on(id)` |
 | 回合尾的数字 | `turnTail` | 回合尾注（P2 `turn.note`） | `turnNote(id)` |
 | 弹窗、提示 | `shell.overlay` · Modal / Toast | 弹层面板（P2 `presentation: "sheet"`）、`toast` 效果 | — |
@@ -269,25 +269,25 @@ rc.4 里，插件可以给对话注册一个「View」（和 Chat、Trajectory �
 | 系统通知 | Notification API | 应用内通知（P2 `notify`） | — |
 | 输入框里插字、附图 | `inputActions` | `insert`（已有）、`attach`（P2） | — |
 
-SDK 配套一个检查：`dsh-go-plugin-check --from-web <插件目录>` 读出它的网页 slot，逐条给出上表的建议（P2）。
+SDK 配套一个检查：`xrk-plugin-check --from-web <插件目录>` 读出它的网页 slot，逐条给出上表的建议（P2）。
 
 ### 3.7 网页岛本身的体验
 
 | 改进 | 期 | 内容 |
 |---|---|---|
 | rc.4 配方复核 | P1 | rc.4 改了会话头部（View 标签行、「更多」）。`recipes.json` 的配方在 rc.4 运行时上逐个跑一遍（模拟器），`island_logic_test.dart` 补 rc.4 的用例 |
-| 给网页作者的环境标记 | P1（只写文档） | 岛里 `<html>` 已有 `data-dsh-go-island` 和 `data-dsh-go-island-form`（page / panel），以及 `--dsh-go-island-top` 等 CSS 变量；写进 `web-panels.md`，配一节「让网页插件在 DSH Go 里好看」：用 `--dsw-*` token、不写死宽度、360 宽下自测 |
+| 给网页作者的环境标记 | P1（只写文档） | 岛里 `<html>` 已有 `data-xrk-mobile-island` 和 `data-xrk-mobile-island-form`（page / panel），以及 `--xrk-mobile-island-top` 等 CSS 变量；写进 `web-panels.md`，配一节「让网页插件在 XRK Go 里好看」：用 `--dsw-*` token、不写死宽度、360 宽下自测 |
 | 岛内浮层 | P2 | 插件自己页面弹出的对话框、提示挂在 `shell.overlay` 里，在岛里被一并隐藏。做法同现有 body 弹层（`island.js` `markLayers`）：岛内点按后 3 秒内出现在 `[data-slot="shell.overlay"]` 下的新节点放出来；本机由桥接遮掉官方占用者 |
-| 只读环境信息 | P2 | `window.__dshGoIsland.info()` → `{app, form, theme, textScale}`，只读，不加任何能力 |
+| 只读环境信息 | P2 | `window.__xrkGoIsland.info()` → `{app, form, theme, textScale}`，只读，不加任何能力 |
 | 预热 | 不做 | 一个岛约 200 MB，提前建不划算；首开骨架 1–3 秒维持现状 |
 
 ### 3.8 能力探测与降级链
 
 | 方向 | 怎么知道对方能做什么 | 做不到时 |
 |---|---|---|
-| App → 网页插件的一个占用者 | 座位规划器按顺序试：原生适配器（schema 表单、Cordis、同位置的 `dshGo` 原生面板）→ 岛（这个 slot 支持的形态、守卫、占用表、内存预算、5 秒就绪门）→ 「在网页版打开」 | 都不行就隐藏，并在插件详情「网页版界面」里列出（§3.5） |
-| App → `dshGo` 插件 | 请求带 `caps`：`surfaces`、`components`、`features`、App 版本 | 插件自己用 `adaptView` / `hasComponent` 降级；不认识的组件画占位，不认识的 surface 忽略 |
-| 网页插件 → 自己是不是在 App 的岛里 | `html[data-dsh-go-island]`、`data-dsh-go-island-form`（P1 写进文档），P2 加只读 `info()` | 不在岛里就照常是网页版 |
+| App → 网页插件的一个占用者 | 座位规划器按顺序试：原生适配器（schema 表单、Cordis、同位置的 `xrkGo` 原生面板）→ 岛（这个 slot 支持的形态、守卫、占用表、内存预算、5 秒就绪门）→ 「在网页版打开」 | 都不行就隐藏，并在插件详情「网页版界面」里列出（§3.5） |
+| App → `xrkGo` 插件 | 请求带 `caps`：`surfaces`、`components`、`features`、App 版本 | 插件自己用 `adaptView` / `hasComponent` 降级；不认识的组件画占位，不认识的 surface 忽略 |
+| 网页插件 → 自己是不是在 App 的岛里 | `html[data-xrk-mobile-island]`、`data-xrk-mobile-island-form`（P1 写进文档），P2 加只读 `info()` | 不在岛里就照常是网页版 |
 | 同一个包两边都有 | 原生优先：对话详情页签和全部功能已经是这样（`seat_planner.dart` 里 `nativePanelId` 那段）；聊天页弹层 P1 先两样都显示，P2 由桥接在岛模式下把已原生化的包的网页条目一并遮掉 | ui.json `plugins.seats` 可以反过来指定 `web` |
 
 ## 4. 给作者的新能力
@@ -348,7 +348,7 @@ SDK 配套一个检查：`dsh-go-plugin-check --from-web <插件目录>` 读出�
 
 ```js
 // 清单："turn.note": [{ "id": "cost" }]
-ctx.dshGo.turnNote('cost', (scope, emit) =>
+ctx.xrkGo.turnNote('cost', (scope, emit) =>
   watchTurnCosts(scope.sessionId, (costs) =>          // costs: [{ turnId, yuan }]
     emit(Object.fromEntries(costs.map((c) => [c.turnId, { text: `¥${c.yuan.toFixed(2)}`, tone: 'muted' }])))))
 ```
@@ -367,7 +367,7 @@ ctx.dshGo.turnNote('cost', (scope, emit) =>
 #### P2：`notify`
 
 ```js
-ctx.dshGo.notify('done', { title: '日报已生成', body: '12 条要点，点开查看', open: 'panel:report' })
+ctx.xrkGo.notify('done', { title: '日报已生成', body: '12 条要点，点开查看', open: 'panel:report' })
 ```
 
 - 清单 `"notify": [{ "id": "done" }]`。标题 ≤ 24、正文 ≤ 80 字；`open` 只能是本插件面板或 `session:<id>`。
@@ -443,7 +443,7 @@ owner 举的例子里，**已经有的**：列表 `list`、网格 `grid`、标�
 
 | 项 | 期 | 内容 |
 |---|---|---|
-| `accent: "app"` | P1 | 根节点写 `"accent": "app"`，强调色跟随用户在 设置 › 主题 选的配色：取配色的浅色主色（`AppAccent.seed`），深色那份和任何请求色一样由对比度搜索推出，照常过 ≥ 4.5:1 的校正。App 换配色时设 `DshUiAppAccent`，插件视图的解析缓存随之作废，界面跟着变，和功能磁贴一个逻辑（page-design §2）。不改缺省值：不写 `accent` 的老视图仍是蓝色。SDK 离线检查按 App 默认的雾蓝算 |
+| `accent: "app"` | P1 | 根节点写 `"accent": "app"`，强调色跟随用户在 设置 › 主题 选的配色：取配色的浅色主色（`AppAccent.seed`），深色那份和任何请求色一样由对比度搜索推出，照常过 ≥ 4.5:1 的校正。App 换配色时设 `XrkUiAppAccent`，插件视图的解析缓存随之作废，界面跟着变，和功能磁贴一个逻辑（page-design §2）。不改缺省值：不写 `accent` 的老视图仍是蓝色。SDK 离线检查按 App 默认的雾蓝算 |
 | 图标名扩充 | P1 | 72 个扩到 162 个（`native_icons.dart`）：编辑与分享、状态、版式、文件与媒体、Agent 与工作、时间、人与消息（含微信、QQ、Telegram、Discord，给通道类插件）、设备与主机、外观。全部取 App 已有的 `AppIcons` 角色（Phosphor Regular），图标字体不动；清单（胶囊、菜单、面板）和视图（列表行、按钮）用同一张表，SDK 的 `view.schema.json` 列同一份。**不收**锁、钥匙、盾牌、指纹、审批、权限这类安全语义的图标，免得插件拼出像授权的界面。天气、交通这类要新画字形的，等有插件要再加 |
 | 表格列类型 | P2 | 见 §4.2 |
 | 不开放 | — | 字体、任意字号 / 行高 / 圆角 / 宽高 / 定位、阴影、渐变、透明度、动画参数、外链图片、SVG（`native-plugins-views.md` §7.3，理由不变） |
@@ -477,7 +477,7 @@ owner 举的例子里，**已经有的**：列表 `list`、网格 `grid`、标�
 | `notify` | 首次询问、逐插件开关、频率上限；内容不含链接，点开只能去本插件面板或对话 | 桥接 + App | — |
 | 小部件（P3） | 用户自己加到桌面才有；只显示状态条那三项；锁屏不显示 | App | — |
 
-所有 `/dsh-go/*` 路由照旧经 K3 守卫，没有凭据一律 401。永远不开放的清单不变：批准工具调用、改权限、手机操控、装卸插件、切主机、读 App 设置或凭据、无点按的自动执行（`notify` 只是提示，不带任何效果）。
+所有 `/xrk-mobile/*` 路由照旧经 K3 守卫，没有凭据一律 401。永远不开放的清单不变：批准工具调用、改权限、手机操控、装卸插件、切主机、读 App 设置或凭据、无点按的自动执行（`notify` 只是提示，不带任何效果）。
 
 ## 5. 审美约束
 
@@ -534,11 +534,11 @@ owner 举的例子里，**已经有的**：列表 `list`、网格 `grid`、标�
 | # | 项 | 主要改动 | 测试 | 风险 |
 |---|---|---|---|---|
 | 1 | 目录到 rc.4 | `slot_catalog.dart`（3 个新 slot、`slotCatalogRelease`）、`recipes.json` `release`；配方在 rc.4 上复核 | `slot_catalog_test`（104 / 103）、`island_logic_test` 补 rc.4 用例 | 低 |
-| 2 | `dsh-ui` 方言（genui） | 新 `dsh_ui_dialect_genui.dart`；`parseDshUi` 加分支；`DshUiFallback` 对方言不给「让它重发」 | 映射单测（每种 genui 组件一条夹具）、模糊测试、深浅色 golden（一份典型 genui 回复） | 低：只影响原来就画不出来的块 |
+| 2 | `dsh-ui` 方言（genui） | 新 `xrk_ui_dialect_genui.dart`；`parseXrkUi` 加分支；`XrkUiFallback` 对方言不给「让它重发」 | 映射单测（每种 genui 组件一条夹具）、模糊测试、深浅色 golden（一份典型 genui 回复） | 低：只影响原来就画不出来的块 |
 | 3 | 对话视图整页岛 | 目录给 `conversation.view` 整页策略；`recipes.json` + `island.js` 的 `session-view`；对话详情「插件」页签加这类条目 | 规划器单测；配方 PoC（真插件，如 `dsh-context`） | 低中：PoC 不过退回「在网页版打开」 |
 | 4 | 聊天页「插件」弹层 | `native_model.dart` 放行 `chat.panel`；新 `chat_plugins_sheet.dart`；胶囊行末尾入口；B 类 7 个 slot 走面板岛（`IslandForm.panel` 已有） | 规划器单测；几何测试（胶囊、弹层）；深浅色 golden；岛预算测试（预算不够 → 一行「在网页版打开」）；守卫关闭时只有原生面板 | 中：岛的内存。只在本机、只在有第三方占用者时出现、走 `IslandBudget` |
 | 5 | 插件详情「网页版界面」 | `plugin_detail_sheet.dart` 新一节；slot → 白话名表 | 组件测试、深浅色 golden | 低 |
-| 6 | 4 个新组件 | `dsh_ui_plugin_*`（解析、渲染）；`ImageViewerPage` 改成可滑动一组 | 模型测试、交互测试、SDK 与 Dart 对照用例（`sdk_parity_test`）、几何测试、golden（深浅、320 / 390、1× / 2×） | 低中：查看器改动 |
+| 6 | 4 个新组件 | `xrk_ui_plugin_*`（解析、渲染）；`ImageViewerPage` 改成可滑动一组 | 模型测试、交互测试、SDK 与 Dart 对照用例（`sdk_parity_test`）、几何测试、golden（深浅、320 / 390、1× / 2×） | 低中：查看器改动 |
 | 7 | `accent: "app"` | v2 样式解析 | 对比度断言（6 套预设 × 深浅色）、golden | 低 |
 | 8 | 图标名扩充 | `native_icons.dart`、SDK 名单 | 名单测试 | 低 |
 | 9 | 文档、SDK、示例、技能 | 见 §7 | `sdk/plugin-kit` 的 `node --test`；示例插件单测；`examples/plugins/e2e` | 低 |
@@ -551,13 +551,13 @@ owner 举的例子里，**已经有的**：列表 `list`、网格 `grid`、标�
 - 效果：`attach`、`open web:`、`open session:`。
 - 组件：`list` 分组 / 前缀图 / 行菜单、`searchField`、`markdown`、`time`、表格列类型。
 - 兼容：genui 交互回传和主机相对图片；`sidebar.footer.action`、`settings.plugins.tab`、`plugins.detail.*` 的整页岛；岛内浮层；岛的只读环境信息；SSH 主机装桥接（hosts.md 已列的第二期）。
-- 作者工具：插件页「创建插件」（照 rc.4：开新对话，把请求和 `dsh-go-plugin` 技能放进草稿，不发送）；`check --from-web`。
-- 测试：桥接 `runtime/tests/native-*.mjs` 加协议用例（新 surface、`tools` 归属、`attach` 上限、`notify` 频率）；`runtime/test-host.sh` 真 DSH 端到端；App 侧同 P1 的 golden 与几何口径。
+- 作者工具：插件页「创建插件」（照 rc.4：开新对话，把请求和 `xrk-plugin` 技能放进草稿，不发送）；`check --from-web`。
+- 测试：桥接 `runtime/tests/native-*.mjs` 加协议用例（新 surface、`tools` 归属、`attach` 上限、`notify` 频率）；`runtime/test-host.sh` 真 XRK 端到端；App 侧同 P1 的 golden 与几何口径。
 - 风险：协议面变大（v1 只加可选项，老 App 忽略）；`notify` 的打扰（首次询问 + 频率上限 + 开关）；`tool.card` 交互的归属判断（只信桥接）。粗估 18–22 人日。
 
 ### 6.3 P3
 
-桌面小部件、后台系统通知、宠物包（`pets.md`）、音视频组件（和 media-generation 的视频一起）、用户消息的消息操作、桥接浏览器半侧的 React 渲染器（同一份 `dshGo` 声明在网页版也显示，作者写一次两边用）、A2UI 方言、向上游提议（逐条 `data-slot` 标记、第三方面板的深链 id、把工具的 `presentResult` 视图经会话 API 下发）。每项开工前单独评估。
+桌面小部件、后台系统通知、宠物包（`pets.md`）、音视频组件（和 media-generation 的视频一起）、用户消息的消息操作、桥接浏览器半侧的 React 渲染器（同一份 `xrkGo` 声明在网页版也显示，作者写一次两边用）、A2UI 方言、向上游提议（逐条 `data-slot` 标记、第三方面板的深链 id、把工具的 `presentResult` 视图经会话 API 下发）。每项开工前单独评估。
 
 ## 7. 作者文档与 SDK 同步
 
@@ -566,18 +566,18 @@ owner 举的例子里，**已经有的**：列表 `list`、网格 `grid`、标�
 | `docs/plugins/slots.md` | `chat.panel` 落地、聊天页弹层的样子 | 新 surface 逐个一节 |
 | `docs/plugins/components.md` | 4 个新组件 + 深浅色 golden 截图 | P2 组件 |
 | `docs/plugins/styles.md` / `design-rules.md` | `accent: "app"`、新图标名单、§5 的「谁定什么」 | 表格列类型 |
-| `docs/plugins/web-panels.md` | 对话视图、聊天页面板岛、网页版界面一节、岛里的环境标记与「在 DSH Go 里好看」 | 浮层、`info()`、`open web:` |
+| `docs/plugins/web-panels.md` | 对话视图、聊天页面板岛、网页版界面一节、岛里的环境标记与「在 XRK Go 里好看」 | 浮层、`info()`、`open web:` |
 | `docs/plugins/from-web.md`（新） | §3.6 对照表 + 每行一个最小例子 | `check --from-web` |
 | `docs/plugins/native-for-free.md` | `dsh-ui` 围栏和 genui 的关系；工具卡「已经在写 `presentationMeta` 就再加一个键」 | — |
 | `docs/plugins/versions.md` | 新组件的降级、`caps.components` | 新 surface 与桥接版本 |
 | `docs/plugins/en/*` | 同步英文 | 同步英文 |
-| `sdk/plugin-kit/schema/view.schema.json` | `emptyState`、`gallery`、`progress.shape`、`metric.trend`、`accent: "app"`、`x-dsh-go` 里的上限 | P2 组件 |
+| `sdk/plugin-kit/schema/view.schema.json` | `emptyState`、`gallery`、`progress.shape`、`metric.trend`、`accent: "app"`、`x-xrk-mobile` 里的上限 | P2 组件 |
 | `schema/manifest.schema.json`、`contributions.schema.json` | `chat.panel` 已在，补说明 | 新 surface、`tools`、`notify`、`presentation` |
 | `types/schema.d.ts`（`scripts/gen-types.mjs` 生成）、`lib/view.js` | 生成类型；构造函数 `emptyState()`、`gallery()` | 同 |
 | `lib/caps.js` | `adaptView` 的新降级（`gallery` → `grid` + `image`、`emptyState` → `callout`） | 同 |
 | `lib/view-check.js` | 新组件校验，和 Dart 共用对照用例 | 同 |
-| `skill/SKILL.md`（`dsh-go-plugin` 技能） | 新组件、`chat.panel`、`accent: "app"` 的写法 | 新 surface |
-| 示例插件 | 新 `examples/plugins/dsh-go-example-album`：聊天页弹层 + 全部功能里一个相册面板，用到 `gallery`、`emptyState`、环形进度、趋势线、`accent: "app"`（图片放 `assets/`，没有图时是空态） | 给 `dsh-go-example-quick` 加 `composer.tools` 和 `session.actions`；`dsh-go-example-usage` 加 `turn.note` |
+| `skill/SKILL.md`（`xrk-plugin` 技能） | 新组件、`chat.panel`、`accent: "app"` 的写法 | 新 surface |
+| 示例插件 | 新 `examples/plugins/xrk-example-album`：聊天页弹层 + 全部功能里一个相册面板，用到 `gallery`、`emptyState`、环形进度、趋势线、`accent: "app"`（图片放 `assets/`，没有图时是空态） | 给 `xrk-example-quick` 加 `composer.tools` 和 `session.actions`；`xrk-example-usage` 加 `turn.note` |
 
 ## 8. 需要 owner 定的事
 
@@ -601,12 +601,12 @@ owner 举的例子里，**已经有的**：列表 `list`、网格 `grid`、标�
 | 文件 | 内容 |
 |---|---|
 | `index/dsh-index.json` | dshfind 索引原文（2026-10-28） |
-| `index/manifests.jsonl` | 每个包最新版清单的摘录（`dsh`、`exports` 键、依赖、描述、tarball） |
-| `index/slot-catalog-0.2.1-rc.4.json` | rc.4 的 103 个 slot，从 `@deepseek-ai/dsh-cordis-client-runner@0.2.1-rc.4` 的 `lib/client.js` 文本解析（`CLIENT_SLOT_API`，不执行），与 rc.2 对比只多 3 个 |
+| `index/manifests.jsonl` | 每个包最新版清单的摘录（`xrkh`、`exports` 键、依赖、描述、tarball） |
+| `index/slot-catalog-0.2.1-rc.4.json` | rc.4 的 103 个 slot，从 `@xrkseek/harness-cli-cordis-client-runner@0.2.1-rc.4` 的 `lib/client.js` 文本解析（`CLIENT_SLOT_API`，不执行），与 rc.2 对比只多 3 个 |
 | `index/scan.jsonl` | 每个浏览器半侧包一行：注册的 slot、`data-slot` 选择器、primitives、标准 props、客户端服务、DOM 行为、宿主侧特征 |
 | `index/downloads.json` | npm 上月下载 |
 | `index/analysis.txt` | 本文的所有统计表 |
-| `scripts/` | `manifests.py` → `scan.py` → `downloads.py` → `analyze.py`、`appendix.py`（P1 / P2 的 slot 集合在 `index/stages.json`），按这个顺序重跑即可；DSH 升级后先用 `slotcat.py` 重新生成目录 |
+| `scripts/` | `manifests.py` → `scan.py` → `downloads.py` → `analyze.py`、`appendix.py`（P1 / P2 的 slot 集合在 `index/stages.json`），按这个顺序重跑即可；XRK 升级后先用 `slotcat.py` 重新生成目录 |
 
 安全做法：每个 tarball 下载到自己新建的空目录，用 Python `tarfile` 在内存里逐个读成员做正则匹配（`python3 -I`），读完即删 tarball，不解压、不运行包里的任何东西。例外是为了读文档解压过的四个包（`dsh-cordis-client-runner`、`dsh-client-ui-conversation`、`dsh-client-ui-entry-customization` 的 0.2.1-rc.4，以及 `@changfenhuang/dsh-genui` 0.15.0 的 `SKILL.md`），各在自己的空目录里，只读。
 

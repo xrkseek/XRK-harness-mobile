@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,8 +21,8 @@ import 'notify_state.dart' show appForegroundProvider, notifyChannelProvider;
 import 'phone_state.dart';
 
 void _trace(String message) {
-  if (!kReleaseMode && const bool.fromEnvironment('DSH_PHONE_TURN_TRACE')) {
-    debugPrint('DSH_PHONE_TURN $message');
+  if (!kReleaseMode && const bool.fromEnvironment('XRK_PHONE_TURN_TRACE')) {
+    debugPrint('XRK_PHONE_TURN $message');
   }
 }
 
@@ -136,7 +136,7 @@ class PhoneTurnLink {
 class _OwnerRead {
   _OwnerRead(this.taskId, this.client, this.generation, this.lifetime);
   final int taskId;
-  final DshClient client;
+  final XrkClient client;
   final MuxGeneration? generation;
   final Object lifetime;
   bool valid = true;
@@ -167,7 +167,7 @@ class PhoneTurnEndController extends Notifier<void> {
   final _nativeLatest = <String, int>{};
   Object _lifetime = Object();
   _OwnerRead? _reading;
-  DshClient? _ownerClient;
+  XrkClient? _ownerClient;
   MuxGeneration? _ownerGeneration;
   final _deferred = <String, _DeferredPhoneEnd>{};
 

@@ -2,14 +2,14 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/provider_keys.dart';
-import 'package:dsh_app/state/providers_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/subscriptions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/provider_keys.dart';
+import 'package:xrk_app/state/providers_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/subscriptions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -252,8 +252,8 @@ class FakeProviderBackend implements ProviderBackend {
 }
 
 /// `answered <status>` as `llm/discoverModels` words a refused listing.
-DshRemoteException listingRefused(String url, int status) =>
-    DshRemoteException('gateway/internal', '$url/models answered $status${status == 401 ? '; check the API key' : ''}');
+XrkRemoteException listingRefused(String url, int status) =>
+    XrkRemoteException('gateway/internal', '$url/models answered $status${status == 401 ? '; check the API key' : ''}');
 
 // ── Sample data ──────────────────────────────────────────────────────────────
 
@@ -333,7 +333,7 @@ class FakeSubscriptionBackend implements SubscriptionBackend {
   @override
   Future<List<SubscriptionStatus>> list() async {
     calls.add('list');
-    if (!available) throw const DshRemoteException('gateway/not-found', 'no method appAuth/list');
+    if (!available) throw const XrkRemoteException('gateway/not-found', 'no method appAuth/list');
     return statuses;
   }
 
@@ -390,7 +390,7 @@ List<Override> providerOverrides(
       backend == null
           ? null
           : HostConnection(
-              client: DshClient(DshConnection(Uri.parse('http://127.0.0.1:9'))),
+              client: XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9'))),
               label: backend.hostLabel,
               isLocal: backend.isLocal,
             ),

@@ -1,7 +1,7 @@
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/ui/settings/background_guide_page.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/ui/settings/background_guide_page.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -63,7 +63,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('vivo / iQOO'), findsOneWidget);
-    expect(find.text('电池 › 后台耗电管理 › DSH'), findsOneWidget);
+    expect(find.text('电池 › 后台耗电管理 › XRK'), findsOneWidget);
     expect(tester.getRect(find.text('允许后台高耗电')).top, lessThan(tester.getRect(find.text('系统电池优化')).top));
     expect(find.text('其他品牌'), findsOneWidget);
     expect(find.text(_makers.first), findsNothing);

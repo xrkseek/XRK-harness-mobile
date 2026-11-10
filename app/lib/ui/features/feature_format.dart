@@ -1,9 +1,9 @@
-// Chinese wording for the native mirrors of official DSH Web pages: schedule
+// Chinese wording for the native mirrors of official XRK Web pages: schedule
 // rules, job states, preset names. Rule wording follows the official
 // `dsh-client-ui-schedule` / `dsh-client-ui-permission-presets` /
 // `dsh-client-ui-agent-preset` copy where it exists.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../l10n/l10n.dart';

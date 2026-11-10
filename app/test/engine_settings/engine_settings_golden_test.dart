@@ -4,15 +4,15 @@
 //
 //   flutter test --update-goldens test/engine_settings
 
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_hub.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/general_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/runtime_settings_pages.dart';
-import 'package:dsh_app/ui/engine_settings/subagent_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/web_search_page.dart';
-import 'package:dsh_app/ui/plugins/plugin_inventory_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_hub.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/general_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/runtime_settings_pages.dart';
+import 'package:xrk_app/ui/engine_settings/subagent_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/web_search_page.dart';
+import 'package:xrk_app/ui/plugins/plugin_inventory_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -31,7 +31,7 @@ void engineGolden(
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
     testWidgets('$name ($mode)', (tester) async {
       final fake = host?.call() ?? FakeSettingsHost();
-      final client = DshClient.withCarrier(fake);
+      final client = XrkClient.withCarrier(fake);
       await pumpPage(
         tester,
         page(),

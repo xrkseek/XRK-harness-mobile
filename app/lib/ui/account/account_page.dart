@@ -81,7 +81,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     final account = ref.read(accountProvider.notifier);
     final running = await account.hasRunningAccountTasks();
     if (!mounted) return;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final ok = await showAppDialog<bool>(
       context: context,
       builder: (dialog) => AlertDialog(
@@ -158,7 +158,7 @@ class _SignedInView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final profile = state.profile;
     final balance = ref.watch(accountBalanceProvider);
 
@@ -266,7 +266,7 @@ class _WalletStat extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final amountStyle = AppType.tabular(AppType.display(size: 26, color: scheme.onSurface)).copyWith(height: 1.25);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,7 +341,7 @@ class _SignedOutView extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final unsupported = state.phase == AccountPhase.unsupported;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -435,7 +435,7 @@ class ApiKeyTile extends ConsumerWidget {
     final l10n = context.l10n;
     final settings = ref.watch(settingsProvider);
     final scheme = Theme.of(context).colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return SettingsTile(
       icon: AppIcons.apiKey,
       tint: tint,
@@ -503,8 +503,8 @@ Future<void> manageApiKey(BuildContext context, WidgetRef ref) async {
             TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: DshColors.of(dialog).danger,
-                foregroundColor: DshColors.of(dialog).onDanger,
+                backgroundColor: XrkColors.of(dialog).danger,
+                foregroundColor: XrkColors.of(dialog).onDanger,
               ),
               onPressed: () => Navigator.pop(dialog, true),
               child: Text(l10n.commonClear),

@@ -7,7 +7,7 @@
 import 'dart:async';
 import 'dart:ui' show ImageFilter;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 
 import '../../companion/companion_light.dart';
@@ -220,9 +220,9 @@ class _CompanionLogState extends State<CompanionLog> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final padding = MediaQuery.paddingOf(context);
-    final blur = DshSurfaces.of(context).blurEnabled;
+    final blur = XrkSurfaces.of(context).blurEnabled;
     final entries = widget.entries;
     final older = widget.onLoadOlder != null || widget.loadingOlder;
     if (widget.onLoadOlder != null && !widget.loadingOlder && !_stalled) {
@@ -365,7 +365,7 @@ class _LogLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final gap = first ? 0.0 : (named ? 22.0 : 10.0);
     if (entry.speaker == CompanionLogSpeaker.narration) {
       final style = entry.code

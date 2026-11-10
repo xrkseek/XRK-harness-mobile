@@ -31,7 +31,7 @@ flutter test --no-pub \
   test/forum/forum_image_gallery_test.dart
 ```
 
-Set `DSH_TEST_FONT_DIR` if Noto CJK fonts are installed somewhere other than the test harness's default. Widget tests must use a tester engine matching the host architecture. From the repository root, also run `python3 app/tool/guide_sync.py --check`.
+Set `XRK_TEST_FONT_DIR` if Noto CJK fonts are installed somewhere other than the test harness's default. Widget tests must use a tester engine matching the host architecture. From the repository root, also run `python3 app/tool/guide_sync.py --check`.
 
 ## Original workspace validation record
 

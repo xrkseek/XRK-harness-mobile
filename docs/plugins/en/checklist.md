@@ -15,7 +15,7 @@ No `error` lines means done. `--json` for machines.
 
 | | Item | |
 |---|---|---|
-| ⬜ | `dshGo.v` is `1`; `contributes` exists | ⚙️ |
+| ⬜ | `xrkGo.v` is `1`; `contributes` exists | ⚙️ |
 | ⬜ | Every id unique within the plugin (across slots too) | ⚙️ |
 | ⬜ | Capsules ≤ 10, menu items ≤ 12, strip ≤ 24, panel titles ≤ 16, plugin name ≤ 24 characters, **in Chinese and English** | ⚙️ |
 | ⬜ | Plus panel tools 2, chat actions 2, turn note 1 at most | ⚙️ |
@@ -26,13 +26,13 @@ No `error` lines means done. `--json` for machines.
 | ⬜ | Static `effect`s only insert / command / open / link / toast / copy | ⚙️ |
 | ⬜ | The strip's `panel` names one of your panels | ⚙️ |
 | ⬜ | Static view files inside the package, ≤ 32 KiB | ⚙️ |
-| ⬜ | `engines.dsh` declares the DSH versions you support | ⚙️ |
+| ⬜ | `engines.dsh` declares the XRK versions you support | ⚙️ |
 
 ## Host half
 
 | | Item | |
 |---|---|---|
-| ⬜ | `ctx.inject(['dshGo'], …)`, not `'dshGo?'`; `dshGo` not in the top-level `inject` | ⚙️ `--load` |
+| ⬜ | `ctx.inject(['xrkGo'], …)`, not `'xrkGo?'`; `xrkGo` not in the top-level `inject` | ⚙️ `--load` |
 | ⬜ | Every capsule / menu item without a static `effect` has an `on(id)` | ⚙️ `--load` |
 | ⬜ | Every panel has a `panel(id)` or a static view | ⚙️ `--load` |
 | ⬜ | No registrations for ids the manifest does not declare | ⚙️ `--load` |
@@ -45,7 +45,7 @@ No `error` lines means done. `--json` for machines.
 
 | | Item | |
 |---|---|---|
-| ⬜ | Match the view root version: omitted `v` / `v: 1` uses v1; set `v: 2` for the added [components](components.md) and bounded [styles](styles.md). Keep manifest `dshGo.v` at `1`; use `caps` / `adaptView` for older apps | ⚙️ |
+| ⬜ | Match the view root version: omitted `v` / `v: 1` uses v1; set `v: 2` for the added [components](components.md) and bounded [styles](styles.md). Keep manifest `xrkGo.v` at `1`; use `caps` / `adaptView` for older apps | ⚙️ |
 | ⬜ | Tool cards ≤ 8 KiB, ≤ 40 components, ≤ 6 levels; panels ≤ 32 KiB, ≤ 120, ≤ 8 | ⚙️ |
 | ⬜ | Tool cards without bindings (no data model) and without buttons (not tappable in phase 0) | ⚙️ |
 | ⬜ | `presentationMeta` wrapped in `toolCard()`: never throws, never returns `undefined` / `NaN` | |

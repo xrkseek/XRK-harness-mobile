@@ -36,7 +36,7 @@
 
 | 运行时 | 上限 |
 |---|---|
-| 清单 `dshGo` | 16 KiB |
+| 清单 `xrkGo` | 16 KiB |
 | 视图 | 32 KiB、120 个节点、8 层 |
 | 工具卡 | 8 KiB、40 个节点 |
 | 数据推送 | 32 KiB、4 次/秒 |
@@ -65,6 +65,6 @@
 
 | 等级 | 包括 |
 |---|---|
-| 稳定 | `dshGo` 清单 v1；已列出的位置和效果；视图 v1、v2；`ctx.dshGo` 的公开方法；`@dsh-go/plugin-kit` 的公开导出 |
+| 稳定 | `xrkGo` 清单 v1；已列出的位置和效果；视图 v1、v2；`ctx.xrkGo` 的公开方法；`@xrkseek/plugin-kit` 的公开导出 |
 | 较新，可能微调 | `composer.tools`、`session.actions`、`turn.note`、`placement: "plugin"`、`presentation: "sheet"`：字段不会删，但位置的呈现还可能调整 |
 | 不要依赖 | 桥接的内部路由、`lib/bridge/` 下的内部文件、未写进文档的字段 |

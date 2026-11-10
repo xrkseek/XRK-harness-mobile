@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'connection_state.dart';
@@ -11,10 +11,10 @@ import 'settings_state.dart';
 
 /// `session/modelCatalog` of the active host (null while disconnected).
 ///
-/// DSH 0.2.1 lists no models until a provider credential exists, so the
+/// XRK 0.2.1 lists no models until a provider credential exists, so the
 /// catalog is re-read when the key saved in the app changes and again when
 /// the Host confirms the credential (`credentials/reference-updated`) or its
-/// adapters change (`llm/adapters-updated`): the app pushes the key to DSH
+/// adapters change (`llm/adapters-updated`): the app pushes the key to XRK
 /// asynchronously, and the first re-read can beat it. A custom provider's
 /// model edits (thinking levels, names) change no route, so the pi-ai
 /// section's own update counts too.

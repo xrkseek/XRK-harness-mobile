@@ -1,4 +1,4 @@
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../l10n/l10n.dart';
 import '../link_status.dart';
@@ -12,7 +12,7 @@ const remoteStateDir = r'$HOME/.dsh-app-remote';
 /// banners and `~/.profile` chatter can't be mistaken for results.
 const _tag = 'DSHAPP';
 
-/// A `dsh web` on the remote that dsh-app can reach through a tunnel.
+/// A `xrkh serve` on the remote that dsh-app can reach through a tunnel.
 class RemoteDshEndpoint {
   const RemoteDshEndpoint({
     required this.port,
@@ -26,7 +26,7 @@ class RemoteDshEndpoint {
   /// Port on the remote's loopback (`--host 127.0.0.1`).
   final int port;
 
-  /// Launch token from the `dsh web: http://…/?token=` line; good for this
+  /// Launch token from the `xrkh serve: http://…/?token=` line; good for this
   /// process's lifetime only.
   final String token;
   final int? pid;
@@ -37,10 +37,10 @@ class RemoteDshEndpoint {
   /// Remote `$HOME`, to expand `~` in the configured working directory.
   final String? home;
 
-  /// Resolved `dsh` binary (default command only).
+  /// Resolved `xrkh` binary (default command only).
   final String? dshPath;
 
-  /// `127.0.0.1:<port>`: the Host header DSH's fence accepts.
+  /// `127.0.0.1:<port>`: the Host header XRK's fence accepts.
   String get authority => '127.0.0.1:$port';
 }
 
@@ -56,16 +56,16 @@ class RemoteProbe {
   /// That instance was started with the command configured now.
   final bool sameCommand;
 
-  /// Latest `dsh web: http://…?token=` line from its log.
+  /// Latest `xrkh serve: http://…?token=` line from its log.
   final String? launchLine;
 
   bool get reusable => pid != null && sameCommand && DshLaunchUrl.tryParse(launchLine ?? '') != null;
 }
 
-/// Finds or starts dsh-app's managed `dsh web` on the remote.
+/// Finds or starts dsh-app's managed `xrkh serve` on the remote.
 ///
-/// Files under `~/.dsh-app-remote/` (mode 700):
-/// * `web.pid` — pid of the `dsh web` process dsh-app started;
+/// Files under `~/.xrk-app-remote/` (mode 700):
+/// * `web.pid` — pid of the `xrkh serve` process dsh-app started;
 /// * `web.log` — its stdout/stderr, truncated on every start, so the last
 ///   `token=` line always belongs to the running process;
 /// * `web.cmd` — the launch command it was started with (a different command
@@ -89,7 +89,7 @@ class RemoteDshBootstrap {
   final String? workingDirectory;
 
   /// Extra variables exported before anything runs (tests isolate `HOME` and
-  /// `DSH_HOME` this way; advanced users could add PATH tweaks).
+  /// `XRK_HOME` this way; advanced users could add PATH tweaks).
   final Map<String, String> environment;
   final Duration startTimeout;
 
@@ -212,7 +212,7 @@ ours() {
 
   String stopScript() => '${_prelude()}${_stopOld()}true\n';
 
-  /// Looks for `dsh` where npm, nvm, volta, bun, pnpm and Homebrew put it,
+  /// Looks for `xrkh` where npm, nvm, volta, bun, pnpm and Homebrew put it,
   /// since a non-interactive SSH shell often lacks the PATH from `~/.bashrc`.
   static const _dshSearch = r'''
 if ! command -v dsh >/dev/null 2>&1; then
@@ -341,7 +341,7 @@ printf 'DSHAPP dsh %s\n' "$(command -v dsh)"
         HostLinkErrorKind.dshNotFound,
         customCommand ? appL10n.remoteErrCommandNotFound(command) : appL10n.remoteErrDshMissing,
         detail: [
-          if (!customCommand) 'npm install -g @deepseek-ai/dsh',
+          if (!customCommand) 'npm install -g @xrkseek/harness-cli',
           if (!customCommand) appL10n.remoteStartCommandExample,
           if (tail.isNotEmpty) tail,
         ].join('\n'),

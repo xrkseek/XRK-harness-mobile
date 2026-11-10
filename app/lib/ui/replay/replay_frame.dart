@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../share_code/conversation_share.dart';
 import '../../state/chat_state.dart' show CommandNotice;

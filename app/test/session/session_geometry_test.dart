@@ -1,9 +1,9 @@
 // Measured symmetry of 对话详情: the capsule tabs (thumb concentric with the
 // track, equal segments) and the bar (back key and its mirror, title centred).
 
-import 'package:dsh_app/state/session_detail_state.dart';
-import 'package:dsh_app/ui/common/segmented_pill.dart';
-import 'package:dsh_app/ui/session/session_detail_page.dart';
+import 'package:xrk_app/state/session_detail_state.dart';
+import 'package:xrk_app/ui/common/segmented_pill.dart';
+import 'package:xrk_app/ui/session/session_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

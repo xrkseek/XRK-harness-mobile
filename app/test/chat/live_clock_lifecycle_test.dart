@@ -1,4 +1,4 @@
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart';
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 

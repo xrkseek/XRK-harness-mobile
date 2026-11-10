@@ -1,11 +1,11 @@
 # 第三方声明（Third-Party Notices）
 
-本文件集中列出 dsh-go 复制或改写进源码的第三方代码与素材，以及随 App 一起分发的字体、原生库和 Linux 运行时组件。源文件头那一行 `Portions derived from …` 指向这里。
+本文件集中列出本仓库复制或改写进源码的第三方代码与素材，以及随 App 一起分发的字体、原生库和 Linux 运行时组件。源文件头那一行 `Portions derived from …` 指向这里。
 
 - App 内「设置 › 开源许可」页随 APK 分发同样的声明（`app/lib/ui/common/third_party_licenses.dart`，字体在 `app/lib/ui/settings/font_licenses.dart`）。
 - Dart / Flutter 依赖应按 `app/pubspec.lock`（以及本地包的 lock）核对直接与传递依赖；Flutter 从包根 `LICENSE` 收集许可并显示在许可证页。这里不逐包重复，发行前仍须核验实际 APK 的许可资产，不能仅凭依赖声明认定已收录。
 - 许可证全文见文末「许可证全文」。
-- 本项目自己的许可见 `LICENSE`（AGPL-3.0）；品牌标识和吉祥物美术不属于第三方，也不在 AGPL 授权范围内，见 `ASSETS.md`。
+- 本项目代码许可见 `LICENSE`（AGPL-3.0）。产品名与标识为 **XRK Harness**；引擎契约以 [XRK-Harness](https://github.com/xrkseek/XRK-harness) 为准。
 
 ## 一、复制或改写进源码的代码
 
@@ -18,7 +18,7 @@
 | 许可 | 经作者许可使用 |
 | 用途 | 手机操控：无障碍读屏与操作、控制浮层，以及「不打扰模式」的特权虚拟屏 |
 
-上游路径前缀为 `android/app/src/main/kotlin/app/xiangyue/phase/`；本仓库路径前缀为 `app/android/app/src/main/kotlin/io/github/ccch1mneyyy/dsh_app/phone/`。
+上游路径前缀为 `android/app/src/main/kotlin/app/xiangyue/phase/`；本仓库路径前缀为 `app/android/app/src/main/kotlin/com/xrkseek/harness/phone/`。
 
 | 本仓库文件 | 上游来源 |
 |---|---|
@@ -41,17 +41,6 @@ Portions of the phone control feature are derived from Phase
 used with the author's permission.
 ```
 
-### go.dshtui.com 首页（作者交付使用）
-
-| 项 | 内容 |
-|---|---|
-| 作品 | DSH Go 展示网站：HTML、CSS、JavaScript、内容检查与发布脚本、八张功能展示图 |
-| 作者 | ClayGao233 / 采云师烧饼（https://github.com/ClayGao233 、https://space.bilibili.com/28879571） |
-| 许可 | 作者交付给本项目用于 go.dshtui.com；交付包未附许可证声明，不在本仓库的 AGPL-3.0 授权范围内 |
-| 用途 | `https://go.dshtui.com/` 首页 |
-
-本仓库位置：`site/home/`。在交付版本上的改动：产品名统一写作「DSH Go」，填写作者、下载、仓库、贡献者和分享元信息（`dist/site-config.js`），加入页面 CSP、下载二维码、第二个下载链接和 Star 数（`dist/index.html`、`dist/author-ui.js`、`dist/refinements.css` 末尾），统一换行符；没有发布的工作文件（作者说明、备份脚本、未用到的图片）未收入。功能展示图依据 DSH Go 的界面截图制作，含 DSH Go 的品牌图形和鲸娘形象（见 `ASSETS.md`）。页底保留作者的「网页开发」署名。
-
 ### PiPilot（MIT）
 
 | 项 | 内容 |
@@ -71,28 +60,28 @@ used with the author's permission.
 - `shell/`：`drawer_drag.dart`、`home_shell.dart`、`sessions_drawer.dart`
 - `theme/`：`accent.dart`、`app_theme.dart`、`backdrop.dart`、`highlight_theme.dart`、`motion.dart`、`palette.dart`、`semantic_colors.dart`、`shapes.dart`、`squircle.dart`、`typography.dart`
 
-### DeepSeek Harness（MIT）
+### XRK-Harness（MIT）
 
 | 项 | 内容 |
 |---|---|
-| 项目 | DeepSeek Harness，https://github.com/deepseek-ai/deepseek-harness |
+| 项目 | XRK-Harness，https://github.com/deepseek-ai/deepseek-harness |
 | 版权人 | Copyright (c) 2026 DeepSeek |
 | 许可 | MIT |
 | 用途 | 移植官方客户端的若干算法与图形；部分组件的结构与行为参照其 Web 客户端 |
 
 | 本仓库文件 | 上游来源 | 用途 |
 |---|---|---|
-| `app/lib/ui/chat/secret_mask.dart` | `@deepseek-ai/dsh-client-ui-secret-mask` | 凭据格式、线性匹配与遮挡；眼睛图标 |
-| `app/lib/ui/chat/widgets/artifact_card.dart` | `@deepseek-ai/dsh-client-ui-deliverables`（`PresentedFileCard`、`Deliverables`） | 交付文件卡片 |
-| `app/lib/state/session_search.dart` | `@deepseek-ai/dsh-client-ui-workspace`（`deriveSearchResults`） | 对话搜索结果合并 |
-| `app/lib/ui/features/schedule_editor/cron.dart` | `@deepseek-ai/dsh-client-ui-schedule`（`task-cron.js`） | 定时任务的 cron 解析与中文描述 |
+| `app/lib/ui/chat/secret_mask.dart` | `@xrkseek/harness-cli-client-ui-secret-mask` | 凭据格式、线性匹配与遮挡；眼睛图标 |
+| `app/lib/ui/chat/widgets/artifact_card.dart` | `@xrkseek/harness-cli-client-ui-deliverables`（`PresentedFileCard`、`Deliverables`） | 交付文件卡片 |
+| `app/lib/state/session_search.dart` | `@xrkseek/harness-cli-client-ui-workspace`（`deriveSearchResults`） | 对话搜索结果合并 |
+| `app/lib/ui/features/schedule_editor/cron.dart` | `@xrkseek/harness-cli-client-ui-schedule`（`task-cron.js`） | 定时任务的 cron 解析与中文描述 |
 | `app/lib/ui/engine_settings/namespace_copy.dart` | 官方设置页（`dsh-client-ui-settings-*`、`dsh-client-ui-chat`、`dsh-client-ui-conversation` 等）与各包 README 的中文文案 | 引擎设置项的中文文案 |
-| `app/lib/ui/common/think_glyph.dart` | `@deepseek-ai/dsh-web-frontend`（`IconThinkOutline`） | 思考图标轮廓 |
-| `packages/dsh_client/lib/src/binary_response.dart` | `@deepseek-ai/dsh-client-connection`（`parseBinaryResponse`） | 二进制结果解码 |
-| `packages/dsh_client/lib/src/deliverables.dart` | `@deepseek-ai/dsh-client-ui-deliverables`（`isPresentedData`、`isPresentedFile`、`presentedForClosing`） | 交付文件校验与按轮选取 |
-| `runtime/patches/route-guard.diff` | `dsh-host-webserver` | 运行时构建时打到 DSH 上的补丁 |
+| `app/lib/ui/common/think_glyph.dart` | `@xrkseek/harness-cli-web-frontend`（`IconThinkOutline`） | 思考图标轮廓 |
+| `packages/xrk_client/lib/src/binary_response.dart` | `@xrkseek/harness-cli-client-connection`（`parseBinaryResponse`） | 二进制结果解码 |
+| `packages/xrk_client/lib/src/deliverables.dart` | `@xrkseek/harness-cli-client-ui-deliverables`（`isPresentedData`、`isPresentedFile`、`presentedForClosing`） | 交付文件校验与按轮选取 |
+| `runtime/patches/route-guard.diff` | `dsh-host-webserver` | 运行时构建时打到 XRK 上的补丁 |
 
-此外，App 中部分组件的结构与行为参照 DeepSeek Harness 的 Web 客户端（MIT），包括消息操作、提及、输入区 dock、回合过程、产物、工作区、终端和定时任务等，不逐文件列出。
+此外，App 中部分组件的结构与行为参照 XRK-Harness 的 Web 客户端（MIT），包括消息操作、提及、输入区 dock、回合过程、产物、工作区、终端和定时任务等，不逐文件列出。
 
 ### DS Bot（Apache-2.0，已修改）
 
@@ -107,27 +96,27 @@ used with the author's permission.
 
 | 本仓库文件 | 上游来源 |
 |---|---|
-| `app/lib/ui/chat/dsh_ui/dsh_ui_model.dart` | `ds-bot/src/shared/views.js`（`normalizeView`、校验与上限、`viewSummary`） |
-| `app/lib/ui/chat/dsh_ui/dsh_ui_reply.dart` | `ds-bot/src/shared/views.js`（`validateOptions`） |
-| `app/lib/ui/chat/dsh_ui/dsh_ui_chart.dart` | `ds-bot/src/client/widget-chart.js`（`niceTicks`、数值轴、提示框） |
-| `app/test/chat/dsh_ui/dsh_ui_model_test.dart` | `ds-bot/test/views.test.js` 的用例 |
-| `packages/dsh_client/lib/src/dsbot_api.dart` | `src/client/inks.js`（配色表）、`src/client/characters.js`（`fnv1a`、`defaultColor`） |
+| `app/lib/ui/chat/xrk_ui/xrk_ui_model.dart` | `ds-bot/src/shared/views.js`（`normalizeView`、校验与上限、`viewSummary`） |
+| `app/lib/ui/chat/xrk_ui/xrk_ui_reply.dart` | `ds-bot/src/shared/views.js`（`validateOptions`） |
+| `app/lib/ui/chat/xrk_ui/xrk_ui_chart.dart` | `ds-bot/src/client/widget-chart.js`（`niceTicks`、数值轴、提示框） |
+| `app/test/chat/xrk_ui/xrk_ui_model_test.dart` | `ds-bot/test/views.test.js` 的用例 |
+| `packages/xrk_client/lib/src/dsbot_api.dart` | `src/client/inks.js`（配色表）、`src/client/characters.js`（`fnv1a`、`defaultColor`） |
 | `app/android/.../runtime/GuestSetup.kt` | `ds-bot/src/host/tools.js`、`prompt.js`（`show_view` 说明与提示规则） |
 | `app/lib/ui/bots/bot_mention.dart` | `ds-bot/src/shared/mentions.js`（「所有人」与地址判定等提及规则） |
 
 DS Bot 的 NOTICE 原文附在文末。
 
-### ds-harness-remote（MIT）
+### xrk-remote（MIT）
 
 | 项 | 内容 |
 |---|---|
-| 项目 | ds-harness-remote，https://github.com/liguobao/ds-harness-remote |
-| 版权人 | Copyright (c) 2026 DSH Remote contributors |
-| 许可 | MIT（全文另见 `packages/dsh_remote/LICENSE-ds-harness-remote`） |
+| 项目 | xrk-remote，https://github.com/liguobao/xrk-remote |
+| 版权人 | Copyright (c) 2026 XRK Remote contributors |
+| 许可 | MIT（全文另见 `packages/xrk_remote/LICENSE-xrk-remote`） |
 | 用途 | 远程连接：协议、分帧、校验、加密信道、直连（WebRTC）与连接逻辑 |
 | 对应上游版本 | `7e387df`（Host 插件 0.6.0）；工作区上传协议参考 `479b94341c0d0de63846f21d0fcca26997d158d1`（Host 插件 0.6.2） |
 
-路径均相对 `packages/dsh_remote/`：
+路径均相对 `packages/xrk_remote/`：
 
 | 本仓库文件 | 上游来源 |
 |---|---|
@@ -148,15 +137,15 @@ DS Bot 的 NOTICE 原文附在文末。
 | `test/fixtures/protocol-v1/` | `fixtures/protocol/v1`（原样复制） |
 | `tool/e2e/patch-webrtc.mjs` | 不复制代码：在 E2E 时改写上游 `apps/server/src/gateway.ts`，按托管 Server 的行为打开 WebRTC 协商与 signaling 转发 |
 
-### DSHA（MIT）
+### XRKA（MIT）
 
 | 项 | 内容 |
 |---|---|
-| 项目 | DSHA，https://github.com/DSH-APP/DSHA |
+| 项目 | XRKA，https://github.com/DSH-APP/DSHA |
 | 版权人 | Copyright (c) 2026 qiannianhuanxiang |
 | 许可 | MIT |
 | 用途 | 不打扰模式特权进程的 `app_process` 入口 |
-| 文件 | `app/android/app/src/main/kotlin/io/github/ccch1mneyyy/dsh_app/phone/background/PrivilegedDisplayEntry.kt` |
+| 文件 | `app/android/app/src/main/kotlin/io/github/xrkseek/dsh_app/phone/background/PrivilegedDisplayEntry.kt` |
 
 ### discourse_docker（MIT）
 
@@ -180,7 +169,7 @@ DS Bot 的 NOTICE 原文附在文末。
 | 用途 | 界面图标字体的字形；少数图标按它的网格与轮廓补画 |
 
 - `app/tool/icons/phosphor/`：图标源文件与 LICENSE
-- `app/assets/fonts/DshIcons.ttf`、`app/lib/ui/theme/dsh_glyphs.dart`：由 `app/tool/make_icon_font.py` 生成
+- `app/assets/fonts/XrkIcons.ttf`、`app/lib/ui/theme/xrk_glyphs.dart`：由 `app/tool/make_icon_font.py` 生成
 - `app/android/.../phone/a11y/ControlOverlay.kt`：收起键的路径取自 `arrows-in-simple`
 
 ### Material Icons（Apache-2.0）
@@ -227,9 +216,9 @@ DS Bot 的 NOTICE 原文附在文末。
 | Bouncy Castle（`bcprov`、`bcpkix-jdk15to18`） | 1.81 | Bouncy Castle Licence（MIT 条款） | Copyright (c) 2000-2023 The Legion of the Bouncy Castle Inc. | 自签名 ADB 客户端证书 |
 | XZ for Java（`org.tukaani:xz`） | 1.10 | 0BSD | Copyright (C) The XZ for Java authors and contributors | 解压 `.tar.xz` 运行时包 |
 | AndroidX WebKit | 1.15.0 | Apache-2.0 | The Android Open Source Project | 网页插件的深色模式 |
-| flutter_webrtc（pub 包，含 Android 插件代码） | 1.6.3 | MIT；其 NOTICE 另含 react-native-webrtc（MIT，Copyright (c) 2015 Howard Yang）与 `SimulcastVideoEncoderFactoryWrapper.kt`（Apache-2.0，Copyright 2017, Lyo Kato；Copyright 2017-2021, Shiguredo Inc.），原文见文末 | Copyright (c) 2018 湖北捷智云技术有限公司 | DSH Remote 直连（P2P / TURN）的 DataChannel；只用数据通道，不碰麦克风、摄像头和音频会话 |
+| flutter_webrtc（pub 包，含 Android 插件代码） | 1.6.3 | MIT；其 NOTICE 另含 react-native-webrtc（MIT，Copyright (c) 2015 Howard Yang）与 `SimulcastVideoEncoderFactoryWrapper.kt`（Apache-2.0，Copyright 2017, Lyo Kato；Copyright 2017-2021, Shiguredo Inc.），原文见文末 | Copyright (c) 2018 湖北捷智云技术有限公司 | XRK Remote 直连（P2P / TURN）的 DataChannel；只用数据通道，不碰麦克风、摄像头和音频会话 |
 | WebRTC Android SDK（`io.github.webrtc-sdk:android`，libwebrtc m150） | 150.7871.04 | BSD-3-Clause，另附 Google 的专利授权（PATENTS） | Copyright (c) 2011, The WebRTC project authors | flutter_webrtc 的原生 WebRTC（`libjingle_peerconnection_so.so`，每个 ABI 一份） |
-| AudioSwitch（`com.github.davidliu:audioswitch`，twilio/audioswitch 的分支） | `039a35aefab7747c557242fa216c9ea11743b604` | Apache-2.0 | Copyright 2020 Twilio, inc. | flutter_webrtc 的音频路由依赖；DSH Go 不建音频轨，不会启用 |
+| AudioSwitch（`com.github.davidliu:audioswitch`，twilio/audioswitch 的分支） | `039a35aefab7747c557242fa216c9ea11743b604` | Apache-2.0 | Copyright 2020 Twilio, inc. | flutter_webrtc 的音频路由依赖；XRK Go 不建音频轨，不会启用 |
 | mobile_scanner（pub 包，含 Android 插件代码） | 7.5.0 | BSD-3-Clause | Copyright (c) 2022, Julian Steenbakker | Remote「扫码配对电脑」的相机扫码和相册识图 |
 | ML Kit Barcode Scanning（`com.google.mlkit:barcode-scanning`，模型随 APK 打包） | 17.3.0 | [ML Kit 服务条款](https://developers.google.com/ml-kit/terms)（Google 免费分发的二进制，非开源） | Google LLC | mobile_scanner 的二维码识别，在手机本地运行，不需要 Google Play 服务 |
 | CameraX（`androidx.camera:*`，mobile_scanner 的依赖） | 随 mobile_scanner 7.5.0 | Apache-2.0 | The Android Open Source Project | 扫码时的相机预览 |
@@ -308,7 +297,7 @@ APK 内置的 Linux 运行时由 `runtime/build-runtime.sh` 构建，以下组�
 | Node.js | 24.22.1 | https://nodejs.org | MIT 及其捆绑组件的许可 |
 | CPython | 3.12.15 | astral-sh/python-build-standalone | PSF-2.0 及其捆绑组件的许可 |
 | pnpm | 11.28.5 | npm | MIT |
-| DeepSeek Harness 主包（`@deepseek-ai/dsh`） | 0.2.1-rc.4 | npm | MIT；构建补丁集合由 `runtime/patches/pins.json` 决定 |
+| XRK-Harness 主包（`@xrkseek/harness-cli`） | 0.2.1-rc.4 | npm | MIT；构建补丁集合由 `runtime/patches/pins.json` 决定 |
 
 GPL / LGPL 组件的对应源码：proot、libtalloc、libandroid-shmem 的二进制取自 Termux 官方 apt 仓库（https://packages.termux.dev/apt/termux-main ），`runtime/build-runtime.sh` 固定了每个 .deb 的 SHA-256。源码分别在 https://github.com/termux/proot （tag `v5.1.107.98`，构建时一并下载并核对哈希）、https://www.samba.org/ftp/talloc/ （2.5.0）、https://github.com/termux/libandroid-shmem （0.7）；Termux 的构建配方在 https://github.com/termux/termux-packages 。本项目对这三个二进制的修改只有上面说的 DT_NEEDED / DT_SONAME 改名。
 
@@ -320,7 +309,7 @@ GPL / LGPL 组件的对应源码：proot、libtalloc、libandroid-shmem 的二�
 |---|---|---|---|
 | `@deepseek-ai/libreoffice-kit` 及对应平台组件 | 0.1.5 | MPL-2.0 | 保留实际分发组件的 LICENSE/NOTICE；不能将整个 `@deepseek-ai/*` 范围归为 MIT |
 | `@img/sharp-libvips-linux-arm64`、`@img/sharp-libvips-linux-x64` | 1.3.4 | LGPL-3.0-or-later | 按目标 ABI 的实际安装结果核对 libvips 及其捆绑组件许可与对应源码 |
-| 其他 npm 直接及传递依赖 | 见 DSH 与 pnpm 的固定 lock | 各包各自许可 | lock 包含可选平台包，不能把全部条目当成每个 APK 都已打包；以实际 rootfs 文件清单为准 |
+| 其他 npm 直接及传递依赖 | 见 XRK 与 pnpm 的固定 lock | 各包各自许可 | lock 包含可选平台包，不能把全部条目当成每个 APK 都已打包；以实际 rootfs 文件清单为准 |
 
 `runtime/lib/rtbuild.py` 保留 Node 发行包的 `LICENSE` 为 `/opt/node/LICENSE`，保留 Ubuntu `/usr/share/doc/*/copyright`，npm 的许可文件不属于常规开发元数据裁剪项。仍须对最终归档检查许可文件和 symlink 目标是否可用，特别是 npm 包未附许可正文的情形。保留许可文本与提供 GPL/LGPL 等组件适用的对应源码是不同检查项；应为具体发行物记录版本、构建配方、修改和可获取的对应源码，不能只用项目主页或一份声明代替。
 
@@ -339,7 +328,7 @@ C710 新增的 `image` 4.12.0 是 MIT 许可 pub 依赖；其原许可由 Flutte
 - **Clawd on Desk**（https://github.com/rullerzhou-afk/clawd-on-desk，AGPL-3.0）：桌宠的主题包格式、状态名、优先级与时长默认值与它兼容，宠物包可以在两边通用。本项目没有复制它的代码。
 - **Streamdown**（https://github.com/vercel/streamdown）：`app/lib/ui/chat/render/stream_repair.dart` 修补流式 Markdown 末尾的方式参照了它的 `remend`。
 - **DS Bot**：dsh-ui 组件的名称与 DS Bot 一致。
-- **Open-Meteo**（https://open-meteo.com，数据 CC BY 4.0）：示例插件 `examples/plugins/dsh-go-example-weather` 使用它的天气数据，卡片上注明来源。
+- **Open-Meteo**（https://open-meteo.com，数据 CC BY 4.0）：示例插件 `examples/plugins/xrk-example-weather` 使用它的天气数据，卡片上注明来源。
 
 ## 许可证全文
 
@@ -349,8 +338,8 @@ C710 新增的 `image` 4.12.0 是 MIT 许可 pub 依赖；其原许可由 Flutte
 
 ```text
 Copyright (c) 2026 CikeSeven                                   (PiPilot)
-Copyright (c) 2026 DeepSeek                                    (DeepSeek Harness)
-Copyright (c) 2026 DSH Remote contributors                     (ds-harness-remote)
+Copyright (c) 2026 DeepSeek                                    (XRK-Harness)
+Copyright (c) 2026 XRK Remote contributors                     (xrk-remote)
 Copyright (c) 2026 qiannianhuanxiang                           (DSHA)
 Copyright (c) 2018 Civilized Discourse Construction Kit, Inc.  (discourse_docker)
 Copyright (c) 2023 Phosphor Icons                              (Phosphor Icons)
@@ -578,11 +567,11 @@ This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 Third-party code in this repository
 ==============================================================================
 
-DeepSeek Harness (https://github.com/deepseek-ai/deepseek-harness)
+XRK-Harness (https://github.com/deepseek-ai/deepseek-harness)
 MIT License, Copyright (c) 2026 DeepSeek
 
   - ds-bot/dev/desktop-linux/launch.mts follows the steps of
-    apps/desktop/scripts/dev.ts in DeepSeek Harness and reuses a few of its
+    apps/desktop/scripts/dev.ts in XRK-Harness and reuses a few of its
     lines (the release record and the Electron launch arguments). It is a
     developer script for screenshots on Linux and is not in the npm package.
   - app/src/host.mjs and app/src/profile.mjs follow
@@ -601,13 +590,13 @@ MIT License, Copyright (c) 2026 DeepSeek
     checks and fixed guest preferences, the session policy and the new-window
     requests.
   - app/engine/cordis.patch.yml follows the bundle patch of
-    @deepseek-ai/dsh-web-app (packages/bundle/web-app/cordis.patch.yml): the
+    @xrkseek/harness-cli-web-app (packages/bundle/web-app/cordis.patch.yml): the
     transport and host-service rows and the agent-plane rows it turns off.
     app/engine/preset-standard.patch.yml copies its standard preset
     (presets/standard.patch.yml), including the plan-mode prompt text,
     without the goal rows.
   - .agents/skills/record-browser-gif/ comes from the skill of the same name
-    in DeepSeek Harness (.agents/skills/record-browser-gif/): SKILL.md is
+    in XRK-Harness (.agents/skills/record-browser-gif/): SKILL.md is
     adapted and translated for this repository; scripts/encode_gif.py and
     scripts/test_encode_gif.py are copied unchanged.
 
@@ -632,7 +621,7 @@ MIT License, Copyright (c) 2026 DeepSeek
   SOFTWARE.
 
 No other third-party code is copied into this repository. At run time the
-plugin uses the @deepseek-ai/* packages of the DeepSeek Harness install it
+plugin uses the @deepseek-ai/* packages of the XRK-Harness install it
 runs in; they are not bundled. esbuild is a build tool only. The desktop app
 in app/ installs the pinned @deepseek-ai/* packages, Electron and pnpm from
 npm; they keep their own licenses. The build of its window (app/ui) bundles,
@@ -667,7 +656,7 @@ their ideas; it does not contain their code.
     when to condense a long conversation, and what a handoff note holds.
   - obelisk (https://github.com/tommy0103/obelisk), AGPL-3.0:
     searching a Bot's own chat with a SQLite FTS5 index ranked by BM25.
-  - DeepSeek Harness Voice Input plugin
+  - XRK-Harness Voice Input plugin
     (packages/experimental/client-ui-voice-input), MIT: the voice chat
     records with the same steps (record, resample to 16 kHz mono, PCM16 WAV)
     before it calls the plugin's speech service.

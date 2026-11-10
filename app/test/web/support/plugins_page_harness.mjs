@@ -1,10 +1,10 @@
-// Runs assets/web/dsh_web_open.js against a model of DSH Web's Plugins page
+// Runs assets/web/xrk_web_open.js against a model of XRK Web's Plugins page
 // (node, no DOM library) and prints what it pressed, as JSON. Used by
 // test/web/web_open_plugins_test.dart.
 //
 //   node plugins_page_harness.mjs <bridge.js> <scenario JSON>
 //
-// The model follows DSH 0.2.1-rc.4's dsh-client-ui-plugin-manager: the
+// The model follows XRK 0.2.1-rc.4's dsh-client-ui-plugin-manager: the
 // sidebar's 「插件」 entry opens the panel (`section[data-plugin-panel]`, busy
 // while the list loads); a card is `li[data-plugin-package=<name>]` with its
 // title button `查看 <title>` and its enable switch `启用 <title>` (an empty
@@ -235,7 +235,7 @@ const storage = () => {
   return { getItem: (k) => (map.has(k) ? map.get(k) : null), setItem: (k, v) => map.set(k, String(v)), removeItem: (k) => map.delete(k) };
 };
 
-const window = { DshAppOpen: { postMessage: (m) => out.reports.push({ at: now - t0, ...JSON.parse(m) }) } };
+const window = { XrkAppOpen: { postMessage: (m) => out.reports.push({ at: now - t0, ...JSON.parse(m) }) } };
 const context = vm.createContext({
   window, document,
   location: { href: 'http://127.0.0.1:3080/?token=t', replace: () => {} },

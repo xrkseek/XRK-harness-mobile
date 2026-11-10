@@ -2,7 +2,7 @@
 // the group answers, its notice, members at work (with 「停下」), approvals
 // waiting, the group memory.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -139,7 +139,7 @@ class RoomDetailsPage extends ConsumerWidget {
         ],
       );
     }
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final writable = status.readOnly == null;
     final scope = BotActionScope(ref, roomId: room.id);
     final members = [

@@ -1,7 +1,7 @@
-import 'package:dsh_app/ui/chat/render/ansi_text.dart';
-import 'package:dsh_app/ui/chat/render/diff_view.dart';
-import 'package:dsh_app/ui/chat/tool_view.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/render/ansi_text.dart';
+import 'package:xrk_app/ui/chat/render/diff_view.dart';
+import 'package:xrk_app/ui/chat/tool_view.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 

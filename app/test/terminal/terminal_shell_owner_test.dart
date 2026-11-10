@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/terminal_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/terminal_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -106,7 +106,7 @@ void main() {
   test('a current shell error still propagates and a later request can retry', () async {
     final backend = _ShellBackend('current', const [_bash])..pending = Completer<List<TerminalShell>>();
     final workspace = await open(backend);
-    const error = DshTransportException('shell listing failed');
+    const error = XrkTransportException('shell listing failed');
     final result = expectLater(workspace.shells(), throwsA(same(error)));
     backend.pending!.completeError(error);
     await result;

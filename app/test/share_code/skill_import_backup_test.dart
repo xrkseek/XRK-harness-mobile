@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/share_code/share_import.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/share_code/share_import.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_engine.dart';
 
 const _skillPath = '${GuestFs.skillsRoot}/outline';
-const _backupPath = '/root/.dsh/backups/share-import-20261024-153012/skills/outline';
+const _backupPath = '/root/.xrk/backups/share-import-20261024-153012/skills/outline';
 
 void main() {
   // Real files outside the text-only share wire budget are valid installed
@@ -29,12 +29,12 @@ void main() {
   for (final entry in cases.entries) {
     group(entry.key, () {
       late GuestFs fs;
-      late DshClient client;
+      late XrkClient client;
       late Map<String, List<int>> originals;
 
       setUp(() {
         fs = tempGuest();
-        client = DshClient.withCarrier(FakeEngine());
+        client = XrkClient.withCarrier(FakeEngine());
         originals = {'SKILL.md': utf8.encode('old installed skill'), entry.value.$1: entry.value.$2};
         for (final file in originals.entries) {
           final target = fs.file('$_skillPath/${file.key}');

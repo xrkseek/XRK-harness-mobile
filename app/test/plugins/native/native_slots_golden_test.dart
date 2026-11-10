@@ -4,19 +4,19 @@
 // the plugin's native settings. Regenerate with
 // `flutter test --update-goldens test/plugins/native/native_slots_golden_test.dart`.
 
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/widgets/assistant_message.dart';
-import 'package:dsh_app/ui/plugins/native/native_composer_bar.dart';
-import 'package:dsh_app/ui/plugins/native/native_panel.dart';
-import 'package:dsh_app/ui/plugins/native/native_plugin_section.dart';
-import 'package:dsh_app/ui/plugins/seats/session_plugins_tab.dart';
-import 'package:dsh_app/ui/theme/backdrop.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/widgets/assistant_message.dart';
+import 'package:xrk_app/ui/plugins/native/native_composer_bar.dart';
+import 'package:xrk_app/ui/plugins/native/native_panel.dart';
+import 'package:xrk_app/ui/plugins/native/native_plugin_section.dart';
+import 'package:xrk_app/ui/plugins/seats/session_plugins_tab.dart';
+import 'package:xrk_app/ui/theme/backdrop.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -69,7 +69,7 @@ FakeBridge _bridge(_Copy c) {
   final bridge = FakeBridge(
     contributions([
       plugin(
-        'dsh-go-example-quick',
+        'xrk-example-quick',
         title: c.quick,
         icon: 'bolt',
         composer: [
@@ -88,7 +88,7 @@ FakeBridge _bridge(_Copy c) {
         ],
       ),
       plugin(
-        'dsh-go-example-usage',
+        'xrk-example-usage',
         title: c.usage,
         icon: 'chart',
         strip: [
@@ -106,8 +106,8 @@ FakeBridge _bridge(_Copy c) {
       ),
     ]),
   );
-  bridge.views['dsh-go-example-usage/usage'] = DshGoView(
-    pkg: 'dsh-go-example-usage',
+  bridge.views['xrk-example-usage/usage'] = DshGoView(
+    pkg: 'xrk-example-usage',
     id: 'usage',
     title: c.usage,
     view: {
@@ -300,7 +300,7 @@ void main() {
           app(
             NativePanelPage(
               panel: NativePanel(
-                package: 'dsh-go-example-usage',
+                package: 'xrk-example-usage',
                 id: 'usage',
                 title: c.usage,
                 icon: 'chart',
@@ -335,7 +335,7 @@ void main() {
               occupancy: const {Slots.rightPaneTab: []},
               nativePanels: [
                 NativePanel(
-                  package: 'dsh-go-example-usage',
+                  package: 'xrk-example-usage',
                   id: 'usage',
                   title: c.usage,
                   icon: 'chart',
@@ -366,8 +366,8 @@ void main() {
                       return const Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          NativePluginSection(package: 'dsh-go-example-quick'),
-                          NativePluginSection(package: 'dsh-go-example-usage'),
+                          NativePluginSection(package: 'xrk-example-quick'),
+                          NativePluginSection(package: 'xrk-example-usage'),
                         ],
                       );
                     },
@@ -381,9 +381,9 @@ void main() {
         await pumpFrames(tester);
         final container = ProviderScope.containerOf(tester.element(find.byType(Consumer).first));
         container.read(nativeDiagnosticsProvider.notifier)
-          ..view('dsh-go-example-usage', 3277)
-          ..invoked('dsh-go-example-usage', const Duration(milliseconds: 48))
-          ..report('dsh-go-example-usage', '/runtime/usage', [
+          ..view('xrk-example-usage', 3277)
+          ..invoked('xrk-example-usage', const Duration(milliseconds: 48))
+          ..report('xrk-example-usage', '/runtime/usage', [
             NativeIssue('', nativeIssueText('timeout'), code: 'timeout'),
           ]);
         await pumpFrames(tester);

@@ -5,12 +5,12 @@
 ## 执行
 
 ```sh
-DSH_PREFIX=/absolute/prepared-prefix \
-DSH_EVIDENCE_DIR=/absolute/own-evidence \
+XRK_PREFIX=/absolute/prepared-prefix \
+XRK_EVIDENCE_DIR=/absolute/own-evidence \
 node runtime/tests/piai-responses-cli-live.mjs
 ```
 
-需要准备好的 DSH 0.2.2-rc.1 运行时、Node、可写临时目录和普通 loopback 监听。没有新增依赖。`DSH_EVIDENCE_DIR` 可省略；省略时请求和输出写入本次临时目录，结束随临时 HOME/cwd 一起清除。设置时证据保留在指定目录，使用独占空目录以免覆盖既有同名文件。脚本不写源码目录或 runtime prefix。
+需要准备好的 XRK 0.2.2-rc.1 运行时、Node、可写临时目录和普通 loopback 监听。没有新增依赖。`XRK_EVIDENCE_DIR` 可省略；省略时请求和输出写入本次临时目录，结束随临时 HOME/cwd 一起清除。设置时证据保留在指定目录，使用独占空目录以免覆盖既有同名文件。脚本不写源码目录或 runtime prefix。
 
 ## 检查内容
 

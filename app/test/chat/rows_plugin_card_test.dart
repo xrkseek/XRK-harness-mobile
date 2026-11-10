@@ -1,4 +1,4 @@
-// Plugin tool cards (`meta["dsh-go/view"]`) in the row model: a call with a
+// Plugin tool cards (`meta["xrk-mobile/view"]`) in the row model: a call with a
 // card never hides in a tool group, and when a finished turn folds, its
 // tool row goes inside while the card itself stays in the stream. Turns
 // without a card (or with a card that cannot be drawn) fold like any other
@@ -6,9 +6,9 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/chat_rows.dart';
-import 'package:dsh_app/ui/chat/tool_view.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/chat_rows.dart';
+import 'package:xrk_app/ui/chat/tool_view.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/sample_chat.dart';
@@ -44,7 +44,7 @@ ToolChatItem _tool(int seq, String id, {Object? meta}) => ToolChatItem(
   meta: meta,
 );
 
-ToolChatItem _carded(int seq, String id) => _tool(seq, id, meta: {'dsh-go/view': _card});
+ToolChatItem _carded(int seq, String id) => _tool(seq, id, meta: {'xrk-mobile/view': _card});
 
 /// Type, key and card placement of every row, folds opened up.
 List<String> _shape(List<ChatRow> rows) => [
@@ -75,7 +75,7 @@ void main() {
           1,
           'x',
           meta: {
-            'dsh-go/view': {'type': 'gauge'},
+            'xrk-mobile/view': {'type': 'gauge'},
           },
         ),
       ),
@@ -138,13 +138,13 @@ void main() {
             3,
             'w',
             meta: {
-              'dsh-go/view': {'type': 'gauge'},
+              'xrk-mobile/view': {'type': 'gauge'},
             },
           ),
         ),
         before,
       );
-      expect(shape(_tool(3, 'w', meta: {'dsh-go/view': 'x' * 9000})), before);
+      expect(shape(_tool(3, 'w', meta: {'xrk-mobile/view': 'x' * 9000})), before);
       expect(shape(_tool(3, 'w', meta: {'path': 'a.txt'})), before);
     });
 

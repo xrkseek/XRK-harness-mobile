@@ -11,7 +11,7 @@ import '../runtime/runtime_state.dart';
 /// They take the [ProviderContainer] (not a WidgetRef) so they keep working after
 /// the screen that started them is popped.
 abstract final class EngineControl {
-  /// Stops the local DSH, waits for exit, then requests a new start.
+  /// Stops the local XRK, waits for exit, then requests a new start.
   /// An incomplete stop leaves the engine stopping; no new start is requested.
   /// [mode] null keeps the current mode (a restart in safe mode stays in safe mode).
   /// Returns false when the stop did not finish, so no start was requested.

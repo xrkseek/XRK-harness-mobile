@@ -5,30 +5,30 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/providers_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/session_attention_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/subscriptions_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/account/account_page.dart';
-import 'package:dsh_app/ui/chat/model_sheet.dart';
-import 'package:dsh_app/ui/common/segmented_pill.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_app/ui/providers/providers_page.dart';
-import 'package:dsh_app/ui/shell/sessions_drawer.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/providers_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/session_attention_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/subscriptions_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/account/account_page.dart';
+import 'package:xrk_app/ui/chat/model_sheet.dart';
+import 'package:xrk_app/ui/common/segmented_pill.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_app/ui/providers/providers_page.dart';
+import 'package:xrk_app/ui/shell/sessions_drawer.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -192,7 +192,7 @@ class _HttpLists {
   }
 }
 
-List<Override> _overrides(DshClient client) => [
+List<Override> _overrides(XrkClient client) => [
   activeHostProvider.overrideWith(FixedHost.new),
   switchConnectionProvider.overrideWith(() => SwitchConnection(HostConnection(client: client, isLocal: true))),
   activeConnectionProvider.overrideWith((ref) => ref.watch(switchConnectionProvider)),
@@ -254,7 +254,7 @@ void main() {
   for (final background in [false, true]) {
     test('four real list sources retain provider metadata during startup (worker=$background)', () async {
       final host = await _HttpLists.start();
-      final client = DshClient(DshConnection(host.uri), backgroundLists: background);
+      final client = XrkClient(DshConnection(host.uri), backgroundLists: background);
       await client.mux.ready();
       final c = ProviderContainer(overrides: _overrides(client));
       addTearDown(() async {
@@ -289,12 +289,12 @@ void main() {
     testWidgets('$kind keeps cached rows and controls during actual 3-second HTTP worker read', (tester) async {
       usePhoneView(tester);
       late _HttpLists host;
-      late DshClient first;
-      late DshClient next;
+      late XrkClient first;
+      late XrkClient next;
       await tester.runAsync(() async {
         host = await _HttpLists.start();
-        first = DshClient(DshConnection(host.uri), backgroundLists: true);
-        next = DshClient(DshConnection(host.uri), backgroundLists: true);
+        first = XrkClient(DshConnection(host.uri), backgroundLists: true);
+        next = XrkClient(DshConnection(host.uri), backgroundLists: true);
         expect(first.connection.canReadSessionsInBackground, isTrue);
         await first.mux.ready();
         await next.mux.ready();

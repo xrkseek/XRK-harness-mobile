@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/chat/render/markdown_image.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/chat/render/markdown_image.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,7 +75,7 @@ void main() {
     addTearDown(() => directory.delete(recursive: true));
     final ordinary = File('${directory.path}/report.pdf')..writeAsStringSync('ordinary sibling');
     final spaced = File('${directory.path}/report.pdf ')..writeAsStringSync('requested trailing-space file');
-    const channel = MethodChannel('dsh/files');
+    const channel = MethodChannel('xrk/files');
     final requests = <String>[];
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(channel, (call) async {

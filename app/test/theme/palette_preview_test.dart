@@ -1,29 +1,29 @@
 // Not a check: renders every preset in light and dark (chat, settings,
 // drawer) and lays them out side by side for review. Skipped unless asked:
 //
-//   DSH_PALETTE_PREVIEW=<out dir> flutter test test/theme/palette_preview_test.dart
+//   XRK_PALETTE_PREVIEW=<out dir> flutter test test/theme/palette_preview_test.dart
 
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/appearance_state.dart';
-import 'package:dsh_app/state/balance_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/onboarding_state.dart';
-import 'package:dsh_app/state/sessions_state.dart' as sessions;
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/voice_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart';
-import 'package:dsh_app/ui/chat/voice/voice_bridge.dart';
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/appearance_state.dart';
+import 'package:xrk_app/state/balance_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/onboarding_state.dart';
+import 'package:xrk_app/state/sessions_state.dart' as sessions;
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/voice_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart';
+import 'package:xrk_app/ui/chat/voice/voice_bridge.dart';
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

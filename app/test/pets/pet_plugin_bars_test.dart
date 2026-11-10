@@ -6,16 +6,16 @@
 
 import 'dart:math' as math;
 
-import 'package:dsh_app/pets/pet_sheets.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/widgets/attachments.dart';
-import 'package:dsh_app/ui/pets/pet_perch.dart';
-import 'package:dsh_app/ui/pets/pet_stage.dart';
-import 'package:dsh_app/ui/plugins/native/composer_capsules.dart';
-import 'package:dsh_app/ui/plugins/native/composer_strip.dart';
-import 'package:dsh_app/ui/plugins/native/native_composer_bar.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/pets/pet_sheets.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart';
+import 'package:xrk_app/ui/pets/pet_perch.dart';
+import 'package:xrk_app/ui/pets/pet_stage.dart';
+import 'package:xrk_app/ui/plugins/native/composer_capsules.dart';
+import 'package:xrk_app/ui/plugins/native/composer_strip.dart';
+import 'package:xrk_app/ui/plugins/native/native_composer_bar.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

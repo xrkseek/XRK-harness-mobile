@@ -5,19 +5,19 @@
 // that is an ordinary message with the parameter header (v1, §4.6). What the
 // host offers comes from its catalogue (§4.3): none it can read, no mode.
 
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/media_generation.dart';
-import 'package:dsh_app/state/session_modes.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/media/generate_mode.dart';
-import 'package:dsh_app/ui/chat/media/generate_sheet.dart';
-import 'package:dsh_app/ui/chat/widgets/permission_pill.dart';
-import 'package:dsh_app/ui/settings/media_settings_page.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsTile;
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart' show UserChatItem;
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/media_generation.dart';
+import 'package:xrk_app/state/session_modes.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/media/generate_mode.dart';
+import 'package:xrk_app/ui/chat/media/generate_sheet.dart';
+import 'package:xrk_app/ui/chat/widgets/permission_pill.dart';
+import 'package:xrk_app/ui/settings/media_settings_page.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart' show SettingsTile;
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart' show UserChatItem;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -153,7 +153,7 @@ void main() {
       await pumpFrames(tester);
       expect(_capsule, findsNothing);
       expect(find.text('橘猫'), findsOneWidget);
-      expect(tester.widget<TextField>(find.byType(TextField)).decoration!.hintText, '给 DSH 发消息…');
+      expect(tester.widget<TextField>(find.byType(TextField)).decoration!.hintText, '给 XRK 发消息…');
     });
   });
 

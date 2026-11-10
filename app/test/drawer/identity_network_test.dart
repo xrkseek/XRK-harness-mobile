@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/remote/network_details_sheet.dart';
-import 'package:dsh_app/ui/shell/sessions_drawer.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/remote/network_details_sheet.dart';
+import 'package:xrk_app/ui/shell/sessions_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -121,7 +121,7 @@ void main() {
       final sheet = find.byType(RemoteNetworkDetailsSheet);
       expect(tester.widget<RemoteNetworkDetailsSheet>(sheet).host, _host);
       expect(find.descendant(of: sheet, matching: find.text(_name)), findsOneWidget);
-      expect(find.descendant(of: sheet, matching: find.text('DSH Remote')), findsOneWidget);
+      expect(find.descendant(of: sheet, matching: find.text('XRK Remote')), findsOneWidget);
       expect(find.descendant(of: sheet, matching: find.text(path.label)), findsOneWidget);
       expect(find.text('315 毫秒'), findsOneWidget);
       expect(find.text('47 毫秒'), findsOneWidget);

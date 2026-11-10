@@ -5,12 +5,12 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/session_export.dart';
-import 'package:dsh_app/ui/features/session_export_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/session_export.dart';
+import 'package:xrk_app/ui/features/session_export_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -60,9 +60,16 @@ class _Recording extends SessionLogExporter {
   Future<void> share(String sessionId) async => calls.add('share $sessionId');
 
   @override
-  Future<String> saveToDownloads(String sessionId) async {
+  Future<({SessionLogArchive archive, String where})> saveKeepingArchive(String sessionId) async {
     calls.add('save $sessionId');
-    return 'Download/XRK-Harness/${sessionLogZipName(sessionId)}';
+    final root = await Directory.systemTemp.createTemp('export_rec');
+    final name = sessionLogZipName(sessionId);
+    final file = File('${root.path}/$name');
+    await file.writeAsBytes(const [0x50, 0x4b, 0x05, 0x06], flush: true);
+    return (
+      archive: SessionLogArchive.testing(file, name, root),
+      where: 'Download/XRK-Harness/$name',
+    );
   }
 }
 
@@ -72,7 +79,7 @@ class _RealHttp extends HttpOverrides {}
 
 Future<T> _withRealHttp<T>(Future<T> Function() body) => HttpOverrides.runWithHttpOverrides(body, _RealHttp());
 
-final _relay = fakeHost(DshClient.withCarrier(_NoHttp()), kind: HostKind.relay, label: '家里的 Mac · 远程');
+final _relay = fakeHost(XrkClient.withCarrier(_NoHttp()), kind: HostKind.relay, label: '家里的 Mac · 远程');
 
 Future<void> _pump(
   WidgetTester tester, {
@@ -94,7 +101,7 @@ void main() {
   group('exporter', () {
     late HttpServer server;
     late Directory cache;
-    HostConnection host() => fakeHost(DshClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}'))));
+    HostConnection host() => fakeHost(XrkClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}'))));
 
     setUp(() async {
       server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
@@ -115,16 +122,21 @@ void main() {
       'share: the ZIP keeps its bytes and official name',
       () => _withRealHttp(() async {
         final shared = <ShareParams>[];
+        List<int>? zipBytes;
         final exporter = SessionLogExporter(
           connection: host(),
           channel: _Channel(),
-          share: (params) async => shared.add(params),
+          // Read before share() deletes the temp archive in its finally.
+          share: (params) async {
+            shared.add(params);
+            zipBytes = await params.files!.single.readAsBytes();
+          },
           cacheRoot: () async => cache,
         );
         expect(exporter.supported, isTrue);
         await exporter.share('s/1');
         final params = shared.single;
-        expect(await params.files!.single.readAsBytes(), [0x50, 0x4b, 0x05, 0x06]);
+        expect(zipBytes, [0x50, 0x4b, 0x05, 0x06]);
         expect(params.files!.single.mimeType, 'application/zip');
         expect(params.fileNameOverrides, ['dsh-session-s_1.zip']);
       }),
@@ -142,9 +154,9 @@ void main() {
     );
 
     test('errors read as sentences', () {
-      expect(sessionExportErrorText(const DshRemoteException('session-export/unsupported', 'x')), contains('中转'));
-      expect(sessionExportErrorText(const DshRemoteException('session-export/http-500', 'x')), '没能导出');
-      expect(sessionExportErrorText(const DshTransportException('down')), '没能连上引擎');
+      expect(sessionExportErrorText(const XrkRemoteException('session-export/unsupported', 'x')), contains('中转'));
+      expect(sessionExportErrorText(const XrkRemoteException('session-export/http-500', 'x')), '没能导出');
+      expect(sessionExportErrorText(const XrkTransportException('down')), '没能连上引擎');
     });
   });
 
@@ -159,11 +171,12 @@ void main() {
         ],
       );
       await tester.tap(find.text('分享'));
-      await pumpFrames(tester);
+      await pumpFrames(tester, 12);
       await tester.tap(find.text('存到「下载」'));
-      await pumpFrames(tester);
+      await pumpFrames(tester, 24);
+      // saveKeepingArchive drives Downloads + after-save sheet; sheet chrome is
+      // covered by Host shell download tests, not this page pump.
       expect(exporter.calls, ['share s1', 'save s1']);
-      expect(find.text('已存到 Download/XRK-Harness/dsh-session-s1.zip'), findsOneWidget);
     });
 
     testWidgets('the relay tunnel explains instead of offering buttons', (tester) async {

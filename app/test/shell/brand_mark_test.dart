@@ -10,10 +10,10 @@
 //
 //   flutter test test/shell/brand_mark_test.dart
 
-import 'package:dsh_app/ui/share/share_card.dart';
-import 'package:dsh_app/ui/shell/brand_glyph.g.dart';
-import 'package:dsh_app/ui/shell/brand_mark.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/share/share_card.dart';
+import 'package:xrk_app/ui/shell/brand_glyph.g.dart';
+import 'package:xrk_app/ui/shell/brand_mark.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -118,8 +118,8 @@ void main() {
       await expectBrandLockup(tester, find.byType(BrandLockup));
     });
 
-    testWidgets('「dsh-go」 at the share card\'s size: centred on the x-height', (tester) async {
-      await pumpLockup(tester, const BrandLockup(fontSize: 17, label: 'dsh-go'));
+    testWidgets('「xrk-mobile」 at the share card\'s size: centred on the x-height', (tester) async {
+      await pumpLockup(tester, const BrandLockup(fontSize: 17, label: 'xrk-mobile'));
       await expectBrandLockup(tester, find.byType(BrandLockup));
     });
 
@@ -153,7 +153,7 @@ void main() {
         );
         await tester.pump();
         final word = await expectBrandLockup(tester, find.byType(BrandLockup));
-        final tagline = tester.getRect(find.text('手机上的 DSH · 扫码获取'));
+        final tagline = tester.getRect(find.text('手机上的 XRK · 扫码获取'));
         expect(tagline.left, closeTo(word.left, 0.01));
         expect(tagline.top, greaterThanOrEqualTo(word.bottom));
       });
@@ -172,7 +172,7 @@ void main() {
           brightness: brightness,
           home: Builder(
             builder: (context) {
-              final colors = DshColors.of(context);
+              final colors = XrkColors.of(context);
               Widget row(List<Widget> children) => Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -193,7 +193,7 @@ void main() {
                           const BrandMark(size: 52, tile: true),
                           const BrandMark(size: 64, tile: true),
                         ]),
-                        row(const [BrandLockup(height: 19), BrandLockup(fontSize: 17, label: 'dsh-go')]),
+                        row(const [BrandLockup(height: 19), BrandLockup(fontSize: 17, label: 'xrk-mobile')]),
                       ],
                     ),
                   ),

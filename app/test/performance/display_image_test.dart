@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/common/display_image.dart';
+import 'package:xrk_app/ui/common/display_image.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 

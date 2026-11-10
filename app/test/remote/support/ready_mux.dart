@@ -1,4 +1,4 @@
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 /// A mux that is ready at once, for fake local clients: the local connection
 /// starts the mux itself and waits for it before its repairs.

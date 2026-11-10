@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/diagnostics/diagnostics_markdown.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/voice_settings.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/diagnostics/diagnostics_markdown.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/voice_settings.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,7 +48,7 @@ class _Voice extends VoiceSettingsController {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  const channel = MethodChannel('dsh/phone');
+  const channel = MethodChannel('xrk/phone');
   final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   late ProviderContainer container;
   final calls = <String>[];

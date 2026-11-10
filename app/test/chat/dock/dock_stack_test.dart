@@ -5,8 +5,8 @@
 // accessory beside the front card answers on the folded deck too; a card
 // growing in moves the deck smoothly.
 
-import 'package:dsh_app/ui/chat/dock/dock_pill.dart';
-import 'package:dsh_app/ui/chat/dock/dock_stack.dart';
+import 'package:xrk_app/ui/chat/dock/dock_pill.dart';
+import 'package:xrk_app/ui/chat/dock/dock_stack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

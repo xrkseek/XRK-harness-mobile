@@ -5,9 +5,9 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/widgets/message_menu.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsTile;
+import 'package:xrk_app/ui/chat/widgets/message_menu.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart' show SettingsTile;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

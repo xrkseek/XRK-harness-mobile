@@ -1,6 +1,6 @@
 // 桌面图标: which of the four launcher icons the phone shows. Native side:
 // android/.../icons/ (LauncherIconPlugin, LauncherIcons; MethodChannel
-// `dsh/launcher_icon`), one <activity-alias> per icon.
+// `xrk/launcher_icon`), one <activity-alias> per icon.
 
 import 'dart:async';
 
@@ -44,9 +44,9 @@ class AppIconState {
   AppIconState copyWith({AppIcon? current}) => AppIconState(current: current ?? this.current, mask: mask);
 }
 
-/// The native side (`dsh/launcher_icon`).
+/// The native side (`xrk/launcher_icon`).
 class LauncherIconChannel {
-  const LauncherIconChannel([this.channel = const MethodChannel('dsh/launcher_icon')]);
+  const LauncherIconChannel([this.channel = const MethodChannel('xrk/launcher_icon')]);
 
   final MethodChannel channel;
 

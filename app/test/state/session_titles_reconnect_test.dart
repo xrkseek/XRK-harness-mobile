@@ -1,24 +1,24 @@
 // Title reads (sessionsProvider) across a WebSocket reconnect of the same
-// client (CR-fef154a). On an SSH host the app keeps its DshClient when the
+// client (CR-fef154a). On an SSH host the app keeps its XrkClient when the
 // tunnel comes back on the same port and token, and only the mux reconnects:
 // readListLiveConnectionProvider goes null while it does, which retires the
 // title queue — but the queue's `session/projections` calls are plain HTTP
 // POSTs the mux loss doesn't end. They still fold a log each on the Host, and
 // what they answer belongs to a queue that's gone.
 //
-// Real DshClient HTTP and WebSocket transport against an owned loopback
-// imitation of the wire (not a DSH Host): plain test(), so no test binding
+// Real XrkClient HTTP and WebSocket transport against an owned loopback
+// imitation of the wire (not a XRK Host): plain test(), so no test binding
 // fakes the sockets (flutter_test_config.dart installs none).
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -235,14 +235,14 @@ Future<bool> _eventually(bool Function() condition) async {
 
 void main() {
   late _Wire wire;
-  late DshClient client;
+  late XrkClient client;
   late ProviderContainer c;
   late ProviderSubscription<AsyncValue<List<SessionSummary>>> watched;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     wire = await _Wire.start();
-    client = await DshClient.connect(
+    client = await XrkClient.connect(
       baseUri: wire.base,
       token: 'loopback-token',
       muxOptions: const MuxOptions(retryCaps: [Duration(milliseconds: 100)]),

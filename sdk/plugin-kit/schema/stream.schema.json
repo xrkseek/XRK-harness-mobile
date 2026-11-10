@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://go.dshtui.com/schema/plugin-kit/v1/stream.schema.json",
-  "title": "WS /dsh-go/v1/stream messages, protocol v1",
+  "$id": "https://xrkseek.com/schema/plugin-kit/v1/stream.schema.json",
+  "title": "WS /xrk-mobile/v1/stream messages, protocol v1",
   "description": "docs/design/native-plugins-protocol.md §4.3. One JSON object per text frame; `t` is the type. $defs.up = app -> bridge (<= 4 KiB per frame), $defs.down = bridge -> app (<= 48 KiB). Unknown `t` values and fields are ignored by both sides. v1.1: welcome.conn, up `cancel`, down `done` / `void` (deferred results, §4.7).",
   "oneOf": [
     {

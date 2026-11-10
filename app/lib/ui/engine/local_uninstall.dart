@@ -1,5 +1,5 @@
 // 「卸载运行环境」: frees the room the on-device runtime
-// takes, for a phone that runs DSH on a remote host. Installing again is one
+// takes, for a phone that runs XRK on a remote host. Installing again is one
 // tap away wherever 本机 shows as 未安装.
 
 import 'dart:async';
@@ -53,8 +53,8 @@ class LocalUninstallRow extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(l10n.localEnvUninstallConfirm),

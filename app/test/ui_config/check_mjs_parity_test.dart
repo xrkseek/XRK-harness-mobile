@@ -5,7 +5,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
@@ -21,7 +21,7 @@ String? _node() {
 void main() {
   final node = _node();
   final skip = node == null ? 'node is not installed' : null;
-  final checker = '$appDir/assets/skills/dsh-go-ui/check.mjs';
+  final checker = '$appDir/assets/skills/xrk-ui/check.mjs';
 
   Future<ProcessResult> run(List<String> args, {Map<String, String>? env, String? stdin}) async {
     if (stdin == null) return Process.run(node!, [checker, ...args], environment: env);
@@ -88,16 +88,16 @@ void main() {
       expect(r3.exitCode, 3);
     }, skip: skip);
 
-    test('finds ui.json from where the skill is installed, or from DSH_HOME', () async {
+    test('finds ui.json from where the skill is installed, or from XRK_HOME', () async {
       final home = Directory.systemTemp.createTempSync('ui-check-home-');
       addTearDown(() => home.deleteSync(recursive: true));
-      final scripts = Directory('${home.path}/skills/dsh-go-ui/scripts')..createSync(recursive: true);
+      final scripts = Directory('${home.path}/skills/xrk-ui/scripts')..createSync(recursive: true);
       File(checker).copySync('${scripts.path}/check.mjs');
-      File('$appDir/assets/skills/dsh-go-ui/schema.json').copySync('${home.path}/skills/dsh-go-ui/schema.json');
-      Directory('${home.path}/dsh-go').createSync();
-      File('${home.path}/dsh-go/ui.json').writeAsStringSync('{"version": 1, "hide": ["whaleTail"]}');
+      File('$appDir/assets/skills/xrk-ui/schema.json').copySync('${home.path}/skills/xrk-ui/schema.json');
+      Directory('${home.path}/xrk-mobile').createSync();
+      File('${home.path}/xrk-mobile/ui.json').writeAsStringSync('{"version": 1, "hide": ["whaleTail"]}');
 
-      final env = {...Platform.environment}..remove('DSH_HOME');
+      final env = {...Platform.environment}..remove('XRK_HOME');
       final installed = await Process.run(
         node!,
         ['${scripts.path}/check.mjs', '--json'],
@@ -105,9 +105,9 @@ void main() {
         includeParentEnvironment: false,
       );
       expect(installed.exitCode, 0, reason: '${installed.stderr}');
-      expect((jsonDecode(installed.stdout as String) as Map)['file'], '${home.path}/dsh-go/ui.json');
+      expect((jsonDecode(installed.stdout as String) as Map)['file'], '${home.path}/xrk-mobile/ui.json');
 
-      final viaEnv = await run(['--json'], env: {'DSH_HOME': home.path});
+      final viaEnv = await run(['--json'], env: {'XRK_HOME': home.path});
       expect((jsonDecode(viaEnv.stdout as String) as Map)['applied'], 1);
     }, skip: skip);
   });

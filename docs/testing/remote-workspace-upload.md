@@ -2,7 +2,7 @@
 
 **结论**：Merge with conditions（源码和可用自动验证已完成；界面截图与真机验证未完成）。
 
-**模式**：Review；**对象**：[远程传输](<../../packages/dsh_remote/lib/src/carrier/tunnel_carrier.dart>)、[客户端接口](<../../packages/dsh_client/lib/src/workspace_upload.dart>)、原生聊天上传和抽屉主机详情的本次工作区改动。
+**模式**：Review；**对象**：[远程传输](<../../packages/xrk_remote/lib/src/carrier/tunnel_carrier.dart>)、[客户端接口](<../../packages/xrk_client/lib/src/workspace_upload.dart>)、原生聊天上传和抽屉主机详情的本次工作区改动。
 
 **初始验证基线**：`f769193edbb57f7e1c9f8320e5f3989ac6ddbe84` + 功能改动；**PR 基线**：`28d43f8950138b716b32f291549ddcc6aedca5df`（提交时的最新 main）。**信任级别**：trusted-local。仅移植本次功能到隔离分支，原工作区其他未提交修改不属于本次范围，未回退或夹带。
 
@@ -40,7 +40,7 @@ None found in reviewed scope。五轴核对：
 远程包为避免 `dart test` 自动重解算依赖，直接执行缓存测试入口；不是跳过测试：
 
 ```bash
-# cwd: packages/dsh_remote
+# cwd: packages/xrk_remote
 /root/dev/dart313/dart-sdk/bin/dart \
   --packages=.dart_tool/package_config.json \
   /root/.pub-cache/hosted/pub.dev/test-1.33.0/bin/test.dart
@@ -50,10 +50,10 @@ None found in reviewed scope。五轴核对：
 
 ## Coverage and residual risk
 
-- 上游依据：[ds-harness-remote 0.6.2 / 479b943 协议](<https://github.com/liguobao/ds-harness-remote/blob/479b94341c0d0de63846f21d0fcca26997d158d1/docs/protocol.md#L1529-L1648>) 和 [Host 实现](<https://github.com/liguobao/ds-harness-remote/blob/479b94341c0d0de63846f21d0fcca26997d158d1/packages/plugin/src/workspace-upload.ts>)，MIT；来源已补入[第三方声明](<../../THIRD_PARTY_NOTICES.md#L120-L148>)。
+- 上游依据：[xrk-remote 0.6.2 / 479b943 协议](<https://github.com/liguobao/xrk-remote/blob/479b94341c0d0de63846f21d0fcca26997d158d1/docs/protocol.md#L1529-L1648>) 和 [Host 实现](<https://github.com/liguobao/xrk-remote/blob/479b94341c0d0de63846f21d0fcca26997d158d1/packages/plugin/src/workspace-upload.ts>)，MIT；来源已补入[第三方声明](<../../THIRD_PARTY_NOTICES.md#L120-L148>)。
 - App 沿用普通附件单文件 200 MiB 和单消息总预算；远程传输层只保留协议绝对上限 1 GiB。Relay/TURN、未知路径或旧插件通常仍被 Host 限到 20 MiB，不能通过改 App 绕过。
 - 协议回归覆盖大于 20 MiB 的声明能进入 Host open、Host 拒绝前不读取文件数据；拒绝保留原错误码。另覆盖畸形确认、危险文件名、同名改名、超时、连接退休、失败清理及真实 Noise 通道的精确 RPC 参数。
-- 初始本机阶段没有运行原生 UI 测试；随后 [CI 41691203233](<https://github.com/ccch1mneyyy/dsh-Go/actions/runs/41691203233>) 实际执行全部 Flutter 分片。其他检查通过，Flutter 1 有 6 个失败：3 个新测试把 Tooltip 当作 label 查询、1 个旧几何测试取到了拆分后的图标而非主机控件组、2 张网络详情 golden。已按 Flutter 3.47 的 tooltip 语义和控件组边界修正断言，保留原点击/尺寸/间距要求，不删除或跳过测试。
+- 初始本机阶段没有运行原生 UI 测试；随后 [CI 41691203233](<https://github.com/xrkseek/dsh-Go/actions/runs/41691203233>) 实际执行全部 Flutter 分片。其他检查通过，Flutter 1 有 6 个失败：3 个新测试把 Tooltip 当作 label 查询、1 个旧几何测试取到了拆分后的图标而非主机控件组、2 张网络详情 golden。已按 Flutter 3.47 的 tooltip 语义和控件组边界修正断言，保留原点击/尺寸/间距要求，不删除或跳过测试。
 - 提交超时可能已经落盘；abort 成功也不代表已提交文件被删除。没有宣称可恢复跨连接上传或隔离恶意本地主机进程。
 
 ## CI follow-up

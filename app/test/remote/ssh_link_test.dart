@@ -5,12 +5,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/ssh/local_forward.dart';
-import 'package:dsh_app/remote/ssh/ssh_host_config.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/ssh/local_forward.dart';
+import 'package:xrk_app/remote/ssh/ssh_host_config.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_ssh.dart';
@@ -62,7 +62,7 @@ void main() {
     return l;
   }
 
-  test('a mux stuck reconnecting over live SSH restarts a dead DSH', () async {
+  test('a mux stuck reconnecting over live SSH restarts a dead XRK', () async {
     final l = link();
     final original = await l.open();
     final replaced = l.clients.first;
@@ -74,11 +74,11 @@ void main() {
     expect(connector.calls.last.hostHeader, '127.0.0.1:${server.remote.port}');
   });
 
-  test('a live DSH is left alone while the mux retries', () async {
+  test('a live XRK is left alone while the mux retries', () async {
     final l = link();
     final original = await l.open();
     original.mux.ready().ignore();
-    // A few keepalive ticks, each probing the DSH port.
+    // A few keepalive ticks, each probing the XRK port.
     await Future<void>.delayed(const Duration(milliseconds: 100));
     expect(server.last.tunnels.length, greaterThan(2));
     expect(server.transports, hasLength(1));
@@ -97,7 +97,7 @@ void main() {
 
   test('one transport login failure does not restart a reusable process', () async {
     server.remote.pid = 500;
-    connector.failNext.add(const DshTransportException('temporary'));
+    connector.failNext.add(const XrkTransportException('temporary'));
     final l = link();
     await l.open();
     expect(server.remote.launches, 0);
@@ -111,7 +111,7 @@ void main() {
     expect(server.remote.launches, 1);
   });
 
-  test('a token rejected by a reused DSH restarts it once', () async {
+  test('a token rejected by a reused XRK restarts it once', () async {
     server.remote.pid = 500;
     connector.failNext.add(const DshHttpException(401, 'stale'));
     final l = link();
@@ -131,7 +131,7 @@ void main() {
     expect(
       seen.map((s) => s.step).whereType<HostLinkStep>().toSet().toList(),
       HostLinkStep.values,
-      reason: 'connect → 验证主机指纹 → 启动 DSH → 建立隧道 → 登录',
+      reason: 'connect → 验证主机指纹 → 启动 XRK → 建立隧道 → 登录',
     );
     expect(identical(client, connector.clients.single), isTrue);
     final call = connector.calls.single;
@@ -210,7 +210,7 @@ void main() {
     });
   });
 
-  test('missing dsh is reported at 启动 DSH, without retries', () async {
+  test('missing dsh is reported at 启动 XRK, without retries', () async {
     server.remote.dshInstalled = false;
     final l = link();
     await expectLater(
@@ -284,7 +284,7 @@ void main() {
     l.clients.listen(published.add);
 
     final changed = l.clients.first;
-    final connected = nextStatus(l, (s) => s.isConnected, what: 'DSH 重启后连接');
+    final connected = nextStatus(l, (s) => s.isConnected, what: 'XRK 重启后连接');
     server.remote.killServer();
     server.last.drop();
     await connected;

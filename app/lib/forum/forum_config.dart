@@ -1,4 +1,4 @@
-// Where the dsh-go forum lives and how the app signs in to it (a self-hosted
+// Where the xrk-mobile forum lives and how the app signs in to it (a self-hosted
 // Discourse, server kit in infra/forum/, deploy steps in docs/forum/deploy.md).
 
 /// The forum's address (docs/forum/deploy.md). An address set in 论坛设置
@@ -8,13 +8,13 @@ const forumDefaultBaseUrl = 'https://forum.dshtui.com';
 /// Where Discourse sends the encrypted User API Key. Must be listed in the
 /// site setting `allowed_user_api_auth_redirects` (infra/forum/settings) and
 /// match exactly: Discourse compares path and query too.
-const forumAuthRedirect = 'dshgo://forum/auth';
+const forumAuthRedirect = 'xrkharness://forum/auth';
 
 /// The [forumAuthRedirect] route as the link router keys it.
 const forumAuthRoute = 'forum/auth';
 
 /// Shown on the Discourse approval page and in the user's API key list.
-const forumApplicationName = 'dsh-go';
+const forumApplicationName = 'xrk-mobile';
 
 /// What the key may do: browse, post / like / bookmark / upload,
 /// notifications, `/session/current.json`. All four are in Discourse's

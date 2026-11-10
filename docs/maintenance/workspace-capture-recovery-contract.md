@@ -1,6 +1,6 @@
 # 文件变更记录：失败的内容副本不得参与后续去重
 
-Refs W17-B，无对应公开issue编号。基底为63e255fab5cb9d817af30b631c3643ccce8e9231，DSH 0.2.2-rc.1。会改 runtimeVersion。Android 未编译；ARM、PRoot及手机存储故障未验证。
+Refs W17-B，无对应公开issue编号。基底为63e255fab5cb9d817af30b631c3643ccce8e9231，XRK 0.2.2-rc.1。会改 runtimeVersion。Android 未编译；ARM、PRoot及手机存储故障未验证。
 
 ## 可达问题
 
@@ -21,11 +21,11 @@ Refs W17-B，无对应公开issue编号。基底为63e255fab5cb9d817af30b631c364
 从应用补丁并准备运行时前缀的仓库执行：
 
 ```sh
-DSH_PREFIX=/absolute/prepared-prefix DSH_EVIDENCE_DIR=/absolute/new-evidence \
+XRK_PREFIX=/absolute/prepared-prefix XRK_EVIDENCE_DIR=/absolute/new-evidence \
   node runtime/tests/workspace-capture-recovery-live.mjs
 ```
 
-该手动live测试需要Linux、Python的resource.prlimit和真实DSH CLI，不加入普通CI测试glob，不要求root。父进程只改变自身启动的Host子进程的软文件大小限制，硬限制不变；范围包围第一次官方文件工具的真实捕获写入，finally立即恢复原限制。没有填满磁盘、更改全局配额、替换I/O返回或构造私有生产者。
+该手动live测试需要Linux、Python的resource.prlimit和真实XRK CLI，不加入普通CI测试glob，不要求root。父进程只改变自身启动的Host子进程的软文件大小限制，硬限制不变；范围包围第一次官方文件工具的真实捕获写入，finally立即恢复原限制。没有填满磁盘、更改全局配额、替换I/O返回或构造私有生产者。
 
 三个固定场景：2048字节/128行的首次捕获受256字节软限制后恢复；128字节文件在同限制下正常完成；2048字节文件不改变原限制并在下一turn复用既有副本。每场景两turn、六次自有loopback模型协议请求、四次成功的官方read/write，最终通过公共workspaceChanges.summary/diff观察结果。真实SessionController、Agent和文件服务参与，不把合成模型应答称为外部模型验证。
 

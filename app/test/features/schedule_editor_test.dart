@@ -7,23 +7,23 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/chat/widgets/question_card.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/schedule_editor_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/common/search_capsule.dart';
-import 'package:dsh_app/ui/features/schedule_editor/schedule_draft.dart';
-import 'package:dsh_app/ui/features/schedule_editor/schedule_editor_page.dart';
-import 'package:dsh_app/ui/features/schedule_editor/schedule_pickers.dart';
-import 'package:dsh_app/ui/features/schedules_page.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart' show SegmentedPill;
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/chat/widgets/question_card.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/schedule_editor_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/common/search_capsule.dart';
+import 'package:xrk_app/ui/features/schedule_editor/schedule_draft.dart';
+import 'package:xrk_app/ui/features/schedule_editor/schedule_editor_page.dart';
+import 'package:xrk_app/ui/features/schedule_editor/schedule_pickers.dart';
+import 'package:xrk_app/ui/features/schedules_page.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart' show SegmentedPill;
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -100,12 +100,12 @@ void main() {
   setUpAll(loadTestFonts);
 
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
   late _Sessions sessions;
 
   setUp(() {
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     sessions = _Sessions();
   });
   tearDown(() => client.close());
@@ -179,7 +179,7 @@ void main() {
         'value': {
           'answers': [
             {
-              'id': 'dsh-go-schedule-authorization-edit-question',
+              'id': 'xrk-mobile-schedule-authorization-edit-question',
               'selected': ['授权 / Authorize'],
             },
           ],
@@ -549,7 +549,7 @@ void main() {
     testWidgets('another workspace: the conversation is created in it; a retry reuses it', (tester) async {
       carrier.handlers['schedule/catalog'] = (_) => <Object?>[];
       carrier.handlers['session/create'] = (_) => {'sessionId': 'ws-1', 'agentPreset': 'standard'};
-      carrier.handlers['session/prompt'] = (_) => throw const DshRemoteException('gateway/bad-request', 'nope');
+      carrier.handlers['session/prompt'] = (_) => throw const XrkRemoteException('gateway/bad-request', 'nope');
       await pump(tester, ScheduleEditorPage(now: _now));
       await tester.enterText(find.widgetWithText(TextField, '比如：每日站会提醒'), '日报');
       await tester.enterText(find.byType(TextField).at(1), '写日报');

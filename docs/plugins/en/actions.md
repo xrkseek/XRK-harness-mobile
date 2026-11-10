@@ -66,13 +66,13 @@ The app runs effects only if they arrive within 3 s of the tap; late ones are dr
 Return `pending` first: the tapped element shows a waiting state at once, and the real result arrives up to 60 s later.
 
 ```js
-import { effects } from '@dsh-go/plugin-kit'
+import { effects } from '@xrkseek/plugin-kit'
 
-ctx.dshGo.on('translate', (scope, event) =>
+ctx.xrkGo.on('translate', (scope, event) =>
   effects.deferred(async (signal) => ({ insert: await translate(scope.clipboard, signal) }), { label: 'Translating' }))
 
 // the same without the SDK
-ctx.dshGo.on('translate', (scope) => ({
+ctx.xrkGo.on('translate', (scope) => ({
   pending: { label: 'Translating', timeoutMs: 60_000 },
   result: async (signal) => ({ insert: await translate(scope.clipboard, signal) }),
 }))
@@ -94,14 +94,14 @@ ctx.dshGo.on('translate', (scope) => ({
 
 - `insert` lands at the cursor **when the result arrives**: the person may have typed meanwhile, so insert, don't assume an empty composer.
 - Model calls spend the person's quota: one call per tap, and say what is happening ("Translating").
-- Example: the "To English" capsule in [`examples/plugins/dsh-go-example-quick`](../../../examples/plugins/dsh-go-example-quick/) translates the clipboard with the default DSH model, and falls back to inserting a request when the host has no model service.
+- Example: the "To English" capsule in [`examples/plugins/xrk-example-quick`](../../../examples/plugins/xrk-example-quick/) translates the clipboard with the default XRK model, and falls back to inserting a request when the host has no model service.
 
 ## Effects in tests
 
 `checkEffects` / `checkPending` in the SDK are the bridge's own code:
 
 ```js
-import { checkEffects, checkPending } from '@dsh-go/plugin-kit'
+import { checkEffects, checkPending } from '@xrkseek/plugin-kit'
 
 checkEffects({ copy: md, toast: 'Copied' })
 // → { effects: [{ type: 'copy', … }, { type: 'toast', … }], issues: [], violation: false }
@@ -110,7 +110,7 @@ checkEffects({ open: 'panel:usage' }, { panels: ['usage'] })
 checkPending(result)                                    // how a deferred request is read: { ok, label, timeoutMs, … }
 ```
 
-To run handlers too, use the test host (`@dsh-go/plugin-kit/testing`): `await host.invoke('translate', { context: { clipboard } })` gives `{ effects, pending?, settled? }`; `await settled` gives `{ t: 'done', effects }` or `{ t: 'void', reason }`.
+To run handlers too, use the test host (`@xrkseek/plugin-kit/testing`): `await host.invoke('translate', { context: { clipboard } })` gives `{ effects, pending?, settled? }`; `await settled` gives `{ t: 'done', effects }` or `{ t: 'void', reason }`.
 
 ## Selecting files and images (NA v1.3)
 

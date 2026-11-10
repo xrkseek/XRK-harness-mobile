@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
+import 'package:xrk_app/state/bots_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,7 +12,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final f = jsonDecode(
-    File('../packages/dsh_client/test/fixtures/dsbot_chat_live_race.json').readAsStringSync(),
+    File('../packages/xrk_client/test/fixtures/dsbot_chat_live_race.json').readAsStringSync(),
   ) as Map<String, dynamic>;
   for (final first in [true, false]) {
     test(

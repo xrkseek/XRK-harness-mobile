@@ -1,5 +1,5 @@
 // Original W3-26 six counterexamples, promoted to required ADD6 b27 regressions.
-import 'package:dsh_app/plugins/seams/seams.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'wave7_schema_routing_boundaries_test.dart' as fixture;

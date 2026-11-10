@@ -1,9 +1,9 @@
-import 'package:dsh_app/state/draft_store.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/mention/mention_text_controller.dart';
-import 'package:dsh_app/ui/chat/voice/voice_bridge.dart';
-import 'package:dsh_app/ui/chat/voice/voice_controller.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/draft_store.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/mention/mention_text_controller.dart';
+import 'package:xrk_app/ui/chat/voice/voice_bridge.dart';
+import 'package:xrk_app/ui/chat/voice/voice_controller.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,9 +18,9 @@ void main() {
   testWidgets('host change during real Composer build safely restores the persisted draft', (tester) async {
     SharedPreferences.setMockInitialValues({});
     usePhoneView(tester);
-    final first = DshClient.withCarrier(FakeRpcCarrier({}));
-    final replacement = DshClient.withCarrier(FakeRpcCarrier({}));
-    final host = ValueNotifier<DshClient?>(first);
+    final first = XrkClient.withCarrier(FakeRpcCarrier({}));
+    final replacement = XrkClient.withCarrier(FakeRpcCarrier({}));
+    final host = ValueNotifier<XrkClient?>(first);
     final input = MentionTextController();
     final bridge = FakeVoiceBridge();
     final voice = VoiceInputController(
@@ -47,7 +47,7 @@ void main() {
             ref.watch(draftStoreProvider);
             container = ProviderScope.containerOf(context);
             return Scaffold(
-              body: ValueListenableBuilder<DshClient?>(
+              body: ValueListenableBuilder<XrkClient?>(
                 valueListenable: host,
                 builder: (context, _, child) => Align(
                   alignment: Alignment.bottomCenter,

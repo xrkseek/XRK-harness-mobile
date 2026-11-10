@@ -1,8 +1,8 @@
-import 'package:dsh_app/state/workspace_state.dart';
-import 'package:dsh_app/ui/chat/artifact_preview.dart';
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/chat/render/markdown_image.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/workspace_state.dart';
+import 'package:xrk_app/ui/chat/artifact_preview.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/chat/render/markdown_image.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,7 +35,7 @@ void main() {
       'mailto:user@example.com',
       'javascript:alert(1)',
       'intent://open',
-      'dshgo://open',
+      'xrkharness://open',
       'data:text/plain,hello',
       'tel:123',
       'file%3A%2F%2F%252Froot',

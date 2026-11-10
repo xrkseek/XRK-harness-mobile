@@ -148,7 +148,7 @@ class EngineFailureCard extends ConsumerWidget {
         ? ref.watch(safePreflightProvider).value ?? const <SafeHazard>[]
         : const <SafeHazard>[];
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
 
     void run(FailureAction action) {
       switch (action) {

@@ -14,7 +14,7 @@ test('controls parity corpus stays reproducible', () => {
 
 test('all control builders match the generated schema catalog', () => {
   const schema = JSON.parse(readFileSync(new URL('../schema/view.schema.json', import.meta.url), 'utf8'))
-  for (const type of schema['x-dsh-go'].controlBuilders) {
+  for (const type of schema['x-xrk-mobile'].controlBuilders) {
     assert.deepEqual(kit[type]({ label: 'A', unused: undefined }), { type, label: 'A' })
   }
   const s = new SchemaSet()

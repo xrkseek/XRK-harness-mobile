@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/share_code/share_codec.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/ui/share_code/share_code_panel.dart';
-import 'package:dsh_app/ui/share_code/share_out.dart';
+import 'package:xrk_app/share_code/share_codec.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/ui/share_code/share_code_panel.dart';
+import 'package:xrk_app/ui/share_code/share_out.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -79,7 +79,7 @@ void main() {
       await firstDone.future;
     });
     await tester.pump();
-    expect(names, ['dsh-go-profile-20261024.dshgo', 'dsh-go-profile-20261024.dshgo']);
+    expect(names, ['xrk-mobile-profile-20261024.dshgo', 'xrk-mobile-profile-20261024.dshgo']);
     expect((decodeShareFile(firstContent!) as ProfileShare).skills.single.name, 'first');
     await tester.pumpWidget(const SizedBox());
   });

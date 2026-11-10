@@ -27,7 +27,7 @@ abstract final class PetBubbleMetrics {
 /// A tone per kind: done in the success colour, a failure in danger,
 /// waiting requests in warning (as the run strip shows them).
 Color petBubbleTone(BuildContext context, PetBubbleKind kind) {
-  final dsh = DshColors.of(context);
+  final dsh = XrkColors.of(context);
   return switch (kind) {
     PetBubbleKind.done => dsh.success,
     PetBubbleKind.failed => dsh.danger,
@@ -45,7 +45,7 @@ class PetBubbleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final title = bubble.shortTitle;
     final verb = theme.textTheme.labelMedium!.copyWith(
       color: theme.colorScheme.onSurface,

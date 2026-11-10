@@ -6,17 +6,17 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/companion/companion_pack.dart';
-import 'package:dsh_app/companion/companion_state.dart';
-import 'package:dsh_app/l10n/gen/app_localizations.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/companion/companion_chrome.dart';
-import 'package:dsh_app/ui/companion/companion_page.dart';
-import 'package:dsh_app/ui/companion/companion_stage.dart';
-import 'package:dsh_app/ui/theme/app_theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/companion/companion_pack.dart';
+import 'package:xrk_app/companion/companion_state.dart';
+import 'package:xrk_app/l10n/gen/app_localizations.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/companion/companion_chrome.dart';
+import 'package:xrk_app/ui/companion/companion_page.dart';
+import 'package:xrk_app/ui/companion/companion_stage.dart';
+import 'package:xrk_app/ui/theme/app_theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -80,7 +80,7 @@ class _Mux extends DshMux {
   Stream<DshConnectionState> get states => connection.stream;
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client(super.connection);
   final events = StreamController<DshEvent>();
   Completer<SessionProjections?>? projectionRead;
@@ -118,8 +118,8 @@ class _Room {
   L10n l10n(WidgetTester tester) => L10n.of(tester.element(find.byType(CompanionPage)));
 
   void expectVisitAndVitals() {
-    expect(bridge.getPaths, [dshGoCompanionPath]);
-    expect(bridge.postPaths, ['$dshGoCompanionPath/events']);
+    expect(bridge.getPaths, [xrkGoCompanionPath]);
+    expect(bridge.postPaths, ['$xrkGoCompanionPath/events']);
     expect(bridge.posts, [
       {'storeId': 'synthetic-greeting-store', 'expectedRevision': 0, 'type': 'visit'},
     ]);

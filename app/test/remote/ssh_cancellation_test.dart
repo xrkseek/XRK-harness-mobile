@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/ssh/remote_shell.dart';
-import 'package:dsh_app/remote/ssh/ssh_host_config.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/ssh/remote_shell.dart';
+import 'package:xrk_app/remote/ssh/ssh_host_config.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_ssh.dart';
 
-Future<Object?> outcome(Future<DshClient> future) =>
+Future<Object?> outcome(Future<XrkClient> future) =>
     future.then<Object?>((client) => client, onError: (Object error) => error);
 
 class HeldBootstrap extends FakeTransport {
@@ -48,7 +48,7 @@ class HeldProbe extends FakeTransport {
   }
 }
 
-class TrackedClient extends DshClient {
+class TrackedClient extends XrkClient {
   TrackedClient() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
 
   bool closed = false;
@@ -69,7 +69,7 @@ void main() {
     final opening = outcome(link.open());
     await link.close();
     secrets.complete(const SshSecrets(password: 'pw'));
-    expect(await opening, isNot(isA<DshClient>()));
+    expect(await opening, isNot(isA<XrkClient>()));
     expect(server.connects, isEmpty);
   });
 
@@ -93,7 +93,7 @@ void main() {
     await prompted.future;
     await link.close();
     accepted.complete(true);
-    expect(await opening, isNot(isA<DshClient>()));
+    expect(await opening, isNot(isA<XrkClient>()));
     expect(pins, 0);
     expect(server.transports, isEmpty);
   });
@@ -112,7 +112,7 @@ void main() {
     await link.close();
     final closedBeforeRelease = transport.isClosed;
     transport.release.complete();
-    expect(await opening, isNot(isA<DshClient>()));
+    expect(await opening, isNot(isA<XrkClient>()));
     expect(closedBeforeRelease, isTrue);
     expect(transport.tunnels, isEmpty);
     expect(link.localPort, isNull);
@@ -138,7 +138,7 @@ void main() {
     await link.close();
     final channel = FakeChannel();
     transport.release.complete(channel);
-    expect(await opening, isNot(isA<DshClient>()));
+    expect(await opening, isNot(isA<XrkClient>()));
     expect(channel.destroyed, isTrue);
     expect(logins, 0);
     expect(link.localPort, isNull);
@@ -147,7 +147,7 @@ void main() {
 
   test('a client returned after close is disposed and never published', () async {
     final entered = Completer<void>();
-    final release = Completer<DshClient>();
+    final release = Completer<XrkClient>();
     final transport = FakeTransport(FakeRemote()..pid = 500);
     final client = TrackedClient();
     addTearDown(client.close);
@@ -168,7 +168,7 @@ void main() {
     release.complete(client);
     final result = await opening;
     expect(client.closed, isTrue);
-    expect(result, isNot(isA<DshClient>()));
+    expect(result, isNot(isA<XrkClient>()));
     expect(link.currentClient, isNull);
     expect(link.localPort, isNull);
     expect(link.status.phase, HostLinkPhase.idle);

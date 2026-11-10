@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,8 +27,8 @@ void main() {
     test('installation caller keeps request identity: $mode', () async {
       final a = FakePluginCarrier();
       final b = FakePluginCarrier();
-      final ac = DshClient.withCarrier(a);
-      final bc = DshClient.withCarrier(b);
+      final ac = XrkClient.withCarrier(a);
+      final bc = XrkClient.withCarrier(b);
       addTearDown(ac.close);
       addTearDown(bc.close);
       final ar = Completer<Object?>();
@@ -99,8 +99,8 @@ void main() {
   test('retired queued request and duplicate resolve their own cancellation', () async {
     final a = FakePluginCarrier();
     final b = FakePluginCarrier();
-    final ac = DshClient.withCarrier(a);
-    final bc = DshClient.withCarrier(b);
+    final ac = XrkClient.withCarrier(a);
+    final bc = XrkClient.withCarrier(b);
     addTearDown(ac.close);
     addTearDown(bc.close);
     final ar = Completer<Object?>();

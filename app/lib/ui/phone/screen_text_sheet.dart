@@ -27,7 +27,7 @@ class ScreenTextSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final text = result.text ?? '';
     if (!result.ok) {
       return SafeArea(
@@ -112,7 +112,7 @@ class _Hint extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: kSheetGutter),
       child: Text(
         text,
-        style: (style ?? theme.textTheme.bodySmall)?.copyWith(color: DshColors.of(context).textTertiary, height: 1.5),
+        style: (style ?? theme.textTheme.bodySmall)?.copyWith(color: XrkColors.of(context).textTertiary, height: 1.5),
       ),
     );
   }

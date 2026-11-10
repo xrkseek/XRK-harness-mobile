@@ -321,7 +321,7 @@ class GlassIconButton extends StatelessWidget {
         grouped: grouped,
         onTap: onPressed,
         child: Center(
-          child: Icon(icon, size: iconSize, color: enabled ? scheme.onSurface : DshColors.of(context).textDisabled),
+          child: Icon(icon, size: iconSize, color: enabled ? scheme.onSurface : XrkColors.of(context).textDisabled),
         ),
       ),
     );

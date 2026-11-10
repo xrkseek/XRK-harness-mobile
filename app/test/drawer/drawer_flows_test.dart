@@ -4,17 +4,17 @@
 //
 //   flutter test test/drawer/drawer_flows_test.dart
 
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/session_attention_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/common/capsule_chip.dart';
-import 'package:dsh_app/ui/shell/drawer/drawer_filter_bar.dart';
-import 'package:dsh_app/ui/shell/drawer/folder_header.dart';
-import 'package:dsh_app/ui/shell/drawer/selection_bars.dart';
-import 'package:dsh_app/ui/shell/drawer/session_tile.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/session_attention_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/common/capsule_chip.dart';
+import 'package:xrk_app/ui/shell/drawer/drawer_filter_bar.dart';
+import 'package:xrk_app/ui/shell/drawer/folder_header.dart';
+import 'package:xrk_app/ui/shell/drawer/selection_bars.dart';
+import 'package:xrk_app/ui/shell/drawer/session_tile.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

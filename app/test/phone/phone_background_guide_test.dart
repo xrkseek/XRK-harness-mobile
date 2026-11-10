@@ -1,7 +1,7 @@
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/ui/phone/phone_background_guide.dart';
-import 'package:dsh_app/ui/phone/phone_control_screen.dart';
-import 'package:dsh_app/ui/phone/phone_widgets.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/ui/phone/phone_background_guide.dart';
+import 'package:xrk_app/ui/phone/phone_control_screen.dart';
+import 'package:xrk_app/ui/phone/phone_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

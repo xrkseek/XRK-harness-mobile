@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/links/share_intake.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/compose_inbox.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/draft_store.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/links/share_intake.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/compose_inbox.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/draft_store.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -204,7 +204,7 @@ void main() {
 
   test('canStageFiles asks the connection, else the host kind', () {
     final connection = HostConnection(
-      client: DshClient(DshConnection(Uri.parse('http://127.0.0.1:9'))),
+      client: XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9'))),
       label: '本机',
       isLocal: true,
     );

@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -68,7 +68,7 @@ void main() {
     final directory = Directory.systemTemp.createTempSync('artifact-path-test-');
     final existing = File('${directory.path}/report.docx')..writeAsStringSync('path fixture, no converter involved');
     addTearDown(() => directory.deleteSync(recursive: true));
-    const channel = MethodChannel('dsh/files');
+    const channel = MethodChannel('xrk/files');
     final requests = <String>[];
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(channel, (call) async {

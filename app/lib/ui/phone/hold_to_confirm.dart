@@ -104,7 +104,7 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton> with SingleTi
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final enabled = widget.enabled;
     final style = theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, height: 1.2);
     Widget face(Color fill, Color ink) => DecoratedBox(

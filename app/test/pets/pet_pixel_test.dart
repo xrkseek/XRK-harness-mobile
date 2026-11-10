@@ -6,10 +6,10 @@
 
 import 'dart:typed_data';
 
-import 'package:dsh_app/pets/pet_pack.dart';
-import 'package:dsh_app/pets/pet_sheets.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/ui/pets/pet_sprite.dart';
+import 'package:xrk_app/pets/pet_pack.dart';
+import 'package:xrk_app/pets/pet_sheets.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/ui/pets/pet_sprite.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -133,7 +133,7 @@ void main() {
     // The floating pet (Kotlin PetPack.screenScale / devicePixels) must draw
     // at these numbers too, else it is a size off from the chat page. The
     // same table is asserted in
-    // app/android/app/src/test/kotlin/io/github/ccch1mneyyy/dsh_app/pet/PetPackTest.kt
+    // app/android/app/src/test/kotlin/io/github/xrkseek/dsh_app/pet/PetPackTest.kt
     // (`screenScaleMatchesTheAppForTheShippedPacks`): change one, change both.
     const expected = [
       ('whale-girl', 2.0, [1, 2, 3]),

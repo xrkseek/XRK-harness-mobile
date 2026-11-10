@@ -59,16 +59,16 @@ for (const file of files) {
         run('error body', r.res, 'contributions.schema.json', '/$defs/error', where)
         continue
       }
-      if (route === '/dsh-go/v1/contributions' && r.status === 200) run('contributions', r.res, 'contributions.schema.json', '', where)
-      else if (route.startsWith('/dsh-go/v1/views/') && r.status === 200) run('view response', r.res, 'contributions.schema.json', '/$defs/viewResponse', where)
-      else if (route === '/dsh-go/v1/invoke' && r.status === 200) {
+      if (route === '/xrk-mobile/v1/contributions' && r.status === 200) run('contributions', r.res, 'contributions.schema.json', '', where)
+      else if (route.startsWith('/xrk-mobile/v1/views/') && r.status === 200) run('view response', r.res, 'contributions.schema.json', '/$defs/viewResponse', where)
+      else if (route === '/xrk-mobile/v1/invoke' && r.status === 200) {
         if (r.req !== undefined) run('invoke request (accepted)', r.req, 'invoke.schema.json', '', where)
         run('invoke response', r.res, 'invoke.schema.json', '/$defs/response', where)
-      } else if (route === '/dsh-go/v1/invoke' && r.req !== undefined) {
+      } else if (route === '/xrk-mobile/v1/invoke' && r.req !== undefined) {
         tally('invoke request (rejected, not checked)', true)
-      } else if (/^\/dsh-go\/v1\/files\/[A-Za-z0-9_-]{32}\/upload$/.test(route) && r.status === 200) {
+      } else if (/^\/xrk-mobile\/v1\/files\/[A-Za-z0-9_-]{32}\/upload$/.test(route) && r.status === 200) {
         run('file upload response', r.res, 'invoke.schema.json', '/$defs/fileUploadResponse', where)
-      } else if (/^\/dsh-go\/v1\/files\/[A-Za-z0-9_-]{32}\/complete$/.test(route) && r.status === 200) {
+      } else if (/^\/xrk-mobile\/v1\/files\/[A-Za-z0-9_-]{32}\/complete$/.test(route) && r.status === 200) {
         if (r.req !== undefined) run('file completion request', r.req, 'invoke.schema.json', '/$defs/fileCompletion', where)
         run('file completion response', r.res, 'invoke.schema.json', '/$defs/fileCompletionResponse', where)
       }

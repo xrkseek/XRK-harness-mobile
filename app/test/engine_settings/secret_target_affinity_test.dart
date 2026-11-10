@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,7 +56,7 @@ List<String> mutations(FakeSettingsHost host) => [
 
 void main() {
   Future<ProviderContainer> start(FakeSettingsHost host) async {
-    final container = ProviderContainer(overrides: engineOverrides(DshClient.withCarrier(host)));
+    final container = ProviderContainer(overrides: engineOverrides(XrkClient.withCarrier(host)));
     addTearDown(container.dispose);
     final sub = container.listen(engineSettingsProvider, (_, _) {});
     addTearDown(sub.close);
@@ -148,7 +148,7 @@ void main() {
       await pumpPage(
         tester,
         const EngineSettingsPage(ns: _ns),
-        overrides: engineOverrides(DshClient.withCarrier(host)),
+        overrides: engineOverrides(XrkClient.withCarrier(host)),
       );
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(320, 900);

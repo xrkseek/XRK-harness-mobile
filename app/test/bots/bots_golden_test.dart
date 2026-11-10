@@ -4,14 +4,14 @@
 // group sheet. Regenerate with
 // `flutter test --update-goldens test/bots/bots_golden_test.dart`.
 
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
-import 'package:dsh_app/ui/bots/bot_details_page.dart';
-import 'package:dsh_app/ui/bots/bots_page.dart';
-import 'package:dsh_app/ui/bots/new_bot_page.dart';
-import 'package:dsh_app/ui/bots/new_room_sheet.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_app/ui/bots/room_details_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_app/ui/bots/bot_details_page.dart';
+import 'package:xrk_app/ui/bots/bots_page.dart';
+import 'package:xrk_app/ui/bots/new_bot_page.dart';
+import 'package:xrk_app/ui/bots/new_room_sheet.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/bots/room_details_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';

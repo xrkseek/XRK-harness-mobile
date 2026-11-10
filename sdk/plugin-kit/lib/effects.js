@@ -33,7 +33,7 @@ export const pickImage = (action, { maxFiles = 1 } = {}) => ({ type: 'pickImage'
  * cancels, time runs out or the app disconnects. Its result may only carry
  * insert, copy, toast and patch. At most 2 pending per plugin.
  *
- *   ctx.dshGo.on('translate', (scope) => effects.deferred(async (signal) => ({ insert: await translate(scope.clipboard, signal) }), { label: '正在翻译' }))
+ *   ctx.xrkGo.on('translate', (scope) => effects.deferred(async (signal) => ({ insert: await translate(scope.clipboard, signal) }), { label: '正在翻译' }))
  */
 export const deferred = (work, { label, timeoutMs } = {}) => ({
   pending: label === undefined && timeoutMs === undefined ? true : { ...(label === undefined ? {} : { label }), ...(timeoutMs === undefined ? {} : { timeoutMs }) },

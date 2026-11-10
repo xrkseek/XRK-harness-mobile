@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/share/share_entry.dart';
-import 'package:dsh_app/ui/share/share_card.dart';
-import 'package:dsh_app/ui/share/share_content.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/share/share_entry.dart';
+import 'package:xrk_app/ui/share/share_card.dart';
+import 'package:xrk_app/ui/share/share_content.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,7 +22,7 @@ class _Mux extends DshMux {
   Stream<DshConnectionState> get states => connection.stream;
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   late final _mux = _Mux(carrier);
   final watches = <StreamController<DshEvent>>[];
@@ -218,7 +218,7 @@ void main() {
     final container = _container(client);
     container.read(currentSessionProvider.notifier).select('a');
     final sub = container.listen(chatProvider('a'), (_, _) {});
-    client.watches.single.addError(const DshRemoteException('session/not-found', 'gone'));
+    client.watches.single.addError(const XrkRemoteException('session/not-found', 'gone'));
     await tester.pump(const Duration(seconds: 3));
     expect(container.read(currentSessionProvider), isNull);
     expect(sub.read().error, isNull);

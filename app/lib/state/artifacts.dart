@@ -1,10 +1,10 @@
 // Chat artifacts: a turn's deliverables as the official Web client reads them
-// (`@deepseek-ai/dsh-client-ui-deliverables`: `present` declarations at the
+// (`@xrkseek/harness-cli-client-ui-deliverables`: `present` declarations at the
 // end of a finished turn), and fallback rules for turns without them.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -146,7 +146,7 @@ ArtifactKind artifactKindOf(String path) => _kinds[_extension(path)] ?? Artifact
 String mimeTypeOf(String path) => _mimes[_extension(path)] ?? 'application/octet-stream';
 
 /// Office formats the Host can convert to PDF for a preview
-/// (`@deepseek-ai/dsh-office-to-pdf`).
+/// (`@xrkseek/harness-cli-office-to-pdf`).
 bool isOfficePath(String path) => const {'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'}.contains(_extension(path));
 
 /// Whether a file the agent merely wrote or linked counts as made for the
@@ -462,7 +462,7 @@ String? _createdPath(ToolCallEvent call, Object? meta, String? cwd) {
 
 /// The native side of artifacts (`files/FilesPlugin.kt`).
 class FilesChannel {
-  const FilesChannel([this.channel = const MethodChannel('dsh/files')]);
+  const FilesChannel([this.channel = const MethodChannel('xrk/files')]);
 
   final MethodChannel channel;
 

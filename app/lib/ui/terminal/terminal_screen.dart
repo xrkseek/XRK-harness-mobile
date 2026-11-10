@@ -39,7 +39,7 @@ class TerminalCardFrame extends StatelessWidget {
     final ambient = Theme.of(context);
     final palette = TerminalPalette.of(context);
     return Theme(
-      data: ambient.brightness == Brightness.dark ? ambient : _darkThemeFor(DshSurfaces.of(context).accent),
+      data: ambient.brightness == Brightness.dark ? ambient : _darkThemeFor(XrkSurfaces.of(context).accent),
       child: DecoratedBox(
         decoration: ShapeDecoration(
           color: palette.background,

@@ -76,7 +76,7 @@ UiConfigSource? defaultUiConfigSource(Ref ref, HostRef host) {
   if (ref.watch(activeHostProvider) != host) return null;
   final conn = ref.watch(activeConnectionProvider.select((c) => c.value));
   if (conn == null || conn.isLocal || conn.kind != host.kind || conn.hostId != host.id) return null;
-  return RemoteUiConfigSource(host: DshUiRemoteHost(conn.client), kicks: ref.watch(uiConfigKicksProvider));
+  return RemoteUiConfigSource(host: XrkUiRemoteHost(conn.client), kicks: ref.watch(uiConfigKicksProvider));
 }
 
 // ── One host's file ─────────────────────────────────────────────────────────
@@ -102,7 +102,7 @@ enum UiConfigAvailability {
   /// A remote host with no conversation yet.
   noSession,
 
-  /// A remote host where the dsh-go-ui skill is not installed and DSH home
+  /// A remote host where the xrk-ui skill is not installed and XRK home
   /// is unknown.
   noSkill,
 
@@ -130,7 +130,7 @@ class UiConfigState {
   /// this before drawing what ui.json decides, to avoid a flash).
   final bool restored;
 
-  /// A remote host without the dsh-go-ui skill.
+  /// A remote host without the xrk-ui skill.
   final bool skillMissing;
 
   /// Offer to install the skill (remote hosts only).

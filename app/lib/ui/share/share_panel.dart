@@ -10,7 +10,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +28,7 @@ import '../../state/chat_state.dart';
 import '../../state/regenerate.dart' show sessionImageBytes;
 import '../../state/sessions_state.dart';
 import '../../usage/usage_stats.dart';
-import '../chat/dsh_ui/dsh_ui.dart' show dshUiPlainText;
+import '../chat/xrk_ui/xrk_ui.dart' show xrkUiPlainText;
 import '../common/app_sheet.dart';
 import '../common/sheet_navigator.dart';
 import '../replay/continue_chat.dart' show conversationMarkdown;
@@ -517,7 +517,7 @@ class SharePanelModel extends ChangeNotifier {
       tools: _privacy.tools,
       images: _privacy.images,
       now: _clock(),
-      app: 'dsh-go ${AppInfo.version.split('+').first}',
+      app: 'xrk-mobile ${AppInfo.version.split('+').first}',
     );
     final built = ShareBuild(share, export.file(share), assets: {for (final a in export.assets) a.id: a});
     // Changed while building: the newer request answers.
@@ -614,7 +614,7 @@ class SharePanelModel extends ChangeNotifier {
   Future<String> shareTextContent() async {
     final reply = anchor;
     if (_scope == ShareScope.reply && reply != null) {
-      final text = redactText(dshUiPlainText(reply.text).trim());
+      final text = redactText(xrkUiPlainText(reply.text).trim());
       return _privacy.images ? text : markdownWithoutImages(text);
     }
     return (await prepare()).of(ConversationFormat.markdown).text;

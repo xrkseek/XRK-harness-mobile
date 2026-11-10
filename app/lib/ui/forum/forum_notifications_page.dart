@@ -208,7 +208,7 @@ class ForumNotificationRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final (icon, line) = describeForumNotification(notification, typeName);
     final unread = !notification.read;
     final subtitle = notification.title;

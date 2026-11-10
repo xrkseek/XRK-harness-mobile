@@ -240,7 +240,7 @@ class _Choose extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final unsupported = state.phase == AccountPhase.unsupported;
     return OnboardingScaffold(
       children: [
@@ -327,7 +327,7 @@ class _AwaitRuntime extends ConsumerWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final progress = ref.watch(localRuntimeProvider.select((s) => s.progress));
     final meta = installMetaLine(l10n, progress, ref.watch(installEtaProvider));
     return OnboardingScaffold(

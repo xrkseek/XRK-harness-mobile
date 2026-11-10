@@ -4,8 +4,8 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/terminal_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/terminal_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -115,7 +115,7 @@ void main() {
 
   test('the limit reached is a failed tab that can be retried', () async {
     final fake = FakeTerminalBackend()
-      ..createError = const DshRemoteException('terminal/limit-reached', 'Session terminal limit reached', {
+      ..createError = const XrkRemoteException('terminal/limit-reached', 'Session terminal limit reached', {
         'limit': 8,
       });
     final workspace = await open(fake);
@@ -281,7 +281,7 @@ void main() {
     expect(read().selected!.title, '构建');
     container.dispose();
     final checked = expectLater(result, completion(isFalse));
-    fake.renameResult.completeError(const DshTransportException('connection closed'));
+    fake.renameResult.completeError(const XrkTransportException('connection closed'));
     await checked;
   });
 
@@ -303,7 +303,7 @@ void main() {
     expect(identical(container.read(terminalWorkspaceProvider(_session).notifier), workspace), isTrue);
     expect(read().selected!.title, '新主机');
     final checked = expectLater(result, completion(isFalse));
-    previous.renameResult.completeError(const DshTransportException('old connection closed'));
+    previous.renameResult.completeError(const XrkTransportException('old connection closed'));
     await checked;
     expect(read().selected!.title, '新主机');
   });
@@ -315,7 +315,7 @@ void main() {
     await fake.renameStarted.future;
     expect(read().selected!.title, '构建');
     final checked = expectLater(result, completion(isFalse));
-    fake.renameResult.completeError(const DshTransportException('rename refused'));
+    fake.renameResult.completeError(const XrkTransportException('rename refused'));
     await checked;
     expect(read().selected!.title, 'bash');
   });
@@ -329,7 +329,7 @@ void main() {
   });
 
   test('a listing failure can be retried', () async {
-    final fake = FakeTerminalBackend()..listError = const DshTransportException('down');
+    final fake = FakeTerminalBackend()..listError = const XrkTransportException('down');
     final workspace = await open(fake);
     expect(read().error, TerminalCopy.offline);
     fake.listError = null;
@@ -341,7 +341,7 @@ void main() {
 
   test('a Host that turned the terminal off says so, also inside the first parallel load', () async {
     final fake = FakeTerminalBackend()
-      ..listError = const DshRemoteException('TERMINAL_DISABLED', 'off', {'remote': true});
+      ..listError = const XrkRemoteException('TERMINAL_DISABLED', 'off', {'remote': true});
     final workspace = await open(fake);
     expect(read().error, TerminalCopy.disabledOnHost, reason: 'not "engine unreachable"');
     fake.listError = null;

@@ -191,7 +191,7 @@ export function replayCorpus({ stagePath = DEFAULT_STAGE, expectedStageSha256 = 
   }));
   const mapped = rows.reduce((count, row) => count + Object.keys(row.bindings).length, 0);
   return {
-    format: 'dsh-go/current-stage-metadata-replay-v1',
+    format: 'xrk-mobile/current-stage-metadata-replay-v1',
     artifactRole: 'developer report; not an adapter, runtime probe, or execution permission',
     historicalInput: { ...historicalPins, measuredAtUtc: facts.measuredAtUtc,
       method: facts.method, core: facts.core, fullProbeSha256: facts.compaction.fullProbeSha256,

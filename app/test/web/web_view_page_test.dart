@@ -1,5 +1,5 @@
 // The web pages in landscape and on tablets: where the app's controls sit,
-// where the page's content may go, and which layout DSH Web gets. Measured
+// where the page's content may go, and which layout XRK Web gets. Measured
 // on real window shapes from the emulator (a side punch-hole in landscape)
 // and a vivo phone (no bottom inset reported in landscape). The app hands
 // every page the cutout's inset on both sides (MirroredSideInsets), as the
@@ -9,11 +9,11 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/render/mermaid_preview.dart';
-import 'package:dsh_app/ui/common/side_insets.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart';
-import 'package:dsh_app/ui/web/web_handle.dart';
-import 'package:dsh_app/ui/web/web_view_page.dart';
+import 'package:xrk_app/ui/chat/render/mermaid_preview.dart';
+import 'package:xrk_app/ui/common/side_insets.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart';
+import 'package:xrk_app/ui/web/web_handle.dart';
+import 'package:xrk_app/ui/web/web_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -107,7 +107,7 @@ Future<void> _pump(
 void main() {
   setUp(() => WebViewPlatform.instance = _platform = FakeWebViewPlatform());
 
-  group('DSH Web layout follows the official breakpoint', () {
+  group('XRK Web layout follows the official breakpoint', () {
     test('below 1024 the sidebar is a drawer, from 1024 up the official layout stays', () {
       for (final w in [_phonePortrait, _phoneLandscape, _vivoLandscape, _tablet600, _tablet840]) {
         expect(_resolve(w).chrome, WebChrome.inline, reason: '${w.size}');
@@ -122,7 +122,7 @@ void main() {
       );
     });
 
-    test('DSH Web as shipped: a seat in its own header on phones, the bar above', () {
+    test('XRK Web as shipped: a seat in its own header on phones, the bar above', () {
       // Below its own drawer breakpoint the official layout keeps a leading
       // seat in the header row: the handle takes the far left of it, with no
       // bar of its own.
@@ -132,17 +132,17 @@ void main() {
       expect(_resolve(_tablet840, adapt: false).chrome, WebChrome.bar);
       expect(_resolve(_phoneLandscape, adapt: false).chrome, WebChrome.bar);
       expect(_resolve(_tablet1280, adapt: false).chrome, WebChrome.bar);
-      // Other sites are not DSH Web: the bar as before.
+      // Other sites are not XRK Web: the bar as before.
       expect(_resolve(_phoneLandscape, dshWeb: false, adapt: false).chrome, WebChrome.bar);
     });
 
-    test("DSH Web as shipped on a phone: the handle takes the far left, the page's own opener moves past it", () {
+    test("XRK Web as shipped on a phone: the handle takes the far left, the page's own opener moves past it", () {
       final i = _resolve(_phonePortrait, adapt: false);
       // The page starts under the status bar: its drawer layout keeps the
       // leading room (11 down, 12 from the side) for the handle.
       expect((i.chrome, i.rootTop, i.left), (WebChrome.seat, 52, 0));
       expect(i.layerTop, 52 + WebChromeMetrics.seatTop + WebChromeMetrics.seatButton + 6);
-      // The official seat holds DSH Web's own sidebar opener: it moves past
+      // The official seat holds XRK Web's own sidebar opener: it moves past
       // the marker instead of under it (12 → 48), one row.
       expect(i.script, contains('[data-sidebar-drawer]>[data-shell-leading]{left:48.0px!important}'));
       // The reserve covers marker, gap, the official opener and the gap after
@@ -151,8 +151,8 @@ void main() {
       // The fullscreen right panel's tab strip starts past them too.
       expect(i.script, contains('padding-left:84.0px!important'));
       // The official layout stays: no app layout attribute.
-      expect(i.script, contains("removeAttribute('data-dsh-app-layout')"));
-      expect(i.script, isNot(contains("setAttribute('data-dsh-app-layout'")));
+      expect(i.script, contains("removeAttribute('data-xrk-app-layout')"));
+      expect(i.script, isNot(contains("setAttribute('data-xrk-app-layout'")));
     });
   });
 
@@ -163,7 +163,7 @@ void main() {
       expect(i.rootTop, 28);
       expect(i.rootBottom, 24);
       expect(i.script, contains('left:52.0px!important;right:52.0px!important'));
-      expect(i.script, contains("setAttribute('data-dsh-app-layout', 'drawer')"));
+      expect(i.script, contains("setAttribute('data-xrk-app-layout', 'drawer')"));
       expect(i.script, contains('--dsh-app-inset-left:52.0px'));
     });
 
@@ -171,7 +171,7 @@ void main() {
       final i = _resolve(_vivoLandscape);
       expect(i.rootBottom, WebChromeMetrics.gestureFloor);
       expect(i.bottom, WebChromeMetrics.gestureFloor);
-      // A reported inset wins; the keyboard takes the place of both: DSH
+      // A reported inset wins; the keyboard takes the place of both: XRK
       // Web's root and its layers end at it (the WebView keeps its size).
       expect(_resolve(_phoneLandscape).bottom, 24);
       expect(_resolve(_vivoLandscape, keyboard: 200).layerBottom, 200);
@@ -215,7 +215,7 @@ void main() {
       expect((i.rootTop, i.rootBottom), (0, 0));
       expect((i.status, i.band, i.bottom, i.frameBottom), (24, WebChromeMetrics.band, 32, 32));
       expect(i.layerTop, 24);
-      expect(i.script, contains("setAttribute('data-dsh-app-layout', 'desktop')"));
+      expect(i.script, contains("setAttribute('data-xrk-app-layout', 'desktop')"));
       expect(i.script, contains('--dsh-app-status:24.0px'));
       expect(i.script, contains('--dsh-app-frame-bottom:32.0px'));
       // Typing: the root ends at the keyboard, the frame pads nothing more.
@@ -226,7 +226,7 @@ void main() {
     test('other sites: no layout attribute, body padding only', () {
       final i = _resolve(_phoneLandscape, dshWeb: false, adapt: false);
       expect((i.left, i.right), (0, 0));
-      expect(i.script, contains("removeAttribute('data-dsh-app-layout')"));
+      expect(i.script, contains("removeAttribute('data-xrk-app-layout')"));
       expect(i.script, contains('padding-bottom:24.0px'));
     });
   });
@@ -242,12 +242,12 @@ void main() {
       expect(menu.size, back.size);
       expect(menu.left - back.right, 8);
       expect(menu.center.dy, back.center.dy);
-      // DSH Web runs edge to edge and pads its own root.
+      // XRK Web runs edge to edge and pads its own root.
       expect(tester.getRect(find.byKey(fakeWebViewKey)), Offset.zero & _phoneLandscape.size);
       expect(_platform.controller.insetsScript, contains('left:52.0px'));
     });
 
-    testWidgets('DSH Web as shipped on a phone: the app\'s mark sits left of the page\'s own opener', (tester) async {
+    testWidgets('XRK Web as shipped on a phone: the app\'s mark sits left of the page\'s own opener', (tester) async {
       await _pump(tester, _phonePortrait, phoneLayout: false);
       // Its own drawer layout keeps the leading room; no bar above the page.
       expect(find.byKey(const ValueKey('web-controls-seat')), findsOneWidget);
@@ -265,7 +265,7 @@ void main() {
       expect(back.top, 52 + WebChromeMetrics.seatTop);
       expect(back.size, const Size.square(WebChromeMetrics.seatButton));
       // The page's own opener, in its own seat, moves past the marker: the
-      // marker never covers it. Both sit in the one header row DSH Web lays
+      // marker never covers it. Both sit in the one header row XRK Web lays
       // out, and the title starts past both.
       expect(
         _platform.controller.insetsScript,
@@ -279,7 +279,7 @@ void main() {
       );
     });
 
-    testWidgets('DSH Web\'s sidebar as a drawer: the marker steps aside, not over it', (tester) async {
+    testWidgets('XRK Web\'s sidebar as a drawer: the marker steps aside, not over it', (tester) async {
       await _pump(tester, _phonePortrait, phoneLayout: false);
       final seat = find.byKey(const ValueKey('web-controls-seat'));
       AnimatedOpacity fade() =>
@@ -290,20 +290,20 @@ void main() {
       expect(touches().ignoring, isFalse);
       // The page's sidebar drawer goes up: the marker gets out of its way,
       // and touches fall through to the sidebar's mask.
-      _platform.controller.post('DshAppSidebar', 'open');
+      _platform.controller.post('XrkAppSidebar', 'open');
       await tester.pump();
       expect(fade().opacity, 0);
       expect(touches().ignoring, isTrue);
       // Folded away again: the marker comes back.
-      _platform.controller.post('DshAppSidebar', 'closed');
+      _platform.controller.post('XrkAppSidebar', 'closed');
       await tester.pump();
       expect(fade().opacity, 1);
       expect(touches().ignoring, isFalse);
     });
 
-    testWidgets("DSH Web's sidebar state reaches the app (dsh_web_sidebar.js)", (tester) async {
+    testWidgets("XRK Web's sidebar state reaches the app (xrk_web_sidebar.js)", (tester) async {
       await _pump(tester, _phonePortrait, phoneLayout: false);
-      expect(_platform.controller.channels, contains('DshAppSidebar'));
+      expect(_platform.controller.channels, contains('XrkAppSidebar'));
       // The bridge loads from the asset bundle: real time, then frames.
       for (var i = 0; i < 40 && !_platform.controller.scripts.any((s) => s.contains('__dshAppSidebar')); i++) {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
@@ -405,7 +405,11 @@ void main() {
       expect(k.report(250, 411), isTrue);
       expect(k.height, 0);
       expect(k.report(90, 411), isFalse);
+      // Mid-close quiet must not resurrect a partial height.
+      expect(k.settle(90, 411), isFalse);
+      expect(k.height, 0);
       expect(k.settle(0, 411), isFalse);
+      expect(k.height, 0);
       // Opening again in a window this wide: straight to where it ends.
       expect(k.report(10, 411), isTrue);
       expect(k.height, 260);
@@ -445,7 +449,7 @@ void main() {
 
     int insetScripts() => _platform.controller.scripts.where((s) => s.contains('dsh-app-insets')).length;
 
-    testWidgets('DSH Web keeps its size; its root rises once per slide', (tester) async {
+    testWidgets('XRK Web keeps its size; its root rises once per slide', (tester) async {
       await _pump(tester, _phonePortrait);
       final controller = _platform.controller;
       final full = Offset.zero & _phonePortrait.size;
@@ -497,8 +501,8 @@ void main() {
   group('load error', () {
     for (final (name, window, dshWeb) in [
       ('other sites, landscape', _phoneLandscape, false),
-      ('DSH Web, landscape', _phoneLandscape, true),
-      ('DSH Web, tablet', _tablet1280, true),
+      ('XRK Web, landscape', _phoneLandscape, true),
+      ('XRK Web, tablet', _tablet1280, true),
     ]) {
       testWidgets('$name: the way back stays above the message', (tester) async {
         _useWindow(tester, window);

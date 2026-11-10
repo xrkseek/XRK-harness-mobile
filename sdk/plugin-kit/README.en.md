@@ -1,18 +1,18 @@
-# @dsh-go/plugin-kit
+# @xrkseek/plugin-kit
 
 English | [中文](README.md)
 
-The author kit for dsh-go native plugins. Zero runtime dependencies, Node 22.19+. Not published to npm: use it from this repository, or copy the files you need into your plugin.
+The author kit for xrk-mobile native plugins. Zero runtime dependencies, Node 22.19+. Not published to npm: use it from this repository, or copy the files you need into your plugin.
 
 | Part | Entry | For |
 |---|---|---|
-| Types | `types/index.d.ts` (`types/schema.d.ts` is generated from the schemas) | Views, manifest, effects, `ctx.dshGo`, `caps` |
+| Types | `types/index.d.ts` (`types/schema.d.ts` is generated from the schemas) | Views, manifest, effects, `ctx.xrkGo`, `caps` |
 | Component builders | `stack()` `row()` `text()` `metric()` `chart()` `list()` `keyValue()` `progress()` `table()` `actions()` `image()` … `bind()` `action()` | Plain JSON nodes, `undefined` props dropped |
 | Tool cards | `toolCard(build)` | Wraps `presentationMeta`: never throws, lossless JSON, ≤ 8 KiB |
 | Capabilities | `hasComponent` `hasSurface` `appAtLeast` `localize` `adaptView` | Degrade by app capability and language |
 | Effects | `effects.insert()` … `effects.deferred()`; `checkEffects` `checkPending` | Build effects; check handler results with the bridge's own code |
-| Test host | `@dsh-go/plugin-kit/testing` → `createTestHost()` | Run your `apply(ctx)` without DSH: manifest, invoke, views, data, deferred results — answers like the bridge |
-| Checker | `bin/check.mjs`; `@dsh-go/plugin-kit/check` | Manifest (the bridge's parser) + views (a line-by-line twin of the app's parser, the app's words) + `--load` for the host half |
+| Test host | `@xrkseek/plugin-kit/testing` → `createTestHost()` | Run your `apply(ctx)` without XRK: manifest, invoke, views, data, deferred results — answers like the bridge |
+| Checker | `bin/check.mjs`; `@xrkseek/plugin-kit/check` | Manifest (the bridge's parser) + views (a line-by-line twin of the app's parser, the app's words) + `--load` for the host half |
 | Schemas | `schema/*.schema.json` | Machine-readable protocol and view definitions; `lib/json-schema.js` validates against them |
 
 ## check
@@ -30,7 +30,7 @@ node sdk/plugin-kit/bin/check.mjs <plugin dir | package.json | view.json | -> [-
 
 - Manifest problems: JSON Pointers from `package.json`, with the bridge's English developer message (the app's plugin details page shows the same); the app's own findings (unknown icon) are localized.
 - View problems: the same paths and words as the app's plugin details page (`lib/messages.json` is synced from the app's ARB files; the app runs the `test/parity/` cases too).
-- Labels are measured in Chinese and English; `--load` loads your code with a temporary `DSH_HOME`.
+- Labels are measured in Chinese and English; `--load` loads your code with a temporary `XRK_HOME`.
 
 `--load` starts with an empty config, validates it and applies defaults through the plugin's own `Config` Standard Schema, then calls `apply`. Without `Config`, it passes an empty object. Like the Host, it accepts synchronous config validation only; missing required values, thrown validation errors, and async validators report a load failure without calling `apply`. The checker does not read the user's Host config.
 
@@ -41,7 +41,7 @@ Option values must be complete: `--lang zh|en`, `--budget toolCard|panel|strip`,
 ## Test host
 
 ```js
-import { createTestHost } from '@dsh-go/plugin-kit/testing'
+import { createTestHost } from '@xrkseek/plugin-kit/testing'
 import { apply } from '../lib/index.js'
 
 const host = createTestHost({ dir: pluginDir, services: { sessions } })
@@ -61,11 +61,11 @@ host.emitEvent('session/event', session, event)
 | `node scripts/sync-bridge.mjs` | The bridge's `lib/native/{limits,util,effects,manifest,capabilities}.js` changed |
 | `node scripts/sync-messages.mjs` | The app's `view` / `plugview` ARB files changed |
 | `node scripts/gen-parity.mjs` | `lib/view-check.js` changed (after the app's parser did); review the diff |
-| `node scripts/sync-skill.mjs` | Any of the above, or `skill/`: rebuilds the app's bundled `dsh-go-plugin` skill |
+| `node scripts/sync-skill.mjs` | Any of the above, or `skill/`: rebuilds the app's bundled `xrk-plugin` skill |
 | `scripts/wire-check.sh` | To validate the schemas against real bridge traffic |
 
 `npm test` (`node --test`) fails when any of these outputs is stale. Type checks need `npm install` (devDependency `typescript` only).
 
 ## License
 
-MIT © DSH-TUI (ccch1mneyyy)
+MIT © XRK-TUI (xrkseek)

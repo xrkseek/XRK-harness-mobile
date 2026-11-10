@@ -4,71 +4,71 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fixtures.dart';
 
-DshUiView parsed(Object? view, {Object? data, PluginViewBudget budget = PluginViewBudget.panel}) {
-  final result = parseDshUiPluginUncached(view, data: data, profile: budget.profile);
-  if (result is DshUiInvalid) fail('invalid: ${result.error}');
-  return (result as DshUiParsed).view;
+XrkUiView parsed(Object? view, {Object? data, PluginViewBudget budget = PluginViewBudget.panel}) {
+  final result = parseXrkUiPluginUncached(view, data: data, profile: budget.profile);
+  if (result is XrkUiInvalid) fail('invalid: ${result.error}');
+  return (result as XrkUiParsed).view;
 }
 
-DshUiIssue invalid(Object? view, {PluginViewBudget budget = PluginViewBudget.panel}) {
-  final result = parseDshUiPluginUncached(view, profile: budget.profile);
-  if (result is! DshUiInvalid) {
-    fail('expected invalid, got ${(result as DshUiParsed).view.root}');
+XrkUiIssue invalid(Object? view, {PluginViewBudget budget = PluginViewBudget.panel}) {
+  final result = parseXrkUiPluginUncached(view, profile: budget.profile);
+  if (result is! XrkUiInvalid) {
+    fail('expected invalid, got ${(result as XrkUiParsed).view.root}');
   }
   return result.error;
 }
 
-T only<T extends DshUiNode>(DshUiView view) => view.nodes.whereType<T>().single;
+T only<T extends XrkUiNode>(XrkUiView view) => view.nodes.whereType<T>().single;
 
 Map<String, Object?> bind(String path) => {r'$': path};
 
 void main() {
   group('catalog', () {
     test('v2 extends the original 16 components', () {
-      expect(dshUiPluginComponents, hasLength(42));
-      expect(dshUiPluginComponents, containsAll(['list', 'keyValue', 'progress', 'table', 'actions', 'image']));
-      expect(dshUiPluginComponents, containsAll(['emptyState', 'gallery']));
+      expect(xrkUiPluginComponents, hasLength(42));
+      expect(xrkUiPluginComponents, containsAll(['list', 'keyValue', 'progress', 'table', 'actions', 'image']));
+      expect(xrkUiPluginComponents, containsAll(['emptyState', 'gallery']));
     });
 
     test('model cards keep the phase-one catalog', () {
-      final model = parseDshUiUncached(jsonEncode({'type': 'list', 'items': []}));
-      expect(model, isA<DshUiInvalid>());
+      final model = parseXrkUiUncached(jsonEncode({'type': 'list', 'items': []}));
+      expect(model, isA<XrkUiInvalid>());
       final plugin = parsePluginView(listView);
-      expect(plugin, isA<DshUiParsed>());
+      expect(plugin, isA<XrkUiParsed>());
     });
 
     test('weather card', () {
       final view = parsed(weatherCard, budget: PluginViewBudget.toolCard);
       expect(view.title, '东京 · 未来 3 天');
       expect(view.issues, isEmpty);
-      final metrics = view.nodes.whereType<DshUiMetric>().toList();
-      expect(metrics.map((m) => m.tone), [null, DshUiTone.info, DshUiTone.warn]);
-      expect(only<DshUiChart>(view).kind, DshUiChartKind.line);
+      final metrics = view.nodes.whereType<XrkUiMetric>().toList();
+      expect(metrics.map((m) => m.tone), [null, XrkUiTone.info, XrkUiTone.warn]);
+      expect(only<XrkUiChart>(view).kind, XrkUiChartKind.line);
     });
 
     test('list', () {
-      final list = only<DshUiList>(parsed(listView));
+      final list = only<XrkUiList>(parsed(listView));
       expect(list.items.map((i) => i.title), ['单行', '两行', '可点']);
       expect(list.items[1].subtitle, '副标题');
-      expect(list.items[1].tone, DshUiTone.warn);
+      expect(list.items[1].tone, XrkUiTone.warn);
       expect(list.items[0].icon, 'bolt');
       expect(list.items[2].action?.id, 'go');
       expect(list.items[0].action, isNull);
     });
 
     test('keyValue as pairs, objects and a map', () {
-      expect(only<DshUiKeyValue>(parsed(keyValueView)).items.map((i) => '${i.label}=${i.value}'), [
+      expect(only<XrkUiKeyValue>(parsed(keyValueView)).items.map((i) => '${i.label}=${i.value}'), [
         '模型=deepseek-v4',
         '输入=12,480 tokens',
         '状态=正常',
       ]);
-      final map = only<DshUiKeyValue>(
+      final map = only<XrkUiKeyValue>(
         parsed({
           'type': 'keyValue',
           'items': {'版本': '0.9.1', '构建': 10252108},
@@ -78,25 +78,25 @@ void main() {
     });
 
     test('progress', () {
-      final bars = parsed(progressView).nodes.whereType<DshUiProgress>().toList();
+      final bars = parsed(progressView).nodes.whereType<XrkUiProgress>().toList();
       expect(bars[0].fraction, closeTo(0.62, 1e-9));
       expect(bars[0].shown, '62%');
       expect(bars[1].shown, '91%');
-      expect(bars[1].tone, DshUiTone.bad);
+      expect(bars[1].tone, XrkUiTone.bad);
       expect(bars[2].shown, '3/12');
-      final over = only<DshUiProgress>(parsed({'type': 'progress', 'value': 140}));
+      final over = only<XrkUiProgress>(parsed({'type': 'progress', 'value': 140}));
       expect(over.fraction, 1);
-      final text = only<DshUiProgress>(parsed({'type': 'progress', 'value': '42%', 'max': '200'}));
+      final text = only<XrkUiProgress>(parsed({'type': 'progress', 'value': '42%', 'max': '200'}));
       expect(text.fraction, closeTo(0.21, 1e-9));
       final badMax = parsed({'type': 'progress', 'value': 5, 'max': 0});
-      expect(only<DshUiProgress>(badMax).max, 100);
+      expect(only<XrkUiProgress>(badMax).max, 100);
       expect(badMax.issues.single.path, 'view.max');
     });
 
     test('table: numeric columns right-aligned, ragged rows padded', () {
-      final table = only<DshUiTable>(parsed(tableView));
-      expect(table.columns.map((c) => c.align), [DshUiAlign.start, DshUiAlign.start, DshUiAlign.end]);
-      final ragged = only<DshUiTable>(
+      final table = only<XrkUiTable>(parsed(tableView));
+      expect(table.columns.map((c) => c.align), [XrkUiAlign.start, XrkUiAlign.start, XrkUiAlign.end]);
+      final ragged = only<XrkUiTable>(
         parsed({
           'type': 'table',
           'columns': [
@@ -115,7 +115,7 @@ void main() {
         ['2', 'x'],
         ['', '3'],
       ]);
-      expect(ragged.columns[1].align, DshUiAlign.end);
+      expect(ragged.columns[1].align, XrkUiAlign.end);
     });
 
     test('actions: one primary per view (confirm counts)', () {
@@ -138,7 +138,7 @@ void main() {
           },
         ],
       });
-      final actions = only<DshUiActions>(view);
+      final actions = only<XrkUiActions>(view);
       expect(actions.items.map((b) => b.primary), [false, false]);
       expect(actions.items[1].action.args, {'n': 1});
       expect(view.issues.map((i) => i.path), contains('view.children[1].items[0].style'));
@@ -146,7 +146,7 @@ void main() {
 
     test('options: values, selected and a bad id', () {
       final view = parsed(choiceView, data: {'range': '30d'});
-      final options = only<DshUiOptions>(view);
+      final options = only<XrkUiOptions>(view);
       expect(options.id, 'range');
       expect(options.options.map((o) => o.key), ['7d', '30d', 'year']);
       expect(options.selected, ['30d']);
@@ -155,15 +155,15 @@ void main() {
         'id': 'has space',
         'options': ['A'],
       });
-      expect(only<DshUiOptions>(bad).id, isEmpty);
+      expect(only<XrkUiOptions>(bad).id, isEmpty);
       expect(bad.issues.single.path, 'view.id');
     });
 
     test('text is restricted in plugin views only', () {
       final view = parsed(textView);
-      expect(view.nodes.whereType<DshUiText>().every((t) => t.restricted), isTrue);
-      final model = parseDshUiUncached(jsonEncode({'type': 'text', 'text': 'x'}));
-      expect(((model as DshUiParsed).view.root as DshUiText).restricted, isFalse);
+      expect(view.nodes.whereType<XrkUiText>().every((t) => t.restricted), isTrue);
+      final model = parseXrkUiUncached(jsonEncode({'type': 'text', 'text': 'x'}));
+      expect(((model as XrkUiParsed).view.root as XrkUiText).restricted, isFalse);
     });
   });
 
@@ -236,27 +236,27 @@ void main() {
         },
       );
       expect(
-        (view.root as DshUiLayout).children.first,
-        isA<DshUiPlaceholder>().having((p) => p.type, 'type', 'metric'),
+        (view.root as XrkUiLayout).children.first,
+        isA<XrkUiPlaceholder>().having((p) => p.type, 'type', 'metric'),
       );
     });
 
     test('missing values: em dash, gaps and empty states', () {
       final view = parsed(usagePanel, data: const {});
-      final metrics = view.nodes.whereType<DshUiMetric>().toList();
+      final metrics = view.nodes.whereType<XrkUiMetric>().toList();
       expect(metrics.map((m) => m.value), ['—', '—']);
-      expect(only<DshUiProgress>(view).shown, '—');
-      expect(view.nodes.whereType<DshUiEmpty>().single.type, 'list');
+      expect(only<XrkUiProgress>(view).shown, '—');
+      expect(view.nodes.whereType<XrkUiEmpty>().single.type, 'list');
       expect(view.issues, isEmpty);
     });
 
     test('bound panel', () {
       final view = parsed(usagePanel, data: usageData);
-      expect(view.nodes.whereType<DshUiMetric>().map((m) => m.value), ['¥0.42', '¥3.10']);
-      expect(only<DshUiProgress>(view).fraction, closeTo(0.62, 1e-9));
-      final list = only<DshUiList>(view);
+      expect(view.nodes.whereType<XrkUiMetric>().map((m) => m.value), ['¥0.42', '¥3.10']);
+      expect(only<XrkUiProgress>(view).fraction, closeTo(0.62, 1e-9));
+      final list = only<XrkUiList>(view);
       expect(list.items.first.action?.args, {'id': 's1'});
-      expect(list.items.last.tone, DshUiTone.good);
+      expect(list.items.last.tone, XrkUiTone.good);
     });
 
     test('a bound type is not allowed', () {
@@ -274,7 +274,7 @@ void main() {
           ],
         },
       );
-      expect((view.root as DshUiLayout).children, hasLength(2));
+      expect((view.root as XrkUiLayout).children, hasLength(2));
     });
 
     test('a literal [] is the same legal empty state (as the schema says)', () {
@@ -295,7 +295,7 @@ void main() {
         },
       ]) {
         final view = parsed(node);
-        expect(view.root, isA<DshUiEmpty>(), reason: '$node');
+        expect(view.root, isA<XrkUiEmpty>(), reason: '$node');
         expect(view.issues, isEmpty, reason: '$node');
       }
       // Table columns are not data: none at all is an error.
@@ -319,7 +319,7 @@ void main() {
           {'values': bind('data.cost')},
         ],
       });
-      expect(view.root, isA<DshUiEmpty>());
+      expect(view.root, isA<XrkUiEmpty>());
     });
   });
 
@@ -327,7 +327,7 @@ void main() {
     test('tool card: 8 KiB', () {
       final big = {'type': 'text', 'text': 'x' * 8200};
       expect(invalid(big, budget: PluginViewBudget.toolCard).path, 'view');
-      expect(parsePluginView(big), isA<DshUiParsed>());
+      expect(parsePluginView(big), isA<XrkUiParsed>());
     });
 
     test('nesting', () {
@@ -388,15 +388,15 @@ void main() {
           },
         ],
       });
-      final list = only<DshUiList>(view);
+      final list = only<XrkUiList>(view);
       expect(list.items, hasLength(50));
       expect(list.truncation, contains('10'));
-      final table = only<DshUiTable>(view);
+      final table = only<XrkUiTable>(view);
       expect(table.columns, hasLength(8));
       expect(table.rows, hasLength(50));
       expect(table.truncation, isNotNull);
-      expect(only<DshUiKeyValue>(view).items, hasLength(24));
-      expect(only<DshUiActions>(view).items, hasLength(4));
+      expect(only<XrkUiKeyValue>(view).items, hasLength(24));
+      expect(only<XrkUiActions>(view).items, hasLength(4));
     });
 
     test('action args: 1 KiB', () {
@@ -413,7 +413,7 @@ void main() {
           {'label': 'ok', 'action': 'b'},
         ],
       });
-      expect(only<DshUiActions>(view).items.map((b) => b.label), ['ok']);
+      expect(only<XrkUiActions>(view).items.map((b) => b.label), ['ok']);
     });
 
     test('strip budget: 8 nodes', () {
@@ -429,22 +429,22 @@ void main() {
 
   group('images', () {
     test('data: PNG is sniffed', () {
-      final image = only<DshUiImage>(parsed(imageView));
-      final source = image.source as DshUiDataImage;
+      final image = only<XrkUiImage>(parsed(imageView));
+      final source = image.source as XrkUiDataImage;
       expect((source.width, source.height), (192, 108));
       expect(image.alt, '黄昏的海面');
     });
 
     test('plugin assets only, no traversal, no web', () {
-      DshUiImageSource? src(String s) => only<DshUiImage>(parsed({'type': 'image', 'src': s})).source;
-      expect(src('asset:icons/a.png'), isA<DshUiAssetImage>().having((a) => a.src, 'src', 'asset:icons/a.png'));
-      expect(src('asset:photo.JPEG'), isA<DshUiAssetImage>());
+      XrkUiImageSource? src(String s) => only<XrkUiImage>(parsed({'type': 'image', 'src': s})).source;
+      expect(src('asset:icons/a.png'), isA<XrkUiAssetImage>().having((a) => a.src, 'src', 'asset:icons/a.png'));
+      expect(src('asset:photo.JPEG'), isA<XrkUiAssetImage>());
       expect(src('asset:../secret.png'), isNull);
       expect(src('asset:a/./b.png'), isNull);
       expect(src('asset:/etc/x.png'), isNull);
       expect(src('asset:a/.hidden/b.png'), isNull);
       expect(src('asset:icons/a.svg'), isNull);
-      expect(src('/dsh-go/v1/assets/pkg/a.png'), isNull);
+      expect(src('/xrk-mobile/v1/assets/pkg/a.png'), isNull);
       expect(src('https://tracker.example/p.png'), isNull);
       expect(src('//tracker.example/p.png'), isNull);
       expect(src('data:image/svg+xml;base64,PHN2Zy8+'), isNull);
@@ -454,22 +454,22 @@ void main() {
       final huge = 'data:image/png;base64,${'A' * 70000}';
       // The view itself is capped (32 KiB), so a big image arrives as data.
       final viaData = parsed({'type': 'image', 'src': bind('data.src')}, data: {'src': huge});
-      expect(only<DshUiImage>(viaData).source, isNull);
+      expect(only<XrkUiImage>(viaData).source, isNull);
       expect(viaData.issues.single.message, contains('65536'));
-      expect(only<DshUiImage>(parsed({'type': 'image', 'src': 'data:image/png;base64,!!!'})).source, isNull);
+      expect(only<XrkUiImage>(parsed({'type': 'image', 'src': 'data:image/png;base64,!!!'})).source, isNull);
       // A valid PNG header claiming 20000 × 20000.
       final bomb = Uint8List.fromList([...duskBytes]);
       bomb.buffer.asByteData().setUint32(16, 20000);
       bomb.buffer.asByteData().setUint32(20, 20000);
       final view = parsed({'type': 'image', 'src': 'data:image/png;base64,${base64Encode(bomb)}'});
-      expect(only<DshUiImage>(view).source, isNull);
+      expect(only<XrkUiImage>(view).source, isNull);
       expect(view.issues.single.path, 'view.src');
     });
 
     test('header sniffing', () {
-      expect(dshUiImageSize(duskBytes), (192, 108));
+      expect(xrkUiImageSize(duskBytes), (192, 108));
       final gif = Uint8List.fromList([...'GIF89a'.codeUnits, 0x40, 0x01, 0xF0, 0x00, 0, 0, 0]);
-      expect(dshUiImageSize(gif), (320, 240));
+      expect(xrkUiImageSize(gif), (320, 240));
       final jpeg = Uint8List.fromList([
         0xFF, 0xD8, // SOI
         0xFF, 0xE0, 0x00, 0x04, 0x00, 0x00, // APP0, length 4
@@ -485,14 +485,14 @@ void main() {
         0x03, // SOF0 480 × 640
         0, 0, 0, 0, 0, 0, 0, 0, 0,
       ]);
-      expect(dshUiImageSize(jpeg), (640, 480));
+      expect(xrkUiImageSize(jpeg), (640, 480));
       final webpX = Uint8List(30)
         ..setAll(0, 'RIFF'.codeUnits)
         ..setAll(8, 'WEBPVP8X'.codeUnits);
       webpX
         ..[24] = 99
         ..[27] = 49;
-      expect(dshUiImageSize(webpX), (100, 50));
+      expect(xrkUiImageSize(webpX), (100, 50));
       final webpL = Uint8List(30)
         ..setAll(0, 'RIFF'.codeUnits)
         ..setAll(8, 'WEBPVP8L'.codeUnits)
@@ -503,20 +503,20 @@ void main() {
         ..[21] = bits & 0xFF
         ..[22] = (bits >> 8) & 0xFF
         ..[23] = (bits >> 16) & 0xFF;
-      expect(dshUiImageSize(webpL), (64, 32));
-      expect(dshUiImageSize(Uint8List.fromList([1, 2, 3])), isNull);
-      expect(dshUiImageSize(Uint8List.fromList([0xFF, 0xD8, 0x00])), isNull);
+      expect(xrkUiImageSize(webpL), (64, 32));
+      expect(xrkUiImageSize(Uint8List.fromList([1, 2, 3])), isNull);
+      expect(xrkUiImageSize(Uint8List.fromList([0xFF, 0xD8, 0x00])), isNull);
     });
   });
 
   group('tolerance', () {
     test('broken children become placeholders, the rest draws', () {
       final view = parsed(partlyBroken, data: const {});
-      final root = view.root as DshUiLayout;
-      expect(root.children[0], isA<DshUiPlaceholder>());
-      expect(root.children[1], isA<DshUiEmpty>());
-      expect((root.children[2] as DshUiImage).source, isNull);
-      expect((root.children[3] as DshUiMetric).value, '—');
+      final root = view.root as XrkUiLayout;
+      expect(root.children[0], isA<XrkUiPlaceholder>());
+      expect(root.children[1], isA<XrkUiEmpty>());
+      expect((root.children[2] as XrkUiImage).source, isNull);
+      expect((root.children[3] as XrkUiMetric).value, '—');
       expect(view.issues.map((i) => i.path), containsAll(['view.children[0].type', 'view.children[2].src']));
     });
 
@@ -545,15 +545,15 @@ void main() {
           {'title': 'a', 'tone': 'pink', 'icon': 'unicorn', 'font': 'Comic'},
         ],
       });
-      final item = only<DshUiList>(view).items.single;
+      final item = only<XrkUiList>(view).items.single;
       expect(item.tone, isNull);
       expect(item.icon, '');
       expect(view.issues.map((i) => i.path), ['view.items[0].icon', 'view.items[0].tone']);
     });
 
     test('a JSON string view parses too (strict JSON)', () {
-      expect(parsePluginView(jsonEncode(weatherCard)), isA<DshUiParsed>());
-      expect(parsePluginView('{"type":"text","text":"a",}'), isA<DshUiInvalid>());
+      expect(parsePluginView(jsonEncode(weatherCard)), isA<XrkUiParsed>());
+      expect(parsePluginView('{"type":"text","text":"a",}'), isA<XrkUiInvalid>());
     });
 
     test('cache: same objects, same result', () {

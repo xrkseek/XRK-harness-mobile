@@ -7,12 +7,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/media_generation.dart';
-import 'package:dsh_app/state/risk_notice_store.dart';
-import 'package:dsh_app/state/session_modes.dart';
-import 'package:dsh_app/ui/chat/render/markdown_image.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/media_generation.dart';
+import 'package:xrk_app/state/risk_notice_store.dart';
+import 'package:xrk_app/state/session_modes.dart';
+import 'package:xrk_app/ui/chat/render/markdown_image.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -151,14 +151,14 @@ Future<void> settlePictures(WidgetTester tester, Finder root) async {
   }
 }
 
-/// `dsh/media` (the gallery): records saves.
+/// `xrk/media` (the gallery): records saves.
 List<MethodCall> mockGallery() {
   final calls = <MethodCall>[];
-  const channel = MethodChannel('dsh/media');
+  const channel = MethodChannel('xrk/media');
   final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   messenger.setMockMethodCallHandler(channel, (call) async {
     calls.add(call);
-    return 'Pictures/DSH Go/${(call.arguments as Map)['name']}';
+    return 'Pictures/XRK Go/${(call.arguments as Map)['name']}';
   });
   addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
   return calls;
@@ -177,7 +177,7 @@ class _NoRiskNotices implements RiskNoticeStore {
 /// synthetic transcripts' own.
 Map<String, Object?> testCatalogMeta() => {
   'v': 1,
-  'contract': 'dsh-go/media/catalog',
+  'contract': 'xrk-mobile/media/catalog',
   'capabilities': {'image': true, 'video': true},
   'models': [
     {
@@ -232,7 +232,7 @@ List<Map<String, Object?>> testMediaServices() => [
 /// The plugin's namespace of settings/describe: [catalog] on the services
 /// field, [services] as its value.
 SettingsNamespaceView testMediaNamespace({
-  String ns = 'dsh-media',
+  String ns = 'xrk-media',
   Object? catalog = const _Default(),
   List<Object?>? services,
 }) => SettingsNamespaceView.fromJson({
@@ -246,7 +246,7 @@ SettingsNamespaceView testMediaNamespace({
         'meta': {
           'default': <Object?>[],
           // null: no catalogue at all.
-          'extra': {'dsh-go/media/catalog': ?(catalog is _Default ? testCatalogMeta() : catalog)},
+          'extra': {'xrk-mobile/media/catalog': ?(catalog is _Default ? testCatalogMeta() : catalog)},
         },
         'inner': {
           'type': 'array',
@@ -274,7 +274,7 @@ const testMediaKeys = {
 
 /// What the host offers with [testMediaNamespace]'s arguments.
 MediaCatalog testMediaCatalogWith({Object? catalog = const _Default(), List<Object?>? services}) => mediaCatalogFrom({
-  'dsh-media': testMediaNamespace(catalog: catalog, services: services),
+  'xrk-media': testMediaNamespace(catalog: catalog, services: services),
 }, credentials: testMediaKeys);
 
 /// The usual host: both services, every key.

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/companion/companion_initiative.dart';
+import 'package:xrk_app/companion/companion_initiative.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _wall = 864000000;

@@ -4,12 +4,12 @@
 // Regenerate with
 // `flutter test --update-goldens test/plugins/view/plugin_view_figures_test.dart`.
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_blocks.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_figures.dart';
-import 'package:dsh_app/ui/chat/media/media_viewer.dart';
-import 'package:dsh_app/ui/chat/widgets/image_actions.dart' show GallerySaveButton;
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_blocks.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_figures.dart';
+import 'package:xrk_app/ui/chat/media/media_viewer.dart';
+import 'package:xrk_app/ui/chat/widgets/image_actions.dart' show GallerySaveButton;
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -69,8 +69,8 @@ Map<String, Object?> _album({bool empty = false}) => {
   ],
 };
 
-DshUiView _parse(Object view, {PluginViewBudget budget = PluginViewBudget.panel}) =>
-    (parsePluginView(view, budget: budget) as DshUiParsed).view;
+XrkUiView _parse(Object view, {PluginViewBudget budget = PluginViewBudget.panel}) =>
+    (parsePluginView(view, budget: budget) as XrkUiParsed).view;
 
 Future<void> _pump(
   WidgetTester tester,
@@ -115,25 +115,25 @@ void main() {
   group('parsing', () {
     test('the four take their shape; nothing new reaches a v1 view', () {
       final view = _parse(_album());
-      final ring = view.nodes.whereType<DshUiProgress>().single;
+      final ring = view.nodes.whereType<XrkUiProgress>().single;
       expect(ring.ring, isTrue);
-      final metric = view.nodes.whereType<DshUiMetric>().single;
+      final metric = view.nodes.whereType<XrkUiMetric>().single;
       expect(metric.trend, [1.2, 2.0, 1.4, null, 2.6, 3.1]);
-      final gallery = view.nodes.whereType<DshUiGallery>().single;
+      final gallery = view.nodes.whereType<XrkUiGallery>().single;
       expect(gallery.items, hasLength(5));
       expect(gallery.items[1].action?.id, 'pick');
       expect(gallery.items[4].image.source, isNull, reason: 'a web address is no source: a quiet placeholder cell');
       expect(view.issues.map((i) => i.path), contains('view.children[1].items[4].src'));
 
       final v1 = _parse({..._album(), 'v': 1});
-      expect(v1.nodes.whereType<DshUiProgress>().single.ring, isFalse);
-      expect(v1.nodes.whereType<DshUiMetric>().single.trend, isNull);
-      expect(v1.nodes.whereType<DshUiGallery>(), isEmpty, reason: 'v2 only: a v1 view draws a placeholder');
+      expect(v1.nodes.whereType<XrkUiProgress>().single.ring, isFalse);
+      expect(v1.nodes.whereType<XrkUiMetric>().single.trend, isNull);
+      expect(v1.nodes.whereType<XrkUiGallery>(), isEmpty, reason: 'v2 only: a v1 view draws a placeholder');
     });
 
     test('emptyState: title required; one button made of label + action', () {
       final view = _parse(_album(empty: true));
-      final empty = view.nodes.whereType<DshUiEmptyState>().single;
+      final empty = view.nodes.whereType<XrkUiEmptyState>().single;
       expect(empty.title, '还没有贴纸');
       expect(empty.icon, 'gallery');
       expect(empty.actions!.items.single.label, '导入');
@@ -146,7 +146,7 @@ void main() {
           {'type': 'text', 'text': 'x'},
         ],
       });
-      expect(broken.nodes.whereType<DshUiPlaceholder>(), hasLength(1));
+      expect(broken.nodes.whereType<XrkUiPlaceholder>(), hasLength(1));
     });
 
     test('limits: 24 pictures in a panel, 8 in a tool card; columns 2–4; aspect 0.5–2; trend 2–30', () {
@@ -159,11 +159,11 @@ void main() {
           for (var i = 0; i < n; i++) {'src': _dot},
         ],
       };
-      expect((_parse(many(30)).root as DshUiGallery).items, hasLength(24));
-      expect((_parse(many(30), budget: PluginViewBudget.toolCard).root as DshUiGallery).items, hasLength(8));
+      expect((_parse(many(30)).root as XrkUiGallery).items, hasLength(24));
+      expect((_parse(many(30), budget: PluginViewBudget.toolCard).root as XrkUiGallery).items, hasLength(8));
       final odd = _parse(many(3, columns: 7, aspect: 9));
-      expect((odd.root as DshUiGallery).columns, isNull);
-      expect((odd.root as DshUiGallery).aspect, 1);
+      expect((odd.root as XrkUiGallery).columns, isNull);
+      expect((odd.root as XrkUiGallery).aspect, 1);
       expect(odd.issues.map((i) => i.path), containsAll(['view.columns', 'view.aspect']));
       final tooLong = _parse({
         'v': 2,
@@ -172,16 +172,16 @@ void main() {
         'value': '1',
         'trend': [for (var i = 0; i < 31; i++) i],
       });
-      expect((tooLong.root as DshUiMetric).trend, isNull);
+      expect((tooLong.root as XrkUiMetric).trend, isNull);
       expect(tooLong.issues.map((i) => i.path), contains('view.trend'));
     });
 
     test('the gallery count is in a column count, not a guess: width decides when none is asked', () {
-      expect(dshUiGalleryColumns(326, null), 3);
-      expect(dshUiGalleryColumns(300, null), 2);
-      expect(dshUiGalleryColumns(326, 4), 4);
-      expect(dshUiGalleryColumns(300, 4), 3, reason: 'four would be under 72 each');
-      expect(dshUiGalleryColumns(140, null), 1);
+      expect(xrkUiGalleryColumns(326, null), 3);
+      expect(xrkUiGalleryColumns(300, null), 2);
+      expect(xrkUiGalleryColumns(326, 4), 4);
+      expect(xrkUiGalleryColumns(300, 4), 3, reason: 'four would be under 72 each');
+      expect(xrkUiGalleryColumns(140, null), 1);
     });
   });
 
@@ -194,7 +194,7 @@ void main() {
       for (final (width, columns) in [(390.0, 2), (520.0, 3)]) {
         await _pump(tester, _album(), width: width);
         final block = tester.getRect(find.byKey(const ValueKey('dsh-ui-gallery')));
-        expect(dshUiGalleryColumns(block.width, null), columns, reason: 'at $width');
+        expect(xrkUiGalleryColumns(block.width, null), columns, reason: 'at $width');
         final rects = [for (var i = 0; i < 5; i++) tester.getRect(find.byKey(ValueKey('dsh-ui-gallery-cell-$i')))];
         for (final r in rects) {
           expect(r.width, moreOrLessEquals(rects.first.width, epsilon: 0.5));
@@ -203,11 +203,11 @@ void main() {
         expect(rects[0].left, moreOrLessEquals(block.left, epsilon: 0.5));
         expect(rects[columns - 1].right, moreOrLessEquals(block.right, epsilon: 0.5));
         for (var c = 1; c < columns; c++) {
-          expect(rects[c].left - rects[c - 1].right, moreOrLessEquals(DshUiGalleryMetrics.gap, epsilon: 0.5));
+          expect(rects[c].left - rects[c - 1].right, moreOrLessEquals(XrkUiGalleryMetrics.gap, epsilon: 0.5));
         }
         // The row's height is its tallest cell's: the caption room is kept in
         // every cell of a row with any caption (海 and 日落 have one, 苔 not).
-        expect(rects[columns].top - rects[0].bottom, moreOrLessEquals(DshUiGalleryMetrics.gap, epsilon: 0.5));
+        expect(rects[columns].top - rects[0].bottom, moreOrLessEquals(XrkUiGalleryMetrics.gap, epsilon: 0.5));
         for (var start = 0; start + columns <= rects.length; start += columns) {
           for (var c = 1; c < columns; c++) {
             expect(rects[start + c].height, moreOrLessEquals(rects[start].height, epsilon: 0.5));
@@ -233,12 +233,12 @@ void main() {
         expect(r.center.dx, moreOrLessEquals(box.center.dx, epsilon: 0.5));
       }
       expect(button.center.dx, moreOrLessEquals(box.center.dx, epsilon: 0.5));
-      expect(badge.width, DshUiGalleryMetrics.emptyBadge);
+      expect(badge.width, XrkUiGalleryMetrics.emptyBadge);
       expect(button.height, greaterThanOrEqualTo(48));
       expect(button.width, lessThan(box.width), reason: 'as wide as its words, like EmptyView');
-      expect(button.width, greaterThanOrEqualTo(DshUiGalleryMetrics.emptyButtonMinWidth));
-      expect(title.top - badge.bottom, moreOrLessEquals(DshUiGalleryMetrics.emptyGap, epsilon: 0.5));
-      expect(button.top - line.bottom, moreOrLessEquals(DshUiGalleryMetrics.emptyGap, epsilon: 0.5));
+      expect(button.width, greaterThanOrEqualTo(XrkUiGalleryMetrics.emptyButtonMinWidth));
+      expect(title.top - badge.bottom, moreOrLessEquals(XrkUiGalleryMetrics.emptyGap, epsilon: 0.5));
+      expect(button.top - line.bottom, moreOrLessEquals(XrkUiGalleryMetrics.emptyGap, epsilon: 0.5));
     });
 
     testWidgets('emptyState: its button invokes the action at the emptyState\'s own path', (tester) async {
@@ -262,12 +262,12 @@ void main() {
     ) async {
       await _pump(tester, _album());
       final ring = tester.getRect(find.byKey(const ValueKey('dsh-ui-ring')));
-      expect(ring.width, DshUiFigureMetrics.ringSize);
+      expect(ring.width, XrkUiFigureMetrics.ringSize);
       final figure = tester.getRect(find.text('72%'));
       expect(figure.center.dx, moreOrLessEquals(ring.center.dx, epsilon: 0.5));
       expect(figure.center.dy, moreOrLessEquals(ring.center.dy, epsilon: 1));
       final trend = tester.getRect(find.byKey(const ValueKey('dsh-ui-trend')));
-      expect(trend.height, DshUiFigureMetrics.trendHeight);
+      expect(trend.height, XrkUiFigureMetrics.trendHeight);
       final label = tester.getRect(find.text('今日'));
       expect(trend.left, moreOrLessEquals(label.left, epsilon: 0.5));
     });
@@ -279,7 +279,7 @@ void main() {
       expect(tester.getRect(find.text('今日')).top, greaterThan(ring.bottom));
       // The figure shrinks to the ring's hole rather than over its stroke.
       final figure = tester.getRect(find.text('72%'));
-      final hole = ring.deflate(DshUiFigureMetrics.ringStroke);
+      final hole = ring.deflate(XrkUiFigureMetrics.ringStroke);
       expect(figure.left, greaterThanOrEqualTo(hole.left));
       expect(figure.right, lessThanOrEqualTo(hole.right));
     });
@@ -314,7 +314,7 @@ void main() {
       expect(find.text('4 / 4'), findsOneWidget);
       expect(
         await page.pictures!.first.bytes!(),
-        (_parse(_album()).nodes.whereType<DshUiGallery>().single.items.first.image.source! as DshUiDataImage).bytes,
+        (_parse(_album()).nodes.whereType<XrkUiGallery>().single.items.first.image.source! as XrkUiDataImage).bytes,
       );
     });
 
@@ -348,8 +348,8 @@ void main() {
 
     testWidgets('the viewer shows a plugin\'s pictures with its name, no capsule', (tester) async {
       final view = _parse(_album());
-      final gallery = view.nodes.whereType<DshUiGallery>().single;
-      final first = gallery.items.first.image.source! as DshUiDataImage;
+      final gallery = view.nodes.whereType<XrkUiGallery>().single;
+      final first = gallery.items.first.image.source! as XrkUiDataImage;
       usePhoneView(tester);
       await tester.pumpWidget(
         testApp(
@@ -375,7 +375,7 @@ void main() {
       expect(find.byType(GallerySaveButton), findsNothing, reason: 'no bytes at hand: no 保存, no 分享');
 
       // A plugin's own (asset) picture is saved as the PNG of what it draws.
-      final png = (await tester.runAsync(() => dshUiImageBytes(MemoryImage(first.bytes))))!;
+      final png = (await tester.runAsync(() => xrkUiImageBytes(MemoryImage(first.bytes))))!;
       expect(png.sublist(0, 4), [0x89, 0x50, 0x4E, 0x47]);
     });
   });

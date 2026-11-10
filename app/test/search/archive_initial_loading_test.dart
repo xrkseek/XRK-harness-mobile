@@ -1,18 +1,18 @@
 import 'dart:async';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/state/balance_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/onboarding_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/shell/session_search_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/state/balance_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/onboarding_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/shell/session_search_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -59,7 +59,7 @@ class _Carrier extends DrawerHost {
   }
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client(super.carrier) : super.withCarrier();
 
   Future<void>? _closing;
@@ -112,7 +112,7 @@ void main() {
       }
       final old = _Client(oldHost);
       final next = _Client(nextHost);
-      final opening = Completer<DshClient>();
+      final opening = Completer<XrkClient>();
       var opens = 0;
       LocalClientConnector selectedConnector = ({required baseUri, required token}) async {
         opens++;

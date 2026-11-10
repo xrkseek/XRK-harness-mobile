@@ -63,7 +63,7 @@ class _UsageNoticeRowState extends ConsumerState<UsageNoticeRow> {
                     const SizedBox(height: 1),
                     Text(
                       l10n.usageNoticeBody,
-                      style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+                      style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
                     ),
                   ],
                 ),

@@ -460,7 +460,7 @@ class ManageFoldersSheet extends ConsumerWidget {
     final l10n = context.l10n;
     final folders = ref.watch(drawerViewProvider.select((v) => v.folders));
     final scheme = Theme.of(context).colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     Widget row(DrawerFolder f, int index) => ListPageRow(
       key: ValueKey(f.id),
       leading: FolderMarkGlyph.of(f),

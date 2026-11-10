@@ -6,13 +6,13 @@
 // The spacing rules and the row → widget mapping mirror ChatList
 // (chat_list.dart `_gapBefore`, `_rowWidget`); keep the two in step.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../state/settings_state.dart';
 import '../chat/chat_rows.dart';
-import '../chat/dsh_ui/dsh_ui.dart';
+import '../chat/xrk_ui/xrk_ui.dart';
 import '../chat/widgets/assistant_message.dart';
 import '../chat/widgets/attachments.dart';
 import '../chat/widgets/change_card.dart';
@@ -197,7 +197,7 @@ class _ReplayListState extends ConsumerState<ReplayList> {
 
   Widget _rowWidget(ChatRow row) {
     return switch (row) {
-      UserRow(:final item) when dshUiReplyChip(item.text) != null => DshUiReplyChip(label: dshUiReplyChip(item.text)!),
+      UserRow(:final item) when xrkUiReplyChip(item.text) != null => XrkUiReplyChip(label: xrkUiReplyChip(item.text)!),
       UserRow(:final item) => UserBubble(
         text: item.text,
         attachments: item.images.isEmpty && item.files.isEmpty
@@ -205,10 +205,10 @@ class _ReplayListState extends ConsumerState<ReplayList> {
             : SentAttachments.echoed(sessionId: replaySessionId, images: item.images, files: item.files),
       ),
       PendingRow() => const SizedBox.shrink(),
-      AssistantRow(:final item, :final showActions, :final footnote) => DshUiScope(
+      AssistantRow(:final item, :final showActions, :final footnote) => XrkUiScope(
         sessionId: replaySessionId,
         messageId: item.id,
-        state: DshUiState.expired,
+        state: XrkUiState.expired,
         child: AssistantMessage(
           item: item,
           showActions: showActions,

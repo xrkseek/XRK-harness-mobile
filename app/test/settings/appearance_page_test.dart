@@ -6,14 +6,14 @@
 //
 // The goldens show the whole page, tile styles, launcher icons and launch screen included.
 
-import 'package:dsh_app/app.dart';
-import 'package:dsh_app/state/app_icon_state.dart';
-import 'package:dsh_app/state/appearance_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/tile_style_state.dart';
-import 'package:dsh_app/ui/settings/appearance/appearance_page.dart';
-import 'package:dsh_app/ui/settings/appearance/tile_style_picker.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/app.dart';
+import 'package:xrk_app/state/app_icon_state.dart';
+import 'package:xrk_app/state/appearance_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/tile_style_state.dart';
+import 'package:xrk_app/ui/settings/appearance/appearance_page.dart';
+import 'package:xrk_app/ui/settings/appearance/tile_style_picker.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,7 +70,7 @@ Future<ProviderContainer> _pumpApp(WidgetTester tester, {Color? wallpaper}) asyn
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: const DshApp(home: AppearancePage()),
+      child: const XrkApp(home: AppearancePage()),
     ),
   );
   await tester.pumpAndSettle();

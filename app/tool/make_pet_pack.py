@@ -125,7 +125,7 @@ PACKS = {
         kind='clawd', dir='deepy-whale',
         name='Deepy 小鲸鱼',
         author='DSH-TUI',
-        license='DSH-TUI 吉祥物，作者授权 dsh-go 使用',
+        license='DSH-TUI 吉祥物，作者授权 xrk-mobile 使用',
         source='DSH-TUI（Clawd on Desk 主题包 v1.0.0）',
         faces='left',
         preview_zoom=2, preview_per_row=24,
@@ -134,7 +134,7 @@ PACKS = {
         kind='whale-girl', dir='whale-girl',
         name='鲸娘',
         author='DSH-TUI',
-        license='DSH-TUI 吉祥物，作者授权 dsh-go 使用',
+        license='DSH-TUI 吉祥物，作者授权 xrk-mobile 使用',
         source='https://dshtui.com/pets/whale-girl-emoji/',
         faces='front',     # she faces the viewer: never mirrored
         preview_zoom=3, preview_per_row=12,

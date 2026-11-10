@@ -31,7 +31,7 @@ class RepositoryFixture(unittest.TestCase):
         for key, text, review, locked in entries:
             records[key] = {'text': text, 'sourceHash': snapshot['entries'][key]['sourceHash'],
                             'translationHash': catalog.canonical_hash(text), 'review': review, 'locked': locked}
-        return {'format': 'dsh-go-i18n-translations', 'schemaVersion': 1, 'locale': 'ru', 'entries': records}
+        return {'format': 'xrk-mobile-i18n-translations', 'schemaVersion': 1, 'locale': 'ru', 'entries': records}
 
 
 class FingerprintTest(RepositoryFixture):

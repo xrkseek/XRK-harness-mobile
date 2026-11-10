@@ -7,7 +7,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -205,7 +205,7 @@ class _TaskRow extends StatelessWidget {
     final l10n = context.l10n;
     return ListPageRow(
       icon: task.recurring ? AppIcons.recurring : AppIcons.automation,
-      iconColor: task.active ? null : DshColors.of(context).textTertiary,
+      iconColor: task.active ? null : XrkColors.of(context).textTertiary,
       title: task.title.isEmpty ? l10n.featuresScheduleUntitled : task.title,
       subtitle: scheduleSummary(task, now: now),
       onTap: onTap,
@@ -282,8 +282,8 @@ class _ScheduleDetailPageState extends ConsumerState<ScheduleDetailPage> {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(context.l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(context.l10n.commonDelete),
@@ -317,7 +317,7 @@ class _ScheduleDetailPageState extends ConsumerState<ScheduleDetailPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final task = ref.watch(schedulesProvider).value?.where((t) => t.id == _task.id).firstOrNull ?? _task;
     final sessions = ref.watch(sessionsProvider).value;
     final session = sessions?.where((s) => s.sessionId == task.sessionId).firstOrNull;

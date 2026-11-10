@@ -1,7 +1,7 @@
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_dialect_card.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_dialect_card.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -39,15 +39,15 @@ void main() {
           final message = _message(view.source, fenced);
           if (!fenced) expect(message, isNot(contains('dsh-ui')));
           final harness = await _mount(tester, message);
-          expect(find.byType(DshUiCard), findsOneWidget);
+          expect(find.byType(XrkUiCard), findsOneWidget);
           expect(find.textContaining('"type"'), findsNothing);
-          final answer = find.descendant(of: find.byType(DshUiCard), matching: find.text(view.label));
+          final answer = find.descendant(of: find.byType(XrkUiCard), matching: find.text(view.label));
           expect(answer, findsOneWidget);
           await tester.tap(answer);
           await pumpFrames(tester);
           expect(harness.controllers['s1']!.sent, hasLength(1));
           final sent = harness.controllers['s1']!.sent.single;
-          expect(parseDshUiReply(sent), isNotNull);
+          expect(parseXrkUiReply(sent), isNotNull);
           expect(sent, contains(view.reply));
           expect(tester.takeException(), isNull);
         } finally {
@@ -59,8 +59,8 @@ void main() {
       testWidgets('$format ${view.name}: a later user message keeps the old card expired', (tester) async {
         try {
           final harness = await _mount(tester, _message(view.source, fenced), expired: true);
-          expect(find.byType(DshUiCard), findsOneWidget);
-          final answer = find.descendant(of: find.byType(DshUiCard), matching: find.text(view.label));
+          expect(find.byType(XrkUiCard), findsOneWidget);
+          final answer = find.descendant(of: find.byType(XrkUiCard), matching: find.text(view.label));
           expect(answer, findsOneWidget);
           await tester.tap(answer);
           await pumpFrames(tester);
@@ -78,9 +78,9 @@ void main() {
     const source = '{"title":"构建报告","items":[{"type":"button","label":"重跑","action":"rerun"}]}';
     try {
       final harness = await _mount(tester, _message(source, true));
-      expect(find.byType(DshUiDialectCard), findsOneWidget);
-      expect(find.byType(DshUiCard), findsNothing);
-      final fallback = find.descendant(of: find.byType(DshUiDialectCard), matching: find.textContaining('在网页版查看'));
+      expect(find.byType(XrkUiDialectCard), findsOneWidget);
+      expect(find.byType(XrkUiCard), findsNothing);
+      final fallback = find.descendant(of: find.byType(XrkUiDialectCard), matching: find.textContaining('在网页版查看'));
       expect(fallback, findsOneWidget);
       await tester.tap(fallback);
       await pumpFrames(tester);

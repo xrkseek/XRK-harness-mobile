@@ -1,6 +1,6 @@
 # 视图 v2：文字、颜色与容器
 
-在视图根节点写 `v: 2` 才启用样式。省略 `v` 或写 `v: 1`，继续使用原来的渲染路径。`dshGo.v` 仍是 NA 主协议版本 `1`，不是视图版本。
+在视图根节点写 `v: 2` 才启用样式。省略 `v` 或写 `v: 1`，继续使用原来的渲染路径。`xrkGo.v` 仍是 NA 主协议版本 `1`，不是视图版本。
 
 ```js
 {
@@ -125,4 +125,4 @@ v2 面板和工具卡的内容始终放在 App 控制的不透明区域内，外
 
 旧 App 忽略 `v`、`accent`、`style`、`spans` 中不认识的属性，仍画原有节点的 `text` / `value`。保留文字回退即可使用同一份样式视图；新控件还需要按 `caps.components` 做组件降级。工具卡写入历史，尤其不要省略 v1 仍需要的属性。
 
-完整的样式小看板在 [`dsh-go-example-styles`](../../examples/plugins/dsh-go-example-styles/README.md)。新交互组件的预算和状态行为见组件、动作相关文档。
+完整的样式小看板在 [`xrk-example-styles`](../../examples/plugins/xrk-example-styles/README.md)。新交互组件的预算和状态行为见组件、动作相关文档。

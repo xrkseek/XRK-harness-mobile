@@ -1,6 +1,6 @@
-// The phone layout on the official frame (assets/web/dsh_web_phone.js and .css),
+// The phone layout on the official frame (assets/web/xrk_web_phone.js and .css),
 // run against a model under node (test/web/support/phone_layout_harness.mjs).
-// From DSH 0.2.2 on the official layout has a drawer of its own below 768px and
+// From XRK 0.2.2 on the official layout has a drawer of its own below 768px and
 // makes the page inert while its sidebar is expanded, so keeping that sidebar
 // expanded under the app's drawer leaves a page that takes no touch at all.
 // Needs `node` on PATH; skipped without it.
@@ -24,7 +24,7 @@ void main() {
   Future<Map<String, Object?>> run(Map<String, Object?> scenario) async {
     final result = await Process.run(node!, [
       'test/web/support/phone_layout_harness.mjs',
-      'assets/web/dsh_web_phone.js',
+      'assets/web/xrk_web_phone.js',
       jsonEncode(scenario),
     ]);
     expect(result.exitCode, 0, reason: '${result.stderr}');
@@ -64,13 +64,13 @@ void main() {
   }, skip: skip);
 
   test('the app\'s drawer and settings rules stand down for the official drawer', () {
-    final css = File('assets/web/dsh_web_phone.css').readAsStringSync();
+    final css = File('assets/web/xrk_web_phone.css').readAsStringSync();
     expect(
       css,
-      isNot(contains(':root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"] > [class*="_sidebarCol"]')),
+      isNot(contains(':root[data-xrk-app-layout="drawer"] [data-slot="root"] > [class*="_frame"] > [class*="_sidebarCol"]')),
       reason: 'sliding the column fights the official transform',
     );
     final settings = css.substring(css.indexOf('settings as a full-screen sheet'), css.indexOf('Desktop layout:'));
-    expect(RegExp(r':root\[data-dsh-app-layout="drawer"\](?!:not\(:has\(\[data-sidebar-drawer\]\)\))').hasMatch(settings), false);
+    expect(RegExp(r':root\[data-xrk-app-layout="drawer"\](?!:not\(:has\(\[data-sidebar-drawer\]\)\))').hasMatch(settings), false);
   });
 }

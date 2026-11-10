@@ -7,25 +7,25 @@
 //
 //   flutter test test/landscape/landscape_geometry_test.dart
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/session_search.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/bots/bot_sheets.dart' show confirmDelete;
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/dock/dock_stack.dart';
-import 'package:dsh_app/ui/chat/model_sheet.dart' show ModelChip;
-import 'package:dsh_app/ui/chat/widgets/approval_card.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart' show WhaleSprites;
-import 'package:dsh_app/ui/common/app_sheet.dart' show SheetDragHandle;
-import 'package:dsh_app/ui/session/session_detail_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/shell/session_search_page.dart';
-import 'package:dsh_app/ui/terminal/terminal_keys.dart';
-import 'package:dsh_app/ui/terminal/terminal_page.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/session_search.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/bots/bot_sheets.dart' show confirmDelete;
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/dock/dock_stack.dart';
+import 'package:xrk_app/ui/chat/model_sheet.dart' show ModelChip;
+import 'package:xrk_app/ui/chat/widgets/approval_card.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart' show WhaleSprites;
+import 'package:xrk_app/ui/common/app_sheet.dart' show SheetDragHandle;
+import 'package:xrk_app/ui/session/session_detail_page.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/ui/shell/session_search_page.dart';
+import 'package:xrk_app/ui/terminal/terminal_keys.dart';
+import 'package:xrk_app/ui/terminal/terminal_page.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';

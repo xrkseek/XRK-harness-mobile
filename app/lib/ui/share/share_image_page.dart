@@ -342,7 +342,7 @@ class ShareStatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final text = error ?? status;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -381,7 +381,7 @@ class ShareToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Semantics(
       label: label,
       button: true,

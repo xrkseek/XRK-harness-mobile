@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/update/downloader.dart';
-import 'package:dsh_app/update/update_config.dart';
-import 'package:dsh_app/update/update_http.dart';
+import 'package:xrk_app/update/downloader.dart';
+import 'package:xrk_app/update/update_config.dart';
+import 'package:xrk_app/update/update_http.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 final _bytes = List<int>.generate(64, (i) => (i * 23) & 255);

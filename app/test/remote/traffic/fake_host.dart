@@ -1,17 +1,17 @@
-// In-memory DSH Host behind a DSH Remote tunnel, for traffic measurements
+// In-memory XRK Host behind a XRK Remote tunnel, for traffic measurements
 // with fake time. It mirrors what `RemoteTunnelCarrier` adds on top of the
 // app's own calls: one session open (Relay hello, Noise IK, capability
 // probe) per link and a `harness.transport.describe` health probe every 25 s
 // while a link is up. Payload shapes follow the fixtures captured from
-// `dsh web` (packages/dsh_client/test/fixtures); sizes are moderate guesses
+// `xrkh serve` (packages/xrk_client/test/fixtures); sizes are moderate guesses
 // for a real coding session (see [FakeHost] parameters).
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/relay/relay_backend.dart';
-import 'package:dsh_client/dsh_client.dart';
-import 'package:dsh_remote/dsh_remote.dart' show harnessRemoteAllowlist;
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/relay/relay_backend.dart';
+import 'package:xrk_client/xrk_client.dart';
+import 'package:xrk_remote/xrk_remote.dart' show harnessRemoteAllowlist;
 
 import 'traffic_meter.dart';
 
@@ -23,7 +23,7 @@ String _text(int bytes, [String seed = 'lorem ipsum dolor sit amet ']) {
   return out.toString().substring(0, bytes);
 }
 
-/// The capability probe a Host answers (ds-harness-remote 0.5.20).
+/// The capability probe a Host answers (xrk-remote 0.5.20).
 const _capabilities = [
   'transport.relay',
   'harness.remote.v3',
@@ -557,10 +557,10 @@ class FakeTunnelCarrier extends DshCarrier {
     if (!host.online) {
       // No tunnel: the call tries to open one (`api.device` says offline).
       meter.record('rest api.device', up: 300, down: 600, messages: 0);
-      throw const DshTransportException('HOST_OFFLINE: The Host is offline.');
+      throw const XrkTransportException('HOST_OFFLINE: The Host is offline.');
     }
     if (!allowsEndpoint(endpoint)) {
-      return RpcError(DshRemoteException('METHOD_NOT_ALLOWED', 'The endpoint $endpoint is not available.', const {}));
+      return RpcError(XrkRemoteException('METHOD_NOT_ALLOWED', 'The endpoint $endpoint is not available.', const {}));
     }
     await Future<void>.delayed(Duration.zero);
     // Answered when asked; [FakeHost.listsHeld] delays only the delivery.
@@ -575,7 +575,7 @@ class FakeTunnelCarrier extends DshCarrier {
     meter.record('rest api.device', up: 300, down: 600, messages: 0);
     await Future<void>.delayed(Duration.zero);
     if (_closed) throw const DshClosedException('remote carrier closed');
-    if (!host.online) throw const DshTransportException('HOST_OFFLINE: The Host is offline.');
+    if (!host.online) throw const XrkTransportException('HOST_OFFLINE: The Host is offline.');
     host.connects++;
     // Relay hello / connect.request / Noise IK messages 1+2, then the
     // mandatory capability probe.
@@ -655,7 +655,7 @@ class FakeHostLink implements DshMuxLink {
     health?.cancel();
     _onLost?.call(
       const DshCarrierLostException('remote connection closed (CONNECTION_FAILED)'),
-      const DshTransportException('CONNECTION_FAILED: relay dropped'),
+      const XrkTransportException('CONNECTION_FAILED: relay dropped'),
     );
   }
 
@@ -676,12 +676,12 @@ class FakeHostLink implements DshMuxLink {
 }
 
 /// [RelayBackend] whose Host connections go to [host] through a metered
-/// fake tunnel, with the mux options of `DshRemoteRelayBackend`.
+/// fake tunnel, with the mux options of `XrkRemoteRelayBackend`.
 class TrafficRelayBackend implements RelayBackend {
   TrafficRelayBackend(this.host);
 
   final FakeHost host;
-  final clients = <DshClient>[];
+  final clients = <XrkClient>[];
 
   static const muxOptions = MuxOptions(
     retryCaps: [
@@ -734,14 +734,14 @@ class TrafficRelayBackend implements RelayBackend {
   Future<void> forgetHost(RelayHost host) async {}
 
   @override
-  bool reconnect(DshClient client) {
+  bool reconnect(XrkClient client) {
     if (!clients.contains(client)) return false;
     client.mux.reconnect();
     return true;
   }
 
   @override
-  Future<bool> probe(DshClient client) async {
+  Future<bool> probe(XrkClient client) async {
     if (!clients.contains(client)) return true;
     final carrier = (client.carrier as MeteredCarrier).inner as FakeTunnelCarrier;
     final link = host.live;
@@ -751,16 +751,16 @@ class TrafficRelayBackend implements RelayBackend {
   }
 
   @override
-  RelayPath? pathOf(DshClient client) => null;
+  RelayPath? pathOf(XrkClient client) => null;
 
   @override
-  Future<DshClient> connectHost(RelayHost relayHost, {RelayStateCallback? onState}) async {
+  Future<XrkClient> connectHost(RelayHost relayHost, {RelayStateCallback? onState}) async {
     if (!host.online) {
       host.meter.record('rest api.device', up: 300, down: 600, messages: 0);
       throw HostLinkError(HostLinkErrorKind.hostOffline, 'offline', retryable: true);
     }
     final carrier = MeteredCarrier(FakeTunnelCarrier(host), host.meter);
-    final client = DshClient.withCarrier(carrier, muxOptions: muxOptions);
+    final client = XrkClient.withCarrier(carrier, muxOptions: muxOptions);
     clients.add(client);
     client.mux.states.listen((state) {
       onState?.call(switch (state) {

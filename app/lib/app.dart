@@ -12,8 +12,7 @@ import 'state/app_info.dart';
 import 'state/appearance_state.dart';
 import 'state/locale_state.dart';
 import 'state/star_prompt.dart' show starPromptGateProvider, starPromptProvider;
-import 'state/tile_style_state.dart';
-import 'ui/chat/dsh_ui/dsh_ui_model.dart' show DshUiAppAccent;
+import 'ui/chat/xrk_ui/xrk_ui_model.dart' show XrkUiAppAccent;
 import 'ui/common/side_insets.dart';
 import 'ui/launch/launch_overlay.dart';
 import 'ui/shell/root_gate.dart';
@@ -21,17 +20,17 @@ import 'ui/theme/theme.dart';
 import 'ui_config/ui_config_state.dart';
 import 'usage/usage_stats.dart';
 
-class DshApp extends ConsumerStatefulWidget {
-  const DshApp({super.key, this.home});
+class XrkApp extends ConsumerStatefulWidget {
+  const XrkApp({super.key, this.home});
 
   /// Replaces the root gate (widget tests).
   final Widget? home;
 
   @override
-  ConsumerState<DshApp> createState() => _DshAppState();
+  ConsumerState<XrkApp> createState() => _XrkAppState();
 }
 
-class _DshAppState extends ConsumerState<DshApp> with WidgetsBindingObserver {
+class _XrkAppState extends ConsumerState<XrkApp> with WidgetsBindingObserver {
   /// Themes of the palette last built: rebuilt only when the palette or the
   /// language changes.
   AppAccent? _accent;
@@ -53,11 +52,6 @@ class _DshAppState extends ConsumerState<DshApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    // Start loading the stored tile style now, so 全部功能 opens in it rather
-    // than flashing the default first.
-    ref.read(tileStyleProvider);
-    // Anonymous usage statistics live as long as the app, in either 界面
-    // (release builds: today is noted, and earlier days go out).
     ref.read(usageStatsProvider);
     // 公测版: the star prompt counts time in front from launch, in either 界面.
     if (ref.read(starPromptGateProvider)) ref.read(starPromptProvider);
@@ -101,7 +95,7 @@ class _DshAppState extends ConsumerState<DshApp> with WidgetsBindingObserver {
     _instantPages = instantPages;
     _fluid = fluid;
     // Plugin views that ask for `accent: "app"` follow the palette.
-    DshUiAppAccent.set(accent.seed.toARGB32());
+    XrkUiAppAccent.set(accent.seed.toARGB32());
     // English UI still shows Chinese content: keep its glyphs Chinese.
     final glyphs = english ? AppLocale.zhCN : null;
     _light = buildLightTheme(
@@ -151,9 +145,7 @@ class _DshAppState extends ConsumerState<DshApp> with WidgetsBindingObserver {
     );
     final themeMode = ref.watch(uiThemeModeProvider.select((s) => s.value));
     final appearance = ref.watch(appearanceProvider);
-    final waiting =
-        !appearance.loaded ||
-        (appearance.source == AccentSource.wallpaper && ref.watch(wallpaperAccentProvider).isLoading);
+    final waiting = !appearance.loaded;
     final locale = _resolveLocale();
     final performance = ref.watch(performanceDefaultsProvider);
     final reduced =

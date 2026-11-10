@@ -5,7 +5,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -100,10 +100,10 @@ void useSkill(BuildContext context, {required SkillInfo skill, required String s
 /// The workspace 「新对话里用」 must switch to, or null to start where a new
 /// conversation starts now.
 ///
-/// A skill from a workspace's own folder (`.dsh/skills` under it) only exists
+/// A skill from a workspace's own folder (`.xrk/skills` under it) only exists
 /// in conversations of that workspace: when [sessionId] belongs to one, the
 /// skill's `SKILL.md` lies inside it and [selected] is another (or 全部), the
-/// answer is that workspace. Skills from `~/.dsh` or a plugin work anywhere.
+/// answer is that workspace. Skills from `~/.xrk` or a plugin work anywhere.
 String? skillWorkspaceSwitch({
   required SkillInfo skill,
   required String sessionId,

@@ -6,7 +6,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -299,7 +299,7 @@ class CachedImageReader implements WorkspaceImageReader {
 class EngineImageReader implements WorkspaceImageReader {
   const EngineImageReader(this.client);
 
-  final DshClient? client;
+  final XrkClient? client;
 
   @override
   Future<LoadedImage> read(String sessionId, String path) async {
@@ -340,8 +340,8 @@ String imageErrorText(Object error) {
     ImageTooLarge() => 'too-large',
     ArtifactError(:final code) => code,
     PlatformException(:final code) => code,
-    DshRemoteException(:final code) => code,
-    DshTransportException() || DshCarrierLostException() => 'offline',
+    XrkRemoteException(:final code) => code,
+    XrkTransportException() || DshCarrierLostException() => 'offline',
     _ => '',
   };
   return switch (code) {
@@ -807,7 +807,7 @@ class _ImagePlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final known = size ?? hint;
     final aspect = known == null || known.height <= 0 ? 4 / 3 : known.width / known.height;
     return ConstrainedBox(
@@ -847,7 +847,7 @@ class _ImageError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final text = theme.textTheme.bodyMedium;
     Widget tile = DecoratedBox(
       decoration: ShapeDecoration(

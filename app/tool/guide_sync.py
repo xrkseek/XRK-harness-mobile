@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Check the user guide against the app, then build the dsh-go-guide skill.
+"""Check the user guide against the app, then build the xrk-guide skill.
 
-    python3 app/tool/guide_sync.py           # check, then write app/assets/skills/dsh-go-guide/
+    python3 app/tool/guide_sync.py           # check, then write app/assets/skills/xrk-guide/
     python3 app/tool/guide_sync.py --check   # check only, write nothing; exit 1 on any problem
 
 The guide lives in docs/guide/ (SKILL.md, README.md, zh/*.md, en/*.md) and ships
-as the dsh-go-guide skill: the app installs it into the on-device engine
-(lib/ui_config/ui_skill.dart), flat in app/assets/skills/dsh-go-guide/ with
+as the xrk-guide skill: the app installs it into the on-device engine
+(lib/ui_config/ui_skill.dart), flat in app/assets/skills/xrk-guide/ with
 manifest.json mapping each file back to its place. Rules for the pages:
 
-- zh/ and en/ hold the same pages. README.md says `> dsh-go <version>`, the
+- zh/ and en/ hold the same pages. README.md says `> xrk-mobile <version>`, the
   version name in app/pubspec.yaml (without `+N`).
 - A UI path is a code span `A › B › C` on the line right after
   `<!-- nav: keyA,keyB,keyC -->`, which names each label's ARB key
@@ -30,13 +30,13 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-SKILL = 'dsh-go-guide'
+SKILL = 'xrk-guide'
 LOCALES = ('zh', 'en')
 NAV = re.compile(r'^<!-- nav: ([A-Za-z][A-Za-z0-9_]*(?:,[A-Za-z][A-Za-z0-9_]*)*) -->$')
 SPAN = re.compile(r'`([^`\n]+)`')
 BOLD = re.compile(r'\*\*([^*\n]+)\*\*')
 LINK = re.compile(r'\]\(([^)\s]+)\)')
-VERSION_LINE = re.compile(r'^> dsh-go (\S+)$', re.MULTILINE)
+VERSION_LINE = re.compile(r'^> xrk-mobile (\S+)$', re.MULTILINE)
 BANNED = {'zh': ('会话', '实验'), 'en': ()}
 
 
@@ -158,15 +158,15 @@ def check_skill(text: str) -> list[str]:
         return ['SKILL.md: must start with --- front matter']
     lines = front[1].splitlines()
     errors = []
-    if not any(line.startswith('# dsh-go:managed') for line in lines):
-        errors.append('SKILL.md: front matter needs the # dsh-go:managed line')
+    if not any(line.startswith('# xrk-mobile:managed') for line in lines):
+        errors.append('SKILL.md: front matter needs the # xrk-mobile:managed line')
     for key in ('name', 'description', 'whenToUse'):
         if not any(line.startswith(f'{key}: ') for line in lines):
             errors.append(f'SKILL.md: front matter needs {key}')
     if f'name: {SKILL}' not in lines:
         errors.append(f'SKILL.md: name must be {SKILL}')
     for line in lines:
-        # Plain YAML scalars: one more `: ` or ` #` and DSH can't read the skill.
+        # Plain YAML scalars: one more `: ` or ` #` and XRK can't read the skill.
         key, _, value = line.partition(': ')
         if not line.startswith('#') and (': ' in value or ' #' in value or value[:1] in '\'"[]{}&*!|>%@`'):
             errors.append(f'SKILL.md: {key} must be a plain one-line value (no ": ", " #" or leading quote)')
@@ -199,7 +199,7 @@ def check(repo: Path, guide: Path) -> list[str]:
     version = app_version(repo / 'app/pubspec.yaml')
     stated = VERSION_LINE.findall((guide / 'README.md').read_text(encoding='utf-8'))
     if stated != [version]:
-        errors.append(f'README.md: want one line `> dsh-go {version}` (app/pubspec.yaml), found {stated}')
+        errors.append(f'README.md: want one line `> xrk-mobile {version}` (app/pubspec.yaml), found {stated}')
     errors += check_skill((guide / 'SKILL.md').read_text(encoding='utf-8'))
     ids = read_page_ids(repo / 'app/lib/links/page_links.dart', repo / 'app/lib/ui/settings/index/spots.dart')
     res = repo / 'app/android/app/src/main/res'

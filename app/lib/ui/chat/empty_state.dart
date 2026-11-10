@@ -62,7 +62,7 @@ const defaultSuggestions = <ChatSuggestion>[
   ChatSuggestion._default(AppIcons.tip, 3, SuggestionTint.blue),
 ];
 
-/// Tips about using DSH Go, one at a time under the suggestions. Each names
+/// Tips about using XRK Go, one at a time under the suggestions. Each names
 /// a gesture or entry the app really has (see the handlers it describes).
 List<String> defaultTips() => [
   appL10n.viewTipSteer,
@@ -216,7 +216,7 @@ class ChatEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final retry = connected ? null : onReconnect;
     final idle = connected || retry != null ? null : this.idle;
     final subtitle = connected

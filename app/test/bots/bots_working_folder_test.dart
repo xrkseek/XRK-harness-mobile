@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/ui/bots/working_folder_sheet.dart';
-import 'package:dsh_app/ui/bots/bot_details_page.dart';
-import 'package:dsh_app/ui/bots/room_details_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/ui/bots/working_folder_sheet.dart';
+import 'package:xrk_app/ui/bots/bot_details_page.dart';
+import 'package:xrk_app/ui/bots/room_details_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -146,7 +146,7 @@ void main() {
       await tester.tap(confirm);
       await frames(tester);
       expect(tester.widget<FilledButton>(save).onPressed, isNull);
-      pending.completeError(DshRemoteException('bot/refused', 'Directory no longer exists'));
+      pending.completeError(XrkRemoteException('bot/refused', 'Directory no longer exists'));
       await frames(tester);
       expect(find.textContaining('主机拒绝了此目录'), findsOneWidget);
       expect(tester.widget<RadioGroup<String>>(find.byType(RadioGroup<String>)).groupValue, project);

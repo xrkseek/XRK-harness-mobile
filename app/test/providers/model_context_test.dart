@@ -3,11 +3,11 @@
 // `llm-pi-ai.providers.<route>.modelOverrides.<modelId>`，引擎下一请求就按新值
 // 计算上下文占用与压缩。留空 = 回到目录值。
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/ui/providers/model_context_page.dart';
-import 'package:dsh_app/ui/providers/subscription_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/ui/providers/model_context_page.dart';
+import 'package:xrk_app/ui/providers/subscription_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

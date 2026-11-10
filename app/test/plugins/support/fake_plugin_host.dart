@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
-/// `PluginsApi` is an extension on [DshClient], so fakes sit one level down:
+/// `PluginsApi` is an extension on [XrkClient], so fakes sit one level down:
 /// a [DshCarrier] answering `pluginManager/*` from [handlers] and a mux link
 /// that can push `$events` items.
 class FakePluginCarrier extends DshCarrier {
@@ -49,15 +49,15 @@ class FakePluginCarrier extends DshCarrier {
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
     calls.add((endpoint, args));
     if (!allowsEndpoint(endpoint)) {
-      return RpcError(DshRemoteException('METHOD_NOT_ALLOWED', 'not available over the relay'));
+      return RpcError(XrkRemoteException('METHOD_NOT_ALLOWED', 'not available over the relay'));
     }
     final handler = handlers[endpoint];
     if (handler == null) {
-      return RpcError(DshRemoteException('gateway/method-not-found', 'no handler for $endpoint'));
+      return RpcError(XrkRemoteException('gateway/method-not-found', 'no handler for $endpoint'));
     }
     try {
       return RpcOk(await handler(args));
-    } on DshRemoteException catch (error) {
+    } on XrkRemoteException catch (error) {
       return RpcError(error);
     }
   }
@@ -111,7 +111,7 @@ class FakeMuxLink implements DshMuxLink {
   Future<void> close(int code, String reason) async {}
 }
 
-HostConnection fakeHost(DshClient client, {HostKind kind = HostKind.local, String label = '本机'}) => HostConnection(
+HostConnection fakeHost(XrkClient client, {HostKind kind = HostKind.local, String label = '本机'}) => HostConnection(
   client: client,
   label: label,
   isLocal: kind == HostKind.local,
@@ -159,12 +159,12 @@ final emptyOfficialMarket = MarketCatalog(
 );
 
 /// The official fixtures (`fixtures/official-index.json` and
-/// `fixtures/dsh-go.json`), written to the contract in
+/// `fixtures/xrk-mobile.json`), written to the contract in
 /// docs/design/plugin-market.md §3.
 Map<String, Object?> officialIndexJson() =>
     jsonDecode(File('test/plugins/fixtures/official-index.json').readAsStringSync()) as Map<String, Object?>;
 Map<String, Object?> officialSidecarJson() =>
-    jsonDecode(File('test/plugins/fixtures/dsh-go.json').readAsStringSync()) as Map<String, Object?>;
+    jsonDecode(File('test/plugins/fixtures/xrk-mobile.json').readAsStringSync()) as Map<String, Object?>;
 
 /// The official market read from the fixtures, as the app reads the live one.
 MarketCatalog officialFixtureMarket({Map<String, Object?>? index, Map<String, Object?>? sidecar}) => MarketCatalog(
@@ -174,7 +174,7 @@ MarketCatalog officialFixtureMarket({Map<String, Object?>? index, Map<String, Ob
 
 Map<String, Object?> ok(Object? value) => {'ok': true, 'value': value};
 
-// ── Sample data (shapes from DSH 0.2.1-rc.2 and dshfind) ────────────────────
+// ── Sample data (shapes from XRK 0.2.1-rc.2 and dshfind) ────────────────────
 
 Map<String, Object?> bundleJson(
   String name, {
@@ -211,7 +211,7 @@ Map<String, Object?> bundleJson(
 
 final sampleBundles = <Object?>[
   bundleJson(
-    '@deepseek-ai/dsh-base',
+    '@xrkseek/harness-cli-base',
     version: '0.2.1-rc.2',
     installed: false,
     removable: false,
@@ -221,7 +221,7 @@ final sampleBundles = <Object?>[
   bundleJson('dsh-approval-gate', version: '0.3.0', description: '危险命令二次确认'),
   bundleJson('broken-thing', version: null, error: {'code': 'not-bundle'}, removable: true),
   bundleJson(
-    '@deepseek-ai/dsh-experimental-session-search',
+    '@xrkseek/harness-cli-experimental-session-search',
     version: '0.2.1-rc.2',
     official: true,
     optional: true,
@@ -242,7 +242,7 @@ Map<String, Object?> _version(String version, {int ts = 1789469760}) => {
 
 final sampleIndex = <String, Object?>{
   'format': 1,
-  'title': {'en': 'dshfind · DSH Plugin Directory', 'zh': 'dshfind · DSH 插件目录'},
+  'title': {'en': 'dshfind · XRK Plugin Directory', 'zh': 'dshfind · XRK 插件目录'},
   'metadata': {
     'categories': {
       'agent': {

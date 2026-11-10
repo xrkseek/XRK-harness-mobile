@@ -2,8 +2,8 @@
 // window, four levels with hysteresis), and the compaction flag, fed the
 // events ChatController sees.
 
-import 'package:dsh_app/state/run_pulse.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/run_pulse.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 final t0 = DateTime(2026, 10, 24, 10);

@@ -6,8 +6,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dsh_app/state/workspace_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/workspace_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 class MemoryWorkspace implements WorkspaceSource {
   MemoryWorkspace({
@@ -77,7 +77,7 @@ class MemoryWorkspace implements WorkspaceSource {
     _check('list $dir');
     final prefix = dir.isEmpty ? '' : '$dir/';
     if (dir.isNotEmpty && !_allFolders.contains(dir)) {
-      throw DshRemoteException('workspace-file/not-found', 'no entry at "$dir"', {'path': dir});
+      throw XrkRemoteException('workspace-file/not-found', 'no entry at "$dir"', {'path': dir});
     }
     final entries = <String, DshWorkspaceEntry>{};
     for (final folder in _allFolders) {
@@ -103,16 +103,16 @@ class MemoryWorkspace implements WorkspaceSource {
     _check('read $file');
     final bytes = _files[file];
     if (bytes == null) {
-      throw DshRemoteException('workspace-file/not-found', 'no entry', {'path': file});
+      throw XrkRemoteException('workspace-file/not-found', 'no entry', {'path': file});
     }
     final String text;
     try {
       text = utf8.decode(bytes);
     } on FormatException {
-      throw DshRemoteException('workspace-file/not-text', 'not text', {'path': file});
+      throw XrkRemoteException('workspace-file/not-text', 'not text', {'path': file});
     }
     if (text.contains('\u0000')) {
-      throw DshRemoteException('workspace-file/not-text', 'not text', {'path': file});
+      throw XrkRemoteException('workspace-file/not-text', 'not text', {'path': file});
     }
     var lines = text.split('\n');
     if (text.endsWith('\n')) lines = lines.sublist(0, lines.length - 1);
@@ -136,7 +136,7 @@ class MemoryWorkspace implements WorkspaceSource {
     final file = rel(path);
     _check('stat $file');
     if (!_files.containsKey(file)) {
-      throw DshRemoteException('workspace-file/not-found', 'no entry', {'path': file});
+      throw XrkRemoteException('workspace-file/not-found', 'no entry', {'path': file});
     }
     return DshFileStat(absolutePath: '$root/$file', version: _version(file), bytes: _files[file]!.length);
   }
@@ -147,7 +147,7 @@ class MemoryWorkspace implements WorkspaceSource {
     _check('readBytes $file');
     final bytes = _files[file];
     if (bytes == null) {
-      throw DshRemoteException('workspace-file/not-found', 'no entry', {'path': file});
+      throw XrkRemoteException('workspace-file/not-found', 'no entry', {'path': file});
     }
     final end = (offset + length).clamp(0, bytes.length);
     return DshWorkspaceBytes(

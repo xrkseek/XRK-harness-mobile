@@ -4,14 +4,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/balance_state.dart';
-import 'package:dsh_app/state/commands_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/usage_state.dart';
-import 'package:dsh_app/ui/chat/balance_widgets.dart';
-import 'package:dsh_app/ui/chat/slash_palette.dart';
-import 'package:dsh_app/ui/chat/usage_sheet.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/balance_state.dart';
+import 'package:xrk_app/state/commands_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/usage_state.dart';
+import 'package:xrk_app/ui/chat/balance_widgets.dart';
+import 'package:xrk_app/ui/chat/slash_palette.dart';
+import 'package:xrk_app/ui/chat/usage_sheet.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -118,7 +118,7 @@ void main() {
 
   group('session usage', () {
     test('folds captured session/control frames', () {
-      final lines = File('../packages/dsh_client/test/fixtures/control_reply_ok.jsonl')
+      final lines = File('../packages/xrk_client/test/fixtures/control_reply_ok.jsonl')
           .readAsLinesSync()
           .where((l) => l.trim().isNotEmpty);
       var values = <String, Object?>{};

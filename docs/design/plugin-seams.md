@@ -1,6 +1,6 @@
 # 插件接缝与原生界面声明式自定义（实现规格）
 
-> 2026-10-25。依据只读调研：npm 包 `@deepseek-ai/dsh@0.2.1-rc.2`（其 `node_modules/@deepseek-ai/` 下的官方包）、DSH 0.2.0-rc.2 源码（https://github.com/deepseek-ai/deepseek-harness ）、npm 上 15 个热门浏览器插件抽样。
+> 2026-10-25。依据只读调研：npm 包 `@xrkseek/harness-cli@0.2.1-rc.2`（其 `node_modules/@deepseek-ai/` 下的官方包）、XRK 0.2.0-rc.2 源码（https://github.com/deepseek-ai/deepseek-harness ）、npm 上 15 个热门浏览器插件抽样。
 > 宠物另见 [pets.md](pets.md)。
 > 调研数据：当前版本的 slot 目录 JSON 在 `app/test/plugins/seams/fixtures/`；插件抽样的结论汇总在 §1.3（重新生成方法见附录 A）。
 
@@ -9,10 +9,10 @@
 网页插件进原生 UI，按 slot 走 **「原生适配器优先，网页岛兜底」**：
 
 - 有原生适配器的（插件设置 schema、Cordis 列表、`dsh_ui` 面板、以后的宠物协议）原生画。
-- 没有的挂**网页岛**：一个 WebView 加载本机 DSH 的官方网页版，导航到目标位置，只露出目标 slot。
+- 没有的挂**网页岛**：一个 WebView 加载本机 XRK 的官方网页版，导航到目标位置，只露出目标 slot。
 - 不能做「每条消息一个岛」。岛是整个官方客户端，一个约百 MB 量级，只能整页、面板、浮层三种形态，同屏最多 1–2 个。
 
-另加一个口子：**`$DSH_HOME/dsh-go/ui.json`**，只能声明不能执行，让用户叫 AI 改原生界面（§10）。
+另加一个口子：**`$XRK_HOME/xrk-mobile/ui.json`**，只能声明不能执行，让用户叫 AI 改原生界面（§10）。
 
 必须先补的安全洞：本机 webserver 上插件路由不鉴权，手机上任何 App 都能调（§9）。网页岛上线前，本机引擎必须先装路由守卫。
 
@@ -73,7 +73,7 @@
 - **`@dsh-std/ui`**：仍是草案（`dsh-TUI/vendor/dsh-std/docs/proposals/ui-contribution.zh.md:4`「状态：草案」）。远端 host-rendered surface 一个都没定义，官方客户端也不用它，用的是自己的 slot 系统。短期内指望不上。
 - **已有的原生声明式实现**：
   - `settings/describe` 的 JSON Schema → `app/lib/ui/engine_settings/schema_form.dart`，已经能原生画插件的宿主侧配置。
-  - `dsh_ui` 渲染器（`app/lib/ui/chat/dsh_ui/`）：节点有 layout / text / metric / chart / compare / steps / callout / options / confirm。它和准备提给上游 `@dsh-std/ui` 的 Panel 块（markdown / list / keyValue / progress / table / actions）高度重合。补上 list、keyValue、progress、table 四种块，再把「回答」改成可路由的 action，就能做「声明式插件面板」的原生实现（§4.3）。
+  - `dsh_ui` 渲染器（`app/lib/ui/chat/xrk_ui/`）：节点有 layout / text / metric / chart / compare / steps / callout / options / confirm。它和准备提给上游 `@dsh-std/ui` 的 Panel 块（markdown / list / keyValue / progress / table / actions）高度重合。补上 list、keyValue、progress、table 四种块，再把「回答」改成可路由的 action，就能做「声明式插件面板」的原生实现（§4.3）。
 
 ## 2. 总体架构
 
@@ -175,7 +175,7 @@ class PluginSeat extends ConsumerWidget {
 |---|---|---|---|
 | `schema-config` | plugins.bundle.config、plugins.row.config、settings.section | 该包在 `settings/describe` 有 namespace 且 `autoGenerate != false` | 复用 `schema_form.dart` |
 | `cordis` | tool.view.cordis | 总是（列表部分） | 复用 `app/lib/ui/cordis/`；交互区仍是岛 |
-| `dsh-ui-panel` | 声明式面板 surface（§4.3） | 包注册了 `dshGoPanels` | `dsh_ui` 渲染器 + 新增块 |
+| `dsh-ui-panel` | 声明式面板 surface（§4.3） | 包注册了 `xrkGoPanels` | `dsh_ui` 渲染器 + 新增块 |
 | `pet` | shell.overlay | 包声明 Codex / linxin manifest | 以后做（pets.md） |
 
 ### 4.3 声明式面板（P2，给愿意适配原生的插件）
@@ -183,7 +183,7 @@ class PluginSeat extends ConsumerWidget {
 在 `@dsh-std/ui` 落地前，由宿主侧桥接插件（§5.2）提供一个可选 Cordis 服务：
 
 ```ts
-ctx.dshGoPanels.register({
+ctx.xrkGoPanels.register({
   id: 'cost',
   placement: 'session-panel' | 'chat-panel',
   title: () => '用量',
@@ -194,43 +194,43 @@ ctx.dshGoPanels.register({
 ```
 
 - `PanelDoc` = `dsh_ui` 的节点表，加 list / keyValue / progress / table / actions 五种块。
-- App 走守卫后的路由读取 `GET /dsh-go/v1/panels` 加流式更新；`invoke` 走 `POST`。
-- 插件只要 `inject: ['dshGoPanels?']`（可选依赖），没有 App 时零影响。
+- App 走守卫后的路由读取 `GET /xrk-mobile/v1/panels` 加流式更新；`invoke` 走 `POST`。
+- 插件只要 `inject: ['xrkGoPanels?']`（可选依赖），没有 App 时零影响。
 - 以后 std 定稿，按 std 改坐标，渲染器不动。
 
 ## 5. 插件清单查询
 
 ### 5.1 Tier A：任何主机，不需要宿主改动
 
-1. `pluginManager/listBundles`（已有，`packages/dsh_client/lib/src/plugins_api.dart`）：包、版本、启用状态、`official`。
+1. `pluginManager/listBundles`（已有，`packages/xrk_client/lib/src/plugins_api.dart`）：包、版本、启用状态、`official`。
 2. 带 cookie 的 `GET /` 取 index HTML，解析 `window.__DSH_BOOT__` 的 `entries[].id`，得出**哪些包有浏览器半侧**，以及 `release.version`。
-   - 新文件 `packages/dsh_client/lib/src/client_inventory_api.dart` 负责解析。只读 JSON，不执行。
+   - 新文件 `packages/xrk_client/lib/src/client_inventory_api.dart` 负责解析。只读 JSON，不执行。
 3. 结果：`PluginClientInfo { package, hasClient, rev, official }`。没有 slot 占用信息，所以座位只能显示「在网页版打开」，加上设置类的整页岛（整页岛按 section id 导航，不需要占用信息）。
 
-### 5.2 Tier B：本机引擎，带宿主侧桥接插件 `dsh-go-bridge`
+### 5.2 Tier B：本机引擎，带宿主侧桥接插件 `xrk-bridge`
 
-`dsh-go-bridge` 是 App 运行时自带的一个 DSH 包，有宿主和浏览器两半，经 `/etc/dsh-app/dsh-web.patch.yml`（`runtime/lib/rtbuild.py:26`）加载。远程主机可选从 npm 安装，要用户确认。
+`xrk-bridge` 是 App 运行时自带的一个 XRK 包，有宿主和浏览器两半，经 `/etc/dsh-app/dsh-web.patch.yml`（`runtime/lib/rtbuild.py:26`）加载。远程主机可选从 npm 安装，要用户确认。
 
-- **浏览器半侧**：`inject: ['slots']`。每次页面启动读 `slots` 的实时组合（`SlotCore.snapshot()` / `entries(key)`，签名见 `dsh-cordis-client-runner/lib/client.js:2226`），按 slot 汇总占用者（包名、cell、order、label），`POST /dsh-go/v1/occupancy` 报给宿主，带 `__DSH_BOOT__.rev`。
+- **浏览器半侧**：`inject: ['slots']`。每次页面启动读 `slots` 的实时组合（`SlotCore.snapshot()` / `entries(key)`，签名见 `dsh-cordis-client-runner/lib/client.js:2226`），按 slot 汇总占用者（包名、cell、order、label），`POST /xrk-mobile/v1/occupancy` 报给宿主，带 `__DSH_BOOT__.rev`。
 - **宿主半侧**：
   - 缓存最新一份占用表（按 boot rev）。
-  - `GET /dsh-go/v1/inventory` 返回 `{release, bootRev, packages[{name, hasClient, rev}], slots{key: SlotOccupant[]}}`。
+  - `GET /xrk-mobile/v1/inventory` 返回 `{release, bootRev, packages[{name, hasClient, rev}], slots{key: SlotOccupant[]}}`。
   - 同时承载 §4.3 的面板服务。
 - **冷启动**：App 发现 bootRev 变了而占用表还是旧的，就开一个隐藏的「探针岛」加载一次页面，报完即销毁（计入内存预算，§7）。
-- 所有 `/dsh-go/*` 路由都经过 §9 的守卫。App 用已有的 API 鉴权调用。
+- 所有 `/xrk-mobile/*` 路由都经过 §9 的守卫。App 用已有的 API 鉴权调用。
 
 ## 6. 网页岛
 
 ### 6.1 宿主页 = 官方客户端 + 隔离层
 
 - **URL**：同 `localWebUri(baseUrl, token)`（`app/lib/ui/web/local_web_screen.dart:21`），SSH 隧道主机同理。中转主机不提供网页，没有岛。
-- **导航**：复用 `app/assets/web/dsh_web_open.js` 的会话 / 设置分区 / 面板 / 右栏能力，只读加载。岛脚本补三个目标：设置分区、右栏页签、主面板。rc.4 的设置导航和侧栏面板行上没有 id，只能按名字找，所以岛只认**整个名字相等、且只有一个**的那一项（桥接占用表里另有同名条目也不点），点后要它变成 `aria-current`、槽位内容换过才算打开；客户端只把当前分区 / 面板放在内存里，读不回 id。右栏页签由桥接按 tab type id 打开（它确认该 kind 成了活动页签），桥接打不开就不再按名字猜；没有桥接 `openTab` 时按名字找引导页条目，点后从 `dsh.sidebar-right.v1.<会话>` 读回活动页签的 kind 核对，岛只显示这个页签自己的槽位（分屏时别的窗格也画同一个 slot）。任何一项没确认，都按「没找到」上报，退回网页版——槽位本身一直在（`main` 默认画对话、设置默认画第一个分区），不能把它当成找到（CR-7881a22）。
+- **导航**：复用 `app/assets/web/xrk_web_open.js` 的会话 / 设置分区 / 面板 / 右栏能力，只读加载。岛脚本补三个目标：设置分区、右栏页签、主面板。rc.4 的设置导航和侧栏面板行上没有 id，只能按名字找，所以岛只认**整个名字相等、且只有一个**的那一项（桥接占用表里另有同名条目也不点），点后要它变成 `aria-current`、槽位内容换过才算打开；客户端只把当前分区 / 面板放在内存里，读不回 id。右栏页签由桥接按 tab type id 打开（它确认该 kind 成了活动页签），桥接打不开就不再按名字猜；没有桥接 `openTab` 时按名字找引导页条目，点后从 `dsh.sidebar-right.v1.<会话>` 读回活动页签的 kind 核对，岛只显示这个页签自己的槽位（分屏时别的窗格也画同一个 slot）。任何一项没确认，都按「没找到」上报，退回网页版——槽位本身一直在（`main` 默认画对话、设置默认画第一个分区），不能把它当成找到（CR-7881a22）。
 - **隔离**：页面加载后注入 `islands/island.js` + `island.css`。
-  1. `<html>` 加 `dsh-go-island` 类；`[data-slot="root"]` 整体 `visibility:hidden`。
+  1. `<html>` 加 `xrk-mobile-island` 类；`[data-slot="root"]` 整体 `visibility:hidden`。
   2. 目标 slot 的子孙 `visibility:visible`，再按「配方」把目标容器拉满视口。配方见 `app/assets/islands/recipes.json`：`{slot, open, stretch}`，选择器只用 `data-slot`、角色和 CSS 模块类名后缀，原则同手机布局。
   3. 背景改透明（`html, body { background: transparent }`），WebView `setBackgroundColor(transparent)`。
-- **就绪门**：岛先隐藏（`Offstage` / 不透明度 0）。脚本确认目标 slot 存在且非空后发 `ready`；5 秒内没有 `ready`，或报 `empty` / `slot-missing`，就销毁岛、换成「在网页版打开」。DSH 升级弄坏配方时，最坏结果是「不生效」，不会出错页。
-- **list slot 里的官方条目**：Tier B 的浏览器半侧在**岛模式下**（`location.hash` 带 `#dsh-go-island=<slot>`）用同 id、更低 priority 注册空组件，遮掉官方占用者（依据：同 id 复用即替换，`slots.zh.md`「Cardinality 与 scope」）。只剩第三方条目。Tier A 主机上面板岛不可用，只有整页岛。
+- **就绪门**：岛先隐藏（`Offstage` / 不透明度 0）。脚本确认目标 slot 存在且非空后发 `ready`；5 秒内没有 `ready`，或报 `empty` / `slot-missing`，就销毁岛、换成「在网页版打开」。XRK 升级弄坏配方时，最坏结果是「不生效」，不会出错页。
+- **list slot 里的官方条目**：Tier B 的浏览器半侧在**岛模式下**（`location.hash` 带 `#xrk-mobile-island=<slot>`）用同 id、更低 priority 注册空组件，遮掉官方占用者（依据：同 id 复用即替换，`slots.zh.md`「Cardinality 与 scope」）。只剩第三方条目。Tier A 主机上面板岛不可用，只有整页岛。
 
 ### 6.2 三种形态
 
@@ -244,7 +244,7 @@ ctx.dshGoPanels.register({
 
 ### 6.3 桥接 API
 
-通道：`JavaScriptChannel('DshGoIsland')`，页面侧全局 `window.__dshGoIsland`，由 `island.js` 安装。
+通道：`JavaScriptChannel('DshGoIsland')`，页面侧全局 `window.__xrkGoIsland`，由 `island.js` 安装。
 
 岛 → 原生（JSON，`t` 为类型）：
 
@@ -257,7 +257,7 @@ ctx.dshGoPanels.register({
 | `link` | `url` | 只收 https；原生弹确认（显示域名）后用外部浏览器打开 |
 | `session` | `id` | 插件想打开某个对话：校验存在后开原生对话页 |
 
-原生 → 岛（`runJavaScript`）：`__dshGoIsland.init({slot, cell, mode, theme, insets, textScale})`、`setTheme(theme)`、`setInsets({top, bottom})`。
+原生 → 岛（`runJavaScript`）：`__xrkGoIsland.init({slot, cell, mode, theme, insets, textScale})`、`setTheme(theme)`、`setInsets({top, bottom})`。
 
 **桥是不可信输入**：`addJavascriptInterface` 对页面里所有 frame 都可见，所以桥只做呈现类消息。不提供任何读写 App 数据、发消息、装插件的能力。导航限制在主机同源，复用 `dshWebNavigation` 的判定逻辑，在岛组件里另写一份。
 
@@ -282,17 +282,17 @@ ctx.dshGoPanels.register({
 - **亮暗**：让 WebView 的 `prefers-color-scheme` 跟随 App。
   - Kotlin 经 `WebViewFlutterAndroidExternalApi.getWebView(engine, id)` 拿到 WebView（webview_flutter_android 4.14.1 自带此类）。
   - 再用 androidx.webkit 的 `WebSettingsCompat.setForceDark` + 只用网页主题的暗色策略（targetSdk 28 走这条）。androidx.webkit 1.15.0 已是传递依赖，App 需显式声明同版本。
-  - DSH 主题为 `system` 时随之切换。不写宿主设置：`ui-theme` 的模式存在宿主上，跨浏览器共享，改了会影响用户电脑上的网页版。
-- **配色**：注入 `<style id="dsh-go-island-theme">`，用 App 配色覆盖 DSH 的核心别名 token（共 107 个，取最影响观感的约 15 个）：
+  - XRK 主题为 `system` 时随之切换。不写宿主设置：`ui-theme` 的模式存在宿主上，跨浏览器共享，改了会影响用户电脑上的网页版。
+- **配色**：注入 `<style id="xrk-mobile-island-theme">`，用 App 配色覆盖 XRK 的核心别名 token（共 107 个，取最影响观感的约 15 个）：
   - 背景：`--dsw-alias-bg-base`（岛内设为透明）、`--dsw-alias-bg-layer-1/2`。
   - 文字：`--dsw-alias-label-primary/secondary/tertiary`。
   - 描边：`--dsw-alias-border-l1…l4`。
   - 强调：`--dsw-alias-brand-primary`、`--dsw-alias-link`。
   - 状态：`--dsw-alias-state-{success,warn,error}-primary`。
   - 交互：`--dsw-alias-interactive-bg-hover`。
-  - 再加 `color-scheme`。用户在 DSH 显式设了 light / dark 时，靠这层覆盖保证外观跟 App 一致。
+  - 再加 `color-scheme`。用户在 XRK 显式设了 light / dark 时，靠这层覆盖保证外观跟 App 一致。
 - **字体与字号**：同手机布局，注入 App 自带字体。字号按 App 字号缩放，用 CSS `zoom` 或覆盖字号 token，二选一，以实测对齐为准。
-- **切换**：App 亮暗、强调色、字号变化时调 `__dshGoIsland.setTheme(...)`，不重载页面。
+- **切换**：App 亮暗、强调色、字号变化时调 `__xrkGoIsland.setTheme(...)`，不重载页面。
 
 ## 9. 安全：插件路由不鉴权
 
@@ -308,13 +308,13 @@ ctx.dshGoPanels.register({
 | 层 | 作用范围 | 做法 |
 |---|---|---|
 | **G1 路由守卫（必须，网页岛之前）** | 本机引擎 | 在运行时构建里给 `dsh-host-webserver/lib/index.js` 打补丁：`match` 命中 exact / prefix 路由后，调 `ctx.get('connection')?.requestRejection(req)`（`dsh-client-connection/lib/index.js:736-750`）。它同时检查 Host/Origin 白名单和 cookie / API 鉴权；返回 401 / 403 就直接拒绝。例外只有 `GET /`（自带启动令牌换 cookie）和显式白名单。同源页面里插件自己的 fetch、`<video>`、`<script>`、EventSource 都自带 cookie，不受影响；App 的 Dart 客户端走 API 鉴权，同样放行 |
-| G1 的保障 | 本机引擎 | 补丁按 DSH 版本钉住原文件 sha256，对不上就构建失败。构建期测试启动 profile 后列出全部已注册路由，逐个断言：没有 cookie 时 401，有 cookie 时照常 |
-| G1 的退路 | 本机引擎 | 补丁维护不动时，由 `dsh-go-bridge` 宿主半侧在最先加载时包装 `webServer.register` 给每个 handler 套同样的检查。依赖加载顺序，PoC 证明可行才用 |
+| G1 的保障 | 本机引擎 | 补丁按 XRK 版本钉住原文件 sha256，对不上就构建失败。构建期测试启动 profile 后列出全部已注册路由，逐个断言：没有 cookie 时 401，有 cookie 时照常 |
+| G1 的退路 | 本机引擎 | 补丁维护不动时，由 `xrk-bridge` 宿主半侧在最先加载时包装 `webServer.register` 给每个 handler 套同样的检查。依赖加载顺序，PoC 证明可行才用 |
 | G2 桥最小化 | 所有主机 | §6.3：桥只收呈现类消息；外链要确认；导航限同源 |
 | G3 令牌不外泄 | 所有主机 | 岛只经 `/?token=` 换 cookie，和现在的网页版相同；不向页面注入任何 App 侧凭据 |
-| 远程主机 | — | 管不了对方的进程，在文档里如实说明。SSH 主机可在用户同意后安装 `dsh-go-bridge`，由它的宿主半侧走退路做守卫 |
+| 远程主机 | — | 管不了对方的进程，在文档里如实说明。SSH 主机可在用户同意后安装 `xrk-bridge`，由它的宿主半侧走退路做守卫 |
 
-另提一条上游 issue：请 DSH 给插件路由默认套 `requestRejection`，或者给 `register` 加 `auth` 选项。合入后删掉 G1 补丁。
+另提一条上游 issue：请 XRK 给插件路由默认套 `requestRejection`，或者给 `register` 加 `auth` 选项。合入后删掉 G1 补丁。
 
 ## 10. 原生界面的声明式自定义（`ui.json`）
 
@@ -322,11 +322,11 @@ ctx.dshGoPanels.register({
 
 | | 本机引擎 | 远程主机 |
 |---|---|---|
-| 路径 | `$DSH_HOME/dsh-go/ui.json`，即 rootfs 内 `/root/.dsh/dsh-go/ui.json`，App 侧是 `filesDir/runtime/rootfs/root/.dsh/dsh-go/ui.json` | 对方的 `$DSH_HOME/dsh-go/ui.json` |
-| 读 | App 直接读文件（Dart） | `workspaceFiles/read`（`packages/dsh_client/lib/src/workspace_api.dart` 已封装）。这个端点接受工作区外的绝对路径，权限由对方文件系统组合决定；需要带一个会话 id（`workspaceFileScopeId`），取最近一个对话；主机上一个对话都没有时暂不读 |
-| 找到 `$DSH_HOME` | 固定 `/root/.dsh` | ① SSH 主机：启动时读远端环境变量；② 其他主机：`skills/list`（`features_api.dart:493`）里 `dsh-go-ui` 技能的 `path` 往上三级（`<dshHome>/skills/dsh-go-ui/SKILL.md`）；③ 都拿不到 → 设置里显示「这台主机还没装界面技能」+ 安装入口（§10.5） |
-| 自动重读 | `Directory('<rootfs>/root/.dsh/dsh-go').watch()`（inotify；目录不存在时 App 先建），加上回到前台时补读一次；去抖 300 ms | `workspaceFiles/changes` 流（文件监听沿用文件读权限，可在工作区外）；不支持时退回前台每 60 秒一次 `stat` 比对 `version`；重连和回到前台时补读 |
-| 写 | App 不写 ui.json（只读）。可选：本机 App 把读取结果写到 `$DSH_HOME/dsh-go/ui.status.json`，供 agent 自查 | 远程只读（`dsh-api-workspace-files` 不提供写操作） |
+| 路径 | `$XRK_HOME/xrk-mobile/ui.json`，即 rootfs 内 `/root/.xrk/xrk-mobile/ui.json`，App 侧是 `filesDir/runtime/rootfs/root/.xrk/xrk-mobile/ui.json` | 对方的 `$XRK_HOME/xrk-mobile/ui.json` |
+| 读 | App 直接读文件（Dart） | `workspaceFiles/read`（`packages/xrk_client/lib/src/workspace_api.dart` 已封装）。这个端点接受工作区外的绝对路径，权限由对方文件系统组合决定；需要带一个会话 id（`workspaceFileScopeId`），取最近一个对话；主机上一个对话都没有时暂不读 |
+| 找到 `$XRK_HOME` | 固定 `/root/.xrk` | ① SSH 主机：启动时读远端环境变量；② 其他主机：`skills/list`（`features_api.dart:493`）里 `xrk-ui` 技能的 `path` 往上三级（`<dshHome>/skills/xrk-ui/SKILL.md`）；③ 都拿不到 → 设置里显示「这台主机还没装界面技能」+ 安装入口（§10.5） |
+| 自动重读 | `Directory('<rootfs>/root/.xrk/xrk-mobile').watch()`（inotify；目录不存在时 App 先建），加上回到前台时补读一次；去抖 300 ms | `workspaceFiles/changes` 流（文件监听沿用文件读权限，可在工作区外）；不支持时退回前台每 60 秒一次 `stat` 比对 `version`；重连和回到前台时补读 |
+| 写 | App 不写 ui.json（只读）。可选：本机 App 把读取结果写到 `$XRK_HOME/xrk-mobile/ui.status.json`，供 agent 自查 | 远程只读（`dsh-api-workspace-files` 不提供写操作） |
 
 - 每台主机各自一份。App 按 `hostId` 缓存最后一次有效配置，冷启动时先用缓存，避免界面闪变。
 - 中转主机若不开放 `workspaceFiles/*`，就不支持 ui.json（用 `supportsEndpoint` 判定）。
@@ -416,30 +416,30 @@ class FromUiJsonBadge extends StatelessWidget { … }     // 「来自 ui.json�
   - 用户根是 `<dshHome>/skills`（rank 400，跳过 `.system` 子目录）；
   - 目录形式 `<name>/SKILL.md`，YAML frontmatter 必填 `name`（kebab-case）和 `description`，可选 `whenToUse`；
   - 根目录受监视，**新增无需重启**。
-- **内容**：`$DSH_HOME/skills/dsh-go-ui/`：
+- **内容**：`$XRK_HOME/skills/xrk-ui/`：
   - `SKILL.md`：何时用（「把手机 App 的 XX 改成 YY」）、文件路径、改法（读 → 改 → 写回 → 自查）、动作集合、限制、常见示例。
   - `schema.json`：v1 的 JSON Schema，与 App 的 Dart 校验同源。
   - `examples/*.json`。
-  - `scripts/check.mjs`：零依赖校验器，`node $DSH_HOME/skills/dsh-go-ui/scripts/check.mjs` 输出与 App 相同的 Pointer 错误。
+  - `scripts/check.mjs`：零依赖校验器，`node $XRK_HOME/skills/xrk-ui/scripts/check.mjs` 输出与 App 相同的 Pointer 错误。
   - 本机另可读 `ui.status.json`。
   - 两套校验共用 `app/test/ui_config/fixtures/`。
-- **本机自动安装**：每次引擎启动前由 Dart 写入 rootfs（与 `GuestSetup.writeAgentsMd` 同样的「受管标记」做法：`SKILL.md` 首行带 `<!-- dsh-go:managed -->`，用户删掉这行后不再覆盖）。不改 `GuestSetup.kt`。
+- **本机自动安装**：每次引擎启动前由 Dart 写入 rootfs（与 `GuestSetup.writeAgentsMd` 同样的「受管标记」做法：`SKILL.md` 首行带 `<!-- xrk-mobile:managed -->`，用户删掉这行后不再覆盖）。不改 `GuestSetup.kt`。
 - **远程安装**（必须用户确认）：
   - ① SSH 主机：经已有的 SSH 通道写文件。
   - ② 其他主机：App 准备一条消息（含技能文件内容和写入指令），放进输入框由用户点发送，让对方 agent 用自己的工具写入。
-  - 装好后 `skills/list` 能看到 `dsh-go-ui`，同时解决 `$DSH_HOME` 定位（§10.1）。
+  - 装好后 `skills/list` 能看到 `xrk-ui`，同时解决 `$XRK_HOME` 定位（§10.1）。
 
 ### 10.6 重置与升级会不会清掉（核实结果）
 
 | 操作 | 代码 | 结果 |
 |---|---|---|
-| **运行时升级** | `RuntimeInstaller.install` → `activateRootfs`（`app/android/.../runtime/RuntimeInstaller.kt:32-58、106-126`） | **保留**。用户的 `/root` 先移到 `home.carry`，新 rootfs 换上后再移回，`/root/.dsh` 里的插件（`profiles/web`）、`cordis.patch.yml`、`skills/`、`dsh-go/ui.json` 都在。被替换的只有运行时自有文件，如 `/etc/dsh-app/dsh-web.patch.yml`（每次升级重写，`rtbuild.py:696-705`） |
-| **「重置运行环境」** | `RuntimeController.reset` → `RuntimeInstaller.reset()` = `baseDir.deleteRecursivelySafely()`（`RuntimeController.kt:296-325`、`RuntimeInstaller.kt:71-73`） | **全部删除**：整个 `filesDir/runtime`，包括 `/root/.dsh` 下的插件、补丁、技能、ui.json、对话记录。对话框文案只提到「对话记录和工作区文件」（`app/lib/ui/engine/engine_screen.dart:365-368`） |
+| **运行时升级** | `RuntimeInstaller.install` → `activateRootfs`（`app/android/.../runtime/RuntimeInstaller.kt:32-58、106-126`） | **保留**。用户的 `/root` 先移到 `home.carry`，新 rootfs 换上后再移回，`/root/.xrk` 里的插件（`profiles/web`）、`cordis.patch.yml`、`skills/`、`xrk-mobile/ui.json` 都在。被替换的只有运行时自有文件，如 `/etc/dsh-app/dsh-web.patch.yml`（每次升级重写，`rtbuild.py:696-705`） |
+| **「重置运行环境」** | `RuntimeController.reset` → `RuntimeInstaller.reset()` = `baseDir.deleteRecursivelySafely()`（`RuntimeController.kt:296-325`、`RuntimeInstaller.kt:71-73`） | **全部删除**：整个 `filesDir/runtime`，包括 `/root/.xrk` 下的插件、补丁、技能、ui.json、对话记录。对话框文案只提到「对话记录和工作区文件」（`app/lib/ui/engine/engine_screen.dart:365-368`） |
 
 建议：
 
 1. 重置对话框加一个勾选「保留界面配置和技能」，**默认勾选**。
-   - 保留 `/root/.dsh/dsh-go/` 和 `/root/.dsh/skills/`：用户写的、体积小、不会把引擎弄坏。
+   - 保留 `/root/.xrk/xrk-mobile/` 和 `/root/.xrk/skills/`：用户写的、体积小、不会把引擎弄坏。
    - 做法：删除前移到 `filesDir/runtime-keep/`，重新解压完成后移回。
 2. 再加一个勾选「保留已装插件和设置」，**默认不勾**。
    - 保留 `profiles/`、`cordis.patch.yml`、`.env`。重置多半是为了救坏插件，默认不留。
@@ -447,7 +447,7 @@ class FromUiJsonBadge extends StatelessWidget { … }     // 「来自 ui.json�
 
 ## 11. 实现顺序与上线门槛
 
-接缝内核与清单（`app/lib/plugins/seams/`）、网页岛运行时（`app/lib/ui/plugins/islands/`、`app/assets/islands/`）、宿主桥接与路由守卫（`runtime/bridge/dsh-go-bridge/`、运行时补丁）、`ui.json` 内核（`app/lib/ui_config/`、`app/assets/skills/dsh-go-ui/`）互不依赖，可以并行。整页岛接入依赖前三者；聊天页面板岛、`ui.json` 在各界面的接入排在其后；浮层岛和声明式面板服务属于 P2。
+接缝内核与清单（`app/lib/plugins/seams/`）、网页岛运行时（`app/lib/ui/plugins/islands/`、`app/assets/islands/`）、宿主桥接与路由守卫（`runtime/bridge/xrk-bridge/`、运行时补丁）、`ui.json` 内核（`app/lib/ui_config/`、`app/assets/skills/xrk-ui/`）互不依赖，可以并行。整页岛接入依赖前三者；聊天页面板岛、`ui.json` 在各界面的接入排在其后；浮层岛和声明式面板服务属于 P2。
 
 **上线门槛**：G1 路由守卫随运行时出包之前，本机引擎的整页岛不对用户开放。远程主机的整页岛可先开，那里的风险与现在的「网页版」入口相同。
 
@@ -457,15 +457,15 @@ class FromUiJsonBadge extends StatelessWidget { … }     // 「来自 ui.json�
 |---|---|---|
 | 单岛内存 | 网页岛 | 真机 `dumpsys meminfo`：App 进程 + WebView 渲染进程的增量，写回本文 §7 |
 | 隔离配方 | 网页岛 | settings.section（dsh-pet「桌宠配置」）、plugins.bundle.config、sidebar.right.pane.tab、main 四类各一个真插件，`ready` 后只露目标内容 |
-| force-dark 跟随 | 网页岛 | App 切深色后岛内 `matchMedia('(prefers-color-scheme: dark)')` 为 true，DSH 主题为 system 时跟随 |
+| force-dark 跟随 | 网页岛 | App 切深色后岛内 `matchMedia('(prefers-color-scheme: dark)')` 为 true，XRK 主题为 system 时跟随 |
 | 岛模式遮官方条目 | 宿主桥接 | 在 `conversation.input.dock` 用同 id、更低 priority 注册空组件，官方条目消失，第三方条目保留 |
 | G1 守卫 | 路由守卫 | 构建期列出全部路由：无 cookie 401 / 403；网页版、插件页面、App 原生功能回归全部正常 |
 | `__DSH_BOOT__` 解析 | 接缝内核 | 本机与 SSH 主机都能列出带浏览器半侧的包 |
 | 远程读 ui.json | `ui.json` | 工作区外绝对路径 `read` + `changes` 在 SSH 主机可用；对方沙箱策略拒绝时给出明确提示 |
-| 技能热加载 | `ui.json` | 写入 `skills/dsh-go-ui/` 后不重启，下一轮对话 `skills/list` 可见 |
+| 技能热加载 | `ui.json` | 写入 `skills/xrk-ui/` 后不重启，下一轮对话 `skills/list` 可见 |
 
 ## 附录 A：slot 目录与抽样数据的来源
 
-- **slot 全表（100 项）**：对 `dsh-cordis-client-runner/lib/client.js` 做文本解析（不执行），按 `key: "…", kind: "…", scope: "…", summary: "…"` 逐项提取 `declaredBy`、`occupants`、`replaceRisk`。结果存为 `slot-catalog-<DSH 版本>.json`；当前版本的 `key` / `kind` / `scope` / `replaceRisk` 四列提交在 `app/test/plugins/seams/fixtures/`，`slot_catalog_test.dart` 拿它核对 `slotCatalog`。DSH 升级后照此重新生成，与本文 §3 对比增删。
+- **slot 全表（100 项）**：对 `dsh-cordis-client-runner/lib/client.js` 做文本解析（不执行），按 `key: "…", kind: "…", scope: "…", summary: "…"` 逐项提取 `declaredBy`、`occupants`、`replaceRisk`。结果存为 `slot-catalog-<XRK 版本>.json`；当前版本的 `key` / `kind` / `scope` / `replaceRisk` 四列提交在 `app/test/plugins/seams/fixtures/`，`slot_catalog_test.dart` 拿它核对 `slotCatalog`。XRK 升级后照此重新生成，与本文 §3 对比增删。
 - **slot 树**：`deepseek-harness/docs/subsystems/slots.zh.md`「当前层级」（0.2.0-rc.2 源码）。
 - **插件抽样**：16 个包（15 个带浏览器半侧 + 1 个只有宿主侧的 dsh-whale-widget）的 tarball 从 npm 下载后解包阅读（解包内容不入库）。逐包的 slot、inject、是否挂 body、是否改官方 DOM、宿主路由已汇总进本文 §1.3。

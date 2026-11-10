@@ -1,13 +1,13 @@
-// The DSH Go sidecar of the official plugin index, `dsh-go.json`
+// The XRK Go sidecar of the official plugin index, `xrk-mobile.json`
 // (docs/design/plugin-market.md §3): what format 1 has no room for — the
-// tier, the zh/en title and summary, screenshots, the DSH Go protocol
+// tier, the zh/en title and summary, screenshots, the XRK Go protocol
 // declaration, the risk the market's checks found, the npm integrity and the
 // withdrawn versions. Read leniently like the index: an entry that breaks a
 // rule is skipped, the rest of the file still counts.
 
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../update/version.dart';
 
@@ -62,7 +62,7 @@ class DshGoListing {
   /// https only.
   final List<Uri> screenshots;
 
-  /// Uses the DSH Go native protocol (cards, forms, settings pages).
+  /// Uses the XRK Go native protocol (cards, forms, settings pages).
   final bool adapted;
 
   /// Older apps show the plugin but can't install it.
@@ -81,7 +81,7 @@ class DshGoListing {
   /// Withdrawn versions: people who have one installed are warned.
   final Set<String> blockedVersions;
 
-  /// Goes under 「适配 DSH Go」 (a community entry): declares the protocol and
+  /// Goes under 「适配 XRK Go」 (a community entry): declares the protocol and
   /// the checks didn't flag it as not adapted.
   bool get isAdapted => adapted && !flags.contains('not-adapted');
 
@@ -104,7 +104,7 @@ class MarketSidecar {
 
 final _integrity = RegExp(r'^sha(?:256|384|512)-[A-Za-z0-9+/]+={0,2}$');
 
-/// Reads a decoded `dsh-go.json`. Throws [MarketIndexException] only when it
+/// Reads a decoded `xrk-mobile.json`. Throws [MarketIndexException] only when it
 /// isn't a schema-1 sidecar at all; a bad entry is skipped and recorded.
 MarketSidecar parseMarketSidecar(Object? json) {
   if (json is! Map) throw const MarketIndexException(r'$', 'must be an object');
@@ -153,8 +153,8 @@ DshGoListing? _listing(String name, Object? value) {
   final rawFlags = risk['flags'];
   if (rawFlags is! List || rawFlags.any((flag) => flag is! String || flag.isEmpty)) return null;
   final flags = _strings(rawFlags);
-  final dshGo = value['dshGo'] is Map ? value['dshGo'] as Map : const {};
-  final minAppText = dshGo['minApp'];
+  final xrkGo = value['xrkGo'] is Map ? value['xrkGo'] as Map : const {};
+  final minAppText = xrkGo['minApp'];
   final minApp = minAppText is String ? AppVersion.tryParse(minAppText) : null;
   // An unreadable minimum would let any app install it.
   if (minAppText != null && minApp == null) return null;
@@ -169,9 +169,9 @@ DshGoListing? _listing(String name, Object? value) {
       for (final text in _strings(value['screenshots']))
         if (Uri.tryParse(text) case final uri? when uri.scheme == 'https' && uri.host.isNotEmpty) uri,
     ].take(maxMarketScreenshots).toList(growable: false),
-    adapted: dshGo['adapted'] == true,
+    adapted: xrkGo['adapted'] == true,
     minApp: minApp,
-    features: _strings(dshGo['features']),
+    features: _strings(xrkGo['features']),
     risk: [
       declared,
       for (final flag in flags) ?marketRiskFlagLevels[flag],

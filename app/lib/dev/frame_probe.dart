@@ -6,23 +6,23 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 /// Opt-in diagnostics only. Neither collection nor reporting requests frames.
-const _enabled = !kReleaseMode && bool.fromEnvironment('DSH_FRAME_PROBE');
+const _enabled = !kReleaseMode && bool.fromEnvironment('XRK_FRAME_PROBE');
 
 /// The probe brings its own binding, created before the app starts.
 const frameProbeEnabled = _enabled;
-const _requestedSampleEvery = int.fromEnvironment('DSH_FRAME_PROBE_SAMPLE_EVERY', defaultValue: 60);
+const _requestedSampleEvery = int.fromEnvironment('XRK_FRAME_PROBE_SAMPLE_EVERY', defaultValue: 60);
 const _sampleEvery = _requestedSampleEvery > 0 ? _requestedSampleEvery : 60;
 
 /// Android's logcat cuts a line at about 4 KB, so a report goes out as lines
 /// under this many bytes (UTF-8, prefix included).
 const frameProbeLineBytes = 3000;
 
-/// One report ([json]) as log lines, `DSH_FRAME_PROBE seq line/lines part`
-/// (`DSH_FRAME_PROBE 12 2/3 …`). Every line of a report carries its [seq];
+/// One report ([json]) as log lines, `XRK_FRAME_PROBE seq line/lines part`
+/// (`XRK_FRAME_PROBE 12 2/3 …`). Every line of a report carries its [seq];
 /// joining the parts of one seq in line order gives the JSON back.
 @visibleForTesting
 List<String> frameProbeLines(int seq, String json, {int maxBytes = frameProbeLineBytes}) {
-  // Room for `DSH_FRAME_PROBE <seq> <line>/<lines> ` whatever the numbers.
+  // Room for `XRK_FRAME_PROBE <seq> <line>/<lines> ` whatever the numbers.
   final budget = maxBytes - 64;
   final parts = <String>[];
   final part = StringBuffer();
@@ -44,7 +44,7 @@ List<String> frameProbeLines(int seq, String json, {int maxBytes = frameProbeLin
     bytes += size;
   }
   if (part.isNotEmpty || parts.isEmpty) parts.add(part.toString());
-  return [for (var i = 0; i < parts.length; i++) 'DSH_FRAME_PROBE $seq ${i + 1}/${parts.length} ${parts[i]}'];
+  return [for (var i = 0; i < parts.length; i++) 'XRK_FRAME_PROBE $seq ${i + 1}/${parts.length} ${parts[i]}'];
 }
 
 Future<void> runWithFrameProbe(Future<void> Function() startApp) {
@@ -291,9 +291,9 @@ class _Probe {
     final useful = frames.where((line) => !line.contains('package:flutter/')).toList();
     final app = useful.where(
       (line) =>
-          line.contains('package:dsh_app/') ||
-          line.contains('package:dsh_client/') ||
-          line.contains('package:dsh_remote/'),
+          line.contains('package:xrk_app/') ||
+          line.contains('package:xrk_client/') ||
+          line.contains('package:xrk_remote/'),
     );
     final selected = (app.isNotEmpty ? app : useful)
         .take(2)

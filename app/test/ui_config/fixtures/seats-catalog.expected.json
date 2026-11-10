@@ -10,7 +10,7 @@
     {
       "pointer": "/plugins/seats/future.slot.name",
       "kind": "adjusted",
-      "message": "当前 DSH 没有这个 slot，先保留"
+      "message": "当前 XRK 没有这个 slot，先保留"
     }
   ]
 }

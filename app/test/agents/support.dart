@@ -1,10 +1,10 @@
 // Shared fixtures for the multi-agent tests: a host session list shaped like
-// DSH 0.2.1-rc.2's `session/list` (checked against a throwaway `dsh web`
+// XRK 0.2.1-rc.2's `session/list` (checked against a throwaway `xrkh serve`
 // running a scripted model), a team, and fakes for the team panel.
 
-import 'package:dsh_app/state/agents_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/agents_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 

@@ -141,7 +141,7 @@
   "viewChartHorizontalBar": "横向柱状图",
   "viewChartLine": "折线图",
   "viewChartDonut": "环形图",
-  "viewUiResendMessage": "上一个 dsh-ui 视图无法显示：{value}。请修正后重发。",
+  "viewUiResendMessage": "上一个插件视图无法显示：{value}。请修正后重发。",
   "@viewUiResendMessage": {
     "placeholders": {
       "value": {
@@ -1024,7 +1024,7 @@
       }
     }
   },
-  "viewShareInstallCommand": "安装：dsh plugin add {value}",
+  "viewShareInstallCommand": "安装：xrkh plugin add {value}",
   "@viewShareInstallCommand": {
     "placeholders": {
       "value": {

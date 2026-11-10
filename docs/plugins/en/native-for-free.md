@@ -1,6 +1,6 @@
 # Native for free
 
-Six things in a DSH plugin already show natively in the dsh-go app, with no dsh-go-specific code (the sixth needs one function). Use them before reaching for [slots](slots.md).
+Six things in a XRK plugin already show natively in the xrk-mobile app, with no xrk-mobile-specific code (the sixth needs one function). Use them before reaching for [slots](slots.md).
 
 | In your plugin | In the app | How native | Hosts |
 |---|---|---|---|
@@ -9,7 +9,7 @@ Six things in a DSH plugin already show natively in the dsh-go app, with no dsh-
 | Plugin settings (an exported `Config`, live-editable fields) | Plugin details and the plugin group in Settings: a native form | Fully | On-device, SSH; relay depends on the host |
 | Tools (`defineTool`) | The tool row: icon + name + one-line summary; expands to arguments and result | Generic | All |
 | Teaching the model to write ` ```dsh-ui ` blocks (in a skill or system prompt) | Charts, metrics, comparisons and options in replies | Fully | All |
-| `"dsh-go/view"` in a tool's `presentationMeta` | A native card in the tool row | Fully | All |
+| `"xrk-mobile/view"` in a tool's `presentationMeta` | A native card in the tool row | Fully | All |
 
 ## The tool row's summary
 
@@ -23,7 +23,7 @@ So name the argument that best describes a call `query`, `url`, `path` or `name`
 
 Your exported `Config` (schemastery) becomes a native settings page, reached from the plugin's details and Settings › Engine parameters › Plugins. `.volatile()` fields apply as they change; the rest apply when the person taps Save, which reloads the plugin. Secret fields (`role('secret')`) are write-only. Nested objects become groups, `.collapse()` groups start folded, and a `description` written as `{ zh, en }` follows the app's language. If your plugin has its own web settings page, register `configure({ auto: false })` in `apply`: the app puts "Set up on the web" at the top and still draws every field it can.
 
-Every field shows on a host whose dsh-go bridge serves `/dsh-go/v1/plugin-config`; elsewhere the app only gets volatile fields. Bind secrets to a credential with a `role('credential-ref')` field: a bare `role('secret')` shows whether it is set but can't be filled in from the app ([design](../../design/plugin-config.md)).
+Every field shows on a host whose xrk-mobile bridge serves `/xrk-mobile/v1/plugin-config`; elsewhere the app only gets volatile fields. Bind secrets to a credential with a `role('credential-ref')` field: a bare `role('secret')` shows whether it is set but can't be filled in from the app ([design](../../design/plugin-config.md)).
 
 ## dsh-ui blocks
 
@@ -48,9 +48,9 @@ On a host with `@changfenhuang/dsh-genui`, the model writes genui's own JSON in 
 | `chart`, `table`, `keyvalue`, `list`, `steps`, `timeline`, `tabs`, `accordion`, `code`, `diff` | The matching native components |
 | `image` / `image-group` | `image` / a gallery (`data:` only) |
 | Buttons, forms and other interactive parts | One "Interactive part" tag |
-| `echart`, `svg`, `mermaid`, maps, scenes and the like | A "… · View in DSH Web" tag; a run of them folds into one |
+| `echart`, `svg`, `mermaid`, maps, scenes and the like | A "… · View in XRK Web" tag; a run of them folds into one |
 
-The card is read-only: nothing to tap, nothing sent. A block with nothing to match is one line, "This block shows in DSH Web", with no resend. To have the app draw more of it, have your skill ask for the components in the left column.
+The card is read-only: nothing to tap, nothing sent. A block with nothing to match is one line, "This block shows in XRK Web", with no resend. To have the app draw more of it, have your skill ask for the components in the left column.
 
 ## When you need slots
 

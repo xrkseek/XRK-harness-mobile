@@ -1,7 +1,7 @@
 // Permanent deletion is separate from archive and never has an undo window.
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show SessionSummary;
+import 'package:xrk_client/xrk_client.dart' show SessionSummary;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

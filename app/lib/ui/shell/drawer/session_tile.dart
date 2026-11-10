@@ -65,7 +65,7 @@ class SessionTile extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final shape = Squircle.border(AppShape.md);
     final highlighted = selecting ? selected : current;
     final Widget? marker = switch ((pending, running, unread)) {
@@ -237,7 +237,7 @@ class DrawerEyebrow extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(10, 16, 10, 6),
       child: Semantics(
         header: true,
-        child: Text(text, style: AppType.eyebrow(color: DshColors.of(context).textTertiary)),
+        child: Text(text, style: AppType.eyebrow(color: XrkColors.of(context).textTertiary)),
       ),
     );
   }

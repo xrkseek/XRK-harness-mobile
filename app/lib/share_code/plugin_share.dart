@@ -2,7 +2,7 @@
 // entry or an installed bundle), plus the npm facts that make it checkable on
 // the other side.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import 'share_codec.dart';
 import 'share_link.dart';

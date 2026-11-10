@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -97,7 +97,7 @@ Future<bool> confirmMarketRisk(BuildContext context, MarketEntry entry) async {
   final listing = entry.listing;
   if (listing == null || !listing.needsConfirm) return true;
   final l10n = context.l10n;
-  final colors = DshColors.of(context);
+  final colors = XrkColors.of(context);
   final container = ProviderScope.containerOf(context, listen: false);
   final messenger = ScaffoldMessenger.maybeOf(context);
   final host = container.read(pluginHostProvider);
@@ -355,7 +355,7 @@ Future<bool> removePluginBundle(BuildContext context, PluginBundle bundle, {Rout
   final generation = host?.client.mux.generation;
   final readyGeneration = host?.client.mux.lastReadyGenerationNumber;
   final title = bundle.title();
-  final colors = DshColors.of(context);
+  final colors = XrkColors.of(context);
   final ok = await showAppDialog<bool>(
     context: context,
     builder: (dialog) => AlertDialog(
@@ -586,7 +586,7 @@ Future<void> showPluginCommandSheet(
     isScrollControlled: true,
     builder: (sheet) {
       final theme = Theme.of(sheet);
-      final colors = DshColors.of(sheet);
+      final colors = XrkColors.of(sheet);
       return SafeArea(
         top: false,
         child: SingleChildScrollView(

@@ -7,7 +7,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -155,12 +155,12 @@ class CompanionDeepCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final deep = companionDeepGlass(context);
     return Theme(
       data: theme.copyWith(
         extensions: [
-          ...theme.extensions.values.where((e) => e is! DshSurfaces),
+          ...theme.extensions.values.where((e) => e is! XrkSurfaces),
           surfaces.copyWith(
             card: surfaces.card.copyWith(fill: deep.fill, fallbackFill: deep.fallbackFill),
           ),

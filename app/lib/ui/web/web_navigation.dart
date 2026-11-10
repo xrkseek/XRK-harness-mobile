@@ -1,4 +1,4 @@
-/// Navigation policy for the embedded DSH site.
+/// Navigation policy for the embedded XRK site.
 enum DshWebNavigation { stay, external, block }
 
 DshWebNavigation dshWebNavigation(Uri base, String url, bool isMainFrame) {

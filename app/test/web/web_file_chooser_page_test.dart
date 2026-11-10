@@ -4,8 +4,8 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/ui/plugins/islands/island_platform.dart';
-import 'package:dsh_app/ui/web/web_view_page.dart';
+import 'package:xrk_app/ui/plugins/islands/island_platform.dart';
+import 'package:xrk_app/ui/web/web_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,7 +16,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import '../chat/support/harness.dart';
 import 'support/fake_webview.dart';
 
-const _channel = MethodChannel('dsh/web-files');
+const _channel = MethodChannel('xrk/web-files');
 const _file = 'content://documents/document/picked';
 const _params = FileSelectorParams(isCaptureEnabled: false, acceptTypes: [], mode: FileSelectorMode.open);
 

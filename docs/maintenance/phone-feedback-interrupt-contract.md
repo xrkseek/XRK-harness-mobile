@@ -1,8 +1,8 @@
 # 无障碍反馈中断与手机任务停止
 
-Refs #570。本合同区分 Android 的 feedback interruption 与 DSH 手机任务的显式停止。Android 设备回归尚未运行，不据此宣布华为时钟问题已修复。
+Refs #570。本合同区分 Android 的 feedback interruption 与 XRK 手机任务的显式停止。Android 设备回归尚未运行，不据此宣布华为时钟问题已修复。
 
-Android `AccessibilityService.onInterrupt` 请求打断服务正在提供的反馈；它不是服务解绑通知，也不携带用户停止 DSH 手机任务的意图。`AccessibilityManager.interrupt()` 会请求所有绑定服务中断反馈。DSH 的此回调不应因此退休 PhoneTasks owner、取消确认或中断 phone worker。
+Android `AccessibilityService.onInterrupt` 请求打断服务正在提供的反馈；它不是服务解绑通知，也不携带用户停止 XRK 手机任务的意图。`AccessibilityManager.interrupt()` 会请求所有绑定服务中断反馈。XRK 的此回调不应因此退休 PhoneTasks owner、取消确认或中断 phone worker。
 
 目前本服务没有持有持续 TTS、音频或振动反馈任务。悬浮条的 `announceForAccessibility` 将事件交给无障碍系统，长按球的 `performHapticFeedback` 是一次性反馈；不为这些调用增加整项任务取消。此回调只记录收到反馈中断，今后若新增本服务持有的持续反馈，必须在这里只停止该反馈。
 

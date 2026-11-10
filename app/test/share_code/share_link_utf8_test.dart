@@ -1,7 +1,7 @@
-import 'package:dsh_app/forum/render/cooked.dart';
-import 'package:dsh_app/share_code/share_codec.dart';
-import 'package:dsh_app/share_code/share_link.dart';
-import 'package:dsh_app/share_code/share_models.dart';
+import 'package:xrk_app/forum/render/cooked.dart';
+import 'package:xrk_app/share_code/share_codec.dart';
+import 'package:xrk_app/share_code/share_link.dart';
+import 'package:xrk_app/share_code/share_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -9,9 +9,9 @@ void main() {
   final valid = ShareLink.inline(ShareKind.profile, validCode);
 
   for (final entry in <String, String>{
-    'query': 'dshgo://share/profile?p=%FF',
+    'query': 'xrkharness://share/profile?p=%FF',
     'fragment': '$shareLandingUrl#p=%FF',
-    'path': 'dshgo://share/pro%FFfile?p=$validCode',
+    'path': 'xrkharness://share/pro%FFfile?p=$validCode',
   }.entries) {
     test('parse rejects non-UTF8 ${entry.key} without throwing', () {
       // These are structurally valid URIs. The bad bytes appear only when
@@ -23,7 +23,7 @@ void main() {
   }
 
   test('find continues from a malformed candidate to a valid share link', () {
-    final found = ShareLink.find('broken dshgo://share/profile?p=%FF\nvalid ${valid.appLink}');
+    final found = ShareLink.find('broken xrkharness://share/profile?p=%FF\nvalid ${valid.appLink}');
     expect(found, isNotNull);
     expect(found!.kind, ShareKind.profile);
     expect(found.code, validCode);

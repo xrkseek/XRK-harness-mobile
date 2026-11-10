@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/bots/bot_details_page.dart';
-import 'package:dsh_app/ui/common/page_hero.dart';
+import 'package:xrk_app/ui/bots/bot_details_page.dart';
+import 'package:xrk_app/ui/common/page_hero.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +20,7 @@ Future<void> frames(WidgetTester t) async {
 
 void main() {
   final fixture =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_usage_scanning.json').readAsStringSync()) as Map;
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_usage_scanning.json').readAsStringSync()) as Map;
   final during = (fixture['during']['value'] as Map).cast<String, Object?>();
   final after = (fixture['after']['value'] as Map).cast<String, Object?>();
   final scanning = find.byKey(const ValueKey('usage-scanning'));

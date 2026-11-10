@@ -1,9 +1,9 @@
 // Which host events become alerts, and when they are withdrawn
 // (lib/notify/chat_alerts.dart).
 
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
@@ -239,7 +239,7 @@ void main() {
   });
 
   group('outcomeFromEvents', () {
-    // Shapes captured from a live `dsh web` 0.2.1-rc.2: a one-message tail
+    // Shapes captured from a live `xrkh serve` 0.2.1-rc.2: a one-message tail
     // of session/page at the projections cut.
     SessionLogEvent ev(int seq, String type, Map<String, Object?> data) =>
         SessionLogEvent.fromJson({'seq': seq, 'time': 1792712155483, 'type': type, 'data': data});
@@ -357,7 +357,7 @@ void main() {
           'error',
           error: const LlmFailure(
             message:
-                'DeepSeek model "deepseek-v5" requires DeepSeek Harness 0.3.0 or later; current version is 0.2.1-rc.4',
+                'DeepSeek model "deepseek-v5" requires XRK-Harness 0.3.0 or later; current version is 0.2.1-rc.4',
             code: 'CLIENT_UPGRADE_REQUIRED',
           ),
         ).text,

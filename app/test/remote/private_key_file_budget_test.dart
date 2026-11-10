@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/attachments.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/attachments.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
 

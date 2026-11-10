@@ -1,5 +1,5 @@
-import 'package:dsh_app/state/usage_state.dart';
-import 'package:dsh_app/ui/chat/usage_sheet.dart';
+import 'package:xrk_app/state/usage_state.dart';
+import 'package:xrk_app/ui/chat/usage_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

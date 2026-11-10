@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/media/gallery.dart';
-import 'package:dsh_app/media/video.dart';
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/ui/chat/media/media_video_viewer.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/media/gallery.dart';
+import 'package:xrk_app/media/video.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/ui/chat/media/media_video_viewer.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -230,14 +230,14 @@ void main() {
     MethodCall? captured;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
       captured = call;
-      return 'Movies/DSH Go/movie.mp4';
+      return 'Movies/XRK Go/movie.mp4';
     });
     addTearDown(
       () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null),
     );
     expect(
       await const MediaChannel(channel).saveVideoFile('/phone/movie.mp4', name: 'movie.mp4'),
-      'Movies/DSH Go/movie.mp4',
+      'Movies/XRK Go/movie.mp4',
     );
     expect(captured!.method, 'saveVideoFile');
     expect(captured!.arguments, {'path': '/phone/movie.mp4', 'name': 'movie.mp4'});

@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/schedule_editor_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/schedule_editor_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../plugins/support/fake_plugin_host.dart';
@@ -26,7 +26,7 @@ void main() {
     test('early session error stays on returned Future when prompt ${rejectPrompt ? "rejects" : "accepts"}', () async {
       final leaked = await _zoneErrors(() async {
         final carrier = FakePluginCarrier();
-        final client = DshClient.withCarrier(carrier);
+        final client = XrkClient.withCarrier(carrier);
         final entered = Completer<void>();
         final reply = Completer<Object?>();
         carrier.handlers['schedule/catalog'] = (_) => <Object?>[];
@@ -57,11 +57,11 @@ void main() {
           await events.cancel();
           // Both transports finish. No permanently pending request or real sleep.
           if (rejectPrompt) {
-            reply.completeError(const DshRemoteException('session/not-found', 'gone'));
+            reply.completeError(const XrkRemoteException('session/not-found', 'gone'));
           } else {
             reply.complete({'accepted': true});
           }
-          expect(await result, rejectPrompt ? isA<DshRemoteException>() : isA<ScheduleCreateFailure>());
+          expect(await result, rejectPrompt ? isA<XrkRemoteException>() : isA<ScheduleCreateFailure>());
         } finally {
           if (!reply.isCompleted) reply.complete({'accepted': true});
           await client.close();
@@ -74,14 +74,14 @@ void main() {
   test('prompt refusal without a session event still reaches the caller', () async {
     final leaked = await _zoneErrors(() async {
       final carrier = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       carrier.handlers['schedule/catalog'] = (_) => <Object?>[];
-      carrier.handlers['session/prompt'] = (_) => throw const DshRemoteException('session/not-found', 'gone');
+      carrier.handlers['session/prompt'] = (_) => throw const XrkRemoteException('session/not-found', 'gone');
       try {
         await client.mux.ready();
         await expectLater(
           requestSchedule(client, sessionId: 's', title: 'daily', request: 'create daily task'),
-          throwsA(isA<DshRemoteException>().having((e) => e.code, 'code', 'session/not-found')),
+          throwsA(isA<XrkRemoteException>().having((e) => e.code, 'code', 'session/not-found')),
         );
       } finally {
         await client.close();

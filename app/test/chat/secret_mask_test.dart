@@ -2,8 +2,8 @@
 // table (each format with near misses), overlaps, linear time on hostile
 // input, and the bubble (masked display, the eye, copy keeps the original).
 
-import 'package:dsh_app/ui/chat/secret_mask.dart';
-import 'package:dsh_app/ui/chat/widgets/user_bubble.dart';
+import 'package:xrk_app/ui/chat/secret_mask.dart';
+import 'package:xrk_app/ui/chat/widgets/user_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';

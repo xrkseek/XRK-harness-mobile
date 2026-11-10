@@ -1,4 +1,4 @@
-// Component builders for dsh-go plugin views (docs/design/native-plugins-views.md).
+// Component builders for xrk-mobile plugin views (docs/design/native-plugins-views.md).
 // Each returns a plain JSON node `{ type, ...props }` with undefined props
 // dropped, so a builder tree and a hand-written literal are interchangeable.
 // Zero dependencies; validation is `check`'s job, not the builders'.

@@ -1,5 +1,5 @@
 /// Thin client for the Host-owned DeepSeek account service (`account/*` Remote
-/// namespace, `@deepseek-ai/dsh-api-account-controller`, DSH 0.2.1-rc.2).
+/// namespace, `@xrkseek/harness-cli-api-account-controller`, XRK 0.2.1-rc.2).
 ///
 /// The Host owns PKCE, the `/oauth/callback` route on its webserver, the
 /// credential store and the `deepseek-account` model route. This client only
@@ -22,7 +22,7 @@ library;
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../l10n/l10n.dart';
 import 'app_info.dart';
@@ -172,7 +172,7 @@ class AccountProfile {
   final String? contact;
   final String? avatarUrl;
 
-  /// Name, else the masked contact, else a neutral label (same order as DSH's sidebar).
+  /// Name, else the masked contact, else a neutral label (same order as XRK's sidebar).
   String get displayName {
     final n = name?.trim() ?? '';
     if (n.isNotEmpty) return n;
@@ -226,7 +226,7 @@ class AccountQueryFailed implements Exception {
 
 /// Identity of the calling UI for one Platform-bound operation; the Host derives
 /// the `x-client-version`, `x-client-locale` and `x-client-timezone-offset`
-/// headers from it (`x-client-platform` is the Host's own: `web` outside DSH Desktop).
+/// headers from it (`x-client-platform` is the Host's own: `web` outside XRK Desktop).
 class AccountClientMetadata {
   const AccountClientMetadata({required this.version, required this.locale, required this.timezoneOffsetSeconds});
 
@@ -290,7 +290,7 @@ class DshAccountApi implements AccountApi {
   DshAccountApi(this.client, {required this.callbackOrigin, AccountClientMetadata Function()? metadata})
     : _metadata = metadata ?? AccountClientMetadata.current;
 
-  final DshClient client;
+  final XrkClient client;
   final AccountClientMetadata Function() _metadata;
 
   @override

@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
-import 'package:dsh_app/ui/bots/bot_details_page.dart';
-import 'package:dsh_app/ui/bots/bots_page.dart';
-import 'package:dsh_app/ui/bots/install_card.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_app/ui/bots/room_details_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_app/ui/bots/bot_details_page.dart';
+import 'package:xrk_app/ui/bots/bots_page.dart';
+import 'package:xrk_app/ui/bots/install_card.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/bots/room_details_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,8 +39,8 @@ Future<void> frames(WidgetTester tester) async {
 
 void main() {
   final fixture =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_official_v023.json').readAsStringSync()) as Map;
-  final officialError = DshRemoteException.fromJson((fixture['hello'] as Map)['body']['error']);
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_official_v023.json').readAsStringSync()) as Map;
+  final officialError = XrkRemoteException.fromJson((fixture['hello'] as Map)['body']['error']);
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
 

@@ -2,7 +2,7 @@
 // Bot color (the web client draws characters this app does not have), and a
 // group's members stacked.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -56,7 +56,7 @@ class BotAvatar extends ConsumerWidget {
               right: -1,
               bottom: -1,
               child: DecoratedBox(
-                decoration: ShapeDecoration(color: DshSurfaces.of(context).backdropTop, shape: const CircleBorder()),
+                decoration: ShapeDecoration(color: XrkSurfaces.of(context).backdropTop, shape: const CircleBorder()),
                 child: Padding(
                   padding: const EdgeInsets.all(2),
                   child: StatusDot(tone: StatusTone.busy, size: dot),
@@ -134,7 +134,7 @@ class RoomAvatar extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.07),
             shape: const CircleBorder(),
           ),
-          child: Icon(AppIcons.groupChat, size: size * 0.5, color: DshColors.of(context).textTertiary),
+          child: Icon(AppIcons.groupChat, size: size * 0.5, color: XrkColors.of(context).textTertiary),
         ),
       );
     }

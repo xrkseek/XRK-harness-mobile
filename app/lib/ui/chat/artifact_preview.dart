@@ -8,7 +8,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -206,7 +206,7 @@ Future<Artifact> _absolute(WidgetRef ref, String sessionId, Artifact artifact) a
 /// A preview failure in words, and whether it is about the file itself.
 ({String title, String? message, _Fix fix}) _problemOf(Object error) {
   final code = switch (error) {
-    DshRemoteException(:final code) => code,
+    XrkRemoteException(:final code) => code,
     ArtifactError(:final code) => code,
     SheetFormatException() => 'sheet',
     _ => '',
@@ -548,7 +548,7 @@ class PreviewNotice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     Widget? graphic = glyph;
     if (graphic == null && icon != null) {
       graphic = SizedBox.square(
@@ -609,7 +609,7 @@ Widget _noticeFor(
 }) {
   final problem = _problemOf(error);
   final tooLarge = switch (error) {
-    DshRemoteException(:final code) || ArtifactError(:final code) => code == 'workspace-file/too-large',
+    XrkRemoteException(:final code) || ArtifactError(:final code) => code == 'workspace-file/too-large',
     _ => false,
   };
   final large = sized && tooLarge;
@@ -702,7 +702,7 @@ class _FramePage extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: metaIsPath
-                                    ? AppType.monoLabel(color: DshColors.of(context).textTertiary)
+                                    ? AppType.monoLabel(color: XrkColors.of(context).textTertiary)
                                     : theme.textTheme.bodySmall?.copyWith(
                                         color: theme.colorScheme.onSurfaceVariant,
                                         height: 1.35,
@@ -925,7 +925,7 @@ class _TextPreviewState extends ConsumerState<_TextPreview> {
     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
     child: Text(
       text,
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: DshColors.of(context).textTertiary),
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: XrkColors.of(context).textTertiary),
     ),
   );
 }
@@ -956,7 +956,7 @@ class _MoreElsewhere extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(text, style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary)),
+            child: Text(text, style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary)),
           ),
           TextButton(onPressed: onOpen, child: Text(l10n.commonOpenWith)),
         ],
@@ -1009,7 +1009,7 @@ class _MarkdownDocument extends StatelessWidget {
   Widget build(BuildContext context) {
     final front = splitFrontMatter(text);
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1146,14 +1146,14 @@ class _TablePreviewState extends ConsumerState<_TablePreview> {
       final stat = await source?.stat(widget.artifact.path);
       _bytes = stat?.bytes;
       if ((stat?.bytes ?? 0) > _workbookBytes) {
-        throw DshRemoteException('workspace-file/too-large', 'workbook', {});
+        throw XrkRemoteException('workspace-file/too-large', 'workbook', {});
       }
     }
     final file = await files.materialize(widget.sessionId, await _absolute(ref, widget.sessionId, widget.artifact));
     final size = await file.length();
     _bytes = size;
     if (size > _workbookBytes) {
-      throw DshRemoteException('workspace-file/too-large', 'workbook', {});
+      throw XrkRemoteException('workspace-file/too-large', 'workbook', {});
     }
     final bytes = await file.readAsBytes();
     return compute(_readWorkbook, bytes);
@@ -1178,7 +1178,7 @@ class _TablePreviewState extends ConsumerState<_TablePreview> {
     if (sheets == null) return const _Spinner();
     final grid = sheets[_sheet];
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final note = [
       if (grid.truncated) l10n.viewArtifactRows(grid.rows.length),
       if (grid.columns > 200) l10n.viewArtifactColumns,
@@ -1293,7 +1293,7 @@ class _PdfPreviewState extends ConsumerState<_PdfPreview> {
           final stat = await ref.read(workspaceSourceProvider(widget.sessionId))?.stat(widget.artifact.path);
           _bytes = stat?.bytes;
           if ((stat?.bytes ?? 0) > _remotePdfBytes) {
-            throw DshRemoteException('workspace-file/too-large', 'pdf', {});
+            throw XrkRemoteException('workspace-file/too-large', 'pdf', {});
           }
         }
         file = await files.materialize(widget.sessionId, await _absolute(ref, widget.sessionId, widget.artifact));
@@ -1398,7 +1398,7 @@ class _ImagePreviewState extends ConsumerState<_ImagePreview> {
         final stat = await ref.read(workspaceSourceProvider(widget.sessionId))?.stat(widget.artifact.path);
         _bytes = stat?.bytes;
         if ((stat?.bytes ?? 0) > _remoteImageBytes) {
-          throw DshRemoteException('workspace-file/too-large', 'image', {});
+          throw XrkRemoteException('workspace-file/too-large', 'image', {});
         }
       }
       final file = await files.materialize(widget.sessionId, await _absolute(ref, widget.sessionId, widget.artifact));
@@ -1661,7 +1661,7 @@ class _Waiting extends StatelessWidget {
             Text(
               text,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(color: DshColors.of(context).textTertiary),
+              style: theme.textTheme.bodyMedium?.copyWith(color: XrkColors.of(context).textTertiary),
             ),
             const SizedBox(height: 12),
             TextButton.icon(
@@ -1714,7 +1714,7 @@ class _PdfPagesState extends ConsumerState<_PdfPages> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return FutureBuilder(
       future: _pages,
       builder: (context, snapshot) {

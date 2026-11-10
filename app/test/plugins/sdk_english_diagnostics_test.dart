@@ -3,8 +3,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -47,10 +47,10 @@ process.stdout.write(JSON.stringify(cases.map(c => ({name:c.name, ...checkView(c
         budget: PluginViewBudget.values.byName(c['budget'] as String),
       );
       final issues = switch (parsed) {
-        DshUiParsed(:final view) => view.issues,
-        DshUiInvalid(:final error) => [error],
+        XrkUiParsed(:final view) => view.issues,
+        XrkUiInvalid(:final error) => [error],
       };
-      expect(parsed is DshUiInvalid, js['fatal'], reason: c['name'] as String);
+      expect(parsed is XrkUiInvalid, js['fatal'], reason: c['name'] as String);
       expect(
         [
           for (final issue in issues) {'path': issue.path, 'message': issue.message},

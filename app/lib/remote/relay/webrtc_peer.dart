@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dsh_remote/dsh_remote.dart' as remote;
+import 'package:xrk_remote/xrk_remote.dart' as remote;
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 /// [remote.RemotePeerConnector] over flutter_webrtc (libwebrtc): the
-/// DataChannel that carries DSH Remote's direct path (LAN / P2P / TURN).
+/// DataChannel that carries XRK Remote's direct path (LAN / P2P / TURN).
 /// Data only — no microphone, camera or audio session is touched.
 Future<remote.RemotePeerConnection> flutterPeerConnector(
   List<remote.RemoteIceServer> iceServers,

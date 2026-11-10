@@ -8,16 +8,16 @@
 //
 //   flutter test --update-goldens test/providers/provider_model_test.dart
 
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/providers_state.dart';
-import 'package:dsh_app/ui/common/segmented_pill.dart';
-import 'package:dsh_app/ui/providers/provider_detail_page.dart';
-import 'package:dsh_app/ui/providers/provider_form_page.dart';
-import 'package:dsh_app/ui/providers/provider_model_page.dart';
-import 'package:dsh_app/ui/providers/provider_widgets.dart' show FormFieldBlock, FormFieldLabel, SelectionTick;
-import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsMetrics;
-import 'package:dsh_app/ui/theme/glass.dart' show GlassSurface;
-import 'package:dsh_client/dsh_client.dart' show DshRemoteException, ModelCatalog, ProviderSettings;
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/providers_state.dart';
+import 'package:xrk_app/ui/common/segmented_pill.dart';
+import 'package:xrk_app/ui/providers/provider_detail_page.dart';
+import 'package:xrk_app/ui/providers/provider_form_page.dart';
+import 'package:xrk_app/ui/providers/provider_model_page.dart';
+import 'package:xrk_app/ui/providers/provider_widgets.dart' show FormFieldBlock, FormFieldLabel, SelectionTick;
+import 'package:xrk_app/ui/settings/settings_widgets.dart' show SettingsMetrics;
+import 'package:xrk_app/ui/theme/glass.dart' show GlassSurface;
+import 'package:xrk_client/xrk_client.dart' show XrkRemoteException, ModelCatalog, ProviderSettings;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -557,5 +557,5 @@ class _RefusingBackend extends FakeProviderBackend {
     String? apiKeyEnv,
     List<ProviderModelSpec>? models,
     int? expectedRevision,
-  }) async => throw const DshRemoteException('settings/conflict', 'revision 3 is stale');
+  }) async => throw const XrkRemoteException('settings/conflict', 'revision 3 is stale');
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,7 +45,7 @@ void main() {
   for (final code in ['bot/read-only', 'bot/not-found']) {
     test('legacy hello $code is an unsupported mobile capability', () async {
       final fake = FakeDsBotTransport();
-      fake.handlers['hello'] = (_) => throw DshRemoteException(code, 'legacy endpoint');
+      fake.handlers['hello'] = (_) => throw XrkRemoteException(code, 'legacy endpoint');
       final container = dsBotContainer(fake);
       addTearDown(container.dispose);
       container.listen(dsBotProvider, (_, _) {});

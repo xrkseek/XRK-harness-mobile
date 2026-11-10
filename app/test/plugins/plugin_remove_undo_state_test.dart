@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +12,7 @@ import 'support/fake_plugin_host.dart';
 
 void main() {
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
   late ProviderContainer container;
   late List<Object?> inventory;
 
@@ -31,7 +31,7 @@ void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     inventory = [bundleJson('first'), bundleJson('second')];
     carrier.handlers['pluginManager/listBundles'] = (_) => inventory;
     carrier.handlers['pluginManager/removeBundle'] = (args) {
@@ -136,7 +136,7 @@ void main() {
     final first = controller.scheduleRemoval(bundle('first'));
     final other = FakePluginCarrier();
     other.handlers['pluginManager/listBundles'] = (_) => [bundleJson('first')];
-    final otherClient = DshClient.withCarrier(other);
+    final otherClient = XrkClient.withCarrier(other);
     addTearDown(otherClient.close);
     container.updateOverrides(pluginOverrides(fakeHost(otherClient)));
     await tester.pump();
@@ -188,9 +188,9 @@ void main() {
 
   testWidgets('Host exception restores row and propagates failure', (tester) async {
     final controller = await ready(tester);
-    carrier.handlers['pluginManager/removeBundle'] = (_) => throw const DshRemoteException('DENIED', 'denied');
+    carrier.handlers['pluginManager/removeBundle'] = (_) => throw const XrkRemoteException('DENIED', 'denied');
     final first = controller.scheduleRemoval(bundle('first'));
-    final failure = expectLater(first.done, throwsA(isA<DshRemoteException>()));
+    final failure = expectLater(first.done, throwsA(isA<XrkRemoteException>()));
     await tester.pump(InstalledPluginsController.removalUndoWindow);
     await failure;
     expect(visible(), ['first', 'second']);

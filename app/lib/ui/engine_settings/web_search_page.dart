@@ -84,7 +84,7 @@ class _ApiSwitch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final web = settings[WebSearchSettingsPage.webNs]!;
     final saving = _fields.any(settings.isSaving);
     final error = _fields.map(settings.errorOf).nonNulls.firstOrNull;

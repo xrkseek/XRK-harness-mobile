@@ -362,7 +362,7 @@
   "stateSafeSuspectPlugins": "{what}, suspected plugins: {plugins}",
   "stateSafePreflightFailed": "{what}, startup checks failed: {checks}",
   "stateListSeparator": ", ",
-  "stateSafeRepairPrompt": "My XRK has a problem in normal mode ({what}). Follow the Safe mode instructions to find the cause. Fix the web configuration using reversible changes, verify startup with dsh-app-plugins trial, then tell me what changed.",
+  "stateSafeRepairPrompt": "My XRK has a problem in normal mode ({what}). Follow the Safe mode instructions to find the cause. Fix the web configuration using reversible changes, verify startup with xrkh plugins trial, then tell me what changed.",
   "stateScheduleCreatePrompt": "Create automation “{title}”: {rule}.\nCall schedule_create exactly once, using these arguments unchanged. Don’t run the task now.\n\n```json\n{args}\n```",
   "stateActionReason": "{action}: {reason}",
   "stateAlertPreviewRun": "Run: {value}",

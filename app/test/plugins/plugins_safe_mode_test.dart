@@ -1,6 +1,6 @@
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../chat/support/harness.dart';
@@ -8,11 +8,11 @@ import 'support/fake_plugin_host.dart';
 
 void main() {
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
 
   setUp(() {
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     carrier.handlers['pluginManager/listBundles'] = (_) => sampleBundles;
   });
 

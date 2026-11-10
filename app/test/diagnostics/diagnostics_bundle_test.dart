@@ -6,13 +6,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/diagnostics/diagnostics_export.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/state/app_info.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/settings_state.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/diagnostics/diagnostics_export.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/state/app_info.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/settings_state.dart';
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,7 +30,7 @@ RuntimeStatus _status({bool crashed = true}) => RuntimeStatus(
   abi: 'arm64-v8a',
   bundledVersion: 'r4-dsh0.2.1-rc.2-node24.22.1-ubuntu24.04.5-4ae04eb76a4f',
   installedVersion: 'r4-dsh0.2.1-rc.2-node24.22.1-ubuntu24.04.5-4ae04eb76a4f',
-  dshVersion: '0.2.1-rc.2',
+  engineVersionAlias: '0.2.1-rc.2',
   nodeVersion: '24.22.1',
   baseUrl: 'http://127.0.0.1:3080',
   token: _launch,
@@ -44,7 +44,7 @@ RuntimeStatus _status({bool crashed = true}) => RuntimeStatus(
           summary: 'Error: plugin dsh-approval-gate failed to load (apiKey=$_sk)',
           suspects: const ['dsh-approval-gate'],
           recent: const ['dsh-approval-gate'],
-          diagnostics: '/root/.dsh/startup-diagnostics.json',
+          diagnostics: '/root/.xrk/startup-diagnostics.json',
           upSeconds: 3,
         )
       : null,
@@ -68,7 +68,7 @@ DiagnosticsSnapshot _snapshot({bool crashed = true}) => DiagnosticsSnapshot(
     },
     manifest: {
       'runtimeVersion': 'r4-dsh0.2.1-rc.2-node24.22.1-ubuntu24.04.5-4ae04eb76a4f',
-      'dshVersion': '0.2.1-rc.2',
+      'engineVersion': '0.2.1-rc.2',
       'nodeVersion': '24.22.1',
       'ubuntuVersion': '24.04.5',
     },
@@ -86,8 +86,8 @@ DiagnosticsSnapshot _snapshot({bool crashed = true}) => DiagnosticsSnapshot(
     'defaults': {'autoStartLocalDefault': false},
   },
   engineLog: [
-    '[dsh-app] launching dsh web',
-    'dsh web: http://127.0.0.1:3080/?token=$_launch',
+    '[dsh-app] launching xrkh serve',
+    'xrkh serve: http://127.0.0.1:3080/?token=$_launch',
     '\x1B[2m[gateway]\x1B[0m listening on 127.0.0.1:3080',
     '[llm] DEEPSEEK_API_KEY=$_sk',
     '[agent] turn finished · 2,431 tokens',
@@ -129,7 +129,7 @@ void main() {
       expect((summary['device']! as Map)['android'], '14');
       expect((summary['device']! as Map)['model'], '23113RKC6C');
       final runtime = summary['runtime']! as Map;
-      expect(runtime['dshVersion'], '0.2.1-rc.2');
+      expect(runtime['engineVersion'], '0.2.1-rc.2');
       expect(runtime['phase'], 'error');
       expect(runtime['strikes'], 1);
       expect(runtime['error'], 'login failed: http://127.0.0.1:3080/?token=•••');
@@ -165,8 +165,8 @@ void main() {
     test('logs: masked, colour stripped, ordinary lines intact', () {
       expect(
         files['engine.log'],
-        '[dsh-app] launching dsh web\n'
-        'dsh web: http://127.0.0.1:3080/?token=•••\n'
+        '[dsh-app] launching xrkh serve\n'
+        'xrkh serve: http://127.0.0.1:3080/?token=•••\n'
         '[gateway] listening on 127.0.0.1:3080\n'
         '[llm] DEEPSEEK_API_KEY=sk-•••\n'
         '[agent] turn finished · 2,431 tokens\n',
@@ -195,7 +195,6 @@ void main() {
 
   group('exporter', () {
     late Directory cache;
-    late _Files files;
     late List<ShareParams> shared;
     late List<DiagnosticsStep> steps;
     late DiagnosticsExporter exporter;
@@ -203,12 +202,10 @@ void main() {
     setUp(() {
       cache = Directory.systemTemp.createTempSync('dsh-diagnostics-');
       addTearDown(() => cache.deleteSync(recursive: true));
-      files = _Files();
       shared = [];
       steps = [];
       exporter = DiagnosticsExporter(
         collect: (at) async => _snapshot(),
-        files: files,
         share: (params) async {
           shared.add(params);
           return ShareResultStatus.success;
@@ -231,85 +228,6 @@ void main() {
       expect(steps, [DiagnosticsStep.collecting, DiagnosticsStep.packing]);
     });
 
-    test('save hands the ZIP to Downloads and says where', () async {
-      final where = await exporter.saveToDownloads(onStep: steps.add);
-      expect(where, 'Download/XRK-Harness/xrk-harness-diagnostics-20261024-153012.zip');
-      expect(files.saved.single.name, 'xrk-harness-diagnostics-20261024-153012.zip');
-      expect(files.saved.single.mime, 'application/zip');
-      expect(diagnosticsSavedText(where), '已存到 下载/XRK-Harness/xrk-harness-diagnostics-20261024-153012.zip');
-      expect(steps.last, DiagnosticsStep.saving);
-    });
-
-    for (final seconds in [0, 1]) {
-      test('a later build preserves the ZIP awaiting native save (offset $seconds)', () async {
-        final held = _HeldFiles();
-        DiagnosticsExporter make(String line, DateTime at) => DiagnosticsExporter(
-          collect: (_) async => DiagnosticsSnapshot(
-            at: at,
-            status: _status(crashed: false),
-            settings: const AppSettings(loaded: true),
-            engineLog: [line],
-          ),
-          files: held,
-          cacheRoot: () async => cache,
-          clock: () => at,
-        );
-        final first = make('first export', _at).saveToDownloads();
-        // Own errors immediately, including a failure before the native boundary.
-        final outcome = first.then<Object>((value) => value, onError: (Object error) => error);
-        addTearDown(() async {
-          if (!held.release.isCompleted) held.release.complete();
-          await outcome;
-        });
-        await Future.any<Object>([held.entered.future, outcome]);
-        expect(held.entered.isCompleted, isTrue, reason: 'the first save must reach native IO');
-        try {
-          await make('second export', _at.add(Duration(seconds: seconds))).build();
-        } finally {
-          held.release.complete();
-        }
-        expect(await outcome, 'Download/XRK-Harness/xrk-harness-diagnostics-20261024-153012.zip');
-        expect(_unzip(held.bytes!)['engine.log']!.trim(), 'first export');
-      });
-    }
-
-    test('save removes only its operation directory after native completion', () async {
-      final built = await exporter.build();
-      final where = await exporter.saveToDownloads(onStep: steps.add);
-      expect(where, 'Download/XRK-Harness/xrk-harness-diagnostics-20261024-153012.zip');
-      final source = File(files.saved.single.path);
-      expect(source.existsSync(), isFalse);
-      expect(source.parent.existsSync(), isFalse);
-      expect(built.existsSync(), isTrue, reason: 'a separate build still owns its root ZIP');
-      expect(steps, [DiagnosticsStep.collecting, DiagnosticsStep.packing, DiagnosticsStep.saving]);
-    });
-
-    test('save cleans its operation on native failure and preserves the error', () async {
-      final failure = PlatformException(code: 'permission', message: 'denied');
-      final native = _FailingFiles(failure);
-      final failed = DiagnosticsExporter(
-        collect: (_) async => _snapshot(),
-        files: native,
-        cacheRoot: () async => cache,
-        clock: () => _at,
-      );
-      await expectLater(failed.saveToDownloads(), throwsA(same(failure)));
-      expect(native.source, isNotNull);
-      expect(native.source!.parent.existsSync(), isFalse);
-    });
-
-    test('save cleans an allocated operation when collection fails', () async {
-      final failure = StateError('collection failed');
-      final failed = DiagnosticsExporter(
-        collect: (_) async => throw failure,
-        files: files,
-        cacheRoot: () async => cache,
-      );
-      await expectLater(failed.saveToDownloads(), throwsA(same(failure)));
-      expect(files.saved, isEmpty);
-      expect(Directory('${cache.path}/diagnostics').listSync(), isEmpty);
-    });
-
     test('share sends the ZIP to the share sheet', () async {
       expect(await exporter.share(onStep: steps.add), isTrue);
       final params = shared.single;
@@ -325,44 +243,4 @@ void main() {
       expect(diagnosticsErrorText(StateError('x')), '没能导出诊断包');
     });
   });
-}
-
-class _Files extends FilesChannel {
-  final saved = <({String path, String name, String mime})>[];
-
-  @override
-  Future<String> saveToDownloads(String hostPath, {required String name, required String mime}) async {
-    expect(File(hostPath).existsSync(), isTrue);
-    saved.add((path: hostPath, name: name, mime: mime));
-    return 'Download/XRK-Harness/$name';
-  }
-}
-
-/// Models FilesPlugin opening its source on the worker after the channel call.
-class _HeldFiles extends FilesChannel {
-  final entered = Completer<String>();
-  final release = Completer<void>();
-  List<int>? bytes;
-
-  @override
-  Future<String> saveToDownloads(String hostPath, {required String name, required String mime}) async {
-    entered.complete(hostPath);
-    await release.future;
-    bytes = await File(hostPath).readAsBytes();
-    return 'Download/XRK-Harness/$name';
-  }
-}
-
-class _FailingFiles extends FilesChannel {
-  _FailingFiles(this.failure);
-
-  final Object failure;
-  File? source;
-
-  @override
-  Future<String> saveToDownloads(String hostPath, {required String name, required String mime}) async {
-    source = File(hostPath);
-    expect(source!.existsSync(), isTrue);
-    throw failure;
-  }
 }

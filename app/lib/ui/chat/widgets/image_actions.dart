@@ -28,7 +28,7 @@ String gallerySaveErrorText(String code) => switch (code) {
 };
 
 /// 「保存到相册」: reads the picture with [load], puts it in the gallery's
-/// DSH album as [name] and says so (「已保存到相册」). Refused storage offers
+/// XRK album as [name] and says so (「已保存到相册」). Refused storage offers
 /// 「去设置」. True once saved.
 Future<bool> saveImageToGallery(BuildContext context, ImageBytes load, {String? name}) async {
   final l10n = context.l10n;

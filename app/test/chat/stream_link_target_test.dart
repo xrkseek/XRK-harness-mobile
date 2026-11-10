@@ -1,4 +1,4 @@
-import 'package:dsh_app/ui/chat/render/stream_repair.dart';
+import 'package:xrk_app/ui/chat/render/stream_repair.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

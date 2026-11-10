@@ -1,13 +1,13 @@
-// Goldens for first run's 确认方式 sheet over 「想让 DSH Go 帮你做哪些事」:
+// Goldens for first run's 确认方式 sheet over 「想让 XRK Go 帮你做哪些事」:
 // nothing chosen yet, and 全程自动 chosen with what stays with the person.
 //
 //   flutter test --update-goldens test/access/phone_mode_golden_test.dart
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/onboarding/access_step.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/onboarding/access_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

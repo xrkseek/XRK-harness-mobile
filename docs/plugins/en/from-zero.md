@@ -2,17 +2,17 @@
 
 [中文](../from-zero.md)
 
-Build an installable DSH plugin from an empty directory. It counts Unicode code points, UTF-8 bytes and lines, displays a native card in dsh-go, and keeps an ordinary tool result for the model and the DSH web client. The example does not make network requests, write files or read the clipboard. Its output contains counts only.
+Build an installable XRK plugin from an empty directory. It counts Unicode code points, UTF-8 bytes and lines, displays a native card in xrk-mobile, and keeps an ordinary tool result for the model and the XRK web client. The example does not make network requests, write files or read the clipboard. Its output contains counts only.
 
 The sequence is: write the bundle, test and check its view, install it on a host, inspect the release tarball, publish your package, then verify the market index. Each step has an observable result.
 
 ## 1. Prepare the development environment
 
-The example targets **DSH and dsh-tools 0.2.1-rc.4** and needs Node 22.19 or later (this guide was verified on Node 24). DSH Go now ships 0.2.2-rc.1 (which needs Node 24.9 or later), and the repository's example plugins run their tests on it.
+The example targets **XRK and dsh-tools 0.2.1-rc.4** and needs Node 22.19 or later (this guide was verified on Node 24). XRK Go now ships 0.2.2-rc.1 (which needs Node 24.9 or later), and the repository's example plugins run their tests on it.
 
-`engines.dsh` and the dsh-tools dependencies name a **tested version range**, the same as the example plugins in this repository: `">=0.2.1-rc.2 <0.3.0-0"`. DSH compares versions with semver when it installs a plugin, so a single exact version gets the plugin refused as soon as the engine moves on (rc.2 → rc.4, say) even if not a line changed. The lower bound is the oldest version you tested; the upper bound stops before the next minor version, because a 0.x minor may break things. To support a version outside the range, run the same tests on it first, then widen the range.
+`engines.dsh` and the dsh-tools dependencies name a **tested version range**, the same as the example plugins in this repository: `">=0.2.1-rc.2 <0.3.0-0"`. XRK compares versions with semver when it installs a plugin, so a single exact version gets the plugin refused as soon as the engine moves on (rc.2 → rc.4, say) even if not a line changed. The lower bound is the oldest version you tested; the upper bound stops before the next minor version, because a 0.x minor may break things. To support a version outside the range, run the same tests on it first, then widen the range.
 
-You need an installed `dsh` CLI and a complete dsh-go development checkout containing `sdk/plugin-kit/`. The SDK is distributed with the repository and is not published to npm. The name `@dsh-go/plugin-kit` in examples is not an instruction to install a public npm package. This guide invokes the checker from the checkout; the plugin itself uses DSH's `dsh-tools` at runtime.
+You need an installed `xrkh` CLI and a complete xrk-mobile development checkout containing `sdk/plugin-kit/`. The SDK is distributed with the repository and is not published to npm. The name `@xrkseek/plugin-kit` in examples is not an instruction to install a public npm package. This guide invokes the checker from the checkout; the plugin itself uses XRK's `dsh-tools` at runtime.
 
 ```sh
 node --version
@@ -20,15 +20,15 @@ npm --version
 pnpm --version
 dsh --version
 
-# Replace this with your complete dsh-go development checkout.
-DSHGO_DEV_ROOT=/absolute/path/to/dsh-go
+# Replace this with your complete xrk-mobile development checkout.
+DSHGO_DEV_ROOT=/absolute/path/to/xrk-mobile
 mkdir -p dsh-text-metrics-demo/lib dsh-text-metrics-demo/test
 cd dsh-text-metrics-demo
 ```
 
 ## 2. Write the complete plugin
 
-Put these seven files in the new directory. `dsh.bundle.patch` in `package.json` declares the installation layer, and `cordis.patch.yml` mounts the package entry point. There is no `dshGo` manifest: **a tool-result card does not need the native bridge manifest**.
+Put these seven files in the new directory. `dsh.bundle.patch` in `package.json` declares the installation layer, and `cordis.patch.yml` mounts the package entry point. There is no `xrkGo` manifest: **a tool-result card does not need the native bridge manifest**.
 
 `render` produces ordinary text for the model; `presentationMeta` supplies the app card. The card uses fixed components and concrete values, with no tool-card data bindings or buttons. `toolCard` converts the view to plain JSON and falls back to a normal result without a card if construction fails or the view exceeds 8 KiB.
 
@@ -42,7 +42,7 @@ The input limit counts UTF-16 code units. Output code points are not grapheme cl
   "name": "dsh-text-metrics-demo",
   "version": "0.1.0",
   "private": true,
-  "description": "A DSH tool with a bilingual native text-metrics card.",
+  "description": "A XRK tool with a bilingual native text-metrics card.",
   "type": "module",
   "main": "./lib/index.js",
   "exports": {
@@ -53,8 +53,8 @@ The input limit counts UTF-16 code units. Output code points are not grapheme cl
   "files": ["lib", "cordis.patch.yml", "README.md"],
   "scripts": { "test": "node --test test/*.test.js" },
   "engines": { "node": ">=22.19", "dsh": ">=0.2.1-rc.2 <0.3.0-0" },
-  "peerDependencies": { "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2 <0.3.0-0" },
-  "devDependencies": { "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2 <0.3.0-0" },
+  "peerDependencies": { "@xrkseek/harness-cli-tools": ">=0.2.1-rc.2 <0.3.0-0" },
+  "devDependencies": { "@xrkseek/harness-cli-tools": ">=0.2.1-rc.2 <0.3.0-0" },
   "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
 }
 ```
@@ -107,7 +107,7 @@ export function toolCard(build) {
     try {
       const json = JSON.stringify(build(args, value))
       if (json === undefined || Buffer.byteLength(json, 'utf8') > 8 * 1024) return {}
-      return { 'dsh-go/view': JSON.parse(json) }
+      return { 'xrk-mobile/view': JSON.parse(json) }
     } catch {
       return {}
     }
@@ -119,7 +119,7 @@ export function toolCard(build) {
 
 <!-- file: lib/index.js -->
 ```js
-import { defineTool } from '@deepseek-ai/dsh-tools'
+import { defineTool } from '@xrkseek/harness-cli-tools'
 import { measure } from './measure.js'
 import { metricsView, toolCard } from './view.js'
 
@@ -163,7 +163,7 @@ export function apply(ctx) {
 ```js
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { validateJsonSchemaValue } from '@deepseek-ai/dsh-tools'
+import { validateJsonSchemaValue } from '@xrkseek/harness-cli-tools'
 import { apply } from '../lib/index.js'
 import { measure } from '../lib/measure.js'
 import { metricsView, toolCard } from '../lib/view.js'
@@ -192,8 +192,8 @@ test('real defineTool output validates and carries both model text and a card', 
     const value = await tool.execute(args)
     assert.deepEqual(validateJsonSchemaValue(tool.output.schema, value, 'value'), [])
     const meta = tool.output.presentationMeta(args, value)
-    assert.deepEqual(meta['dsh-go/view'], metricsView(value))
-    assert.ok(Buffer.byteLength(JSON.stringify(meta['dsh-go/view']), 'utf8') < 8192)
+    assert.deepEqual(meta['xrk-mobile/view'], metricsView(value))
+    assert.ok(Buffer.byteLength(JSON.stringify(meta['xrk-mobile/view']), 'utf8') < 8192)
     assert.equal(tool.output.render(args, value)[0].type, 'text')
     assert.ok(!JSON.stringify(meta).includes(args.text))
   }
@@ -213,13 +213,13 @@ test('a broken or oversized card does not fail the tool result', () => {
 # Text metrics / 文本统计
 
 The `text_metrics` tool counts Unicode code points, UTF-8 bytes and lines.
-It does not store the input or make network requests. dsh-go shows a native
-card; the DSH web client keeps the ordinary text result.
+It does not store the input or make network requests. xrk-mobile shows a native
+card; the XRK web client keeps the ordinary text result.
 
 `text_metrics` 统计码点、UTF-8 字节和行数，不保存输入、不发网络请求。
 码点不是字形；空文本为0行。输入上限8000个UTF-16码元。
 
-Development baseline: DSH and dsh-tools 0.2.1-rc.4, Node 22.19+. Supports DSH >=0.2.1-rc.2 <0.3.0-0.
+Development baseline: XRK and dsh-tools 0.2.1-rc.4, Node 22.19+. Supports XRK >=0.2.1-rc.2 <0.3.0-0.
 Run `npm install --ignore-scripts` and `npm test` before installing this local bundle.
 This tutorial package is private; choose a unique name and a license before publishing.
 ```
@@ -234,7 +234,7 @@ npm test
 node "$DSHGO_DEV_ROOT/sdk/plugin-kit/bin/check.mjs" . --load
 ```
 
-The tests use the real `@deepseek-ai/dsh-tools` definition and output validator. Their `ctx.tools.register` is a collector, so this step is not a complete host boot. Expect four passing tests and `text_metrics` in the checker's registered tools. “No dshGo manifest: only zero-cost extensions such as tool cards (presentationMeta)” is expected for this example.
+The tests use the real `@xrkseek/harness-cli-tools` definition and output validator. Their `ctx.tools.register` is a collector, so this step is not a complete host boot. Expect four passing tests and `text_metrics` in the checker's registered tools. “No xrkGo manifest: only zero-cost extensions such as tool cards (presentationMeta)” is expected for this example.
 
 Export a deterministic result as JSON for the checker and preview:
 
@@ -272,13 +272,13 @@ dsh plugin --profile web add "$DSH_TUTORIAL_PLUGIN_DIR"
 dsh --profile web --dump-config
 ```
 
-`--dump-config` confirms that the bundle layer composes; it does not prove that the JavaScript entry point loaded. Check loading in the running `web` profile as well, or start it with `dsh web`. Ask the model to call `text_metrics` with two lines, “你好” and “A”. The ordinary result and the native card should both appear.
+`--dump-config` confirms that the bundle layer composes; it does not prove that the JavaScript entry point loaded. Check loading in the running `web` profile as well, or start it with `xrkh serve`. Ask the model to call `text_metrics` with two lines, “你好” and “A”. The ordinary result and the native card should both appear.
 
 | Host | Where to install and check |
 |---|---|
 | On-device engine | Use the app's local terminal and keep the directory inside that environment |
 | SSH host | Use the remote terminal; a development-computer path is not automatically copied there |
-| Relay host | Install on the machine running DSH; tool cards travel with existing tool records and this example needs no additional REST tunnel |
+| Relay host | Install on the machine running XRK; tool cards travel with existing tool records and this example needs no additional REST tunnel |
 
 This release links a local directory, so removing it breaks the entry point. After editing `lib/`, follow [local reloading](local-development.md). Restarting the on-device engine interrupts current work. Uninstalling and reinstalling is not a guarantee that an already loaded module is invalidated. Existing conversation records do not recompute presentation metadata; make a new tool call.
 
@@ -295,8 +295,8 @@ Install the actual tarball in an empty test home so a directory link cannot hide
 
 ```sh
 DSH_TUTORIAL_HOME="$(mktemp -d)/dsh-home"
-DSH_HOME="$DSH_TUTORIAL_HOME" dsh plugin --profile web add "$PWD/dsh-text-metrics-demo-0.1.0.tgz"
-DSH_HOME="$DSH_TUTORIAL_HOME" dsh web --no-open
+XRK_HOME="$DSH_TUTORIAL_HOME" dsh plugin --profile web add "$PWD/dsh-text-metrics-demo-0.1.0.tgz"
+XRK_HOME="$DSH_TUTORIAL_HOME" xrkh serve --no-open
 ```
 
 After renaming the package, use the tarball filename reported by `npm pack`.
@@ -353,7 +353,7 @@ npm view @your-scope/dsh-text-metrics name version repository dist.integrity --j
 
 The example has no `prepare` or `prepublishOnly` build scripts, so these commands explicitly disable scripts. If later versions require them, complete the build and tests before following the appropriate release process. Uploading a source repository alone does not publish an installable npm package. Refer to [npm's publication documentation](https://docs.npmjs.com/cli/v11/commands/npm-publish/) for account operations and command options.
 
-## 7. Verify the market index dsh-go actually consumes
+## 7. Verify the market index xrk-mobile actually consumes
 
 The app currently reads dshfind's **format-1 index** at `https://api.dshfind.com/market/dsh-index.json`. Website discovery and inclusion in this index have different requirements.
 
@@ -373,7 +373,7 @@ console.log(entry ? JSON.stringify(entry, null, 2) : 'Not in this index yet')
 JS
 ```
 
-Finally search for the package in the app, verify version, source and target host, install it and make a fresh tool call. A website page, an npm release, an index entry and a working app installation are four separate states; confirm each one. If the package stays unlisted, contact dshfind through its feedback channel with the public repository URL, the exact npm version and the index result. No listing request to dsh-go is needed.
+Finally search for the package in the app, verify version, source and target host, install it and make a fresh tool call. A website page, an npm release, an index entry and a working app installation are four separate states; confirm each one. If the package stays unlisted, contact dshfind through its feedback channel with the public repository URL, the exact npm version and the index result. No listing request to xrk-mobile is needed.
 
 ## 8. Troubleshooting
 
@@ -389,6 +389,6 @@ Finally search for the package in the app, verify version, source and target hos
 
 ## References
 
-Compare the implementation with this repository's [quick start](quickstart.md), [host support](hosts.md), [checklist](checklist.md), the SDK and the [weather example](../../../examples/plugins/dsh-go-example-weather/).
+Compare the implementation with this repository's [quick start](quickstart.md), [host support](hosts.md), [checklist](checklist.md), the SDK and the [weather example](../../../examples/plugins/xrk-example-weather/).
 
-Bundle/profile behavior is documented in the [official DSH publishing guide](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md). Market requirements come from [dshfind's discovery documentation](https://github.com/hikariming/dshfind/blob/3ee8543f3ec60792cae0523d4a149cba0d68770c/README.zh-CN.md) and its [index generator](https://github.com/hikariming/dshfind/blob/3ee8543f3ec60792cae0523d4a149cba0d68770c/scripts/lib/dsh-index.mjs).
+Bundle/profile behavior is documented in the [official XRK publishing guide](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md). Market requirements come from [dshfind's discovery documentation](https://github.com/hikariming/dshfind/blob/3ee8543f3ec60792cae0523d4a149cba0d68770c/README.zh-CN.md) and its [index generator](https://github.com/hikariming/dshfind/blob/3ee8543f3ec60792cae0523d4a149cba0d68770c/scripts/lib/dsh-index.mjs).

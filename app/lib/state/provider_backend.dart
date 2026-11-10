@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 /// What the custom-provider screens need from one engine, as a seam the tests
-/// can fake. [ClientProviderBackend] is the real one, over a [DshClient].
+/// can fake. [ClientProviderBackend] is the real one, over a [XrkClient].
 abstract class ProviderBackend {
   /// The on-device engine (keys typed here are also kept on the phone).
   bool get isLocal;
@@ -68,7 +68,7 @@ abstract class ProviderBackend {
 class ClientProviderBackend implements ProviderBackend {
   ClientProviderBackend(this.client, {required this.isLocal, required this.hostLabel});
 
-  final DshClient client;
+  final XrkClient client;
 
   @override
   final bool isLocal;

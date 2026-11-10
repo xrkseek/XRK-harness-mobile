@@ -1,7 +1,7 @@
-// Incoming app links (`dshgo://…`, the https landing
+// Incoming app links (`xrkharness://…`, the https landing
 // links once App Links are verified) and files opened with / shared to the
 // app, routed to the feature that owns them. Native side:
-// android/.../links/LinksPlugin.kt (MethodChannel `dsh/links`).
+// android/.../links/LinksPlugin.kt (MethodChannel `xrk/links`).
 //
 // ── For features ────────────────────────────────────────────────────────────
 //
@@ -20,11 +20,11 @@
 //   toasts), null while the home shell isn't on screen.
 //
 // Reserved hosts: `share` (分享码, lib/share_code), `forum` (community login,
-// e.g. `dshgo://forum/auth?payload=…`), `open` (a page of the app,
+// e.g. `xrkharness://forum/auth?payload=…`), `open` (a page of the app,
 // links/page_links.dart), and the share host's own name for
-// hosted conversation links (`dshgo://go.dshtui.com/c/…`, the same as its
+// hosted conversation links (`xrkharness://go.dshtui.com/c/…`, the same as its
 // https links; registered by [LinkHost] itself, lib/ui/share_hosted/) and
-// the official market's plugin pages (`dshgo://go.dshtui.com/p/…`,
+// the official market's plugin pages (`xrkharness://go.dshtui.com/p/…`,
 // links/plugin_links.dart).
 //
 // ── Delivery ────────────────────────────────────────────────────────────────
@@ -60,7 +60,7 @@ const appLinkScheme = 'dshgo';
 
 /// The native bridge: a broadcast stream of incoming links.
 class AppLinks {
-  AppLinks({MethodChannel? channel}) : _channel = channel ?? const MethodChannel('dsh/links') {
+  AppLinks({MethodChannel? channel}) : _channel = channel ?? const MethodChannel('xrk/links') {
     _controller = StreamController<Uri>.broadcast(onListen: _flush);
     _channel.setMethodCallHandler(_onCall);
     unawaited(_ready());
@@ -352,7 +352,7 @@ class _LinkHostState extends ConsumerState<LinkHost> {
     _offHosted = registerHostedLinks(_router);
     // A plugin's page in the official market: its detail sheet.
     _offPlugins = registerPluginLinks(_router);
-    // `dshgo://open/<page>`: the guide's links to the app's own pages.
+    // `xrkharness://open/<page>`: the guide's links to the app's own pages.
     _offPages = registerPageLinks(
       _router,
       session: () => ref.read(currentSessionProvider),

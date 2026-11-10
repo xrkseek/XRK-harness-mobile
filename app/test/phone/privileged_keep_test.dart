@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/phone_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _modes = ['off', 'shizuku', 'sui', 'root', 'adb'];
-const _methods = MethodChannel('dsh/phone');
+const _methods = MethodChannel('xrk/phone');
 
 Map<String, Object?> _wire({
   Object? keep,

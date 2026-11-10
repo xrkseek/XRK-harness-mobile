@@ -11,10 +11,10 @@
 
 import 'dart:ui' show Tristate;
 
-import 'package:dsh_app/state/tile_style_state.dart';
-import 'package:dsh_app/ui/common/feature_tile.dart';
-import 'package:dsh_app/ui/settings/appearance/tile_style_picker.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/state/tile_style_state.dart';
+import 'package:xrk_app/ui/common/feature_tile.dart';
+import 'package:xrk_app/ui/settings/appearance/tile_style_picker.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

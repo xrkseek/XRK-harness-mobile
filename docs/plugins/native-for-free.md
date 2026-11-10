@@ -1,6 +1,6 @@
 # 不写 App 代码就原生显示的东西
 
-DSH 插件里有六样东西，dsh-go App 已经用原生界面画，不需要任何 dsh-go 专属代码（第 6 样只多一个函数）。先把这些用足，再考虑[插槽](slots.md)。
+XRK 插件里有六样东西，xrk-mobile App 已经用原生界面画，不需要任何 xrk-mobile 专属代码（第 6 样只多一个函数）。先把这些用足，再考虑[插槽](slots.md)。
 
 | 插件里写了 | App 里出现在 | 原生程度 | 主机 |
 |---|---|---|---|
@@ -9,7 +9,7 @@ DSH 插件里有六样东西，dsh-go App 已经用原生界面画，不需要�
 | 插件配置（导出 `Config`，可在线修改的字段） | 插件详情页、设置里的插件分组：原生表单 | 完全原生 | 本机、SSH；中转视主机而定 |
 | 工具（`defineTool`） | 对话里的工具行：图标 + 名字 + 一行摘要，展开看参数和结果 | 通用样式 | 全部 |
 | 教模型输出 ` ```dsh-ui ` 代码块（写进技能或系统提示） | 助手消息里的图表、指标、对比卡、选项 | 完全原生 | 全部 |
-| 工具的 `presentationMeta` 里放 `"dsh-go/view"` | 工具行展开区的原生卡片 | 完全原生 | 全部 |
+| 工具的 `presentationMeta` 里放 `"xrk-mobile/view"` | 工具行展开区的原生卡片 | 完全原生 | 全部 |
 
 ## 工具行的摘要怎么取
 
@@ -23,7 +23,7 @@ DSH 插件里有六样东西，dsh-go App 已经用原生界面画，不需要�
 
 插件导出的 `Config`（schemastery）会画成原生设置页，入口在插件详情和 设置 › 引擎参数 › 插件。`.volatile()` 的字段改了立即生效，其余字段点「保存」后重新载入插件。密钥类字段（`role('secret')`）只写不读。对象嵌套成组，`.collapse()` 的组默认折叠；`description` 写成 `{ zh, en }` 两种语言。插件自带网页设置页时，在 `apply` 里注册 `configure({ auto: false })`，App 会在页首给出「在网页版设置」，原生能画的字段照样画。
 
-主机装有提供 `/dsh-go/v1/plugin-config` 的 dsh-go bridge 时，所有字段都会出现；否则 App 只拿得到 volatile 字段。密钥要用 `role('credential-ref')` 绑定到凭据，裸的 `role('secret')` 在 App 里只显示是否已设置、不能填写（[设计](../design/plugin-config.md)）。
+主机装有提供 `/xrk-mobile/v1/plugin-config` 的 xrk-mobile bridge 时，所有字段都会出现；否则 App 只拿得到 volatile 字段。密钥要用 `role('credential-ref')` 绑定到凭据，裸的 `role('secret')` 在 App 里只显示是否已设置、不能填写（[设计](../design/plugin-config.md)）。
 
 ## dsh-ui 代码块
 
@@ -54,4 +54,4 @@ DSH 插件里有六样东西，dsh-go App 已经用原生界面画，不需要�
 
 ## 什么时候需要插槽
 
-上面六样覆盖不到的，才需要 `package.json` 里的 `dshGo` 清单：输入框上方的胶囊、消息长按菜单、输入框上方的状态条、原生面板。见[插槽参考](slots.md)。
+上面六样覆盖不到的，才需要 `package.json` 里的 `xrkGo` 清单：输入框上方的胶囊、消息长按菜单、输入框上方的状态条、原生面板。见[插槽参考](slots.md)。

@@ -22,11 +22,11 @@ enum ApkFlavor {
   };
 }
 
-/// File name of the APK for [version] and [flavor]: `dsh-go-1.2.0-arm64.apk`.
+/// File name of the APK for [version] and [flavor]: `xrk-harness-1.2.0-arm64.apk`.
 /// No build number: GitHub rewrites `+` in asset names.
-String apkAssetName(AppVersion version, ApkFlavor flavor) => 'dsh-go-${version.name}-${flavor.name}.apk';
+String apkAssetName(AppVersion version, ApkFlavor flavor) => 'xrk-harness-${version.name}-${flavor.name}.apk';
 
-final _apkAssetPattern = RegExp(r'^dsh-go-(.+)-(arm64|x64)\.apk$');
+final _apkAssetPattern = RegExp(r'^xrk-harness-(.+)-(arm64|x64)\.apk$');
 
 /// What a manifest may name a file: it becomes a path in the download
 /// directory, so nothing that climbs out of it.

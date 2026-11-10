@@ -1,7 +1,7 @@
 // Share links (docs/design/share-codes.md).
 //
-//   dshgo://share/<kind>?p=<code>                app link, code inline
-//   dshgo://share/profile?gist=<id>&c=<sum>      a profile too large to inline
+//   xrkharness://share/<kind>?p=<code>                app link, code inline
+//   xrkharness://share/profile?gist=<id>&c=<sum>      a profile too large to inline
 //   <shareLandingUrl>#p=<code>                    the same on the landing page
 //   <shareLandingUrl>#gist=<id>&c=<sum>
 //
@@ -12,17 +12,11 @@ import '../links/app_links.dart' show appLinkScheme;
 import '../share_hosted/hosted_config.dart' show shareHostOrigin;
 import 'share_models.dart';
 
-/// The static landing page (site/share/), served by the share host next to
-/// hosted conversation links (docs/design/share-links.md). App Links would
-/// also need the manifest and an assetlinks.json on that domain.
-const shareLandingUrl = '$shareHostOrigin/share/';
+/// Static share landing (`$shareHostOrigin/share/`). Empty when no share host.
+final shareLandingUrl = shareHostOrigin.isEmpty ? '' : '$shareHostOrigin/share/';
 
-/// Where the landing page used to live. That site stays up, so links made
-/// there keep opening in browsers, and the app still reads them.
-const legacyShareLandingUrls = ['https://ccch1mneyyy.github.io/dsh-go/share/'];
-
-/// The current landing page first, then the old ones.
-const _landingUrls = [shareLandingUrl, ...legacyShareLandingUrls];
+/// Landing URLs the app accepts when opening a share link.
+final _landingUrls = [if (shareLandingUrl.isNotEmpty) shareLandingUrl];
 
 /// Host of the app links.
 const shareLinkHost = 'share';
@@ -54,7 +48,7 @@ class ShareLink {
 
   bool get isGist => gistId != null;
 
-  /// `dshgo://share/…`.
+  /// `xrkharness://share/…`.
   Uri get appLink => isGist
       ? Uri(
           scheme: appLinkScheme,
@@ -102,6 +96,15 @@ class ShareLink {
 
   /// The first share link in [text] (a pasted message, a shared text).
   static ShareLink? find(String text) {
+    if (_landingUrls.isEmpty) {
+      final pattern = RegExp('$appLinkScheme://$shareLinkHost/[^\\s"\'<>]+');
+      for (final match in pattern.allMatches(text)) {
+        final uri = Uri.tryParse(match.group(0)!);
+        final link = uri == null ? null : parse(uri);
+        if (link != null) return link;
+      }
+      return null;
+    }
     final landing = _landingUrls.map((u) => RegExp.escape(u.replaceFirst(RegExp(r'^https?://'), ''))).join('|');
     final pattern = RegExp('(?:$appLinkScheme://$shareLinkHost/[^\\s"\'<>]+|https?://(?:$landing)#[^\\s"\'<>]+)');
     for (final match in pattern.allMatches(text)) {
@@ -114,7 +117,9 @@ class ShareLink {
 }
 
 /// Host + path of the landing page, as LinkRouter keys https links.
+/// Empty when no share host is configured.
 String get shareLandingRoute {
+  if (shareLandingUrl.isEmpty) return '';
   final uri = Uri.parse(shareLandingUrl);
   final path = uri.path.endsWith('/') ? uri.path.substring(0, uri.path.length - 1) : uri.path;
   return '${uri.host}$path';

@@ -1,8 +1,8 @@
 // The `@` reference grammar on the app side: which spans of a draft or a sent
 // message are references, and what they show. The wire format itself (what
-// the official clients write) lives in dsh_client's `references_api.dart`.
+// the official clients write) lives in xrk_client's `references_api.dart`.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../../l10n/l10n.dart';
 

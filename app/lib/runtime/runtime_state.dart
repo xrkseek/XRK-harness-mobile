@@ -101,7 +101,7 @@ class LocalRuntimeController extends Notifier<LocalRuntimeState> {
     return _bridge.install(dropKept: true);
   }
 
-  /// The API key is not passed here: it is written to DSH's own credential store
+  /// The API key is not passed here: it is written to XRK's own credential store
   /// after connecting (see connection_state.dart), so it can change without a restart.
   /// Keeps the current mode: in safe mode this starts safe mode again.
   Future<void> start() {

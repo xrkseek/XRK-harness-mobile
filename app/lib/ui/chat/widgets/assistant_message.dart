@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
@@ -11,7 +11,7 @@ import '../../common/fluid_bits.dart';
 import '../../common/typing_indicator.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
-import '../dsh_ui/dsh_ui.dart';
+import '../xrk_ui/xrk_ui.dart';
 import '../../plugins/native/message_plugin_menu.dart';
 import '../../share/share_entry.dart' show shareReply;
 import '../render/markdown_body.dart';
@@ -34,7 +34,7 @@ const _firstTextIn = Duration(milliseconds: 200);
 /// (思考过程 ⌄)
 /// 正文 Markdown…▍
 /// ⚠ 响应已中断
-/// ⧉ ⇪ ⑂ ↻ ⋯        ← 一轮的最后一条才有(分叉视 DSH 是否支持;
+/// ⧉ ⇪ ⑂ ↻ ⋯        ← 一轮的最后一条才有(分叉视 XRK 是否支持;
 ///                    ↻ 重新回答只给整个对话的最后一条)
 /// ```
 ///
@@ -207,7 +207,7 @@ class _AssistantMessageState extends State<AssistantMessage> {
                 ? ReplyActionRow(
                     // Copy / share carry a one-line summary of each visual
                     // reply, never its raw JSON.
-                    text: dshUiPlainText(text),
+                    text: xrkUiPlainText(text),
                     onBranch: widget.onBranch,
                     branching: widget.branching,
                     onShare: () => shareReply(context, widget.item),
@@ -227,7 +227,7 @@ class _AssistantMessageState extends State<AssistantMessage> {
   }
 
   Future<void> _menu(String markdown) async {
-    final text = dshUiPlainText(markdown);
+    final text = xrkUiPlainText(markdown);
     final onBranch = widget.onBranch;
     final onRegenerate = widget.onRegenerate;
     final onQuote = widget.onQuote;
@@ -356,7 +356,7 @@ class _InterruptedMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final danger = DshColors.of(context).danger;
+    final danger = XrkColors.of(context).danger;
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
@@ -431,7 +431,7 @@ class _StallDotState extends State<_StallDot> with SingleTickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
-    final color = DshColors.of(context).textTertiary;
+    final color = XrkColors.of(context).textTertiary;
     return IgnorePointer(
       child: AnimatedOpacity(
         opacity: _shown ? 1 : 0,

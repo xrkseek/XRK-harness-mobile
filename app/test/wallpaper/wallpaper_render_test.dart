@@ -6,13 +6,13 @@
 
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/theme/accent.dart';
-import 'package:dsh_app/ui/theme/app_theme.dart';
-import 'package:dsh_app/ui/theme/palette.dart';
-import 'package:dsh_app/ui/theme/semantic_colors.dart';
-import 'package:dsh_app/wallpaper/custom_wallpaper.dart';
-import 'package:dsh_app/wallpaper/wallpaper_look.dart';
-import 'package:dsh_app/wallpaper/wallpaper_render.dart';
+import 'package:xrk_app/ui/theme/accent.dart';
+import 'package:xrk_app/ui/theme/app_theme.dart';
+import 'package:xrk_app/ui/theme/palette.dart';
+import 'package:xrk_app/ui/theme/semantic_colors.dart';
+import 'package:xrk_app/wallpaper/custom_wallpaper.dart';
+import 'package:xrk_app/wallpaper/wallpaper_look.dart';
+import 'package:xrk_app/wallpaper/wallpaper_render.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -35,7 +35,7 @@ void main() {
         image.dispose();
         final dark = brightness == Brightness.dark;
         final scheme = dark ? DshPalette.darkScheme(AppAccent.mist) : DshPalette.lightScheme(AppAccent.mist);
-        final colors = DshColors.forAccent(brightness, AppAccent.mist);
+        final colors = XrkColors.forAccent(brightness, AppAccent.mist);
         final look = frame.look;
         final whole = Rect.fromLTWH(0, 0, pixels.width.toDouble(), pixels.height.toDouble());
         for (final (label, color) in [
@@ -165,14 +165,14 @@ void main() {
       final scheme = brightness == Brightness.dark
           ? DshPalette.darkScheme(AppAccent.mist)
           : DshPalette.lightScheme(AppAccent.mist);
-      final colors = DshColors.forAccent(brightness, AppAccent.mist);
+      final colors = XrkColors.forAccent(brightness, AppAccent.mist);
       expect(look.guard(scheme.onSurface), scheme.onSurface);
       expect(look.guard(scheme.onSurfaceVariant), scheme.onSurfaceVariant);
       for (final c in [colors.textTertiary, scheme.primary, colors.danger, colors.warning, colors.info]) {
         expect(look.worstContrast(look.guard(c)), greaterThanOrEqualTo(wallpaperContrast - 0.01));
       }
       final guarded = look.guardTheme(buildThemeFor(brightness));
-      expect(guarded.extension<DshColors>()!.textTertiary, look.guard(colors.textTertiary));
+      expect(guarded.extension<XrkColors>()!.textTertiary, look.guard(colors.textTertiary));
       expect(guarded.colorScheme.primary, look.guard(scheme.primary));
     }
   });

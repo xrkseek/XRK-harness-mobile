@@ -1,4 +1,4 @@
-// The slash palette: the same catalog as DSH Web's "/" menu, Chinese faces
+// The slash palette: the same catalog as XRK Web's "/" menu, Chinese faces
 // for the first-party commands, prefix-first filtering.
 
 import 'package:flutter/material.dart';
@@ -90,7 +90,7 @@ class SlashPalette extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
 
     final Widget body = switch (content) {
       PaletteMatches(:final commands) when commands.isEmpty => Padding(
@@ -134,7 +134,7 @@ class SlashPalette extends StatelessWidget {
         // Popover over live content: near-opaque so rows never read through,
         // even where the device has blur turned off.
         child: Material(
-          color: DshSurfaces.of(context).backdropTop.withValues(alpha: 0.94),
+          color: XrkSurfaces.of(context).backdropTop.withValues(alpha: 0.94),
           clipBehavior: Clip.antiAlias,
           shape: shape,
           child: SmoothSize(
@@ -168,7 +168,7 @@ class _CommandTile extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final hint = command.hint;
     final description = showHintOnly
         ? (command.description.isEmpty

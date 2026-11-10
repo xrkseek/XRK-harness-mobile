@@ -5,22 +5,22 @@
 //
 //   flutter test --update-goldens test/agents/lineage_test.dart
 
-import 'package:dsh_app/state/agents_state.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/workspace_state.dart';
-import 'package:dsh_app/ui/agents/agent_widgets.dart';
-import 'package:dsh_app/ui/agents/header_agents.dart';
-import 'package:dsh_app/ui/agents/lineage_sheet.dart';
-import 'package:dsh_app/ui/chat/chat_header.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart';
-import 'package:dsh_app/ui/chat/model_sheet.dart';
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart';
-import 'package:dsh_app/ui/session/session_detail_page.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart' show GlassSurface;
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/agents_state.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/workspace_state.dart';
+import 'package:xrk_app/ui/agents/agent_widgets.dart';
+import 'package:xrk_app/ui/agents/header_agents.dart';
+import 'package:xrk_app/ui/agents/lineage_sheet.dart';
+import 'package:xrk_app/ui/chat/chat_header.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart';
+import 'package:xrk_app/ui/chat/model_sheet.dart';
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart';
+import 'package:xrk_app/ui/session/session_detail_page.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart' show GlassSurface;
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;

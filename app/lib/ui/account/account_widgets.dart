@@ -39,9 +39,9 @@ class AccountAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final key = profile?.id ?? profile?.contact ?? profile?.name ?? '';
-    final slot = key.isEmpty ? 0 : DshColors.identityIndex(key);
+    final slot = key.isEmpty ? 0 : XrkColors.identityIndex(key);
     final bg = colors.identity[slot];
     final fg = colors.onIdentity[slot];
     final name = profile?.name?.trim() ?? '';
@@ -96,7 +96,7 @@ class SignInStatus extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final stage = succeeded ? null : (state.stage ?? SignInStage.preparing);
     final (IconData icon, String title, String body) = switch (stage) {
       null => (
@@ -208,7 +208,7 @@ class SignInActions extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final account = ref.read(accountProvider.notifier);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final waiting = state.stage == SignInStage.waitingBrowser && state.authorizeUrl != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -261,7 +261,7 @@ class SignInFailureCard extends ConsumerWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return GlassSurface(
       tier: GlassTier.card,
       borderRadius: AppShape.radiusLg,
@@ -309,7 +309,7 @@ class AccountTile extends ConsumerWidget {
     final state = ref.watch(accountProvider);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
 
     final String title;
     final String? subtitle;

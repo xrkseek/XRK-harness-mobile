@@ -206,7 +206,7 @@ class _ForumTopicPageState extends ConsumerState<ForumTopicPage> {
     });
     final title = detail?.title ?? widget.title ?? l10n.remoteForumTopic;
     final category = site?.category(detail?.categoryId);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final meta = Theme.of(context).textTheme.bodyMedium!.copyWith(color: colors.textTertiary);
 
     final hero = PageHero(
@@ -359,7 +359,7 @@ class _ReplyBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Semantics(
       button: true,
       enabled: enabled,
@@ -428,7 +428,7 @@ class ForumPostTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final meta = theme.textTheme.bodySmall!.copyWith(color: colors.textTertiary);
     final name = post.user.displayName;
     final handle = post.user.name?.trim();
@@ -507,7 +507,7 @@ class _PostAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final tint = onTap == null ? colors.textDisabled : (color ?? colors.textTertiary);
     return Tooltip(
       message: tooltip,
@@ -562,7 +562,7 @@ class _SmallAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Text(

@@ -2,15 +2,15 @@
 // confirmation's hold key and disclaimer, the 「已解除限制」 tag, 确认方式's
 // 「这些由你来操作」 lines, and first run's 确认方式 sheet.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/onboarding/access_step.dart';
-import 'package:dsh_app/ui/phone/hold_to_confirm.dart';
-import 'package:dsh_app/ui/phone/phone_control_screen.dart';
-import 'package:dsh_app/ui/phone/phone_unlock_page.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/onboarding/access_step.dart';
+import 'package:xrk_app/ui/phone/hold_to_confirm.dart';
+import 'package:xrk_app/ui/phone/phone_control_screen.dart';
+import 'package:xrk_app/ui/phone/phone_unlock_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

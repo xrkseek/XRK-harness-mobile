@@ -1,8 +1,8 @@
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/engine/engine_screen.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_card.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/engine/engine_screen.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -87,7 +87,7 @@ void main() {
 
   testWidgets('real safe move action reports incomplete stop and leaves files untouched', (tester) async {
     final bridge = FakeBridge(
-      hazards: const [SafeHazard(path: '/root/.dsh/cordis.patch.yml', kind: 'homePatch', detail: '配置补丁')],
+      hazards: const [SafeHazard(path: '/root/.xrk/cordis.patch.yml', kind: 'homePatch', detail: '配置补丁')],
     );
     final runtime = await pump(tester, status: safeStatus(), bridge: bridge, child: const SafeModeCard());
     await tester.pump();

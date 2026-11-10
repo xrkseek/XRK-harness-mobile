@@ -6,18 +6,18 @@
 // text starts where the title does; the engine's three capsules share the
 // width evenly.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/overview_card.dart';
-import 'package:dsh_app/ui/common/sheet_title_bar.dart';
-import 'package:dsh_app/ui/common/status_chip.dart';
-import 'package:dsh_app/ui/engine/engine_screen.dart';
-import 'package:dsh_app/ui/settings/background_guide_page.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/overview_card.dart';
+import 'package:xrk_app/ui/common/sheet_title_bar.dart';
+import 'package:xrk_app/ui/common/status_chip.dart';
+import 'package:xrk_app/ui/engine/engine_screen.dart';
+import 'package:xrk_app/ui/settings/background_guide_page.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -137,7 +137,7 @@ void main() {
           title: const Text('雾蓝'),
           subtitle: const Text('余额 ¥128.45'),
           onTap: () {},
-          footer: const OverviewFooter(tone: StatusTone.ok, text: '引擎 · 运行中 · DSH 0.2.1'),
+          footer: const OverviewFooter(tone: StatusTone.ok, text: '引擎 · 运行中 · XRK 0.2.1'),
           onFooterTap: () {},
         ),
         textScale: scale,
@@ -153,7 +153,7 @@ void main() {
       final dot = tester.getRect(find.byType(AnimatedStatusDot));
       expect(dot.center.dx, moreOrLessEquals(avatar.center.dx, epsilon: _tol));
       expect(
-        tester.getRect(find.text('引擎 · 运行中 · DSH 0.2.1')).left,
+        tester.getRect(find.text('引擎 · 运行中 · XRK 0.2.1')).left,
         moreOrLessEquals(tester.getRect(find.text('雾蓝')).left, epsilon: _tol),
       );
       expect(tester.getRect(find.text('雾蓝')).left - card.left, moreOrLessEquals(OverviewCard.textStart, epsilon: _tol));

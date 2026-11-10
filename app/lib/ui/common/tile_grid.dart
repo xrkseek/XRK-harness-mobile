@@ -82,7 +82,7 @@ class FeatureCard extends StatelessWidget {
   final String title;
   final String? subtitle;
 
-  /// One of the 8 identity hues (`DshColors.identity`) for the circle; null
+  /// One of the 8 identity hues (`XrkColors.identity`) for the circle; null
   /// follows the accent.
   final int? tint;
 
@@ -102,7 +102,7 @@ class FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = theme.colorScheme;
     final (Color fill, Color ink) = switch (tint) {
       final tint? => (

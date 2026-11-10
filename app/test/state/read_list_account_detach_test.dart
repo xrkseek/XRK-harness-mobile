@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/provider_keys.dart';
-import 'package:dsh_app/state/read_list_cache.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/provider_keys.dart';
+import 'package:xrk_app/state/read_list_cache.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -147,7 +147,7 @@ class _EmptyVault extends ProviderKeyVault {
 
 class _RuntimeHarness {
   _RuntimeHarness() {
-    client = DshClient.withCarrier(carrier, muxOptions: const MuxOptions(retryCaps: [Duration.zero]));
+    client = XrkClient.withCarrier(carrier, muxOptions: const MuxOptions(retryCaps: [Duration.zero]));
     c = ProviderContainer(
       overrides: [
         activeHostProvider.overrideWith(FixedHost.new),
@@ -174,7 +174,7 @@ class _RuntimeHarness {
 
   final carrier = _Carrier();
   final bridge = _PlatformBridge();
-  late final DshClient client;
+  late final XrkClient client;
   late final ProviderContainer c;
 
   Future<void> flush() async {

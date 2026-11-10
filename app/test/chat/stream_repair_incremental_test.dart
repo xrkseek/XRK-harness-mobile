@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/chat/render/math_syntax.dart';
-import 'package:dsh_app/ui/chat/render/stream_repair.dart';
-import 'package:dsh_app/ui/chat/render/table_syntax.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/chat/render/math_syntax.dart';
+import 'package:xrk_app/ui/chat/render/stream_repair.dart';
+import 'package:xrk_app/ui/chat/render/table_syntax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';

@@ -59,7 +59,7 @@ class _BreadcrumbRowState extends State<BreadcrumbRow> {
         itemCount: widget.crumbs.length,
         separatorBuilder: (_, _) => SizedBox(
           width: 20,
-          child: Center(child: Icon(AppIcons.disclosure, size: 16, color: DshColors.of(context).textTertiary)),
+          child: Center(child: Icon(AppIcons.disclosure, size: 16, color: XrkColors.of(context).textTertiary)),
         ),
         itemBuilder: (context, i) => BreadcrumbCapsule(
           label: widget.crumbs[i].label,

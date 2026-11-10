@@ -1,7 +1,7 @@
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/plugins/installed_tab.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/plugins/installed_tab.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,7 +14,7 @@ void main() {
     testWidgets('switch state follows the plugin when the host reorders rows: $official', (tester) async {
       usePhoneView(tester);
       final carrier = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       addTearDown(client.close);
       var rows = [
         bundleJson('alpha', enabled: true, official: official),

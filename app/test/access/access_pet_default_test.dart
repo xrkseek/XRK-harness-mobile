@@ -3,15 +3,15 @@
 // picks the default one, so 「App 外显示」 has something to show (0.9.8 smoke
 // 03j / 03k). A choice already made, 「不显示」 included, stays.
 
-import 'package:dsh_app/performance/performance_state.dart';
-import 'package:dsh_app/pets/overlay_channel.dart';
-import 'package:dsh_app/pets/pet_prefs.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/access_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
+import 'package:xrk_app/performance/performance_state.dart';
+import 'package:xrk_app/pets/overlay_channel.dart';
+import 'package:xrk_app/pets/pet_prefs.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/access_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -90,7 +90,7 @@ void main() {
 
   test('not picked: the light phone keeps its default (no pet), nothing stored', () async {
     final c = await container();
-    await c.read(accessSetupProvider.notifier).choose({AccessFeature.voice});
+    await c.read(accessSetupProvider.notifier).choose({AccessFeature.files});
     await c.read(accessSetupProvider.notifier).apply(readingsWith(offPhone, overlay: true));
     expect(c.read(petPrefsProvider).packId, noPetId);
     expect(c.read(petPrefsProvider).packExplicit, isFalse);

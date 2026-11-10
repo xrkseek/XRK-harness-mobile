@@ -1,19 +1,19 @@
 // Real drawer folder actions and persisted per-Host views. UNRUN fixture.
 import 'dart:convert';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/pets/pet_overlay_actions.dart';
-import 'package:dsh_app/ui/shell/drawer/drawer_filter_bar.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/pets/pet_overlay_actions.dart';
+import 'package:xrk_app/ui/shell/drawer/drawer_filter_bar.dart';
 import 'package:flutter/services.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/shell/drawer/folder_header.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/shell/drawer/folder_header.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

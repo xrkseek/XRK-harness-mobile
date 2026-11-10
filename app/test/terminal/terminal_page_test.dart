@@ -4,9 +4,9 @@
 
 import 'dart:ui' show Tristate;
 
-import 'package:dsh_app/state/terminal_state.dart';
-import 'package:dsh_app/ui/terminal/terminal_keys.dart';
-import 'package:dsh_app/ui/terminal/terminal_page.dart';
+import 'package:xrk_app/state/terminal_state.dart';
+import 'package:xrk_app/ui/terminal/terminal_keys.dart';
+import 'package:xrk_app/ui/terminal/terminal_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -2,17 +2,17 @@
 
 [English](en/from-zero.md)
 
-这篇从空目录做一个可安装的 DSH 插件。它统计输入文本的 Unicode 码点、UTF-8 字节和行数，在 dsh-go 中显示原生卡片，同时保留模型和网页版可读的普通工具结果。示例不联网、不写文件、不读剪贴板；输出只含计数。
+这篇从空目录做一个可安装的 XRK 插件。它统计输入文本的 Unicode 码点、UTF-8 字节和行数，在 xrk-mobile 中显示原生卡片，同时保留模型和网页版可读的普通工具结果。示例不联网、不写文件、不读剪贴板；输出只含计数。
 
 完成路径是：写出 bundle → 跑测试和原生视图检查 → 安装到主机 → 检查发布 tarball → 发布自己的包 → 核对市场索引。每一步都可以单独确认。
 
 ## 1. 准备开发环境
 
-示例基于 **DSH / dsh-tools 0.2.1-rc.4**，需要 Node 22.19 或以上（本文在 Node 24 上验证）。DSH Go 现在内置 0.2.2-rc.1（要求 Node 24.9 或以上），仓库里的示例插件也在它上面跑测试。
+示例基于 **XRK / dsh-tools 0.2.1-rc.4**，需要 Node 22.19 或以上（本文在 Node 24 上验证）。XRK Go 现在内置 0.2.2-rc.1（要求 Node 24.9 或以上），仓库里的示例插件也在它上面跑测试。
 
-`engines.dsh` 和 dsh-tools 的依赖写**验证过的版本范围**，和仓库里的示例插件一样：`">=0.2.1-rc.2 <0.3.0-0"`。DSH 安装时按 semver 比较，写成一个精确版本，引擎一升级（例如 rc.2 → rc.4）插件就会被拒装，哪怕代码一行没变。下限写你测过的最低版本；上限停在下一个次版本之前，因为 0.x 的次版本可以有破坏性改动。要支持范围以外的版本，先在那个版本上跑一遍同样的测试，再放宽。
+`engines.dsh` 和 dsh-tools 的依赖写**验证过的版本范围**，和仓库里的示例插件一样：`">=0.2.1-rc.2 <0.3.0-0"`。XRK 安装时按 semver 比较，写成一个精确版本，引擎一升级（例如 rc.2 → rc.4）插件就会被拒装，哪怕代码一行没变。下限写你测过的最低版本；上限停在下一个次版本之前，因为 0.x 的次版本可以有破坏性改动。要支持范围以外的版本，先在那个版本上跑一遍同样的测试，再放宽。
 
-需要一个已安装的 `dsh` CLI，以及一份包含 `sdk/plugin-kit/` 的 dsh-go 开发源码。SDK 目前随仓库分发，没有发布到 npm；不要把示例中的名称 `@dsh-go/plugin-kit` 当成可直接安装的公共包。本文直接调用源码中的检查器，插件运行时只依赖 DSH 提供的 `dsh-tools`。
+需要一个已安装的 `xrkh` CLI，以及一份包含 `sdk/plugin-kit/` 的 xrk-mobile 开发源码。SDK 目前随仓库分发，没有发布到 npm；不要把示例中的名称 `@xrkseek/plugin-kit` 当成可直接安装的公共包。本文直接调用源码中的检查器，插件运行时只依赖 XRK 提供的 `dsh-tools`。
 
 ```sh
 node --version
@@ -20,15 +20,15 @@ npm --version
 pnpm --version
 dsh --version
 
-# 替换成你取得的完整 dsh-go 开发源码根目录。
-DSHGO_DEV_ROOT=/absolute/path/to/dsh-go
+# 替换成你取得的完整 xrk-mobile 开发源码根目录。
+DSHGO_DEV_ROOT=/absolute/path/to/xrk-mobile
 mkdir -p dsh-text-metrics-demo/lib dsh-text-metrics-demo/test
 cd dsh-text-metrics-demo
 ```
 
 ## 2. 写出完整插件
 
-以下七个文件都位于刚创建的目录中。`package.json` 的 `dsh.bundle.patch` 声明安装层，`cordis.patch.yml` 把这个包的入口挂入 DSH。这里没有 `dshGo` 清单：**只显示工具结果卡片并不需要桥接清单**。
+以下七个文件都位于刚创建的目录中。`package.json` 的 `dsh.bundle.patch` 声明安装层，`cordis.patch.yml` 把这个包的入口挂入 XRK。这里没有 `xrkGo` 清单：**只显示工具结果卡片并不需要桥接清单**。
 
 `render` 返回模型读取的普通文本；`presentationMeta` 提供 App 的卡片。卡片使用固定组件和具体数值，没有工具卡不支持的数据绑定或按钮。`toolCard` 将视图变成纯 JSON，并在构造失败或超过 8 KiB 时退回没有卡片的正常工具结果。
 
@@ -42,7 +42,7 @@ cd dsh-text-metrics-demo
   "name": "dsh-text-metrics-demo",
   "version": "0.1.0",
   "private": true,
-  "description": "A DSH tool with a bilingual native text-metrics card.",
+  "description": "A XRK tool with a bilingual native text-metrics card.",
   "type": "module",
   "main": "./lib/index.js",
   "exports": {
@@ -53,8 +53,8 @@ cd dsh-text-metrics-demo
   "files": ["lib", "cordis.patch.yml", "README.md"],
   "scripts": { "test": "node --test test/*.test.js" },
   "engines": { "node": ">=22.19", "dsh": ">=0.2.1-rc.2 <0.3.0-0" },
-  "peerDependencies": { "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2 <0.3.0-0" },
-  "devDependencies": { "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2 <0.3.0-0" },
+  "peerDependencies": { "@xrkseek/harness-cli-tools": ">=0.2.1-rc.2 <0.3.0-0" },
+  "devDependencies": { "@xrkseek/harness-cli-tools": ">=0.2.1-rc.2 <0.3.0-0" },
   "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
 }
 ```
@@ -107,7 +107,7 @@ export function toolCard(build) {
     try {
       const json = JSON.stringify(build(args, value))
       if (json === undefined || Buffer.byteLength(json, 'utf8') > 8 * 1024) return {}
-      return { 'dsh-go/view': JSON.parse(json) }
+      return { 'xrk-mobile/view': JSON.parse(json) }
     } catch {
       return {}
     }
@@ -119,7 +119,7 @@ export function toolCard(build) {
 
 <!-- file: lib/index.js -->
 ```js
-import { defineTool } from '@deepseek-ai/dsh-tools'
+import { defineTool } from '@xrkseek/harness-cli-tools'
 import { measure } from './measure.js'
 import { metricsView, toolCard } from './view.js'
 
@@ -163,7 +163,7 @@ export function apply(ctx) {
 ```js
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { validateJsonSchemaValue } from '@deepseek-ai/dsh-tools'
+import { validateJsonSchemaValue } from '@xrkseek/harness-cli-tools'
 import { apply } from '../lib/index.js'
 import { measure } from '../lib/measure.js'
 import { metricsView, toolCard } from '../lib/view.js'
@@ -192,8 +192,8 @@ test('real defineTool output validates and carries both model text and a card', 
     const value = await tool.execute(args)
     assert.deepEqual(validateJsonSchemaValue(tool.output.schema, value, 'value'), [])
     const meta = tool.output.presentationMeta(args, value)
-    assert.deepEqual(meta['dsh-go/view'], metricsView(value))
-    assert.ok(Buffer.byteLength(JSON.stringify(meta['dsh-go/view']), 'utf8') < 8192)
+    assert.deepEqual(meta['xrk-mobile/view'], metricsView(value))
+    assert.ok(Buffer.byteLength(JSON.stringify(meta['xrk-mobile/view']), 'utf8') < 8192)
     assert.equal(tool.output.render(args, value)[0].type, 'text')
     assert.ok(!JSON.stringify(meta).includes(args.text))
   }
@@ -213,13 +213,13 @@ test('a broken or oversized card does not fail the tool result', () => {
 # Text metrics / 文本统计
 
 The `text_metrics` tool counts Unicode code points, UTF-8 bytes and lines.
-It does not store the input or make network requests. dsh-go shows a native
-card; the DSH web client keeps the ordinary text result.
+It does not store the input or make network requests. xrk-mobile shows a native
+card; the XRK web client keeps the ordinary text result.
 
 `text_metrics` 统计码点、UTF-8 字节和行数，不保存输入、不发网络请求。
 码点不是字形；空文本为0行。输入上限8000个UTF-16码元。
 
-Development baseline: DSH and dsh-tools 0.2.1-rc.4, Node 22.19+. Supports DSH >=0.2.1-rc.2 <0.3.0-0.
+Development baseline: XRK and dsh-tools 0.2.1-rc.4, Node 22.19+. Supports XRK >=0.2.1-rc.2 <0.3.0-0.
 Run `npm install --ignore-scripts` and `npm test` before installing this local bundle.
 This tutorial package is private; choose a unique name and a license before publishing.
 ```
@@ -234,7 +234,7 @@ npm test
 node "$DSHGO_DEV_ROOT/sdk/plugin-kit/bin/check.mjs" . --load
 ```
 
-这里的单测使用真实的 `@deepseek-ai/dsh-tools` 定义和输出校验。注册用的 `ctx.tools.register` 是测试收集器；这一步不等于主机完整启动。正常结果为 4 项通过，检查器显示注册了 `text_metrics`。“没有 dshGo 清单：只有工具卡（presentationMeta）这类零成本扩展”是这个示例的正常提示。
+这里的单测使用真实的 `@xrkseek/harness-cli-tools` 定义和输出校验。注册用的 `ctx.tools.register` 是测试收集器；这一步不等于主机完整启动。正常结果为 4 项通过，检查器显示注册了 `text_metrics`。“没有 xrkGo 清单：只有工具卡（presentationMeta）这类零成本扩展”是这个示例的正常提示。
 
 把一个确定的调用结果导出为视图 JSON，供检查器和预览使用：
 
@@ -272,13 +272,13 @@ dsh plugin --profile web add "$DSH_TUTORIAL_PLUGIN_DIR"
 dsh --profile web --dump-config
 ```
 
-`--dump-config` 只能确认 bundle 层被组合，不能证明 JavaScript 入口已成功加载。还要在运行中的 `web` profile 查看插件加载结果；尚未启动时运行 `dsh web`。然后让模型调用 `text_metrics`，文本传入两行的“你好”和“A”，应同时看到普通结果和原生卡片。
+`--dump-config` 只能确认 bundle 层被组合，不能证明 JavaScript 入口已成功加载。还要在运行中的 `web` profile 查看插件加载结果；尚未启动时运行 `xrkh serve`。然后让模型调用 `text_metrics`，文本传入两行的“你好”和“A”，应同时看到普通结果和原生卡片。
 
 | 主机 | 安装位置与检查 |
 |---|---|
 | 手机本机引擎 | 在 App 的本机终端中执行，插件目录要留在本机环境内 |
 | SSH 主机 | 在远端终端中执行；本地电脑上的路径不会自动传到远端 |
-| relay 主机 | 在实际运行 DSH 的机器上安装；工具卡随已有工具记录传给 App，本例不需要新增 REST 隧道 |
+| relay 主机 | 在实际运行 XRK 的机器上安装；工具卡随已有工具记录传给 App，本例不需要新增 REST 隧道 |
 
 这个版本的本地路径安装会链接目录，删除目录会使入口失效。修改 `lib/` 后按[本地重载说明](local-development.md)处理；本机重启内核会中断当前任务。卸载再安装不应被当作一定使模块缓存失效。旧聊天记录也不会重新计算新卡片，要做一次新的工具调用。
 
@@ -295,8 +295,8 @@ npm pack --ignore-scripts
 
 ```sh
 DSH_TUTORIAL_HOME="$(mktemp -d)/dsh-home"
-DSH_HOME="$DSH_TUTORIAL_HOME" dsh plugin --profile web add "$PWD/dsh-text-metrics-demo-0.1.0.tgz"
-DSH_HOME="$DSH_TUTORIAL_HOME" dsh web --no-open
+XRK_HOME="$DSH_TUTORIAL_HOME" dsh plugin --profile web add "$PWD/dsh-text-metrics-demo-0.1.0.tgz"
+XRK_HOME="$DSH_TUTORIAL_HOME" xrkh serve --no-open
 ```
 
 修改包名后，请使用 `npm pack` 实际报告的 tarball 文件名。
@@ -353,13 +353,13 @@ npm view @your-scope/dsh-text-metrics name version repository dist.integrity --j
 
 示例没有 `prepare`/`prepublishOnly` 等构建脚本，所以这里明确关闭脚本；将来依赖这些脚本构建时，先完成构建与测试再采用相应发布流程。不要仅把 GitHub 源码仓库上传成功当成 npm 包已可安装。npm 的[发布说明](https://docs.npmjs.com/cli/v11/commands/npm-publish/)是账号操作和参数的依据。
 
-## 7. 核对 dsh-go 实际使用的市场索引
+## 7. 核对 xrk-mobile 实际使用的市场索引
 
 当前 App 默认读取 dshfind 的 **format-1 索引**：`https://api.dshfind.com/market/dsh-index.json`。dshfind 网站目录发现和这个索引有不同的准入规则。
 
 先在自己的公开 GitHub 仓库添加 `dsh-plugin` topic，并核对 npm 包的 `repository` 回链。dshfind 的发现任务会在后续刷新时处理它；不能承诺固定几分钟到账。仓库中的发现逻辑也会识别 npm 的 `dsh-plugin` / `dsh-bundle` 关键词。
 
-索引的收录条件（2026 年 10 月）：被识别为插件、未被标记风险、带 bundle、已发布到 npm、npm 的仓库回链匹配、包名和版本有效；DSH 自带的 `@deepseek-ai/*` 包不收录。版本兼容性由安装端另行检查；风险标记由市场给出，作者无法自行设置。
+索引的收录条件（2026 年 10 月）：被识别为插件、未被标记风险、带 bundle、已发布到 npm、npm 的仓库回链匹配、包名和版本有效；XRK 自带的 `@deepseek-ai/*` 包不收录。版本兼容性由安装端另行检查；风险标记由市场给出，作者无法自行设置。
 
 用精确包名核对索引：
 
@@ -373,7 +373,7 @@ console.log(entry ? JSON.stringify(entry, null, 2) : 'Not in this index yet')
 JS
 ```
 
-最后在 App 的插件市场搜索包名，核对显示的版本、来源和安装目标主机，安装后再做一次工具调用。网站已有页面、npm 已发布、索引已有条目、App 已能安装是四个独立的状态，逐一确认即可。若迟迟未被收录，可附上公开仓库地址、准确的 npm 版本和索引查询结果，通过 dshfind 的反馈渠道联系；无需在 dsh-go 提交上架申请。
+最后在 App 的插件市场搜索包名，核对显示的版本、来源和安装目标主机，安装后再做一次工具调用。网站已有页面、npm 已发布、索引已有条目、App 已能安装是四个独立的状态，逐一确认即可。若迟迟未被收录，可附上公开仓库地址、准确的 npm 版本和索引查询结果，通过 dshfind 的反馈渠道联系；无需在 xrk-mobile 提交上架申请。
 
 ## 8. 常见问题
 
@@ -389,6 +389,6 @@ JS
 
 ## 参考
 
-实现细节可对照仓库的[快速开始](quickstart.md)、[主机覆盖](hosts.md)、[自查清单](checklist.md)，以及 SDK 和 [weather 示例](../../examples/plugins/dsh-go-example-weather/)源码。
+实现细节可对照仓库的[快速开始](quickstart.md)、[主机覆盖](hosts.md)、[自查清单](checklist.md)，以及 SDK 和 [weather 示例](../../examples/plugins/xrk-example-weather/)源码。
 
-发布层参考 [DSH 官方 bundle/profile 教程](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md)。市场条件来自 [dshfind 发现说明](https://github.com/hikariming/dshfind/blob/3ee8543f3ec60792cae0523d4a149cba0d68770c/README.zh-CN.md)及[索引生成器](https://github.com/hikariming/dshfind/blob/3ee8543f3ec60792cae0523d4a149cba0d68770c/scripts/lib/dsh-index.mjs)。
+发布层参考 [XRK 官方 bundle/profile 教程](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md)。市场条件来自 [dshfind 发现说明](https://github.com/hikariming/dshfind/blob/3ee8543f3ec60792cae0523d4a149cba0d68770c/README.zh-CN.md)及[索引生成器](https://github.com/hikariming/dshfind/blob/3ee8543f3ec60792cae0523d4a149cba0d68770c/scripts/lib/dsh-index.mjs)。

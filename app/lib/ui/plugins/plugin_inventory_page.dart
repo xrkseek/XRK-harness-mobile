@@ -377,7 +377,7 @@ class InventorySheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final config = ref.watch(pluginConfigProvider).value;
     final pluginForm = hasPluginConfig(config, item.rowId);
     final configurable =

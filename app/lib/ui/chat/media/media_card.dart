@@ -18,7 +18,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -296,7 +296,7 @@ class _MediaCellState extends ConsumerState<MediaCell> {
   Widget build(BuildContext context) {
     _resolve();
     final l10n = context.l10n;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final dpr = MediaQuery.devicePixelRatioOf(context);
     final item = _item;
     final count = widget.meta.items.length;
@@ -506,7 +506,7 @@ class _Missing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return DecoratedBox(
       decoration: ShapeDecoration(
         color: dsh.codeWellHeader,
@@ -536,7 +536,7 @@ class _StateBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final failed = meta.status == MediaStatus.failed;
     final cancelled = failed && meta.error?.code == 'cancelled';
     final text = switch (meta.status) {
@@ -631,7 +631,7 @@ class MediaMetaLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final style = AppType.tabular(
-      Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13, color: DshColors.of(context).textTertiary),
+      Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13, color: XrkColors.of(context).textTertiary),
     );
     final model = meta.request.modelName;
     final tail = mediaMetaTail(meta);
@@ -733,7 +733,7 @@ class _MediaActionRowState extends ConsumerState<MediaActionRow> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final muted = DshColors.of(context).textTertiary;
+    final muted = XrkColors.of(context).textTertiary;
     final actions = MediaCardActions.maybeOf(context);
     final style = IconButton.styleFrom(
       minimumSize: const Size.square(MediaCardMetrics.button),

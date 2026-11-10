@@ -6,14 +6,14 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/mention/mention_text_controller.dart';
-import 'package:dsh_app/ui/chat/voice/voice_bridge.dart';
-import 'package:dsh_app/ui/chat/voice/voice_controller.dart';
-import 'package:dsh_app/ui/chat/voice/voice_widgets.dart';
-import 'package:dsh_app/ui/chat/widgets/attachments.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/mention/mention_text_controller.dart';
+import 'package:xrk_app/ui/chat/voice/voice_bridge.dart';
+import 'package:xrk_app/ui/chat/voice/voice_controller.dart';
+import 'package:xrk_app/ui/chat/voice/voice_widgets.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,7 +24,7 @@ class _Rig {
   _Rig({FakeVoiceBridge? bridge, this.client, this.modelReady = false}) : bridge = bridge ?? FakeVoiceBridge();
 
   final FakeVoiceBridge bridge;
-  final DshClient? client;
+  final XrkClient? client;
 
   /// The on-device voice model is downloaded (voice settings).
   final bool modelReady;
@@ -103,7 +103,7 @@ void main() {
   testWidgets('the recorder alone needs the engine recognizer', (tester) async {
     final bridge = FakeVoiceBridge(caps: const VoiceCapabilities(recognizer: false, recorder: true));
     // Bundle off: `speech/*` is not served.
-    final rig = _Rig(bridge: bridge, client: DshClient.withCarrier(FakeRpcCarrier({})));
+    final rig = _Rig(bridge: bridge, client: XrkClient.withCarrier(FakeRpcCarrier({})));
     await rig.pump(tester);
     expect(_mic, findsNothing);
   });
@@ -205,7 +205,7 @@ void main() {
 
   testWidgets('both available: a downloaded voice model wins over the phone service', (tester) async {
     final carrier = FakeRpcCarrier({'speech/catalog': (_) => readySpeechCatalog()});
-    final rig = _Rig(client: DshClient.withCarrier(carrier), modelReady: true);
+    final rig = _Rig(client: XrkClient.withCarrier(carrier), modelReady: true);
     await rig.pump(tester);
     await tester.tap(_mic);
     await _settle(tester);
@@ -218,7 +218,7 @@ void main() {
 
   testWidgets('model not downloaded: the system recognizer wins (live text)', (tester) async {
     final carrier = FakeRpcCarrier({'speech/catalog': (_) => readySpeechCatalog()});
-    final rig = _Rig(client: DshClient.withCarrier(carrier));
+    final rig = _Rig(client: XrkClient.withCarrier(carrier));
     await rig.pump(tester);
     await tester.tap(_mic);
     await _settle(tester);
@@ -238,7 +238,7 @@ void main() {
     // A ROM without Google: no recognition service.
     final bridge = FakeVoiceBridge(caps: const VoiceCapabilities(recognizer: false, recorder: true))
       ..recording = silentWav(1);
-    final rig = _Rig(bridge: bridge, client: DshClient.withCarrier(carrier));
+    final rig = _Rig(bridge: bridge, client: XrkClient.withCarrier(carrier));
     await rig.pump(tester);
     expect(_mic, findsOneWidget);
     await tester.tap(_mic);
@@ -261,7 +261,7 @@ void main() {
     final carrier = FakeRpcCarrier({'speech/catalog': (_) => readySpeechCatalog(phase: 'ready')});
     final bridge = FakeVoiceBridge(caps: const VoiceCapabilities(recognizer: false, recorder: true))
       ..recording = silentWav(0.1);
-    final rig = _Rig(bridge: bridge, client: DshClient.withCarrier(carrier));
+    final rig = _Rig(bridge: bridge, client: XrkClient.withCarrier(carrier));
     await rig.pump(tester);
     await tester.tap(_mic);
     await _settle(tester);

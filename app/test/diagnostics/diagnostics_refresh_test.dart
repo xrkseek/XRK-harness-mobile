@@ -1,19 +1,19 @@
 import 'dart:async';
 
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/diagnostics/diagnostics_export.dart';
-import 'package:dsh_app/diagnostics/system_ime_diagnostics.dart';
-import 'package:dsh_app/diagnostics/system_ime_evidence.dart';
-import 'package:dsh_app/diagnostics/diagnostics_publish.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/voice_settings.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/diagnostics/diagnostics_export.dart';
+import 'package:xrk_app/diagnostics/system_ime_diagnostics.dart';
+import 'package:xrk_app/diagnostics/system_ime_evidence.dart';
+import 'package:xrk_app/diagnostics/diagnostics_publish.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/voice_settings.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -120,7 +120,7 @@ class _Fixture {
 
   final ready = Completer<HostConnection?>();
   final runtime = _Runtime();
-  final client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
+  final client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
   late final ProviderContainer container;
   bool closed = false;
 

@@ -3,9 +3,9 @@
 // user's side shows a tag and the card turns read-only. Copying a reply never
 // copies the JSON.
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,17 +37,17 @@ Future<ChatHarness> _pump(WidgetTester tester, ChatState state) async {
 void main() {
   testWidgets('a reply block draws as a card; a tap sends the answer', (tester) async {
     final harness = await _pump(tester, _state());
-    expect(find.byType(DshUiBlock), findsOneWidget);
+    expect(find.byType(XrkUiBlock), findsOneWidget);
     expect(find.textContaining('"type"'), findsNothing);
     await tester.tap(find.text('方案 B'));
     await pumpFrames(tester);
     final sent = harness.controllers['s1']!.sent.single;
-    expect(parseDshUiReply(sent)?.chipLabel, contains('方案 B'));
+    expect(parseXrkUiReply(sent)?.chipLabel, contains('方案 B'));
   });
 
   testWidgets('answered: the user side is a tag and the card is read-only', (tester) async {
     final harness = await _pump(tester, _state(answered: true));
-    expect(find.byType(DshUiReplyChip), findsOneWidget);
+    expect(find.byType(XrkUiReplyChip), findsOneWidget);
     expect(find.textContaining('[dsh-ui reply]'), findsNothing);
     await tester.tap(find.text('方案 A').first);
     await pumpFrames(tester);
@@ -82,7 +82,7 @@ void main() {
       tester,
       ChatState(loading: false, items: [user(1, '帮我比较一下两个贷款方案'), assistant(2, bare)]),
     );
-    expect(find.byType(DshUiBlock), findsOneWidget);
+    expect(find.byType(XrkUiBlock), findsOneWidget);
     expect(find.textContaining('"type"'), findsNothing);
     expect(find.text('方案 B'), findsOneWidget);
   });
@@ -100,12 +100,12 @@ void main() {
       tester,
       ChatState(loading: false, items: [user(1, '帮我比较一下两个贷款方案'), assistant(2, reply)]),
     );
-    final field = find.descendant(of: find.byType(DshUiCard), matching: find.byType(TextField));
+    final field = find.descendant(of: find.byType(XrkUiCard), matching: find.byType(TextField));
     expect(field, findsOneWidget);
     // 只填字、不选预设也能发。
     await tester.enterText(field, '先算一次总利息');
     await pumpFrames(tester, 2);
-    await tester.tap(find.descendant(of: find.byType(DshUiCard), matching: find.text('发送')));
+    await tester.tap(find.descendant(of: find.byType(XrkUiCard), matching: find.text('发送')));
     await pumpFrames(tester, 4);
     final sent = harness.controllers['s1']!.sent.single;
     expect(sent, contains('[dsh-ui reply] 选一个方案'));

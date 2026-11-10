@@ -4,13 +4,13 @@
 //
 //   flutter test --update-goldens test/shell/common_golden_test.dart
 
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/empty_view.dart';
-import 'package:dsh_app/ui/common/page_hero.dart';
-import 'package:dsh_app/ui/common/status_dot.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/empty_view.dart';
+import 'package:xrk_app/ui/common/page_hero.dart';
+import 'package:xrk_app/ui/common/status_dot.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -71,7 +71,7 @@ void main() {
           children: [
             StatusDot(tone: StatusTone.ok, size: 7),
             SizedBox(width: 6),
-            Text('运行中 · DSH 0.2.1'),
+            Text('运行中 · XRK 0.2.1'),
           ],
         ),
         stats: const [('2 小时', '已运行'), ('34', '对话'), ('1.2 GB', '占用')],
@@ -160,7 +160,7 @@ void main() {
             EmptyView(
               icon: AppIcons.time,
               title: '还没有自动化任务',
-              message: '定时让 DSH 帮你跑一遍',
+              message: '定时让 XRK 帮你跑一遍',
               actionLabel: '新建',
               onAction: _noop,
             ),

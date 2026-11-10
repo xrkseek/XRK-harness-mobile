@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dsh_app/phone/phone_channel.dart';
-import 'package:dsh_app/ui/phone/phone_control_screen.dart';
+import 'package:xrk_app/phone/phone_channel.dart';
+import 'package:xrk_app/ui/phone/phone_control_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

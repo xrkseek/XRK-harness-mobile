@@ -1,7 +1,7 @@
 // The on-device engine's Linux files, read and written from the app for what
-// DSH has no remote method for (user skills and the user's AGENTS.md in a
+// XRK has no remote method for (user skills and the user's AGENTS.md in a
 // profile share). The guest root is the rootfs under the app's files dir
-// (RuntimeInstaller.kt: `filesDir/runtime/rootfs`); DSH home is `/root/.dsh`.
+// (RuntimeInstaller.kt: `filesDir/runtime/rootfs`); XRK home is `/root/.xrk`.
 // The files are small; IO is synchronous.
 
 import 'dart:convert';
@@ -34,17 +34,17 @@ class GuestFs {
   /// The rootfs directory (guest `/`).
   final Directory root;
 
-  /// Guest DSH home.
-  static const dshHome = '/root/.dsh';
+  /// Guest XRK home.
+  static const dshHome = '/root/.xrk';
 
-  /// Guest shared agents home (`$DSH_AGENTS_HOME` default).
+  /// Guest shared agents home (`$XRK_AGENTS_HOME` default).
   static const agentsHome = '/root/.agents';
 
   /// Where imported skills go.
   static const skillsRoot = '$dshHome/skills';
 
   /// Where an imported AGENTS.md goes: the shared agents root, loaded after
-  /// DSH home's (app-managed) one.
+  /// XRK home's (app-managed) one.
   static const importedAgentsMd = '$agentsHome/AGENTS.md';
 
   /// The on-device rootfs; null when the runtime isn't installed.
@@ -61,7 +61,7 @@ class GuestFs {
 
   Directory dir(String guestPath) => Directory('${root.path}/${guestPath.replaceFirst(RegExp(r'^/+'), '')}');
 
-  /// The person's own AGENTS.md text: DSH home's unless the app manages it,
+  /// The person's own AGENTS.md text: XRK home's unless the app manages it,
   /// else the shared agents root's. Null when there is none.
   Future<String?> readUserAgentsMd() async {
     for (final path in ['$dshHome/AGENTS.md', importedAgentsMd]) {
@@ -86,9 +86,9 @@ class GuestFs {
     }
   }
 
-  /// User skills from DSH home and the shared agents root (`<name>/SKILL.md`
+  /// User skills from XRK home and the shared agents root (`<name>/SKILL.md`
   /// folders with their small text files, or flat `<name>.md`). The first
-  /// root wins a name, as in DSH's own rank order.
+  /// root wins a name, as in XRK's own rank order.
   Future<List<LocalSkill>> readUserSkills() async {
     final out = <String, LocalSkill>{};
     for (final rootPath in [skillsRoot, '$agentsHome/skills']) {
@@ -168,7 +168,7 @@ class GuestFs {
     return out;
   }
 
-  /// Text of skill [name] in DSH home, by relative path; null when absent.
+  /// Text of skill [name] in XRK home, by relative path; null when absent.
   Map<String, String>? readSkill(String name) {
     final folder = dir('$skillsRoot/$name');
     if (folder.existsSync()) return _readFolder(folder);

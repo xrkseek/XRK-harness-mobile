@@ -1,9 +1,9 @@
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/features_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/features/permission_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/features_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/features/permission_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,14 +25,14 @@ const _auto = {'value': 'auto', 'name': 'auto'};
 
 void main() {
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
   var stored = 'workspace-write';
 
   setUp(() {
     // 自动审查's first-time notice reads whether it was silenced.
     SharedPreferences.setMockInitialValues({});
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     stored = 'workspace-write';
     carrier.handlers['settings/describe'] = (_) => {
       'writable': true,
@@ -94,7 +94,7 @@ void main() {
     stored = 'auto';
     carrier.handlers['permissionPresets/catalog'] = (_) {
       if (stored == 'auto') {
-        throw const DshRemoteException('internal', 'permission: unknown default preset "auto"');
+        throw const XrkRemoteException('internal', 'permission: unknown default preset "auto"');
       }
       return {
         'options': [..._ordinary, _auto],
@@ -153,7 +153,7 @@ void main() {
 
   test('unrelated catalog failures are not rewritten as invalid settings', () async {
     stored = 'auto';
-    carrier.handlers['permissionPresets/catalog'] = (_) => throw const DshRemoteException('offline', 'unreachable');
+    carrier.handlers['permissionPresets/catalog'] = (_) => throw const XrkRemoteException('offline', 'unreachable');
     final container = ProviderContainer(
       retry: (_, _) => null,
       overrides: [activeConnectionProvider.overrideWithValue(AsyncData(fakeHost(client, kind: HostKind.ssh)))],
@@ -161,6 +161,6 @@ void main() {
     addTearDown(container.dispose);
     final sub = container.listen(permissionStateProvider(null), (_, _) {});
     addTearDown(sub.close);
-    await expectLater(container.read(permissionStateProvider(null).future), throwsA(isA<DshRemoteException>()));
+    await expectLater(container.read(permissionStateProvider(null).future), throwsA(isA<XrkRemoteException>()));
   });
 }

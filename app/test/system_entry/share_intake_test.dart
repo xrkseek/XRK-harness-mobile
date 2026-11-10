@@ -1,9 +1,9 @@
-import 'package:dsh_app/links/share_intake.dart';
-import 'package:dsh_app/share_code/share_link.dart';
+import 'package:xrk_app/links/share_intake.dart';
+import 'package:xrk_app/share_code/share_link.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const _channel = MethodChannel('dsh/share');
+const _channel = MethodChannel('xrk/share');
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -88,7 +88,7 @@ void main() {
     });
 
     test('a forwarded share link is found in the text', () {
-      final link = ShareLink.find('dshgo://share/plugin?p=abc.def12345');
+      final link = ShareLink.find('xrkharness://share/plugin?p=abc.def12345');
       expect(link, isNotNull);
       final share = IncomingShare(text: '试试这个插件：${link!.webLink}');
       expect(share.shareLink?.webLink, link.webLink);
@@ -124,7 +124,7 @@ void main() {
 
       // A push from the native side before anyone listens.
       await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
-        'dsh/share',
+        'xrk/share',
         const StandardMethodCodec().encodeMethodCall(const MethodCall('share', {'text': '先到的'})),
         (_) {},
       );

@@ -2,12 +2,12 @@
 // buttons on the sheet's 20 gutter, the secondary pair mirrored, every
 // button 50 tall; and at 360 wide with large text nothing overflows.
 
-import 'package:dsh_app/ui/cordis/cordis_page.dart';
-import 'package:dsh_app/ui/cordis/cordis_plugin_sheet.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/status_dot.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/cordis/cordis_page.dart';
+import 'package:xrk_app/ui/cordis/cordis_plugin_sheet.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/status_dot.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

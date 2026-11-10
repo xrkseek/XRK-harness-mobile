@@ -1,12 +1,12 @@
 // Agent preset compositions as the editor reads and writes them, against the
-// documents a DSH 0.2.1-rc.2 Host returns from `agentPresets/read`
+// documents a XRK 0.2.1-rc.2 Host returns from `agentPresets/read`
 // (fixtures/preset_*.yaml): rows, official names, the persona prompt, the
 // rendered list and the bundle files.
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/features/preset_editor/preset_composition.dart';
+import 'package:xrk_app/ui/features/preset_editor/preset_composition.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaml/yaml.dart';
 
@@ -51,7 +51,7 @@ void main() {
       expect(byId['tool-bash']!.windowsOnly, isFalse);
       expect(byId['tool-pwsh']!.windowsOnly, isTrue);
       expect(byId['planning']!.label, '计划模式');
-      expect(byId['delegation']!.children, contains('@deepseek-ai/dsh-tool-subagent'));
+      expect(byId['delegation']!.children, contains('@xrkseek/harness-cli-tool-subagent'));
       expect(byId['skill-filesystem']!.kind, PresetRowKind.skill);
       expect(byId['tool-web']!.kind, PresetRowKind.tool);
       expect(byId['compaction']!.kind, PresetRowKind.context);
@@ -136,7 +136,7 @@ void main() {
       final insert = (patch.single as Map)['insert'] as List;
       final row = insert.single as Map;
       expect(row['id'], 'preset-review');
-      expect(row['name'], '@deepseek-ai/dsh-agent-preset');
+      expect(row['name'], '@xrkseek/harness-cli-agent-preset');
       final config = row['config'] as Map;
       expect(config['id'], 'review');
       expect(config['name'], '代码审查');

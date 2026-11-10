@@ -17,7 +17,7 @@ import 'squircle.dart';
 /// | xl | 28 | 输入条(composer)、底部弹层、对话框 |
 /// | pill | — | 顶栏胶囊、模型胶囊、发送键、思考胶囊(StadiumBorder) |
 ///
-/// DSH 官方 Web 的阶梯是 4/8/12/16/20/28(panel = 28),这里在触屏上整体
+/// XRK 官方 Web 的阶梯是 4/8/12/16/20/28(panel = 28),这里在触屏上整体
 /// 放大一点,但保留 28 作为最外层容器半径,与官方 composer 一致。
 abstract final class AppShape {
   static const xs = 6.0;
@@ -76,7 +76,7 @@ abstract final class AppSpace {
   /// 换轮(上一轮回答 → 下一条用户消息)的竖向间距。
   static const betweenTurns = 24.0;
 
-  /// 正文最大阅读宽度(平板 / 横屏 / 折叠屏展开时居中)。与 DSH 官方
+  /// 正文最大阅读宽度(平板 / 横屏 / 折叠屏展开时居中)。与 XRK 官方
   /// `--dsh-chat-content-width: 748px` 同档。
   static const readingWidth = 720.0;
 

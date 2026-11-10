@@ -2,13 +2,13 @@
 // 全部功能 before the cards moved to 设置 still opens the same page: every
 // such id resolves through the settings index.
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/engine_settings/runtime_settings_pages.dart';
-import 'package:dsh_app/ui/features/feature_catalog.dart';
-import 'package:dsh_app/ui/plugins/native/native_taps.dart' show openNativePage;
-import 'package:dsh_app/ui/settings/index/settings_pages.dart';
-import 'package:dsh_app/ui_config/ui_config_schema.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/engine_settings/runtime_settings_pages.dart';
+import 'package:xrk_app/ui/features/feature_catalog.dart';
+import 'package:xrk_app/ui/plugins/native/native_taps.dart' show openNativePage;
+import 'package:xrk_app/ui/settings/index/settings_pages.dart';
+import 'package:xrk_app/ui_config/ui_config_schema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

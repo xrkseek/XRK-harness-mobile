@@ -10,7 +10,7 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 /// The platform returns temporary content URIs, without copying file contents
 /// into Dart or granting the page access to app-private filesystem paths.
 class WebFileChooser {
-  WebFileChooser({MethodChannel? channel}) : _channel = channel ?? const MethodChannel('dsh/web-files');
+  WebFileChooser({MethodChannel? channel}) : _channel = channel ?? const MethodChannel('xrk/web-files');
 
   final MethodChannel _channel;
   int _generation = 0;

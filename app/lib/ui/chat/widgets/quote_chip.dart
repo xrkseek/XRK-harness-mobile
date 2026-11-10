@@ -48,7 +48,7 @@ class QuoteChip extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final muted = DshColors.of(context).textTertiary;
+    final muted = XrkColors.of(context).textTertiary;
     final height = heightOf(context);
     final line = quoteLine(quote);
     return Semantics(
@@ -184,7 +184,7 @@ class BubbleQuote extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     // One step under the message text, still on the chat text scale.
     final style = AppType.chatBody(context, scale: 14 / 16, color: theme.colorScheme.onSurfaceVariant);
     return Semantics(

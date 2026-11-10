@@ -12,7 +12,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -84,7 +84,7 @@ class WorkspacesController extends Notifier<WorkspacesState> {
   final Map<String, Workspace> _rows = {};
   List<String> _order = const [];
   final Set<String> _removed = {};
-  DshClient? _client;
+  XrkClient? _client;
   ReadListIdentity? _identity;
 
   @override
@@ -173,7 +173,7 @@ class WorkspacesController extends Notifier<WorkspacesState> {
     state = ref.read(readListCacheProvider).stamp(next, _identity, _requireClient);
   }
 
-  DshClient get _requireClient => _client ?? (throw const DshTransportException('not connected'));
+  XrkClient get _requireClient => _client ?? (throw const XrkTransportException('not connected'));
 
   /// Registers [path] (an existing absolute folder) or returns the workspace
   /// that already has it.
@@ -508,7 +508,7 @@ Future<String?> workspaceForNewSession(Ref ref) async {
 /// [cwd] (null lets the host pick). Falls back to [cwd] if the workspace was
 /// removed in the meantime.
 Future<SessionCreated> createSessionInWorkspace(
-  DshClient client,
+  XrkClient client,
   String? workspaceId, {
   String? cwd,
   void Function()? checkCurrent,
@@ -517,7 +517,7 @@ Future<SessionCreated> createSessionInWorkspace(
   if (workspaceId == null) return client.createSession(cwd: cwd);
   try {
     return await client.createSession(workspaceId: workspaceId);
-  } on DshRemoteException catch (e) {
+  } on XrkRemoteException catch (e) {
     if (e.code != WorkspaceErrors.notFound) rethrow;
     checkCurrent?.call();
     return client.createSession(cwd: cwd);

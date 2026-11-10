@@ -1,11 +1,11 @@
 // The live activity in words (lib/notify/live_activity.dart): the pet's mood,
 // the conversation it names, the chip, and when it says nothing.
 
-import 'package:dsh_app/notify/live_activity.dart';
-import 'package:dsh_app/notify/notify_channel.dart';
-import 'package:dsh_app/pets/pet_mood.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
+import 'package:xrk_app/notify/live_activity.dart';
+import 'package:xrk_app/notify/notify_channel.dart';
+import 'package:xrk_app/pets/pet_mood.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _local = HostRef.local;
@@ -53,7 +53,7 @@ void main() {
     expect(live.title, '修登录页');
     expect(live.text, '正在干活');
     expect(live.chip, '干活中');
-    expect(live.publicText, 'DSH 正在干活');
+    expect(live.publicText, 'XRK 正在干活');
     expect(live.mood, PetStateName.working);
     // The subagent started first: the conversation has been at it since then.
     expect(live.since, _t0.add(const Duration(seconds: 2)));

@@ -5,15 +5,15 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/workspace/directory_picker.dart';
-import 'package:dsh_app/ui/workspace/workspace_format.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/workspace/directory_picker.dart';
+import 'package:xrk_app/ui/workspace/workspace_format.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -138,7 +138,7 @@ void main() {
       expect(container.read(workspacesProvider).byId(app.workspaceId)!.title, '应用');
       await expectLater(
         notifier.rename(site.workspaceId, '应用'),
-        throwsA(isA<DshRemoteException>().having((e) => e.code, 'code', WorkspaceErrors.nameConflict)),
+        throwsA(isA<XrkRemoteException>().having((e) => e.code, 'code', WorkspaceErrors.nameConflict)),
       );
 
       final prefs = container.read(workspacePrefsProvider.notifier);
@@ -164,7 +164,7 @@ void main() {
       await _settle();
       await expectLater(
         container.read(workspacesProvider.notifier).add('/root/nope'),
-        throwsA(isA<DshRemoteException>().having((e) => e.code, 'code', WorkspaceErrors.invalidPath)),
+        throwsA(isA<XrkRemoteException>().having((e) => e.code, 'code', WorkspaceErrors.invalidPath)),
       );
     });
 
@@ -181,7 +181,7 @@ void main() {
   });
 
   group('new conversations', () {
-    test('start in the selected workspace, else in the default folder', () async {
+    test('start in the selected workspace, else let Host pick 向阳', () async {
       final host = FakeWorkspaceHost(folders: ['/root/code/app']);
       final ws = host.seedWorkspace('/root/code/app');
       final container = containerFor(host);
@@ -191,7 +191,7 @@ void main() {
 
       await container.read(sessionsProvider.notifier).create();
       expect(host.argsOf('session/create').last, {
-        'request': {'cwd': localWorkspaceDir},
+        'request': {},
       });
 
       await container.read(workspacePrefsProvider.notifier).select(ws['workspaceId'] as String);
@@ -205,7 +205,7 @@ void main() {
 
     test('a workspace removed meanwhile falls back to the default folder', () async {
       final host = FakeWorkspaceHost();
-      final client = DshClient.withCarrier(host);
+      final client = XrkClient.withCarrier(host);
       await createSessionInWorkspace(client, 'ws-gone', cwd: '/root/workspace');
       expect(
         [for (final a in host.argsOf('session/create')) a['request']],
@@ -301,9 +301,9 @@ void main() {
     });
 
     test('errors are one short line', () {
-      expect(workspaceErrorText(const DshRemoteException(WorkspaceErrors.nameConflict, 'x')), '已有同名的工作区');
-      expect(workspaceErrorText(const DshRemoteException(WorkspaceErrors.exists, 'x')), '已经有同名的文件夹');
-      expect(workspaceErrorText(const DshTransportException('down')), '没能连上引擎');
+      expect(workspaceErrorText(const XrkRemoteException(WorkspaceErrors.nameConflict, 'x')), '已有同名的工作区');
+      expect(workspaceErrorText(const XrkRemoteException(WorkspaceErrors.exists, 'x')), '已经有同名的文件夹');
+      expect(workspaceErrorText(const XrkTransportException('down')), '没能连上引擎');
       expect(workspaceErrorText(StateError('x'), fallback: '没能添加工作区'), '没能添加工作区');
     });
   });

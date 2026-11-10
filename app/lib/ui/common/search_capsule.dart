@@ -51,7 +51,7 @@ class SearchCapsule extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final style = theme.textTheme.bodyMedium!;
     // Taller only when a large system text size needs it.
     final height = heightOf(context);
@@ -119,7 +119,7 @@ class SearchCapsuleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final style = theme.textTheme.bodyMedium!;
     final height = SearchCapsule.heightOf(context);
     return Pressable(

@@ -1,16 +1,16 @@
 # AGENTS.md
 
-dsh-Go 是 DeepSeek Harness 的 Android 手机应用：Flutter 原生界面 + 纯 Dart 客户端 + 打过补丁的 DSH 引擎运行时（在 PRoot 里运行 `dsh web`）。改动前先读 [CONTRIBUTING.md](CONTRIBUTING.md)（贡献与验证契约）与 [docs/architecture.md](docs/architecture.md)。
+dsh-Go 是 XRK-Harness 的 Android 手机应用：Flutter 原生界面 + 纯 Dart 客户端 + 打过补丁的 XRK 引擎运行时（在 PRoot 里运行 `xrkh serve`）。改动前先读 [CONTRIBUTING.md](CONTRIBUTING.md)（贡献与验证契约）与 [docs/architecture.md](docs/architecture.md)。
 
 ## 仓库布局
 
 ```
 app/                         Flutter App：原生界面、Riverpod 状态、l10n、手机操控
 app/lib/l10n/parts/          界面文案的中英文 ARB 输入
-packages/dsh_client/         纯 Dart 客户端：HTTP/SSE、mux、会话与删除 API
-packages/dsh_remote/         远程传输：WebRTC / LAN / TURN / 中继
-runtime/                     打补丁的 DSH 引擎运行时
-runtime/bridge/dsh-go-bridge/  App ↔ 引擎的 HTTP 桥（/dsh-go/v1/*，含会话删除路由）
+packages/xrk_client/         纯 Dart 客户端：HTTP/SSE、mux、会话与删除 API
+packages/xrk_remote/         远程传输：WebRTC / LAN / TURN / 中继
+runtime/                     打补丁的 XRK 引擎运行时
+runtime/bridge/xrk-bridge/  App ↔ 引擎的 HTTP 桥（/xrk-mobile/v1/*，含会话删除路由）
 runtime/patches/             引擎补丁及其 pins.json（补丁与版本钉死）
 sdk/plugin-kit/              插件 SDK
 tooling/                     APK 构建与构建号脚本
@@ -23,8 +23,8 @@ docs/                        架构、发布、路线图、用户指南
 
 ```bash
 (cd app && flutter pub get && flutter analyze && flutter test)   # Flutter 应用
-(cd packages/dsh_client && dart pub get && dart analyze && dart test)
-(cd packages/dsh_remote && dart pub get && dart analyze && dart test)
+(cd packages/xrk_client && dart pub get && dart analyze && dart test)
+(cd packages/xrk_remote && dart pub get && dart analyze && dart test)
 (cd sdk/plugin-kit && npm install && npm test)
 node --test runtime/tests/*.test.mjs                               # 引擎桥/补丁测试
 python3 app/tool/l10n_merge.py --check                             # 文案生成检查
@@ -82,7 +82,7 @@ CI（`.github/workflows/ci.yml`）在 PR 上跑通用检查和改动涉及的部
 
 审查 PR 或改动时，以**不引入新 Bug、最小必要改动、保持代码简洁**为核心：
 
-1. **防止回归**：优先检查新增 Bug、竞态、资源泄漏、性能退化、兼容性问题，特别关注共享层（`packages/dsh_client`、bridge、runtime 补丁）对既有主机连接方式的影响。
+1. **防止回归**：优先检查新增 Bug、竞态、资源泄漏、性能退化、兼容性问题，特别关注共享层（`packages/xrk_client`、bridge、runtime 补丁）对既有主机连接方式的影响。
 2. **避免过度设计**：识别重复实现、无必要的抽象、冗余封装和过度防御性编程；只在存在更简单等效方案时报告，不误判必要的安全校验和错误处理。
 3. **严格控制范围**：改动应围绕目标与关联 issue，不夹带无关重构、格式化、依赖升级或其他功能修改；必要的测试和文档同步除外。
 4. **保证实质价值**：关注无效代码、重复逻辑、无意义拆分和缺乏有效断言的测试；不以代码行数或提交次数判断贡献，不推测贡献者动机。

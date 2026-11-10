@@ -1,9 +1,9 @@
 // The plugin settings on a bridge R7 Host (runtime r14), from what a real one
-// answered (backend stack R7 on DSH 0.2.1-rc.4, with the voice-input kit and
+// answered (backend stack R7 on XRK 0.2.1-rc.4, with the voice-input kit and
 // session search switched on, a local bundle with covered and uncovered rows,
 // the App's phone control and an observer as overlays):
 //
-//   fixtures/bridge_catalog_r14.json          GET /dsh-go/v1/plugin-config
+//   fixtures/bridge_catalog_r14.json          GET /xrk-mobile/v1/plugin-config
 //   fixtures/plugin_bundles_r14.json          pluginManager/listBundles, same
 //                                             moment (icons cut to "<icon>",
 //                                             the run's paths to /root/plugins)
@@ -21,10 +21,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_entries.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_entries.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_bridge.dart';
@@ -77,7 +77,7 @@ const _r14Plugins = [
   'flag-only',
   'ambiguous',
   'race',
-  // dsh-media: in the bundle, but 设置 › 图像与视频 is its page.
+  // xrk-media: in the bundle, but 设置 › 图像与视频 is its page.
   'error-entry',
   'optional-tool-session-query',
 ];
@@ -129,7 +129,7 @@ void main() {
         (sensevoice.owner, sensevoice.bundle, sensevoice.source, sensevoice.writable, sensevoice.reason),
         (
           'optional',
-          '@deepseek-ai/dsh-experimental-voice-input-bundle',
+          '@xrkseek/harness-cli-experimental-voice-input-bundle',
           'official-optional-bundle',
           false,
           'overridden',
@@ -159,7 +159,7 @@ void main() {
         final host = await FakeBridgeHost.start();
         addTearDown(host.close);
         host.listed = raw;
-        final client = await DshClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
+        final client = await XrkClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
         addTearDown(client.close);
         final scope = PluginConfigScope.of(_bundles());
         final api = BridgePluginConfigApi(client, _NoFallback(), scope: () => scope);
@@ -171,10 +171,10 @@ void main() {
           ], revision: 'r1').drain<void>(),
           throwsA(isA<PluginConfigFailure>().having((f) => f.kind, 'kind', PluginConfigFailureKind.rejected)),
         );
-        expect(host.requests.where((r) => r.$2.startsWith('$dshGoPluginConfigPath/')), isEmpty);
+        expect(host.requests.where((r) => r.$2.startsWith('$xrkGoPluginConfigPath/')), isEmpty);
         // The same entry as listed goes out (404 here: the fake has no form).
         await expectLater(api.read('flag-only'), completion(isNull));
-        expect(host.requests.where((r) => r.$2 == dshGoPluginConfigEntryPath('flag-only')), hasLength(1));
+        expect(host.requests.where((r) => r.$2 == xrkGoPluginConfigEntryPath('flag-only')), hasLength(1));
       });
     }
 
@@ -261,9 +261,9 @@ void main() {
       host.entries['speech-to-text-sensevoice'] = sensevoiceEntry();
       final item = {
         'entryId': 'speech-to-text-sensevoice',
-        'package': '@deepseek-ai/dsh-experimental-speech-to-text-sensevoice',
+        'package': '@xrkseek/harness-cli-experimental-speech-to-text-sensevoice',
         'owner': 'optional',
-        'bundle': '@deepseek-ai/dsh-experimental-voice-input-bundle',
+        'bundle': '@xrkseek/harness-cli-experimental-voice-input-bundle',
         'kind': 'plugin',
         'source': 'official-optional-bundle',
         'label': {'en': 'Voice input', 'zh': '语音输入'},
@@ -272,7 +272,7 @@ void main() {
         'writable': true,
       };
       host.listed = [item];
-      final client = await DshClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
+      final client = await XrkClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
       addTearDown(client.close);
       final confirmed = PluginConfigScope.of(_bundles(host.bundles.cast<Map<String, Object?>>()));
       var scope = confirmed;
@@ -307,7 +307,7 @@ void main() {
       await api.describe();
       await refused('暂不支持在这里设置');
       // Only the one read while both agreed reached the Host.
-      expect(host.requests.where((r) => r.$2.startsWith('$dshGoPluginConfigPath/')), hasLength(1));
+      expect(host.requests.where((r) => r.$2.startsWith('$xrkGoPluginConfigPath/')), hasLength(1));
       expect(host.writes(), isEmpty);
       expect(host.requests.where((r) => r.$2 == '/api/credentials/set'), isEmpty);
       expect(host.credentials, isEmpty);
@@ -340,7 +340,7 @@ void main() {
       addTearDown(host.close);
       host.listed = _raw();
       host.recorded['speech-to-text-sensevoice'] = _fixture('bridge_entry_r14_sensevoice.json');
-      final client = await DshClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
+      final client = await XrkClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
       addTearDown(client.close);
       final scope = PluginConfigScope.of(_bundles());
       final api = BridgePluginConfigApi(client, _NoFallback(), scope: () => scope);
@@ -383,7 +383,7 @@ void main() {
     test('rows without titles: the official table, else the id in words', () {
       final raw = [
         for (final b in _rawBundles())
-          if (b['name'] == '@deepseek-ai/dsh-experimental-voice-input-bundle')
+          if (b['name'] == '@xrkseek/harness-cli-experimental-voice-input-bundle')
             {
               ...b,
               'rows': [
@@ -410,7 +410,7 @@ void main() {
     test('a schema that names itself, once its form is read', () {
       final raw = [
         for (final b in _rawBundles())
-          if (b['name'] == '@deepseek-ai/dsh-experimental-voice-input-bundle')
+          if (b['name'] == '@xrkseek/harness-cli-experimental-voice-input-bundle')
             {
               ...b,
               'rows': [
@@ -448,7 +448,7 @@ void main() {
     test('a bundle without a title of its own adds nothing: the entries\' names', () {
       final raw = [
         for (final b in _rawBundles())
-          if (b['name'] == '@deepseek-ai/dsh-experimental-voice-input-bundle') ({...b}..remove('meta')) else b,
+          if (b['name'] == '@xrkseek/harness-cli-experimental-voice-input-bundle') ({...b}..remove('meta')) else b,
       ];
       final bundles = _bundles(raw);
       final state = _state(bundles);
@@ -481,7 +481,7 @@ void main() {
             .meta!
             .title!
             .resolve(),
-        '@deepseek-ai/dsh-tool-session-query',
+        '@xrkseek/harness-cli-tool-session-query',
       );
       expect(pluginConfigEntryName('optional-tool-session-query', bundles, state: state, l10n: _zh), '会话搜索工具');
       expect(
@@ -518,7 +518,7 @@ void main() {
           [
             for (final id in [..._voice, 'local-notes']) pluginConfigTitle(id, bundles, state: state, l10n: l),
           ],
-          ['语音识别', 'SenseVoice 本地识别', '语音转写接口', 'dsh-go-fixture-local-notes'],
+          ['语音识别', 'SenseVoice 本地识别', '语音转写接口', 'xrk-mobile-fixture-local-notes'],
         );
       }
       // The R7 Host's own list: named by bundle.

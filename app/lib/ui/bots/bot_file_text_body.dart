@@ -1,4 +1,4 @@
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
@@ -24,7 +24,7 @@ class BotFileTextBody extends StatelessWidget {
                 ? context.l10n.botsTextPartial(formatBotTextCount(value.text.length, context.l10n.localeName))
                 : context.l10n.botsTextCompletenessUnknown,
             key: const ValueKey('bot-file-text-completeness'),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
           ),
         ),
       MarkdownBody(text: value.text),

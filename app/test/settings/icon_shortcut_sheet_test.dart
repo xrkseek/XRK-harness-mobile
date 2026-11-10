@@ -8,11 +8,11 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/app_icon_state.dart';
-import 'package:dsh_app/state/icon_shortcut_state.dart';
-import 'package:dsh_app/ui/settings/appearance/icon_shortcut_sheet.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/app_icon_state.dart';
+import 'package:xrk_app/state/icon_shortcut_state.dart';
+import 'package:xrk_app/ui/settings/appearance/icon_shortcut_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

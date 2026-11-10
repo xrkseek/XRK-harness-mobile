@@ -4,10 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// Opt-in geometry/gesture diagnostics. Never enabled in release builds.
-const uiTraceEnabled = !kReleaseMode && bool.fromEnvironment('DSH_UI_TRACE');
+const uiTraceEnabled = !kReleaseMode && bool.fromEnvironment('XRK_UI_TRACE');
 
 /// A separate A/B probe for the existing opaque fallback, never release UI.
-const uiTraceNoBlur = !kReleaseMode && bool.fromEnvironment('DSH_UI_NO_BLUR');
+const uiTraceNoBlur = !kReleaseMode && bool.fromEnvironment('XRK_UI_NO_BLUR');
 
 /// Callers pass only dimensions, booleans and fixed event names, never text,
 /// paths, session IDs or provider credentials.
@@ -15,7 +15,7 @@ void uiTrace(String scope, String event, Map<String, Object?> values) {
   if (!uiTraceEnabled) return;
   final finite = values.map((key, value) => MapEntry(key, value is num && !value.isFinite ? null : value));
   debugPrint(
-    '[DSH_UI] ${jsonEncode({'time': DateTime.now().microsecondsSinceEpoch, 'scope': scope, 'event': event, ...finite})}',
+    '[XRK_UI] ${jsonEncode({'time': DateTime.now().microsecondsSinceEpoch, 'scope': scope, 'event': event, ...finite})}',
   );
 }
 

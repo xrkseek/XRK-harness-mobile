@@ -2,14 +2,14 @@
 // a turn steered into while it ran (cut into pieces), several turns between
 // two user messages (auto-triggered, goal rounds, job callbacks), retries,
 // and the stopped / failed turns that stay open. Synthetic items with real
-// seqs, plus one transcript built from DSH log events (turn/start before the
+// seqs, plus one transcript built from XRK log events (turn/start before the
 // opening user/message, the steer inside the same turn).
 
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/chat_rows.dart';
-import 'package:dsh_app/ui/chat/widgets/turn_process.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/chat_rows.dart';
+import 'package:xrk_app/ui/chat/widgets/turn_process.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/sample_chat.dart';
@@ -317,7 +317,7 @@ void main() {
     });
   });
 
-  group('from DSH log events', () {
+  group('from XRK log events', () {
     var seq = 0;
     final events = <Map<String, Object?>>[];
     void ev(String type, Map<String, Object?> data) => events.add({

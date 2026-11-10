@@ -1,37 +1,37 @@
 - id: persona
-  name: '@deepseek-ai/dsh-persona'
+  name: '@xrkseek/harness-cli-persona'
   config:
     prefix: You are a coding agent powered by the {{model}} model.
 - id: agent-instructions
-  name: '@deepseek-ai/dsh-agent-instructions'
+  name: '@xrkseek/harness-cli-agent-instructions'
   config:
     maxBytes: 65536
 - id: time-context
-  name: '@deepseek-ai/dsh-time-context'
+  name: '@xrkseek/harness-cli-time-context'
 - id: tool-bash
-  name: '@deepseek-ai/dsh-tool-bash'
+  name: '@xrkseek/harness-cli-tool-bash'
   disabled: !!js process.platform === 'win32'
 - id: tool-pwsh
-  name: '@deepseek-ai/dsh-tool-pwsh'
+  name: '@xrkseek/harness-cli-tool-pwsh'
   disabled: !!js process.platform !== 'win32'
 - id: tool-fs
-  name: '@deepseek-ai/dsh-tool-fs'
+  name: '@xrkseek/harness-cli-tool-fs'
 - id: tool-fs-search
-  name: '@deepseek-ai/dsh-tool-fs-search'
+  name: '@xrkseek/harness-cli-tool-fs-search'
   config:
     sampleOverCapGlobResults: false
 - id: tool-jobs
-  name: '@deepseek-ai/dsh-tool-jobs'
+  name: '@xrkseek/harness-cli-tool-jobs'
 - id: tool-schedule
-  name: '@deepseek-ai/dsh-tool-schedule'
+  name: '@xrkseek/harness-cli-tool-schedule'
 - id: skill-filesystem
-  name: '@deepseek-ai/dsh-skill-filesystem'
+  name: '@xrkseek/harness-cli-skill-filesystem'
 - id: tool-skill
-  name: '@deepseek-ai/dsh-tool-skill'
+  name: '@xrkseek/harness-cli-tool-skill'
 - id: command-goal
-  name: '@deepseek-ai/dsh-command-goal'
+  name: '@xrkseek/harness-cli-command-goal'
 - id: tool-goal
-  name: '@deepseek-ai/dsh-tool-goal'
+  name: '@xrkseek/harness-cli-tool-goal'
 - id: planning
   name: cordis:group
   group: true
@@ -39,7 +39,7 @@
     planMode: true
   config:
     - id: plan-mode
-      name: '@deepseek-ai/dsh-plan-mode'
+      name: '@xrkseek/harness-cli-plan-mode'
       config:
         section: |
           You are in plan mode. Stay in plan mode until the user approves your plan through exit_plan_mode or switches the session mode. Imperative language to implement changes means plan the implementation, not execute it. A user's conversational agreement — including an answer confirming something you asked — approves nothing and does not end plan mode; fold the confirmed decision into the plan and submit it through exit_plan_mode.
@@ -61,11 +61,11 @@
     toolResultPruner: true
   config:
     - id: compaction-basic
-      name: '@deepseek-ai/dsh-compaction-basic'
+      name: '@xrkseek/harness-cli-compaction-basic'
     - id: command-compact
-      name: '@deepseek-ai/dsh-command-compact'
+      name: '@xrkseek/harness-cli-command-compact'
     - id: tool-result-pruner
-      name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+      name: '@xrkseek/harness-cli-compaction-tool-result-pruner'
       config:
         thresholdChars: 8192
         headChars: 4096
@@ -77,42 +77,42 @@
     workflowEngine: true
   config:
     - id: tool-subagent-control
-      name: '@deepseek-ai/dsh-tool-subagent-control'
+      name: '@xrkseek/harness-cli-tool-subagent-control'
     - id: tool-subagent-list-agents
-      name: '@deepseek-ai/dsh-tool-subagent-control/list-agents'
+      name: '@xrkseek/harness-cli-tool-subagent-control/list-agents'
     - id: tool-subagent
-      name: '@deepseek-ai/dsh-tool-subagent'
+      name: '@xrkseek/harness-cli-tool-subagent'
       config:
         provider: spawn
         toolName: subagent
         modelSelectionSettings: true
     - id: tool-subagent-fork
-      name: '@deepseek-ai/dsh-tool-subagent'
+      name: '@xrkseek/harness-cli-tool-subagent'
       config:
         provider: fork
         toolName: subagent_fork
     - id: workflow-ptc
-      name: '@deepseek-ai/dsh-workflow-ptc'
+      name: '@xrkseek/harness-cli-workflow-ptc'
       config:
         provider: spawn
     - id: tool-workflow
-      name: '@deepseek-ai/dsh-tool-workflow'
+      name: '@xrkseek/harness-cli-tool-workflow'
 - id: tool-ask-user
-  name: '@deepseek-ai/dsh-tool-ask-user'
+  name: '@xrkseek/harness-cli-tool-ask-user'
 - id: tool-todo
-  name: '@deepseek-ai/dsh-tool-todo'
+  name: '@xrkseek/harness-cli-tool-todo'
   config:
     allowParallelInProgress: true
 - id: tool-web
-  name: '@deepseek-ai/dsh-tool-web'
+  name: '@xrkseek/harness-cli-tool-web'
   config:
     fetch: true
     searchTimeoutMs: 60000
 - id: present
-  name: '@deepseek-ai/dsh-tool-present'
+  name: '@xrkseek/harness-cli-tool-present'
 - id: tool-plugin-manager
-  name: '@deepseek-ai/dsh-plugin-manager/tools'
+  name: '@xrkseek/harness-cli-plugin-manager/tools'
   disabled: true
 - id: tool-plugin-market
-  name: '@deepseek-ai/dsh-plugin-market/tools'
+  name: '@xrkseek/harness-cli-plugin-market/tools'
   disabled: true

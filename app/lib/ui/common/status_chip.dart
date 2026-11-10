@@ -103,7 +103,7 @@ class StatusChip extends StatelessWidget {
   /// (底色, 前景色) for [tone].
   static (Color, Color) colorsFor(BuildContext context, StatusTone tone) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final dark = theme.brightness == Brightness.dark;
     final dot = StatusDot.colorFor(context, tone);
     return switch (tone) {

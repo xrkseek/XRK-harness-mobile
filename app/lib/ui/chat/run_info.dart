@@ -1,9 +1,9 @@
 // The words and numbers of the run-information layers
-// (live activity, turn footnote, trajectory rows), derived from DSH turn
+// (live activity, turn footnote, trajectory rows), derived from XRK turn
 // traces. Timing semantics follow the official trajectory view (TTFT from
 // step start to first token; work in progress has no invented end).
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../l10n/l10n.dart';
 import '../../state/chat_state.dart';

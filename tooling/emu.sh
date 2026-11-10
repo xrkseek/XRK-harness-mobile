@@ -9,7 +9,7 @@
 #   tooling/emu.sh wait-boot         block until the emulator finished booting
 set -euo pipefail
 source "$(dirname "$0")/env.sh"
-PKG=io.github.ccch1mneyyy.dsh_app
+PKG=com.xrkseek.harness
 SHOTS="$(dirname "$0")/shots"
 
 case "${1:-}" in
@@ -17,7 +17,7 @@ case "${1:-}" in
   launch) adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/dev/null ;;
   stop) adb shell am force-stop "$PKG" ;;
   shot) mkdir -p "$SHOTS"; adb exec-out screencap -p > "$SHOTS/$2.png"; echo "$SHOTS/$2.png" ;;
-  log) adb logcat -d -v time | grep -E "flutter|DshService|dsh|AndroidRuntime|$PKG" | tail -n "${2:-200}" ;;
+  log) adb logcat -d -v time | grep -E "flutter|XrkService|dsh|AndroidRuntime|$PKG" | tail -n "${2:-200}" ;;
   tap) adb shell input tap "$2" "$3" ;;
   text) adb shell input text "$(printf '%s' "$2" | sed 's/ /%s/g')" ;;
   wait-boot)

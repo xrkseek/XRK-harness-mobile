@@ -1,4 +1,4 @@
-// Portions derived from DeepSeek Harness (https://github.com/deepseek-ai/deepseek-harness), MIT, Copyright (c) 2026 DeepSeek. See THIRD_PARTY_NOTICES.md.
+// Portions derived from XRK-Harness (https://github.com/deepseek-ai/deepseek-harness), MIT, Copyright (c) 2026 DeepSeek. See THIRD_PARTY_NOTICES.md.
 // Local changes: the phone actions (share, save to Downloads, copy path),
 // thumbnails, and the "generated files" card for turns without deliverables.
 
@@ -245,7 +245,7 @@ class _ArtifactTileState extends ConsumerState<ArtifactTile> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final artifact = _artifact;
     final busy = _busy != null;
     final office = ref.watch(artifactFilesProvider.select((files) => files.canConvertOffice));
@@ -394,7 +394,7 @@ IconData artifactIcon(ArtifactKind kind) => switch (kind) {
 
 /// 类型色:跟常见办公软件的习惯走(PDF 红、表格绿、演示橙、文档蓝)。
 Color artifactColor(BuildContext context, ArtifactKind kind) {
-  final dsh = DshColors.of(context);
+  final dsh = XrkColors.of(context);
   final colors = Theme.of(context).colorScheme;
   return switch (kind) {
     ArtifactKind.pdf => dsh.danger,
@@ -504,7 +504,7 @@ Future<ArtifactAction?> showArtifactMenu(
     isScrollControlled: true,
     builder: (sheet) {
       final theme = Theme.of(sheet);
-      final dsh = DshColors.of(sheet);
+      final dsh = XrkColors.of(sheet);
       final actions = [
         if (canFetch && artifactPreviewable(artifact, officeToPdf: officeToPdf)) ArtifactAction.preview,
         if (canFetch) ...[

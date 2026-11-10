@@ -4,14 +4,14 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_app/ui/bots/bot_chat_kit.dart';
-import 'package:dsh_app/ui/bots/bot_format.dart';
-import 'package:dsh_app/ui/bots/bot_mention.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_app/ui/bots/bot_chat_kit.dart';
+import 'package:xrk_app/ui/bots/bot_format.dart';
+import 'package:xrk_app/ui/bots/bot_mention.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -54,7 +54,7 @@ void main() {
     test('a relay that refuses dsBot/* reads as the relay, not as a missing plugin', () async {
       final transport = FakeDsBotTransport();
       transport.handlers['hello'] = (_) =>
-          throw const DshRemoteException('METHOD_NOT_ALLOWED', 'not on the allow-list');
+          throw const XrkRemoteException('METHOD_NOT_ALLOWED', 'not on the allow-list');
       expect((await start(transport)).read(dsBotProvider).availability, DsBotAvailability.relay);
     });
 
@@ -313,7 +313,7 @@ void main() {
 
     test('a failed send goes back to the draft side and says why', () async {
       final transport = FakeDsBotTransport();
-      transport.handlers['send'] = (_) => throw const DshRemoteException('bot/read-only', 'held');
+      transport.handlers['send'] = (_) => throw const XrkRemoteException('bot/read-only', 'held');
       final container = await start(transport);
       final sub = container.listen(botChatProvider('b2'), (_, _) {});
       addTearDown(sub.close);
@@ -321,7 +321,7 @@ void main() {
       expect(await container.read(botChatProvider('b2').notifier).send('hi'), isFalse);
       final state = container.read(botChatProvider('b2'));
       expect(state.pending, isEmpty);
-      expect(state.error, '另一个 DSH 正在使用这个团队');
+      expect(state.error, '另一个 XRK 正在使用这个团队');
     });
 
     test('a group chat reads its newest page again on its room event; live replies keep their place', () async {

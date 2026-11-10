@@ -5,9 +5,9 @@
 //
 //   flutter test test/shell/adaptive/adaptive_scaffold_test.dart
 
-import 'package:dsh_app/ui/shell/adaptive/adaptive_layout.dart';
-import 'package:dsh_app/ui/shell/adaptive/adaptive_scaffold.dart';
-import 'package:dsh_app/ui/theme/backdrop_frame.dart';
+import 'package:xrk_app/ui/shell/adaptive/adaptive_layout.dart';
+import 'package:xrk_app/ui/shell/adaptive/adaptive_scaffold.dart';
+import 'package:xrk_app/ui/theme/backdrop_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

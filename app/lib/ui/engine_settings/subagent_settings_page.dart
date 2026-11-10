@@ -7,7 +7,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show ModelCatalog;
+import 'package:xrk_client/xrk_client.dart' show ModelCatalog;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -167,7 +167,7 @@ class _SubagentSettingsPageState extends ConsumerState<SubagentSettingsPage> {
 
   List<SchemaFormSection> _modelSections(BuildContext context, EngineSettings settings) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = Theme.of(context).colorScheme;
     final enabledValue = settings.valueOf(_enabled) == true;
     final on = enabledValue || _pendingOn;

@@ -2,7 +2,7 @@
 // executable dsh-ui blocks are passed to this reader.
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -204,7 +204,7 @@ class SchemaDocumentationSheet extends StatelessWidget {
 
   Widget _markdown(BuildContext context, String text) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     // The chat's inline code and link colours, so a description reads like a reply.
     return GptMarkdownTheme(
       gptThemeData: GptMarkdownThemeData(

@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -134,7 +134,7 @@ ShareContent pluginCardContent(BuildContext context, MarketEntry entry, {String?
     // plugin, usually too long to scan at the card's size: the card then goes
     // without a QR code (ShareCard.qrFor); the text shared with it carries the
     // install command and the plugin page.
-    link: webLink ?? marketPluginShareWebLink(plugin) ?? dshGoProjectUrl,
+    link: webLink ?? marketPluginShareWebLink(plugin) ?? xrkGoProjectUrl,
     blocks: [
       SharePlugin(
         name: plugin.name,
@@ -169,6 +169,6 @@ String pluginShareText(MarketEntry entry, {String? webLink}) {
       entry.listing == null ? plugin.name : plugin.latest.installTarget(plugin.name).spec,
     ),
     ?page,
-    appL10n.viewSharePhoneInstall(dshGoProjectUrl),
+    appL10n.viewSharePhoneInstall(xrkGoProjectUrl),
   ].join('\n');
 }

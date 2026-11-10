@@ -3,7 +3,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/cot_translation_state.dart';
+import 'package:xrk_app/state/cot_translation_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

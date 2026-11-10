@@ -111,7 +111,7 @@ class _TextPromptState extends State<_TextPrompt> {
               children: [
                 Text(
                   widget.caption!,
-                  style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+                  style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
                 ),
                 const SizedBox(height: 8),
                 field,

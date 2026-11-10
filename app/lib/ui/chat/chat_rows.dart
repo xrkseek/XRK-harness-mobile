@@ -1,6 +1,6 @@
-// The row model between DSH ChatItems and the chat list.
+// The row model between XRK ChatItems and the chat list.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../state/artifacts.dart';
 import '../../state/chat_state.dart';
@@ -33,7 +33,7 @@ final class UserRow extends ChatRow {
   bool get stable => true;
 }
 
-/// 本机刚发出、DSH 还没回显的消息。
+/// 本机刚发出、XRK 还没回显的消息。
 final class PendingRow extends ChatRow {
   const PendingRow(this.prompt);
   final PendingPrompt prompt;
@@ -482,7 +482,7 @@ List<ChatRow> deriveRows({
     rows.add(QuestionRow(question));
   }
   for (final prompt in pending) {
-    // DSH's own context for the model is nobody's message (the controller
+    // XRK's own context for the model is nobody's message (the controller
     // leaves it out already).
     if (prompt.isEngineNote) continue;
     rows.add(PendingRow(prompt));

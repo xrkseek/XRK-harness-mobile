@@ -1,13 +1,13 @@
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/read_list_epoch.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/read_list_epoch.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -125,7 +125,7 @@ void main() {
   });
 
   test('SSH resolved cwd is preserved only for its exact config across client loss', () async {
-    final client = DshClient.withCarrier(FakePluginCarrier());
+    final client = XrkClient.withCarrier(FakePluginCarrier());
     addTearDown(client.close);
     final hosts = _Hosts(const HostsState(loaded: true, ssh: [ssh]));
     HostConnection connection(String? cwd) =>
@@ -252,7 +252,7 @@ void main() {
   });
 
   test('unknown SSH local fallback and AsyncLoading previous client are not live proof', () async {
-    final client = DshClient.withCarrier(FakePluginCarrier());
+    final client = XrkClient.withCarrier(FakePluginCarrier());
     addTearDown(client.close);
     final local = HostConnection(client: client, isLocal: true);
     expect(readListConnection(AsyncData(local), const HostRef.ssh('missing')), isNull);

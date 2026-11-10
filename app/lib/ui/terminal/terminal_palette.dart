@@ -20,10 +20,10 @@ class TerminalPalette {
       foreground = n.paper,
       muted = n.paperFaint,
       accent = _softAccent(accent),
-      _ansi = DshColors.dark.ansi;
+      _ansi = XrkColors.dark.ansi;
 
   /// The palette of the theme around [context].
-  static TerminalPalette of(BuildContext context) => forAccent(DshSurfaces.of(context).accent);
+  static TerminalPalette of(BuildContext context) => forAccent(XrkSurfaces.of(context).accent);
 
   static TerminalPalette forAccent(AppAccent accent) {
     final hit = _cache[accent];
@@ -46,7 +46,7 @@ class TerminalPalette {
   /// Status copy and quiet glyphs.
   final Color muted;
 
-  /// `[dsh-app]` log lines, cursor and selection: a soft tone of the accent.
+  /// `[xrkh-app]` log lines, cursor and selection: a soft tone of the accent.
   final Color accent;
 
   final List<Color> _ansi;
@@ -98,8 +98,8 @@ class TerminalPalette {
       brightMagenta: ansi[13],
       brightCyan: ansi[14],
       brightWhite: ansi[15],
-      searchHitBackground: DshColors.dark.warning,
-      searchHitBackgroundCurrent: DshColors.dark.success,
+      searchHitBackground: XrkColors.dark.warning,
+      searchHitBackgroundCurrent: XrkColors.dark.success,
       searchHitForeground: background,
     );
   }

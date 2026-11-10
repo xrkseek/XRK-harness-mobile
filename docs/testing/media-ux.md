@@ -8,12 +8,12 @@ This change implements the native App UX, not another Host media protocol or a p
 - Changing target origin or manually reusing a key across origins requires explicit confirmation. Default credential reuse is limited to the same provider and origin.
 - Images show loading and actionable file-read failures. Reload evicts the image/read cache, keeps the original Host and session, and never submits generation.
 - Videos have local first-frame previews, in-App texture playback with play/pause/seek, and external-app fallback. Remote files are materialized only for an explicit action, never for scrolling previews. Poster requests serialize; frame dimensions are bounded to 512 pixels. On API 26, automatic full-frame extraction skips videos over four megapixels.
-- Videos save via local-file streaming into Android MediaStore Movies/DSH Go. Image writes retain their existing permission flow. No complete video is sent as a platform-channel byte array.
+- Videos save via local-file streaming into Android MediaStore Movies/XRK Go. Image writes retain their existing permission flow. No complete video is sent as a platform-channel byte array.
 - Player preparation, late completion, background pause, audio focus and surface disposal have explicit cleanup paths.
 
 ## Verification environment
 
-Android/PRoot Linux arm64; Flutter 3.47.7; Dart 3.13.5. A real linux-arm64 flutter_tester is available. Widget tests load actual Noto Sans CJK Light/Regular/Bold through DSH_TEST_FONT_DIR; no font, test bootstrap or pixel-comparator bypass is used.
+Android/PRoot Linux arm64; Flutter 3.47.7; Dart 3.13.5. A real linux-arm64 flutter_tester is available. Widget tests load actual Noto Sans CJK Light/Regular/Bold through XRK_TEST_FONT_DIR; no font, test bootstrap or pixel-comparator bypass is used.
 
 The mirror's online dependency resolution failed for image_picker_ios. An offline mirror attempt also selected unrelated newer packages; its generated lock changes were removed. Final resolution uses the original pub.dev registry with --offline --enforce-lockfile. The [App manifest](../../app/pubspec.yaml) and [dependency lock](../../app/pubspec.lock) remain unchanged. No playback package was added.
 
@@ -23,7 +23,7 @@ From app/ (use a compatible Flutter executable):
 
 	dart analyze lib/ui/chat/media lib/ui/settings/media lib/media lib/state/media_settings.dart test/media/media_image_retry_test.dart test/media/media_video_test.dart test/media/media_settings_feedback_test.dart
 	flutter analyze --no-pub
-	DSH_TEST_FONT_DIR=/path/to/noto-cjk flutter test --no-pub --concurrency=2 test/media
+	XRK_TEST_FONT_DIR=/path/to/noto-cjk flutter test --no-pub --concurrency=2 test/media
 
 Focused behavior coverage includes URL/root/origin validation, Host authority on settings writes, key-sharing consumers, no key/network probing, image read failure/reload and original-Host retry, stale session completions, concurrent video posters, failed-poster queue recovery, original-Host materialization, late-player disposal, background pause, video controls and path-only gallery saves.
 

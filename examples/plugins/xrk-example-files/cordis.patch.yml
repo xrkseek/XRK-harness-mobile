@@ -1,0 +1,4 @@
+# dsh plugin --profile web add /path/to/xrk-example-files
+- insert:
+    - id: xrk-example-files
+      name: xrk-example-files

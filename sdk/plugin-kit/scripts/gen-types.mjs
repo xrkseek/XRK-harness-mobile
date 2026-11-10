@@ -168,7 +168,7 @@ function generate() {
 
 // The public service/builder declarations have a source template too. This keeps
 // these declarations generated while schema remains the source of wire shapes.
-const controlBuilders = schemas['view.schema.json']['x-dsh-go']?.controlBuilders ?? []
+const controlBuilders = schemas['view.schema.json']['x-xrk-mobile']?.controlBuilders ?? []
 const builderDeclarations = controlBuilders.map(name => {
   if (typeof name !== 'string' || !IDENT.test(name)) throw new Error('invalid control builder name')
   const type = `View${pascal(name)}Component`

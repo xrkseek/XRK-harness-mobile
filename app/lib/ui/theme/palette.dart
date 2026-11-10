@@ -31,7 +31,7 @@ import 'surfaces.dart';
 /// 这些常量;暮紫 tertiary 和错误色是语义色,不随配色转。
 abstract final class DshPalette {
   // ══ 浅色:晨雾 ══════════════════════════════════════════
-  /// 页面渐变顶 · 晨雾蓝(与 DSH 官方 deepseek-50 同族)。
+  /// 页面渐变顶 · 晨雾蓝(与 XRK 官方 deepseek-50 同族)。
   static const mistTop = Color(0xFFEBF1FE);
 
   /// 页面渐变底 · 近白微紫。
@@ -106,7 +106,7 @@ abstract final class DshPalette {
   static const duskContainerDark = Color(0xFF3E3451);
   static const onDuskContainerDark = Color(0xFFE4DDF3);
 
-  // ══ 错误(低饱和砖玫红,与 DshColors 的 danger 同值) ═══
+  // ══ 错误(低饱和砖玫红,与 XrkColors 的 danger 同值) ═══
   static const danger = Color(0xFFA54743);
   static const onDanger = Color(0xFFFDF9F8);
   static const dangerContainer = Color(0xFFFFE2E0);
@@ -355,7 +355,7 @@ class NeutralTones {
 
   /// 当前主题那套配色的中性色。
   static NeutralTones current(BuildContext context) =>
-      forAccent(Theme.of(context).extension<DshSurfaces>()?.accent ?? AppAccent.mist);
+      forAccent(Theme.of(context).extension<XrkSurfaces>()?.accent ?? AppAccent.mist);
 
   /// 把一个按雾蓝调出来的中性色换到 [accent] 的色调上(零散的灰,比如图表
   /// 里的「其他」)。

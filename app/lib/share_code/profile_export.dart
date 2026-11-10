@@ -10,7 +10,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../l10n/l10n.dart';
 import 'guest_fs.dart';
@@ -124,7 +124,7 @@ String _pluginSubtitle(SharedPlugin p) => switch (p.source) {
 
 /// Reads everything [client] (and, for the on-device engine, [fs]) can share.
 Future<ProfileExportSource> loadProfileExport(
-  DshClient client, {
+  XrkClient client, {
   required String hostLabel,
   required bool isLocal,
   GuestFs? fs,

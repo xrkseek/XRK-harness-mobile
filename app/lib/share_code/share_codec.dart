@@ -198,7 +198,7 @@ ShareEnvelope readShareEnvelope(String text) {
     throw const ShareDecodeException('not JSON');
   }
   if (json is! Map || json['dshgo'] is! int || json['code'] is! String) {
-    throw const ShareDecodeException('not a dsh-go file');
+    throw const ShareDecodeException('not a xrk-mobile file');
   }
   final assets = json['assets'];
   return ShareEnvelope(

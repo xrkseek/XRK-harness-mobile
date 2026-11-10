@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/relay/relay_backend.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/relay/relay_backend.dart';
+import 'package:xrk_client/xrk_client.dart';
 
-/// Scriptable stand-in for the `dsh_remote` adapter.
+/// Scriptable stand-in for the `xrk_remote` adapter.
 class FakeRelayBackend implements RelayBackend {
   FakeRelayBackend({this.user, List<RelayHost>? hosts, this.available = true}) : hosts = hosts ?? sampleRelayHosts;
 
@@ -23,7 +23,7 @@ class FakeRelayBackend implements RelayBackend {
   Completer<RelayUser>? pendingLogin;
   final List<String> connected = [];
   final List<Object> connectErrors = [];
-  final Set<DshClient> closedClients = {};
+  final Set<XrkClient> closedClients = {};
   Object? listError;
   final Set<String> approved = {};
   final List<String> forgotten = [];
@@ -78,11 +78,11 @@ class FakeRelayBackend implements RelayBackend {
   }
 
   /// Clients restarted through [reconnect].
-  final List<DshClient> reconnected = [];
+  final List<XrkClient> reconnected = [];
   int probes = 0;
 
   @override
-  Future<bool> probe(DshClient client) async {
+  Future<bool> probe(XrkClient client) async {
     probes++;
     return true;
   }
@@ -91,17 +91,17 @@ class FakeRelayBackend implements RelayBackend {
   RelayPath? path;
 
   @override
-  RelayPath? pathOf(DshClient client) => path;
+  RelayPath? pathOf(XrkClient client) => path;
 
   @override
-  bool reconnect(DshClient client) {
+  bool reconnect(XrkClient client) {
     if (closedClients.contains(client)) return false;
     reconnected.add(client);
     return true;
   }
 
   @override
-  Future<DshClient> connectHost(RelayHost host, {RelayStateCallback? onState}) async {
+  Future<XrkClient> connectHost(RelayHost host, {RelayStateCallback? onState}) async {
     onState?.call(RelayConnectionState.connecting, null);
     onState?.call(RelayConnectionState.handshaking, null);
     connected.add(host.id);
@@ -138,9 +138,9 @@ const sampleRelayHosts = [
   ),
 ];
 
-class _TrackedClient extends DshClient {
+class _TrackedClient extends XrkClient {
   _TrackedClient(this.onClosed) : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
-  final void Function(DshClient) onClosed;
+  final void Function(XrkClient) onClosed;
 
   @override
   Future<void> close() async {

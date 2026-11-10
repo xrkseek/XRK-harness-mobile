@@ -1,9 +1,9 @@
 // View-v2 style checks. Constants come from the author schema; the Dart twin
-// lives in dsh_ui_plugin_styles_model.dart. No CSS, evaluation or network I/O.
+// lives in xrk_ui_plugin_styles_model.dart. No CSS, evaluation or network I/O.
 import { readFileSync } from 'node:fs'
 
 const schema = JSON.parse(readFileSync(new URL('../schema/view.schema.json', import.meta.url), 'utf8'))
-const spec = schema['x-dsh-go'].v2Styles
+const spec = schema['x-xrk-mobile'].v2Styles
 const numberColor = value => Number.parseInt(value.slice(1), 16)
 const palette = Object.fromEntries(Object.entries(spec.namedColors).map(([key, value]) => [key, numberColor(value)]))
 const pair = value => [value, value]

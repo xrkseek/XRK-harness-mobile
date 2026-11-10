@@ -16,7 +16,7 @@ v1.0.11 App 的 `nativeLocaleProvider` 当前只发送 `en` 或 `zh-CN`。因此
 
 ## 生成与验证
 
-权威输入是 `runtime/bridge/dsh-go-bridge/lib/native/util.js` 与 `sdk/plugin-kit/lib/caps.js`。依照本波不交生成文件/资产的要求，补丁不包含 SDK 桥接拷贝或 App 技能资产。应用源码后由合入方运行仓库已有生成器：
+权威输入是 `runtime/bridge/xrk-bridge/lib/native/util.js` 与 `sdk/plugin-kit/lib/caps.js`。依照本波不交生成文件/资产的要求，补丁不包含 SDK 桥接拷贝或 App 技能资产。应用源码后由合入方运行仓库已有生成器：
 
 ```sh
 node sdk/plugin-kit/scripts/sync-bridge.mjs

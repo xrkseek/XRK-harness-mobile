@@ -5,7 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
@@ -18,7 +18,7 @@ void main() {
   StreamSubscription<UiConfigRead>? sub;
   Directory? rootfs;
 
-  File config() => File('${root.path}/root/.dsh/dsh-go/ui.json');
+  File config() => File('${root.path}/root/.xrk/xrk-mobile/ui.json');
 
   void start() {
     source = LocalUiConfigSource(
@@ -48,11 +48,11 @@ void main() {
     _ => null,
   };
 
-  test('no file yet: creates dsh-go/, reports absent, then follows the file', () async {
+  test('no file yet: creates xrk-mobile/, reports absent, then follows the file', () async {
     start();
     await until(() => reads.isNotEmpty);
     expect(reads.last, isA<UiConfigAbsent>());
-    expect(Directory('${root.path}/root/.dsh/dsh-go').existsSync(), isTrue);
+    expect(Directory('${root.path}/root/.xrk/xrk-mobile').existsSync(), isTrue);
 
     config().writeAsStringSync('{"version": 1, "density": "compact"}');
     await until(() => lastText() != null);
@@ -90,7 +90,7 @@ void main() {
     await until(() => lastText()?.contains('dark') ?? false);
   });
 
-  test('other files in dsh-go/ are not reads', () async {
+  test('other files in xrk-mobile/ are not reads', () async {
     config().parent.createSync(recursive: true);
     config().writeAsStringSync('{"version": 1}');
     start();
@@ -128,14 +128,14 @@ void main() {
     await until(() => lastText()?.contains('comfortable') ?? false);
   });
 
-  test('DSH home missing (engine never ran): no directory is made', () async {
+  test('XRK home missing (engine never ran): no directory is made', () async {
     root.deleteSync(recursive: true);
     root = tempRootfs(withHome: false);
     rootfs = root;
     start();
     await until(() => reads.isNotEmpty);
     expect(reads.last, isA<UiConfigAbsent>());
-    expect(Directory('${root.path}/root/.dsh').existsSync(), isFalse);
+    expect(Directory('${root.path}/root/.xrk').existsSync(), isFalse);
   });
 
   test('while an install moves /root around nothing is created or written', () async {
@@ -148,10 +148,10 @@ void main() {
     );
     sub = source.watch().listen(reads.add);
     await until(() => reads.isNotEmpty);
-    expect(Directory('${root.path}/root/.dsh/dsh-go').existsSync(), isFalse);
+    expect(Directory('${root.path}/root/.xrk/xrk-mobile').existsSync(), isFalse);
     installing = false;
     kicks.add(null);
-    await until(() => Directory('${root.path}/root/.dsh/dsh-go').existsSync());
+    await until(() => Directory('${root.path}/root/.xrk/xrk-mobile').existsSync());
     config().writeAsStringSync('{"version": 1}');
     await until(() => lastText() != null);
     installing = true;

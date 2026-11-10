@@ -6,12 +6,12 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/session_attention_state.dart';
-import 'package:dsh_app/state/session_created_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/session_attention_state.dart';
+import 'package:xrk_app/state/session_created_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -485,7 +485,7 @@ void main() {
             peak = inFlight > peak ? inFlight : peak;
             await Future<void>.delayed(const Duration(milliseconds: 5));
             inFlight--;
-            if (id == 'bad') throw const DshRemoteException('session/not-found', 'gone');
+            if (id == 'bad') throw const XrkRemoteException('session/not-found', 'gone');
             return DateTime.fromMillisecondsSinceEpoch(1000 * id.codeUnitAt(0));
           }),
         ],

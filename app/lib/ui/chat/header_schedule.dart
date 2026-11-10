@@ -13,7 +13,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -238,7 +238,7 @@ class _RefreshFailed extends ConsumerWidget {
     children: [
       ListPageRow(
         icon: AppIcons.error,
-        iconColor: DshColors.of(context).warning,
+        iconColor: XrkColors.of(context).warning,
         title: context.l10n.viewScheduleRefreshFailed,
         meta: context.l10n.commonRetry,
         onTap: () => ref.invalidate(sessionSchedulesProvider(sessionId)),
@@ -262,7 +262,7 @@ class _ScheduleTaskSheetListState extends ConsumerState<ScheduleTaskSheetList> w
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final read = ref.watch(sessionSchedulesProvider(widget.sessionId));
     final tasks = read.value ?? const <ScheduleTask>[];
     final now = ref.watch(scheduleClockProvider)();
@@ -305,7 +305,7 @@ class _ScheduleTaskSheetListState extends ConsumerState<ScheduleTaskSheetList> w
     );
   }
 
-  Widget _row(BuildContext context, ScheduleTask task, DateTime now, String? deviceZone, DshColors colors) {
+  Widget _row(BuildContext context, ScheduleTask task, DateTime now, String? deviceZone, XrkColors colors) {
     final at = task.scheduledAt;
     final overdue = at != null && !at.isAfter(now);
     final rule = scheduleRuleLine(task, deviceZone: deviceZone, at: now);
@@ -394,7 +394,7 @@ class _ScheduleTaskSheetPageState extends ConsumerState<ScheduleTaskSheetPage> w
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final read = ref.watch(sessionSchedulesProvider(widget.sessionId));
     final listed = read.value;
     final live = listed?.where((t) => t.id == _task.id).firstOrNull;

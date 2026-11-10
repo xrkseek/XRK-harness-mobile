@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

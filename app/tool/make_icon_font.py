@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the app's icon font, assets/fonts/DshIcons.ttf, and its code-point table.
+"""Builds the app's icon font, assets/fonts/XrkIcons.ttf, and its code-point table.
 
 Run from app/:
 
@@ -7,7 +7,7 @@ Run from app/:
 
 Needs fonttools and skia-pathops (`pip install fonttools skia-pathops`, a venv is fine).
 
-The glyph list comes from lib/ui/theme/app_icons.dart: every `DshGlyphs.<name>` it
+The glyph list comes from lib/ui/theme/app_icons.dart: every `XrkGlyphs.<name>` it
 mentions goes into the font, nothing else. Names map to sources by convention:
 
     fooBar         Phosphor Regular  tool/icons/phosphor/regular/foo-bar.svg
@@ -24,8 +24,8 @@ smaller. The em box is the icon box (ascent = em, descent = 0, as in MaterialIco
 `Icon` places a glyph exactly where it places a Material one.
 
 Writes
-    assets/fonts/DshIcons.ttf          the font
-    lib/ui/theme/dsh_glyphs.dart       one const IconData per glyph
+    assets/fonts/XrkIcons.ttf          the font
+    lib/ui/theme/xrk_glyphs.dart       one const IconData per glyph
     tool/icons/codepoints.json         name -> code point; a glyph keeps its code point
                                        across runs, new names take the next free one
 """
@@ -50,10 +50,10 @@ ICONS = os.path.join(APP, 'tool', 'icons')
 VENDOR = os.path.join(ICONS, 'phosphor')
 CODEPOINTS = os.path.join(ICONS, 'codepoints.json')
 TOKENS = os.path.join(APP, 'lib', 'ui', 'theme', 'app_icons.dart')
-OUT_FONT = os.path.join(APP, 'assets', 'fonts', 'DshIcons.ttf')
-OUT_DART = os.path.join(APP, 'lib', 'ui', 'theme', 'dsh_glyphs.dart')
+OUT_FONT = os.path.join(APP, 'assets', 'fonts', 'XrkIcons.ttf')
+OUT_DART = os.path.join(APP, 'lib', 'ui', 'theme', 'xrk_glyphs.dart')
 
-FAMILY = 'DshIcons'
+FAMILY = 'XrkIcons'
 PHOSPHOR_VERSION = '2.1.1'
 GRID = 256  # Phosphor's design grid
 STROKE = 16  # Phosphor Regular's stroke in that grid
@@ -351,12 +351,12 @@ def vendor(names, package):
 
 
 def glyph_names():
-    """Every DshGlyphs.<name> app_icons.dart uses, in first-use order."""
+    """Every XrkGlyphs.<name> app_icons.dart uses, in first-use order."""
     seen = []
     for line in open(TOKENS, encoding='utf-8'):
         if line.lstrip().startswith('//'):
             continue  # doc examples
-        for name in re.findall(r'DshGlyphs\.(\w+)', line):
+        for name in re.findall(r'XrkGlyphs\.(\w+)', line):
             if name not in seen:
                 seen.append(name)
     return seen
@@ -421,12 +421,12 @@ def build_font(names, codepoints):
         'psName': f'{FAMILY}-Regular',
         'version': 'Version 1.000',
         'copyright': 'Glyphs from Phosphor Icons, Copyright (c) 2023 Phosphor Icons, MIT License.',
-        'description': f'dsh-go icon subset of Phosphor Icons {PHOSPHOR_VERSION} Regular and Fill, '
+        'description': f'xrk-mobile icon subset of Phosphor Icons {PHOSPHOR_VERSION} Regular and Fill, '
                        'made by tool/make_icon_font.py.',
     })
     fb.setupOS2(version=4, sTypoAscender=EM, sTypoDescender=0, sTypoLineGap=0,
                 usWinAscent=EM, usWinDescent=0, fsSelection=0x80 | 0x40,  # USE_TYPO_METRICS | REGULAR
-                achVendID='DSH ', fsType=0)
+                achVendID='XRK ', fsType=0)
     fb.setupPost(keepGlyphNames=True)
     fb.setupMaxp()
     # Fixed dates keep the bytes reproducible.
@@ -446,11 +446,11 @@ def write_dart(names, codepoints):
         '',
         "import 'package:flutter/widgets.dart';",
         '',
-        '/// The glyphs of `assets/fonts/DshIcons.ttf`, named after their Phosphor source',
+        '/// The glyphs of `assets/fonts/XrkIcons.ttf`, named after their Phosphor source',
         '/// (`…Fill` is the Fill weight). Widgets use [AppIcons] roles, never these.',
         '///',
         '/// The font is declared in this app\'s own pubspec, so no `fontPackage`.',
-        'abstract final class DshGlyphs {',
+        'abstract final class XrkGlyphs {',
         f"  static const family = '{FAMILY}';",
         '',
     ]
@@ -472,7 +472,7 @@ def main():
     args = ap.parse_args()
     names = glyph_names()
     if not names:
-        sys.exit(f'No DshGlyphs.<name> in {TOKENS}')
+        sys.exit(f'No XrkGlyphs.<name> in {TOKENS}')
     vendor(names, args.phosphor)
     codepoints = assign_codepoints(names)
     build_font(names, codepoints)

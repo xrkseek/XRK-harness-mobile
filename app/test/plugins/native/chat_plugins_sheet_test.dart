@@ -11,18 +11,18 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/plugins/islands/islands.dart';
-import 'package:dsh_app/ui/plugins/native/chat_plugins_sheet.dart';
-import 'package:dsh_app/ui/plugins/native/composer_capsules.dart';
-import 'package:dsh_app/ui/plugins/native/native_composer_bar.dart';
-import 'package:dsh_app/ui/plugins/seats/seat_links.dart' show seatWebOpenerProvider;
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/plugins/islands/islands.dart';
+import 'package:xrk_app/ui/plugins/native/chat_plugins_sheet.dart';
+import 'package:xrk_app/ui/plugins/native/composer_capsules.dart';
+import 'package:xrk_app/ui/plugins/native/native_composer_bar.dart';
+import 'package:xrk_app/ui/plugins/seats/seat_links.dart' show seatWebOpenerProvider;
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -39,7 +39,7 @@ FakeBridge _bridge({bool panels = true, int capsules = 0}) {
   final bridge = FakeBridge(
     contributions([
       plugin(
-        'dsh-go-example-usage',
+        'xrk-example-usage',
         title: '用量',
         icon: 'chart',
         panels: [
@@ -53,7 +53,7 @@ FakeBridge _bridge({bool panels = true, int capsules = 0}) {
         ],
       ),
       plugin(
-        'dsh-go-example-album',
+        'xrk-example-album',
         title: '相册',
         icon: 'gallery',
         panels: [
@@ -81,8 +81,8 @@ FakeBridge _bridge({bool panels = true, int capsules = 0}) {
     ]),
   );
   for (final (pkg, id, label, value) in [
-    ('dsh-go-example-usage', 'usage', '本对话', '¥0.42'),
-    ('dsh-go-example-album', 'album', '今日', '12 张'),
+    ('xrk-example-usage', 'usage', '本对话', '¥0.42'),
+    ('xrk-example-album', 'album', '今日', '12 张'),
   ]) {
     bridge.views['$pkg/$id'] = DshGoView(
       pkg: pkg,
@@ -375,7 +375,7 @@ void main() {
       final spec = tester.widget<seats.FakeIsland>(find.byType(seats.FakeIsland)).spec;
       expect(spec.slot, Slots.chatSheet);
       expect(find.textContaining('网页插件'), findsOneWidget);
-      // The ways in sit under the island, DSH Web always last: a part that
+      // The ways in sit under the island, XRK Web always last: a part that
       // opens something the island never shows still has a way in.
       expect(find.byKey(const ValueKey('chat-plugins-ways-in')), findsOneWidget);
       expect(find.byKey(const ValueKey('chat-plugins-web-link')), findsOneWidget);

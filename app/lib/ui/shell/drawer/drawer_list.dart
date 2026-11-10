@@ -3,7 +3,7 @@
 // rest by day; or, under a status filter, just the matches. Loading, error
 // and empty-host states stay with the drawer (sessions_drawer.dart).
 
-import 'package:dsh_client/dsh_client.dart' show SessionSummary;
+import 'package:xrk_client/xrk_client.dart' show SessionSummary;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -504,7 +504,7 @@
       }
     }
   },
-  "shellSkillInstallDirectory": "1. 目标目录是 `$DSH_HOME/skills/{skill}/`（没有设置 DSH_HOME 时是 `~/.dsh/skills/{skill}/`），不存在就先建。",
+  "shellSkillInstallDirectory": "1. 目标目录是 `$XRK_HOME/skills/{skill}/`（没有设置 XRK_HOME 时是 `~/.xrk/skills/{skill}/`），不存在就先建。",
   "@shellSkillInstallDirectory": {
     "placeholders": {
       "skill": {

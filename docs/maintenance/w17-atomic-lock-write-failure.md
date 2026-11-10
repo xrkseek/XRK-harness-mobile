@@ -8,13 +8,13 @@ withFileLock 使用 open(wx,0600)，显式 writeFile/finally close；取得 hand
 
 ## 命令与 golden
 
-在项目根：`DSH_PREFIX=<独立完整候选prefix> node --test runtime/tests/atomic-claim-write-failure.test.mjs runtime/tests/atomic-lock-write-failure.test.mjs`。
+在项目根：`XRK_PREFIX=<独立完整候选prefix> node --test runtime/tests/atomic-claim-write-failure.test.mjs runtime/tests/atomic-lock-write-failure.test.mjs`。
 
-`node --test runtime/media/dsh-media/test/budget-day-gate.test.js runtime/media/dsh-media/test/budget-ledger.test.js`（node_modules须解析实际候选prefix）。
+`node --test runtime/media/xrk-media/test/budget-day-gate.test.js runtime/media/xrk-media/test/budget-ledger.test.js`（node_modules须解析实际候选prefix）。
 
 新主锁5案基线2失败3通过，候选5通过；原claim7案通过；媒体预算26/26。真实EFBIG由只影响child的ulimit触发，stdout为pipe，无模拟I/O，不真实等待。golden：EFBIG后 lock=ENOENT、operation=0；后继成功一次；既存活锁和空legacy锁字节不变。
 
-完整K前置后 atomic模块 SHA256：92b9d32bd271d1931bfff55a5d46996cbb691225ee911ee7f1483f35ae0916d4；候选000b8994abcbec4e01b2b714fe8c2a37e61670c52e7d3acaf40ec8d39f484dc7。生成方法：从官方rc1按文件名字典序应用已审前置diff，改主锁循环，用Python difflib.unified_diff(before.splitlines(True),after.splitlines(True),fromfile='a/node_modules/@deepseek-ai/dsh-atomic-write/lib/index.js',tofile='b/node_modules/@deepseek-ai/dsh-atomic-write/lib/index.js')生成vendor diff。源码交付用git diff相对ce索引导出；pins由本机按最终顺序统一录制，本包不改pins。
+完整K前置后 atomic模块 SHA256：92b9d32bd271d1931bfff55a5d46996cbb691225ee911ee7f1483f35ae0916d4；候选000b8994abcbec4e01b2b714fe8c2a37e61670c52e7d3acaf40ec8d39f484dc7。生成方法：从官方rc1按文件名字典序应用已审前置diff，改主锁循环，用Python difflib.unified_diff(before.splitlines(True),after.splitlines(True),fromfile='a/node_modules/@xrkseek/harness-cli-atomic-write/lib/index.js',tofile='b/node_modules/@xrkseek/harness-cli-atomic-write/lib/index.js')生成vendor diff。源码交付用git diff相对ce索引导出；pins由本机按最终顺序统一录制，本包不改pins。
 
 ## 边界与本机步骤
 

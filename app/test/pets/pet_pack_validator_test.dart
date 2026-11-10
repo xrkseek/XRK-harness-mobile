@@ -4,9 +4,9 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/pets/pet_name_alias.dart';
-import 'package:dsh_app/pets/pet_pack.dart';
-import 'package:dsh_app/pets/pet_pack_validator.dart';
+import 'package:xrk_app/pets/pet_name_alias.dart';
+import 'package:xrk_app/pets/pet_pack.dart';
+import 'package:xrk_app/pets/pet_pack_validator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pet_library_test.dart' show packJson, png;

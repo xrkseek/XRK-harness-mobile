@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/shell/sessions_drawer.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/shell/sessions_drawer.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,13 +29,13 @@ class _ArchiveHost extends FakeWorkspaceHost {
     }
     calls.add((endpoint, args));
     if (endpoint == 'workspace/unarchiveSession' && failUndo) {
-      return const RpcError(DshRemoteException('foo/bar', 'private failure'));
+      return const RpcError(XrkRemoteException('foo/bar', 'private failure'));
     }
     final request = args['request']! as Map;
     final id = request['sessionId']! as String;
     if (endpoint == 'workspace/archiveSession') {
       if (archiveGate case final gate?) await gate.future;
-      if (failArchiveIds.contains(id)) return const RpcError(DshRemoteException('fixture/denied', 'denied'));
+      if (failArchiveIds.contains(id)) return const RpcError(XrkRemoteException('fixture/denied', 'denied'));
       archived = [...archived, id];
       pinned = pinned.where((value) => value != id).toList();
       push({'type': 'pinned', 'pinnedSessionIds': pinned});

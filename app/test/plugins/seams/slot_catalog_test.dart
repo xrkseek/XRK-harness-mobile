@@ -1,22 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/plugins/seams/seams.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('every slot of 0.2.2-rc.1 plus the app surface, keyed by their own key', () {
     expect(slotCatalogRelease, '0.2.2-rc.1');
     expect(slotCatalog.length, 110);
-    expect(slotCatalog.values.where((s) => s.synthetic).map((s) => s.key), [Slots.dshGoPanel]);
+    expect(slotCatalog.values.where((s) => s.synthetic).map((s) => s.key), [Slots.xrkGoPanel]);
     for (final MapEntry(:key, :value) in slotCatalog.entries) {
       expect(value.key, key);
     }
   });
 
   test('the table matches the extracted catalog', () {
-    // Extracted from DSH's client runner (docs/design/plugin-seams.md, appendix A);
-    // key / kind / scope / replaceRisk only. A DSH bump brings a new extract.
+    // Extracted from XRK's client runner (docs/design/plugin-seams.md, appendix A);
+    // key / kind / scope / replaceRisk only. A XRK bump brings a new extract.
     final file = File('test/plugins/seams/fixtures/slot-catalog-$slotCatalogRelease.json');
     final rows = (jsonDecode(file.readAsStringSync()) as List).cast<Map<String, Object?>>();
     expect(rows.length, 109);
@@ -60,7 +60,7 @@ void main() {
       expect(of(key), SeatPriority.p1, reason: key);
     }
     expect(of(Slots.shellOverlay), SeatPriority.p2);
-    expect(of(Slots.dshGoPanel), SeatPriority.p2);
+    expect(of(Slots.xrkGoPanel), SeatPriority.p2);
     for (final key in [
       'conversation.chat.turnTail',
       'conversation.chat.assistant-actions',
@@ -99,7 +99,7 @@ void main() {
     expect(seatPolicyOf(Slots.shellOverlay).optIn, isTrue);
     expect(seatPolicyOf(Slots.bundleConfig).inference, SlotInference.bundleConfig);
     expect(seatPolicyOf(Slots.rowConfig).inference, SlotInference.rowConfig);
-    expect(seatPolicyOf(Slots.dshGoPanel).webLink, isFalse);
+    expect(seatPolicyOf(Slots.xrkGoPanel).webLink, isFalse);
     // Every island-capable slot is one the app seats.
     for (final info in slotCatalog.values) {
       if (info.policy.islands.isNotEmpty) expect(info.seatable, isTrue, reason: info.key);

@@ -2,8 +2,8 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/session_search.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/session_search.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../shell/golden_harness.dart';
 
@@ -85,8 +85,8 @@ class FakeContentSearch implements SessionContentSearch {
   }
 }
 
-/// The Host's answer when its content index is off (stock `dsh web` profile).
-const searchDisabled = DshRemoteException(
+/// The Host's answer when its content index is off (stock `xrkh serve` profile).
+const searchDisabled = XrkRemoteException(
   'gateway/internal',
   'session search failed: SessionQueryError: session search is disabled: '
       'this deployment configures the session-query index with openAt "never"',

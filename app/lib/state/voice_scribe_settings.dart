@@ -3,7 +3,7 @@
 // enter an outgoing patch.
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 
 import '../l10n/l10n.dart';
@@ -82,7 +82,7 @@ abstract class VoiceScribeTransport {
 
 class VoiceScribeHttpTransport implements VoiceScribeTransport {
   VoiceScribeHttpTransport({required this.client, required this.entryId, required this.isCurrent});
-  final DshClient client;
+  final XrkClient client;
   final String entryId;
   final bool Function() isCurrent;
 

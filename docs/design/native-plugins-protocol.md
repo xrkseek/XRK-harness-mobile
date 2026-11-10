@@ -1,7 +1,7 @@
 # 原生插件协议 v1（冻结稿）
 
 > 2026-10-25 冻结。规格依据：`docs/design/native-plugins.md`（总设计，下称「总设计」）§3、§7.1；`docs/design/plugin-seams.md`（接缝规格）§5.2、§9。
-> 实现：`runtime/bridge/dsh-go-bridge/`（宿主侧桥接）。机器可读：`sdk/plugin-kit/schema/{manifest,contributions,stream,invoke}.schema.json`。
+> 实现：`runtime/bridge/xrk-bridge/`（宿主侧桥接）。机器可读：`sdk/plugin-kit/schema/{manifest,contributions,stream,invoke}.schema.json`。
 > 视图本身（组件树）不在本文：见 `docs/design/native-plugins-views.md` 与 `sdk/plugin-kit/schema/view.schema.json`。本文只规定视图怎么送达、多大、怎么更新。
 > 改协议：在提交说明里写一行「NA protocol v1 change: …」。v1 内只允许**加可选字段**；删字段、改含义、收紧上限一律算 v2。
 > **v1.1**（2026-10-25，桥接 0.3.0）：延后效果（§4.7）——handler 可返回 `pending`，结果之后经流推回发起点按的那条连接。全部是可选新增，v1 的 App 与插件不受影响。
@@ -11,19 +11,19 @@
 
 | 件 | 方向 | 内容 |
 |---|---|---|
-| `package.json` → `dshGo` | 插件 → 桥接 | 静态清单：协议版本、显示名、图标、`wants`、四种贡献 |
-| `ctx.dshGo` | 插件 ↔ 桥接（进程内） | `panel` / `strip` / `on` / `refresh`：视图、数据、点按处理 |
-| `GET /dsh-go/v1/contributions` | App ← 桥接 | 所有已启用插件的贡献、署名、问题列表；带 `ETag` |
-| `GET /dsh-go/v1/views/<pkg>/<id>` | App ← 桥接 | 一个面板的视图 + 初始数据（按 scope） |
-| `WS /dsh-go/v1/stream` | App ↔ 桥接 | 一台主机一条；按 `{pkg, id, scope}` 订阅数据，合并补丁、心跳、重连补拉 |
-| `POST /dsh-go/v1/invoke` | App → 桥接 | 用户点按 → 插件处理 → 白名单效果；3 秒窗口由 App 执行 |
+| `package.json` → `xrkGo` | 插件 → 桥接 | 静态清单：协议版本、显示名、图标、`wants`、四种贡献 |
+| `ctx.xrkGo` | 插件 ↔ 桥接（进程内） | `panel` / `strip` / `on` / `refresh`：视图、数据、点按处理 |
+| `GET /xrk-mobile/v1/contributions` | App ← 桥接 | 所有已启用插件的贡献、署名、问题列表；带 `ETag` |
+| `GET /xrk-mobile/v1/views/<pkg>/<id>` | App ← 桥接 | 一个面板的视图 + 初始数据（按 scope） |
+| `WS /xrk-mobile/v1/stream` | App ↔ 桥接 | 一台主机一条；按 `{pkg, id, scope}` 订阅数据，合并补丁、心跳、重连补拉 |
+| `POST /xrk-mobile/v1/invoke` | App → 桥接 | 用户点按 → 插件处理 → 白名单效果；3 秒窗口由 App 执行 |
 | 流 `done` / `void`（v1.1） | App ← 桥接 | 延后效果：invoke 先回 `pending`，插件做完后结果只推给发起点按的那条流连接（§4.7） |
-| `GET /dsh-go/v1/assets/<pkg>/<path>` | App ← 桥接 | 插件声明目录下的图片（`image` 组件用），可选 |
+| `GET /xrk-mobile/v1/assets/<pkg>/<path>` | App ← 桥接 | 插件声明目录下的图片（`image` 组件用），可选 |
 
 ```
-App                                   dsh-go-bridge（宿主）                     插件（宿主半侧）
+App                                   xrk-bridge（宿主）                     插件（宿主半侧）
  │ 连上主机 / 收到 changed                │                                         │
- ├─ GET contributions?v=1&locale=… ─────▶│ 读已启用插件的 dshGo（缓存）              │
+ ├─ GET contributions?v=1&locale=… ─────▶│ 读已启用插件的 xrkGo（缓存）              │
  │◀──────────── plugins[] + rev ─────────┤                                         │
  │ 打开面板                               │                                         │
  ├─ GET views/<pkg>/<id>?sessionId=… ───▶│ view(scope, caps) ─────────────────────▶│
@@ -38,12 +38,12 @@ App                                   dsh-go-bridge（宿主）                 
 
 没有任何插件时：`contributions` 返回 `plugins: []`，App 界面零变化；桥接不启动任何订阅。
 
-## 1. 插件清单：`package.json` 的 `dshGo`
+## 1. 插件清单：`package.json` 的 `xrkGo`
 
 ### 1.1 顶层
 
 ```jsonc
-"dshGo": {
+"xrkGo": {
   "v": 1,
   "minApp": "0.10.0",
   "title": { "zh": "用量", "en": "Usage" },
@@ -69,7 +69,7 @@ App                                   dsh-go-bridge（宿主）                 
 | `assets` | 相对路径 | 否 | 图片目录，供 `GET /assets` 和 `image` 组件。不声明则该路由对本插件 404 |
 | `contributes` | 对象 | 是 | 键是 surface，值是数组（§1.2） |
 
-整个 `dshGo` 序列化后 ≤ 16 KiB，超出整份作废（状态 `invalid`）。
+整个 `xrkGo` 序列化后 ≤ 16 KiB，超出整份作废（状态 `invalid`）。
 
 **公共类型**
 
@@ -111,7 +111,7 @@ v1 内新增，规则和取舍见 [plugin-platform.md](plugin-platform.md) §2�
 
 面板另有 `placement: "plugin"`（协商：App 的 `surfaces` 没有列出时，只放这里的面板退回 `session.tab`）和 `presentation: "page" | "sheet"`。
 
-`turn.note` 的数据走 §4.3 的流，`scope` 必须带 `sessionId`，否则 `end(not-found)`。数据是 `{ <回合序号>: { text, tone? } }`，桥接逐条清洗，最多保留最新的 `turnNotesPerFeed`（64）个。宿主注册用 `ctx.dshGo.turnNote(id, dataFn)`。App 在一段对话里最多订阅 8 个插件的尾注，给面板和状态条留出流的预算（每条连接 32 个订阅）。
+`turn.note` 的数据走 §4.3 的流，`scope` 必须带 `sessionId`，否则 `end(not-found)`。数据是 `{ <回合序号>: { text, tone? } }`，桥接逐条清洗，最多保留最新的 `turnNotesPerFeed`（64）个。宿主注册用 `ctx.xrkGo.turnNote(id, dataFn)`。App 在一段对话里最多订阅 8 个插件的尾注，给面板和状态条留出流的预算（每条连接 32 个订阅）。
 
 ### 1.3 校验规则
 
@@ -136,21 +136,21 @@ v1 内新增，规则和取舍见 [plugin-platform.md](plugin-platform.md) §2�
 - 桥接再兜一层：没声明、或 surface 不对的 `context` 字段，桥接直接丢掉，插件收不到。
 - 插件在宿主上本来就能读对话（与网页插件同权），`message` 只是省掉插件按 id 查消息的麻烦，不新增暴露。
 
-## 2. 宿主服务 `ctx.dshGo`
+## 2. 宿主服务 `ctx.xrkGo`
 
 ### 2.1 拿到服务
 
 ```js
 export function apply(ctx) {
-  // 只有装了 dsh-go-bridge 的主机才会进这个回调；没有 App 的主机上什么都不发生。
-  ctx.inject(['dshGo'], (ctx) => {
-    ctx.dshGo.panel('usage', { view, data })
-    ctx.dshGo.on('translate', async (scope) => ({ insert: await translate(scope.clipboard) }))
+  // 只有装了 xrk-bridge 的主机才会进这个回调；没有 App 的主机上什么都不发生。
+  ctx.inject(['xrkGo'], (ctx) => {
+    ctx.xrkGo.panel('usage', { view, data })
+    ctx.xrkGo.on('translate', async (scope) => ({ insert: await translate(scope.clipboard) }))
   })
 }
 ```
 
-**注意：写 `['dshGo']`，不要写 `['dshGo?']`。** DSH 0.2.1-rc.2 的 cordis 4.0.5 没有可选依赖语法，`'dshGo?'` 会被当成一个永远不存在的服务名，回调永不执行（总设计 §3.2 的草案写法作废）。`ctx.inject` 本身就是「有就跑、没有就挂起」，不会报错。也不要把 `dshGo` 写进插件顶层的 `inject` 声明，那样没有桥接的主机上整个插件都起不来。
+**注意：写 `['xrkGo']`，不要写 `['xrkGo?']`。** XRK 0.2.1-rc.2 的 cordis 4.0.5 没有可选依赖语法，`'xrkGo?'` 会被当成一个永远不存在的服务名，回调永不执行（总设计 §3.2 的草案写法作废）。`ctx.inject` 本身就是「有就跑、没有就挂起」，不会报错。也不要把 `xrkGo` 写进插件顶层的 `inject` 声明，那样没有桥接的主机上整个插件都起不来。
 
 注册与调用方插件的生命周期绑定：插件卸载、停用或热重载时，它的全部注册自动撤销，桥接推 `changed`。
 
@@ -190,7 +190,7 @@ export function apply(ctx) {
 **延后结果**（v1.1，§4.7）：要调大模型、联网这类 3 秒内做不完的事，handler 立即返回
 
 ```js
-ctx.dshGo.on('translate', (scope, event) => ({
+ctx.xrkGo.on('translate', (scope, event) => ({
   pending: { label: event.locale.startsWith('zh') ? '翻译中' : 'Translating', timeoutMs: 30000 },   // 或 pending: true
   result: (signal) => translate(scope.clipboard, { signal }).then((text) => ({ insert: text })),  // 或直接给一个 Promise
 }))
@@ -208,7 +208,7 @@ ctx.dshGo.on('translate', (scope, event) => ({
 
 | 项 | 规则 |
 |---|---|
-| 鉴权 | 所有 `/dsh-go/*` 路由和 WebSocket 升级都走路由守卫（`Connection.requestRejection`）：无凭据 **401**、跨站 Origin / Host 不符 **403**、Connection 未就绪 **503**。这些响应由守卫发出，正文是纯文本，App 只看状态码。桥接在路由内再查一遍（未打补丁的主机也安全） |
+| 鉴权 | 所有 `/xrk-mobile/*` 路由和 WebSocket 升级都走路由守卫（`Connection.requestRejection`）：无凭据 **401**、跨站 Origin / Host 不符 **403**、Connection 未就绪 **503**。这些响应由守卫发出，正文是纯文本，App 只看状态码。桥接在路由内再查一遍（未打补丁的主机也安全） |
 | 能力参数 | `contributions` 和 `views` 的查询参数：`v`（App 支持的协议主版本，逗号分隔，如 `1`）、`app`（App 版本 `x.y.z`）、`locale`（BCP 47，如 `zh-CN`）、`surfaces`（逗号分隔）、`components`（逗号分隔）。缺 `v` 按 `1`；缺 `app` 按 `0.0.0`（声明了 `minApp` 的插件会是 `needs-app`） |
 | scope 字段 | `sessionId`、`turnId`、`messageId`、`callId`，每个是 1–256 个字符、不含控制字符的字符串。HTTP 里是同名查询参数，流和 invoke 里是 `scope` 对象。未知键丢弃 |
 | scope 规范化 | 去掉空值后按键名排序；两个 scope 相等当且仅当规范化后相等。订阅按 `{pkg, id, 规范化 scope}` 共享同一份数据源 |
@@ -246,14 +246,14 @@ HTTP 错误（守卫的 401/403/503 除外）的正文：
 ### 3.3 问题（issue）格式
 
 ```json
-{ "path": "/dshGo/contributes/composer.actions/2/label", "code": "too-long", "severity": "warn", "message": "label exceeds 10 characters; truncated" }
+{ "path": "/xrkGo/contributes/composer.actions/2/label", "code": "too-long", "severity": "warn", "message": "label exceeds 10 characters; truncated" }
 ```
 
 `path` 是相对 `package.json` 根的 JSON Pointer（运行期问题用 `/runtime/<id>`）。App 在插件详情页安静显示一行「原生界面 · N 项有误」，点开看路径和按 `code` 本地化的说明。
 
 | code | severity | 含义 |
 |---|---|---|
-| `invalid-manifest` | error | `dshGo` 不是对象、超过 16 KiB 或 `contributes` 缺失 |
+| `invalid-manifest` | error | `xrkGo` 不是对象、超过 16 KiB 或 `contributes` 缺失 |
 | `unsupported-version` | error | `v` 不被支持 |
 | `needs-app` | error | App 版本低于 `minApp` |
 | `missing-field` / `invalid-field` | error | 必填缺失 / 类型或格式不对 |
@@ -271,9 +271,9 @@ HTTP 错误（守卫的 401/403/503 除外）的正文：
 
 **NA protocol v1 change（#656，能力缺省兼容）：** `surfaces`、`components` 查询参数分别独立处理。未提供某参数时，桥接向插件的视图回调省略对应可选字段，让 SDK 沿用原有 v1 surface / component 默认；显式空参数（例如 `surfaces=`）仍传空数组，表示该类能力均未声明，不自动回退。明确提供的列表按解析规则规范化后传递：按逗号拆分，去掉每项两端空白，丢掉空项和超过 64 个 UTF-16 代码单元的项，最多保留 64 项（例如 `surfaces=panels,,plugin` 得到 `["panels", "plugin"]`）。此规则不改变 `v` 的版本准入；`placement: "plugin"` 仍须在 `surfaces` 明确列出才保留，否则退回 `session.tab`。清单的 `contributes` 类别和 placement 是不同集合，`plugin` 不是新的清单类别。
 
-### 4.1 `GET /dsh-go/v1/contributions`
+### 4.1 `GET /xrk-mobile/v1/contributions`
 
-请求：`GET /dsh-go/v1/contributions?v=1&app=0.10.0&locale=zh-CN&surfaces=composer.actions,message.actions,composer.strip,panels&components=stack,row,text,…`，可带 `If-None-Match`。
+请求：`GET /xrk-mobile/v1/contributions?v=1&app=0.10.0&locale=zh-CN&surfaces=composer.actions,message.actions,composer.strip,panels&components=stack,row,text,…`，可带 `If-None-Match`。
 
 响应 200（`ETag: "<rev>"`；`If-None-Match` 命中返回 304 空体）：
 
@@ -286,7 +286,7 @@ HTTP 错误（守卫的 401/403/503 除外）的正文：
   "limits": { … },                 // §7 上限表的机器可读版
   "plugins": [
     {
-      "pkg": "dsh-go-example-usage",
+      "pkg": "xrk-example-usage",
       "version": "1.0.0",
       "title": "用量",               // 已按 locale 取值
       "icon": "chart",
@@ -307,16 +307,16 @@ HTTP 错误（守卫的 401/403/503 除外）的正文：
 
 | 字段 | 说明 |
 |---|---|
-| `plugins` | 只含**已启用**且 `package.json` 有 `dshGo` 的包，按包名排序。没有就是 `[]` |
+| `plugins` | 只含**已启用**且 `package.json` 有 `xrkGo` 的包，按包名排序。没有就是 `[]` |
 | `contributes` | 四个键总是齐全（可能是空数组）；`state` 不是 `ok` 时全部为空数组 |
 | 条目 `ready` | actions：有 `effect` 或已 `on(id)`；strip：有 `panel`、已 `strip(id)`、已 `on(id)` 或有静态 `text` 之一；面板：已 `panel(id)` 或有静态 `view` |
 | 面板 `live` | 已注册 `data`：App 打开面板后应订阅流 |
 | 条目 `effect` | 静态效果（已校验，统一成数组）下发，App 本地执行 |
 | strip `tappable` / `live` | `tappable`：有 `panel` 或 `on(id)`，点按有反应；`live`：已 `strip(id)`，App 应订阅流 |
 
-**缓存与失效**：桥接按「插件启停代数」缓存解析后的清单（任一插件 fiber 状态变化、启动图 rev 变化、`ctx.dshGo` 注册变化都会让代数 +1），`package.json` 另按 mtime 复查。App 的拉取时机：连上主机一次；收到流的 `changed` 一次；回到前台一次（带 `If-None-Match`，没变化就是 304）。目标：本机冷启动 300 ms 内拿到。
+**缓存与失效**：桥接按「插件启停代数」缓存解析后的清单（任一插件 fiber 状态变化、启动图 rev 变化、`ctx.xrkGo` 注册变化都会让代数 +1），`package.json` 另按 mtime 复查。App 的拉取时机：连上主机一次；收到流的 `changed` 一次；回到前台一次（带 `If-None-Match`，没变化就是 304）。目标：本机冷启动 300 ms 内拿到。
 
-### 4.2 `GET /dsh-go/v1/views/<pkg>/<id>`
+### 4.2 `GET /xrk-mobile/v1/views/<pkg>/<id>`
 
 `<pkg>` 是包名（带 scope 的包占两段：`/views/@acme/usage-meter/usage`），`<id>` 是面板 id。查询参数 = 能力参数 + scope 字段。
 
@@ -325,7 +325,7 @@ HTTP 错误（守卫的 401/403/503 除外）的正文：
 ```jsonc
 {
   "v": 1,
-  "pkg": "dsh-go-example-usage",
+  "pkg": "xrk-example-usage",
   "id": "usage",
   "title": "用量",
   "view": { "type": "stack", "children": [ … ] },   // 见 view.schema.json
@@ -343,7 +343,7 @@ HTTP 错误（守卫的 401/403/503 除外）的正文：
 - 初始数据：桥接启动（或复用）该 `{pkg, id, scope, locale}` 的数据源，最多等 1 秒第一份 `emit`。数据源按 locale 分开（不区分大小写，`_` 视同 `-`），所以 App 的 GET 视图和流 `hello` 要带同一个 locale，订阅才能接上 GET 时启动的那份。数据源在最后一个订阅者离开 30 秒后才取消，所以「GET 视图 → 马上订阅流」不会重启插件的数据函数。
 - 状态不是 `ok` → 409（`degraded` / `not-native`）；包或面板不存在 → 404。
 
-### 4.3 `WS /dsh-go/v1/stream`
+### 4.3 `WS /xrk-mobile/v1/stream`
 
 一台主机一条连接，App 进后台 60 秒后关（code 1000），回前台重连并补拉。消息都是 JSON 文本帧，`t` 为类型；双方忽略不认识的 `t` 和字段。
 
@@ -392,14 +392,14 @@ HTTP 错误（守卫的 401/403/503 除外）的正文：
 
 **关闭码**：1000 正常、1001 超时、1002 帧格式错、1008 协议违例（首帧不是 `hello`、不是 JSON 对象）、1009 帧过大、1011 桥接内部错误、1013 积压 / 连接数已满。
 
-### 4.4 `POST /dsh-go/v1/invoke`
+### 4.4 `POST /xrk-mobile/v1/invoke`
 
 请求（≤ 64 KiB）：
 
 ```jsonc
 {
   "v": 1,
-  "pkg": "dsh-go-example-quick",
+  "pkg": "xrk-example-quick",
   "id": "translate",                  // 贡献 id（面板点按时是面板 id）
   "surface": "composer.actions",      // composer.actions | message.actions | composer.tools | session.actions | composer.strip | panel
   "action": "refresh",                // 仅 panel：视图里按钮 / options / confirm 的 action 名（1–64 字符）
@@ -446,9 +446,9 @@ HTTP 错误（守卫的 401/403/503 除外）的正文：
 
 桥接在发出前截断 `text`、丢弃其他字段。订阅方式与面板相同（`sub {pkg, id: <strip id>, scope: {sessionId}}`），没有视图，不需要 GET：App 直接画 `icon` + `text`（v1 状态条不走组件树，视图 schema 的 `strip` 预算档留给以后）。
 
-### 4.6 `GET /dsh-go/v1/assets/<pkg>/<path>`（可选）
+### 4.6 `GET /xrk-mobile/v1/assets/<pkg>/<path>`（可选）
 
-- 只服务 `dshGo.assets` 目录内的文件；路径越出目录（含符号链接）→ 404。
+- 只服务 `xrkGo.assets` 目录内的文件；路径越出目录（含符号链接）→ 404。
 - 扩展名白名单：`png`、`jpg`、`jpeg`、`webp`、`gif`；单个 ≤ 1 MiB。
 - `cache-control: private, max-age=300`，`ETag` = 大小 + mtime；支持 `If-None-Match`。
 - 视图里怎么引用（建议 `"src": "asset:icons/a.png"`，App 拼成本路由并带 cookie）由 view schema 定。
@@ -512,7 +512,7 @@ handler 在 3 秒内返回 `{ pending, result }`（§2.2），桥接立即回：
 
 | 项 | 上限 | 谁执行 | 超出时 |
 |---|---|---|---|
-| `dshGo` 清单 | 16 KiB | 桥接 | 整份作废（`invalid`） |
+| `xrkGo` 清单 | 16 KiB | 桥接 | 整份作废（`invalid`） |
 | 条目数（每插件） | actions 2 + 2、strip 1、panels 4 | 桥接 | 截断（warn） |
 | 文字 | 插件名 24、胶囊 10、菜单项 12、面板标题 16、状态条 24、toast 40 | 桥接 | 截断（warn） |
 | 视图 | 32 KiB | 桥接 | 500 `invalid-view`，违规 |
@@ -536,13 +536,13 @@ handler 在 3 秒内返回 `{ pending, result }`（§2.2），桥接立即回：
 
 | 情形 | 处理 |
 |---|---|
-| 插件 `dshGo.v` 不在 App 的 `v` 列表或桥接不支持 | `state: "unsupported"`，`native: false`，App 退回网页岛 |
+| 插件 `xrkGo.v` 不在 App 的 `v` 列表或桥接不支持 | `state: "unsupported"`，`native: false`，App 退回网页岛 |
 | `minApp` 高于 App | `state: "needs-app"`，App 可提示「需要更新 App」 |
 | 未知 surface / 组件 / 效果 / 字段 / 流消息类型 | 忽略（问题列表里记一条），其余照常 |
 | v1 内演进 | 只加可选字段、新 surface、新效果、新组件；老 App 忽略。App 通过 `caps.surfaces` / `caps.components` 告诉插件自己认识什么 |
 | 桥接比 App 旧（第二期 SSH 主机） | App 看 `bridge` 版本号决定是否用新字段；路由 404 = 没装桥接，原生插件全部不显示。延后效果看 `welcome.conn` 是否存在 |
 | 不兼容变更 | 升 `v` 到 2，新旧并存：桥接同时服务 App 请求的最高共同版本 |
-| 工具卡（`meta["dsh-go/view"]`） | 写进对话记录，只增不删字段，App 永久兼容老格式 |
+| 工具卡（`meta["xrk-mobile/view"]`） | 写进对话记录，只增不删字段，App 永久兼容老格式 |
 
 ## 9. 典型时序
 
@@ -563,7 +563,7 @@ handler 在 3 秒内返回 `{ pending, result }`（§2.2），桥接立即回：
 
 ## 11. 可选能力（v1.2）
 
-给朗读这类插件的四样东西：放一段声音、用户开口时停、高频小字幕、悬浮一行字幕。全部可选，协议主版本仍是 `v: 1`。实现：桥接 `lib/native/{capabilities,capability-runtime}.js`；App `lib/plugins/native/native_capabilities.dart`、`android/…/nativemedia/`；测试 `runtime/tests/native-capabilities*.mjs`、`app/test/plugins/native/native_capabilities_test.dart`。示例：`examples/plugins/dsh-go-example-readaloud/`。
+给朗读这类插件的四样东西：放一段声音、用户开口时停、高频小字幕、悬浮一行字幕。全部可选，协议主版本仍是 `v: 1`。实现：桥接 `lib/native/{capabilities,capability-runtime}.js`；App `lib/plugins/native/native_capabilities.dart`、`android/…/nativemedia/`；测试 `runtime/tests/native-capabilities*.mjs`、`app/test/plugins/native/native_capabilities_test.dart`。示例：`examples/plugins/xrk-example-readaloud/`。
 
 | 能力 | 插件得到什么 | 谁做 |
 |---|---|---|
@@ -575,7 +575,7 @@ handler 在 3 秒内返回 `{ pending, result }`（§2.2），桥接立即回：
 ### 11.1 声明与协商
 
 ```jsonc
-"dshGo": {
+"xrkGo": {
   "v": 1,
   "capabilities": ["audio", "voice", "micro", "overlay"],
   "contributes": {
@@ -624,7 +624,7 @@ App 端协商：`contributions` 的查询参数 `features=audio,voice,micro,over
 
 ### 11.4 媒体路由与事件
 
-`GET /dsh-go/v1/media/<pkg>/<id>?lease=…&key=…`：鉴权与其他路由相同（守卫 401 / 403）；只认这两个查询参数；`lease` 必须是活着的、有 audio 角色且媒体 id 相同的租约，`key` 与 `play` 时一致，否则 404。全桥接同时 2 个、每插件 1 个（429）。响应 `cache-control: no-store`、`nosniff`，没有重定向、没有插件给的响应头；超时 504、取消 410、不合格 502 / 413，半截音频不会当成功。App 整段下载（不跟随任何重定向、字节上限、一个总时限）到私有缓存再播放。手机永远不直接访问插件给的地址；`127.0.0.1` 是主机上的事，由插件在 `media` 里自己去取。
+`GET /xrk-mobile/v1/media/<pkg>/<id>?lease=…&key=…`：鉴权与其他路由相同（守卫 401 / 403）；只认这两个查询参数；`lease` 必须是活着的、有 audio 角色且媒体 id 相同的租约，`key` 与 `play` 时一致，否则 404。全桥接同时 2 个、每插件 1 个（429）。响应 `cache-control: no-store`、`nosniff`，没有重定向、没有插件给的响应头；超时 504、取消 410、不合格 502 / 413，半截音频不会当成功。App 整段下载（不跟随任何重定向、字节上限、一个总时限）到私有缓存再播放。手机永远不直接访问插件给的地址；`127.0.0.1` 是主机上的事，由插件在 `media` 里自己去取。
 
 App → 桥接：`{ t: "cap.event", lease, seq, event, reason? }`，`seq` 在租约内递增。
 
@@ -656,7 +656,7 @@ App → 桥接：`micro.sub { sub, pkg, id, scope? }`、`micro.unsub { sub }`；
 | 跟着声音走 | 一个会话里有声音时，声音结束（播完、被停、开口打断）后 App 自动停掉聆听（等用户说完）并关掉字幕 |
 | 回声 | App 用系统的通话录音通道和回声消除（有的话），朗读时提高开口门槛、忽略开头 0.4 秒。外放声音很大、设备没有回声消除时仍可能把朗读声当成开口（朗读会自己停下）；小声说话也可能听不出 |
 | 字幕 | 一行纯文字，App 的字体和颜色，没有链接、没有输入；文字只是文字 |
-| 主机 | 本机引擎可用；SSH 主机等桥接能装上之后同样可用（路由一致）；中转主机没有 `/dsh-go/*`，这些能力不可用 |
+| 主机 | 本机引擎可用；SSH 主机等桥接能装上之后同样可用（路由一致）；中转主机没有 `/xrk-mobile/*`，这些能力不可用 |
 
 ### 11.7 上限
 
@@ -673,7 +673,7 @@ App → 桥接：`micro.sub { sub, pkg, id, scope? }`、`micro.unsub { sub }`；
 
 ## 12. NA v1.3：用户选择文件
 
-`files` 是独立可选能力；只增加自己的桥接协议，不改变 DSH 引擎接口。清单声明 `capabilities: ["files"]`，`hello.features` / `welcome.features` 取交集；缺失即不可用。协议主版本、路由和帧中的 `v` 仍为 `1`。普通 v1 视图也能使用选择效果，视图 v2 另行协商。
+`files` 是独立可选能力；只增加自己的桥接协议，不改变 XRK 引擎接口。清单声明 `capabilities: ["files"]`，`hello.features` / `welcome.features` 取交集；缺失即不可用。协议主版本、路由和帧中的 `v` 仍为 `1`。普通 v1 视图也能使用选择效果，视图 v2 另行协商。
 
 ### 12.1 点按授权与效果
 
@@ -691,8 +691,8 @@ App 仍在既有三秒点击窗口内启动，核对当前 host/stream/plugin �
 
 | 接口 | 请求 | 响应 |
 |---|---|---|
-| `POST /dsh-go/v1/files/<request>/upload?stream=…&name=…&mediaType=…` | `application/octet-stream` 原始字节；name 必填，mediaType 可省略 | `{ v: 1, file: { handle, name, bytes, mediaType, access: "read" } }` |
-| `POST /dsh-go/v1/files/<request>/complete?stream=…` | `application/json`，`{ status: "selected" | "cancelled" | "error" }`，≤ 1 KiB | `{ v: 1, effects, issues }`，执行一次被等待的选择回调后返回 |
+| `POST /xrk-mobile/v1/files/<request>/upload?stream=…&name=…&mediaType=…` | `application/octet-stream` 原始字节；name 必填，mediaType 可省略 | `{ v: 1, file: { handle, name, bytes, mediaType, access: "read" } }` |
+| `POST /xrk-mobile/v1/files/<request>/complete?stream=…` | `application/json`，`{ status: "selected" | "cancelled" | "error" }`，≤ 1 KiB | `{ v: 1, effects, issues }`，执行一次被等待的选择回调后返回 |
 
 上传前检查数量和已知长度，随后独立统计实际读入字节。单文件 ≤ 8 MiB、单次 ≤ 16 MiB；未知长度先预留剩余容量与单文件上限的较小值。桥接保留的内容缓冲区共享 64 MiB，预算包含未知长度的预留，不采用不断增长的 chunk 数组。每上传 30 秒，不允许同时上传和 complete。错误会清除整批已上传内容并阻止后续上传，只能 complete error/cancelled；无部分成功。桥接回给 App 的收据体上限为 4 KiB，complete 响应上限 96 KiB。
 
@@ -702,7 +702,7 @@ App 仍在既有三秒点击窗口内启动，核对当前 host/stream/plugin �
 
 回调选择同面板的 `actions[action]`，否则回落原贡献 id 的 `on(id)`。事件保留原位置、locale 与 action，`value` 为 `{ status, files }`；取消或错误的 files 为空。`signal` 随请求撤销。它仍受现有 handler 三秒预算与 invoke 限流约束。
 
-新增 `ctx.dshGo.readPickedFile(handle): Uint8Array`，只有拥有这次被等待回调的插件可读。返回独立内容副本；异步 await 延续有效，回调结算后、超时、断线、插件世代或注册变化后均抛错。`AsyncLocalStorage` 关联回调，运行时再次核对活跃请求，故遗留异步 continuation 不能继续读。需要长期处理者在回调中复制或 await 持久化到自己的位置；复制后的预算与清理由插件负责。
+新增 `ctx.xrkGo.readPickedFile(handle): Uint8Array`，只有拥有这次被等待回调的插件可读。返回独立内容副本；异步 await 延续有效，回调结算后、超时、断线、插件世代或注册变化后均抛错。`AsyncLocalStorage` 关联回调，运行时再次核对活跃请求，故遗留异步 continuation 不能继续读。需要长期处理者在回调中复制或 await 持久化到自己的位置；复制后的预算与清理由插件负责。
 
 回调效果只有 `patch`、`refresh`、`toast`，不能延后或再发起选择/命令/剪贴板操作。App 同样再查一次白名单。回调完成的 finally、请求过期、断流与插件卸载均撤销句柄并释放保留缓冲区。`selected` 必须有至少一个完整文件；重复 complete 失败。
 
@@ -714,6 +714,6 @@ Android 文件走 `ACTION_OPEN_DOCUMENT` / `CATEGORY_OPENABLE`；图片在 API 3
 
 原生读连续十秒没有新增字节，App 的独立 timer 先向原 owner 发原生 cancel，再取消源订阅并以 error 结算；不等待暂停于 MethodChannel read 的 async generator 清理后才发 cancel。取消、超限、源错误和到期均只结算一次，部分字节不作为 selected，晚回不再上传或取消新 owner。App gate 与后台 hold 可释放；尚未返回的原生 worker 仍受 ioBusy/closing 限制，不能靠重复启动 worker 绕过。系统 chooser 的后台阶段允许把原有断流宽限延长至该次请求的五分钟 deadline，释放时恢复原后台 deadline，不能不断续租。
 
-当前只有 Android 实现本适配器；无 native channel 则不协商。DSH Remote relay 的 `canReachDshGo` 为 false，不开放 files。现有 `fileUploads/upload` 返回对话附件 receipt，不提供插件可读位置，因此本能力用上述桥路由；SSH 复用原认证 HTTP 隧道，不添加 SFTP 或引擎协议。上游需提供中转 bridge 路由后才可支持 relay。
+当前只有 Android 实现本适配器；无 native channel 则不协商。XRK Remote relay 的 `canReachDshGo` 为 false，不开放 files。现有 `fileUploads/upload` 返回对话附件 receipt，不提供插件可读位置，因此本能力用上述桥路由；SSH 复用原认证 HTTP 隧道，不添加 SFTP 或引擎协议。上游需提供中转 bridge 路由后才可支持 relay。
 
 作者约定、理由与 API 官方依据见 [files.md](../plugins/files.md)。自动测试覆盖真实 HTTP/WebSocket、Dart carrier、App tap runner 和原生预算；系统选择器 UI、厂商 provider 与真机进程重建另列设备回归，不将 API 编译等同于设备测量。

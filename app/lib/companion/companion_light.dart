@@ -1,6 +1,6 @@
 // 轻量模式 (docs/design/companion.md §7): she talks to DeepSeek straight from
 // the phone, with no engine and no host. The same Messages API the engine's
-// DeepSeek adapter uses (@deepseek-ai/dsh-llm-deepseek), with the API key
+// DeepSeek adapter uses (@xrkseek/harness-cli-llm-deepseek), with the API key
 // saved in the app; her conversation is a small file next to the pack.
 
 import 'dart:async';

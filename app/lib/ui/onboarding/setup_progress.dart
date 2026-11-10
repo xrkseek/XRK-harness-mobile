@@ -364,7 +364,7 @@ class _SetupProgressCapsuleState extends ConsumerState<SetupProgressCapsule> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final runtime = ref.watch(setupRuntimeProvider);
     final progress = ref.watch(localRuntimeProvider.select((s) => s.progress));
     final visible = runtime != SetupRuntime.ready || _celebrating;
@@ -458,7 +458,7 @@ class _SetupStatusSheet extends ConsumerWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final runtime = ref.watch(setupRuntimeProvider);
     final state = ref.watch(localRuntimeProvider);
     final eta = ref.watch(installEtaProvider);

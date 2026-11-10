@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/harness.dart';
 
-/// A [DshClient] that records the calls [ChatController.send] and the queue
+/// A [XrkClient] that records the calls [ChatController.send] and the queue
 /// actions make, and plays back a scripted event stream.
-class _FakeClient extends DshClient {
+class _FakeClient extends XrkClient {
   _FakeClient() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
 
   final events = StreamController<DshEvent>.broadcast();
@@ -26,10 +26,10 @@ class _FakeClient extends DshClient {
   /// `remove:<item>`, `steer:<item>`.
   final calls = <String>[];
 
-  /// Refuse inline images like DSH does for a text-only model (V4 Pro).
+  /// Refuse inline images like XRK does for a text-only model (V4 Pro).
   bool textOnlyModel = false;
 
-  /// Receipt uploads are unavailable on DSH Remote.
+  /// Receipt uploads are unavailable on XRK Remote.
   bool uploadsAllowed = true;
   bool workspaceUploadsAllowed = false;
   Object? uploadError;
@@ -69,7 +69,7 @@ class _FakeClient extends DshClient {
     calls.add('prompt:${mode.wire}:$text');
     prompts.add((images: images.length, receipts: [...fileReceiptIds], requestId: requestId, mode: mode));
     if (textOnlyModel && images.isNotEmpty) {
-      throw const DshRemoteException(
+      throw const XrkRemoteException(
         'session/attachment-invalid',
         'Model "deepseek-v4-pro" does not support image input.',
         {'reason': 'MODEL_DOES_NOT_SUPPORT_IMAGES'},
@@ -115,7 +115,7 @@ class _FakeClient extends DshClient {
     calls.add('${remove ? 'remove' : 'steer'}:$itemId');
     queue.add((itemId, remove, steer));
     if (gone.contains(itemId)) {
-      throw const DshRemoteException('session/queue-item-not-found', 'queued item is no longer pending');
+      throw const XrkRemoteException('session/queue-item-not-found', 'queued item is no longer pending');
     }
   }
 
@@ -218,7 +218,7 @@ void main() {
     });
 
     test('other refusals still fail the send and drop the bubble', () async {
-      client.promptError = const DshRemoteException('session/agent-busy', 'busy', {'reason': 'x'});
+      client.promptError = const XrkRemoteException('session/agent-busy', 'busy', {'reason': 'x'});
       expect(await chat().send('你好', attachments: [image]), isFalse);
       expect(client.prompts, hasLength(1));
       expect(state().error, '发送失败：AI 正忙，稍后再试');
@@ -259,7 +259,7 @@ void main() {
     });
 
     test('Host upload refusal prevents the prompt and preserves its reason', () async {
-      client.uploadError = const DshRemoteException('UPLOAD_LIMIT', 'Host refused');
+      client.uploadError = const XrkRemoteException('UPLOAD_LIMIT', 'Host refused');
       expect(await chat().send('read this', attachments: [file]), isFalse);
       expect(client.prompts, isEmpty);
       expect(state().pending, isEmpty);
@@ -315,7 +315,7 @@ void main() {
     test('interrupt: stopped but not sent goes back to the caller', () async {
       client.events.add(const SessionStatusEvent('s1', true));
       await settle();
-      client.promptError = const DshRemoteException('session/agent-busy', 'busy', {'reason': 'x'});
+      client.promptError = const XrkRemoteException('session/agent-busy', 'busy', {'reason': 'x'});
       expect(await chat().send('停一下', mode: SendMode.interrupt), isFalse);
       expect(client.calls, ['cancel', 'prompt:queue:停一下']);
       expect(state().pending, isEmpty);
@@ -324,7 +324,7 @@ void main() {
   });
 
   test('approval and answer failures never show an unknown reason', () async {
-    client.responseError = const DshRemoteException('x', 'boom');
+    client.responseError = const XrkRemoteException('x', 'boom');
     await chat().respond(
       const ApprovalRequest(eventId: 'a', sessionId: 's1', toolName: 'bash'),
       ApprovalDecision.allowOnce,
@@ -394,7 +394,7 @@ void main() {
     });
   });
 
-  test('DSH Remote: a text-only model asks for another model, no files', () async {
+  test('XRK Remote: a text-only model asks for another model, no files', () async {
     client.uploadsAllowed = false;
     client.textOnlyModel = true;
     expect(await chat().send('图片', attachments: [image]), isFalse);
@@ -421,7 +421,7 @@ void main() {
       final original = DraftAttachment.sniff('notes.md', Uint8List.fromList('old'.codeUnits));
       final replacement = DraftAttachment.sniff('notes.md', Uint8List.fromList('new'.codeUnits));
       expect(replacement.id, isNot(original.id));
-      client.promptError = const DshTransportException('gone');
+      client.promptError = const XrkTransportException('gone');
       expect(await chat().send('分析', attachments: [original]), isFalse);
       final requestId = client.prompts.single.requestId;
 
@@ -487,7 +487,7 @@ void main() {
     });
 
     test('changed content gets a new request id', () async {
-      client.promptError = const DshTransportException('gone');
+      client.promptError = const XrkTransportException('gone');
       expect(await chat().send('原文'), isFalse);
       final requestId = client.prompts.single.requestId;
       client.promptError = null;
@@ -1123,7 +1123,7 @@ void main() {
     });
   });
 
-  // DSH keeps the inbox across a stop but starts no turn for it: what waits
+  // XRK keeps the inbox across a stop but starts no turn for it: what waits
   // goes again under its own request id, which wakes the agent.
   group('sending what waits right away', () {
     var seq = 0;
@@ -1259,9 +1259,9 @@ void main() {
 
     test('立即发送: not back in goes to the caller, bubble gone', () async {
       await waiting(['用中文']);
-      client.promptError = const DshRemoteException('session/agent-busy', 'busy', {'reason': 'x'});
+      client.promptError = const XrkRemoteException('session/agent-busy', 'busy', {'reason': 'x'});
       final prompt = bubble('用中文');
-      // What DSH reports for the removal.
+      // What XRK reports for the removal.
       splice('next-step', removed: 1, canceled: true);
       final lost = await chat().sendNow(prompt);
       expect([for (final p in lost) p.text], ['用中文']);

@@ -4,11 +4,11 @@
 // a workspace's sheet. Regenerate with
 //   flutter test --update-goldens test/workspace/workspace_golden_test.dart
 
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/workspace/directory_picker.dart';
-import 'package:dsh_app/ui/workspace/workspace_switcher.dart';
-import 'package:dsh_app/ui/workspace/workspaces_page.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/workspace/directory_picker.dart';
+import 'package:xrk_app/ui/workspace/workspace_switcher.dart';
+import 'package:xrk_app/ui/workspace/workspaces_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

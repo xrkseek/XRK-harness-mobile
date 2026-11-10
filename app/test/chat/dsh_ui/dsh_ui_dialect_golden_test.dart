@@ -3,8 +3,8 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -13,7 +13,7 @@ import '../support/harness.dart';
 String j(Object json) => jsonEncode(json);
 
 /// A build report: figures, a table, progress, a warning, and two parts the
-/// app leaves to DSH Web.
+/// app leaves to XRK Web.
 final report = j({
   'title': '本周构建',
   'items': [
@@ -80,20 +80,20 @@ final explainer = j({
       'type': 'keyvalue',
       'pairs': [
         {'key': '版本', 'value': '0.10.0'},
-        {'key': '引擎', 'value': 'DSH 0.2.1-rc.4'},
+        {'key': '引擎', 'value': 'XRK 0.2.1-rc.4'},
       ],
     },
     {'type': 'code', 'lang': 'sh', 'code': 'flutter build apk --release'},
   ],
 });
 
-Widget block(String source) => DshUiScope(
+Widget block(String source) => XrkUiScope(
   sessionId: 's1',
   messageId: 'a1',
-  state: DshUiState.live,
+  state: XrkUiState.live,
   onReply: (_) async => true,
   onAskResend: (_) async => true,
-  child: DshUiBlock(source: source),
+  child: XrkUiBlock(source: source),
 );
 
 Widget sheet(List<Widget> children) => AppBackdrop(
@@ -118,7 +118,7 @@ void main() {
       tester.view.physicalSize = const Size(780, 1960 * 2);
       await tester.pumpWidget(testApp(Scaffold(body: sheet([block(report), block(explainer)])), brightness: brightness));
       await tester.pump(const Duration(milliseconds: 400));
-      await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/dsh_ui_dialect_$suffix.png'));
+      await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/xrk_ui_dialect_$suffix.png'));
     });
   }
 }

@@ -15,7 +15,7 @@ node sdk/plugin-kit/bin/check.mjs 插件目录 --load   # 再加载宿主半侧�
 
 | | 项 | |
 |---|---|---|
-| ⬜ | `dshGo.v` 是 `1`；`contributes` 存在 | ⚙️ |
+| ⬜ | `xrkGo.v` 是 `1`；`contributes` 存在 | ⚙️ |
 | ⬜ | 所有 id 在本插件内唯一（跨插槽也算） | ⚙️ |
 | ⬜ | 胶囊 ≤ 10 字、菜单项 ≤ 12 字、状态条 ≤ 24 字、面板标题 ≤ 16 字、插件名 ≤ 24 字，**中英文都量** | ⚙️ |
 | ⬜ | 每插槽数量不超：胶囊 2、菜单 2、状态条 1、面板 4、加号工具 2、对话操作 2、回合尾注 1 | ⚙️ |
@@ -25,13 +25,13 @@ node sdk/plugin-kit/bin/check.mjs 插件目录 --load   # 再加载宿主半侧�
 | ⬜ | 静态 `effect` 只用 insert / command / open / link / toast / copy | ⚙️ |
 | ⬜ | 状态条的 `panel` 指向本插件的面板 | ⚙️ |
 | ⬜ | 静态视图文件在包目录内、≤ 32 KiB | ⚙️ |
-| ⬜ | `engines.dsh` 写了支持的 DSH 版本 | ⚙️ |
+| ⬜ | `engines.dsh` 写了支持的 XRK 版本 | ⚙️ |
 
 ## 宿主半侧
 
 | | 项 | |
 |---|---|---|
-| ⬜ | `ctx.inject(['dshGo'], …)`，不是 `'dshGo?'`；`dshGo` 不在顶层 `inject` | ⚙️ `--load` |
+| ⬜ | `ctx.inject(['xrkGo'], …)`，不是 `'xrkGo?'`；`xrkGo` 不在顶层 `inject` | ⚙️ `--load` |
 | ⬜ | 每个没写静态 `effect` 的胶囊 / 菜单项都有 `on(id)` | ⚙️ `--load` |
 | ⬜ | 每个面板都有 `panel(id)` 或静态视图 | ⚙️ `--load` |
 | ⬜ | 没有注册清单里没有的 id | ⚙️ `--load` |
@@ -44,7 +44,7 @@ node sdk/plugin-kit/bin/check.mjs 插件目录 --load   # 再加载宿主半侧�
 
 | | 项 | |
 |---|---|---|
-| ⬜ | 按根节点视图版本选组件：省略 `v` / `v: 1` 用 v1；新增组件与有界样式显式写 `v: 2`，见[组件目录](components.md)和[样式](styles.md)。清单 `dshGo.v` 仍为 `1`；旧 App 按 `caps` / `adaptView` 降级 | ⚙️ |
+| ⬜ | 按根节点视图版本选组件：省略 `v` / `v: 1` 用 v1；新增组件与有界样式显式写 `v: 2`，见[组件目录](components.md)和[样式](styles.md)。清单 `xrkGo.v` 仍为 `1`；旧 App 按 `caps` / `adaptView` 降级 | ⚙️ |
 | ⬜ | 工具卡 ≤ 8 KiB、≤ 40 个组件、≤ 6 层；面板 ≤ 32 KiB、≤ 120 个、≤ 8 层 | ⚙️ |
 | ⬜ | 工具卡不用绑定（没有数据模型），不放按钮（第 0 期不能点） | ⚙️ |
 | ⬜ | `presentationMeta` 用 `toolCard()` 包住：不抛错、不返回 `undefined` / `NaN` | |

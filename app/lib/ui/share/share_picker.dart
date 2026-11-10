@@ -3,12 +3,12 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../l10n/l10n.dart';
-import '../chat/dsh_ui/dsh_ui.dart';
+import '../chat/xrk_ui/xrk_ui.dart';
 import '../chat/secret_mask.dart';
 import '../common/app_sheet.dart';
 import '../common/scroll_edge_fade.dart';
@@ -267,7 +267,7 @@ class MessagePickRow extends StatelessWidget {
   static String preview(ChatItem item) {
     final raw = switch (item) {
       UserChatItem(:final text) => maskSecrets(text, mark: '•'),
-      AssistantChatItem(:final text) => maskSecrets(dshUiPlainText(text), mark: '•'),
+      AssistantChatItem(:final text) => maskSecrets(xrkUiPlainText(text), mark: '•'),
       _ => '',
     };
     final text = raw
@@ -293,7 +293,7 @@ class MessagePickRow extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final user = item is UserChatItem;
     return Semantics(
       checked: picked,

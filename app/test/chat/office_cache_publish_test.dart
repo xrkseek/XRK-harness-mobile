@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Valid one-page PDF; both concurrent render requests return identical bytes.
@@ -103,7 +103,7 @@ void main() {
         await req.response.close();
       }
     });
-    final client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
+    final client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
     final files = ArtifactFiles(
       connection: HostConnection(client: client, label: 'synthetic', isLocal: false),
       channel: const FilesChannel(),

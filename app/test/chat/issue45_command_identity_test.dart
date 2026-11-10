@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -13,7 +13,7 @@ class _Mux extends DshMux {
   Stream<DshConnectionState> get states => const Stream.empty();
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   final events = StreamController<DshEvent>.broadcast();
   final calls = <Completer<CommandResult>>[];

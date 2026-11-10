@@ -1,5 +1,5 @@
 // The artifact card's actions reach Android through platform channels
-// (`dsh/files` for open / save, share_plus for share), mocked here; and a
+// (`xrk/files` for open / save, share_plus for share), mocked here; and a
 // remote Host's file is downloaded once into the cache, again on a new
 // version.
 
@@ -7,15 +7,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/chat/widgets/artifact_card.dart';
-import 'package:dsh_app/ui/share/share_card.dart';
-import 'package:dsh_app/ui/share/share_content.dart';
-import 'package:dsh_app/ui/share/share_image_page.dart';
-import 'package:dsh_app/ui/share/share_panel.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/chat/widgets/artifact_card.dart';
+import 'package:xrk_app/ui/share/share_card.dart';
+import 'package:xrk_app/ui/share/share_content.dart';
+import 'package:xrk_app/ui/share/share_image_page.dart';
+import 'package:xrk_app/ui/share/share_panel.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,10 +23,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'support/harness.dart';
 
-const _files = MethodChannel('dsh/files');
+const _files = MethodChannel('xrk/files');
 const _share = MethodChannel('dev.fluttercommunity.plus/share');
 
-/// Records `dsh/files` and share calls; answers like the Kotlin side would.
+/// Records `xrk/files` and share calls; answers like the Kotlin side would.
 class _Android {
   final calls = <MethodCall>[];
   final shares = <MethodCall>[];
@@ -139,7 +139,7 @@ class _RemoteCarrier extends DshCarrier {
     return switch (endpoint) {
       'workspaceFiles/stat' => RpcOk(stat),
       'workspaceFiles/readBytes' => RpcOk({...stat, 'offset': 0, 'data': base64Encode(content), 'eof': true}),
-      _ => const RpcError(DshRemoteException('gateway/not-found', 'missing')),
+      _ => const RpcError(XrkRemoteException('gateway/not-found', 'missing')),
     };
   }
 
@@ -270,7 +270,7 @@ void main() {
     final cache = Directory.systemTemp.createTempSync('office');
     addTearDown(() => cache.deleteSync(recursive: true));
     final carrier = _RemoteCarrier(Uint8List(4))..converting = Completer();
-    final remote = HostConnection(client: DshClient.withCarrier(carrier), label: '工作站', isLocal: false, hostId: 'h1');
+    final remote = HostConnection(client: XrkClient.withCarrier(carrier), label: '工作站', isLocal: false, hostId: 'h1');
     await tester.pumpWidget(
       testApp(
         Scaffold(
@@ -364,7 +364,7 @@ void main() {
         return 'Download/XRK-Harness/a (2).png';
       });
       files = ArtifactFiles(
-        connection: HostConnection(client: DshClient.withCarrier(carrier), label: '工作站', isLocal: false, hostId: 'h1'),
+        connection: HostConnection(client: XrkClient.withCarrier(carrier), label: '工作站', isLocal: false, hostId: 'h1'),
         channel: const FilesChannel(),
         cacheRoot: () async => cache,
       );
@@ -430,9 +430,9 @@ void main() {
 
     test('errors read as sentences', () {
       expect(artifactErrorText(const ArtifactError('missing')), '找不到这个文件了，可能已被删除或移走');
-      expect(artifactErrorText(const DshRemoteException('workspace-file/too-large', 'x')), '文件太大，这个连接传不过来');
+      expect(artifactErrorText(const XrkRemoteException('workspace-file/too-large', 'x')), '文件太大，这个连接传不过来');
       expect(artifactErrorText(PlatformException(code: 'permission')), '没有存储权限，存不进「下载」');
-      expect(artifactErrorText(const DshTransportException('down')), '没能连上引擎');
+      expect(artifactErrorText(const XrkTransportException('down')), '没能连上引擎');
     });
   });
 }

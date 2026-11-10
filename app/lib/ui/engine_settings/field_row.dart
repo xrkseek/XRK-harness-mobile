@@ -60,7 +60,7 @@ class FieldHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final titleText = Text(
       title,
       style: settingsTitleStyle(context)?.copyWith(color: enabled ? scheme.onSurface : colors.textTertiary),
@@ -193,7 +193,7 @@ class EngineFieldRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final expanded = this.expanded;
     final showChevron = enabled && (chevron ?? (onTap != null && trailing == null));
     final endsInGlyph = showChevron || trailing != null;
@@ -302,7 +302,7 @@ class DisclosureChevron extends StatelessWidget {
       alignment: inkCentre,
       duration: AppMotion.of(context, AppMotion.standard),
       curve: AppMotion.std,
-      child: ExcludeSemantics(child: Icon(AppIcons.disclosure, size: 20, color: DshColors.of(context).textTertiary)),
+      child: ExcludeSemantics(child: Icon(AppIcons.disclosure, size: 20, color: XrkColors.of(context).textTertiary)),
     ),
   );
 }
@@ -325,7 +325,7 @@ class ExternalGlyph extends StatelessWidget {
   Widget build(BuildContext context) => Transform.translate(
     offset: const Offset(_shift, 0),
     child: ExcludeSemantics(
-      child: Icon(AppIcons.openExternal, size: size, color: DshColors.of(context).textTertiary),
+      child: Icon(AppIcons.openExternal, size: size, color: XrkColors.of(context).textTertiary),
     ),
   );
 }

@@ -5,15 +5,15 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/workspace_state.dart';
-import 'package:dsh_app/ui/chat/artifact_preview.dart';
-import 'package:dsh_app/ui/chat/widgets/artifact_card.dart';
-import 'package:dsh_app/ui/session/session_artifacts.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/workspace_state.dart';
+import 'package:xrk_app/ui/chat/artifact_preview.dart';
+import 'package:xrk_app/ui/chat/widgets/artifact_card.dart';
+import 'package:xrk_app/ui/session/session_artifacts.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -226,7 +226,7 @@ void main() {
     testWidgets('PDF preview ($suffix)', (tester) async {
       usePhoneView(tester);
       final page = (await tester.runAsync(() => _pagePng(360)))!;
-      const files = MethodChannel('dsh/files');
+      const files = MethodChannel('xrk/files');
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(files, (call) async {
         return switch (call.method) {
           'resolveGuest' => '/data/files/runtime/rootfs/root/workspace/r.pdf',
@@ -253,7 +253,7 @@ void main() {
 
     testWidgets('Office conversion wait ($suffix)', (tester) async {
       usePhoneView(tester);
-      final remote = HostConnection(client: DshClient.withCarrier(_NeverCarrier()), label: '工作站', isLocal: false);
+      final remote = HostConnection(client: XrkClient.withCarrier(_NeverCarrier()), label: '工作站', isLocal: false);
       await tester.pumpWidget(
         testApp(
           const ArtifactPreviewPage(

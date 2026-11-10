@@ -55,7 +55,7 @@ class _QuickPanelItemsSheetState extends ConsumerState<QuickPanelItemsSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final scheme = Theme.of(context).colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     Widget row(DrawerDestination destination, int index) {
       final ticked = _ticked.contains(destination);
       return Semantics(

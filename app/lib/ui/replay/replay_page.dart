@@ -11,7 +11,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart' show GoalPhase, GoalProjection, GoalSnapshot;
+import 'package:xrk_client/xrk_client.dart' show GoalPhase, GoalProjection, GoalSnapshot;
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -414,7 +414,7 @@ class ReplayHeader extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final top = MediaQuery.paddingOf(context).top;
     final height = heightOf(context);
     final ended = position.value >= duration && !playing;

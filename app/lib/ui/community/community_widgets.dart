@@ -20,7 +20,7 @@ import '../share/qr_code.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 
-/// One hue per hub group (`DshColors.identity`).
+/// One hue per hub group (`XrkColors.identity`).
 abstract final class CommunityHues {
   static const prompts = 0;
   static const groups = 5;
@@ -128,7 +128,7 @@ class CommunityGroupRow extends StatelessWidget {
       tint: CommunityHues.groups,
       title: group.title,
       subtitle: group.subtitle,
-      trailing: sheet ? Icon(AppIcons.qrCode, size: 20, color: DshColors.of(context).textTertiary) : null,
+      trailing: sheet ? Icon(AppIcons.qrCode, size: 20, color: XrkColors.of(context).textTertiary) : null,
       onTap: () => sheet
           ? unawaited(showCommunityGroupSheet(context, group))
           : unawaited(openCommunityLink(context, group.url!)),
@@ -177,7 +177,7 @@ class _CommunityGroupSheetState extends State<CommunityGroupSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final group = widget.group;
     final qr = group.qrData;
     final copy = group.copy;

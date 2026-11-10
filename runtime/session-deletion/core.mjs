@@ -12,7 +12,7 @@ const key = (id) => createHash('sha256').update(id).digest('hex');
 
 export function createDeletionSeam(storage, { acquire, parseGeneration, notFound }) {
   const root = resolve(storage.root);
-  const control = join(root, '.dsh-go-lifecycle');
+  const control = join(root, '.xrk-mobile-lifecycle');
   const pending = new Set();
   const draining = new Map();
   const context = new AsyncLocalStorage();
@@ -44,7 +44,7 @@ export function createDeletionSeam(storage, { acquire, parseGeneration, notFound
     }
     let lock;
     for (let attempt = 0; ; attempt++) {
-      try { lock = await acquire(join(control, '_mutations'), 'dsh-go-mutations'); break; }
+      try { lock = await acquire(join(control, '_mutations'), 'xrk-mobile-mutations'); break; }
       catch (error) {
         if (error?.name !== 'SessionAlreadyOwnedError' || attempt >= 500) throw error;
         await delay(20);
@@ -186,7 +186,7 @@ export function createDeletionSeam(storage, { acquire, parseGeneration, notFound
           for (const path of files) await rm(path, { force: true });
           await syncDir(dir);
           await hooks.cleanup();
-          storage.ctx.emit('dsh-go/session-deleted', id);
+          storage.ctx.emit('xrk-mobile/session-deleted', id);
         });
       } finally {
         try { await artifact?.release(); }

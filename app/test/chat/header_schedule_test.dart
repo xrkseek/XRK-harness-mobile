@@ -2,20 +2,20 @@
 // tasks; one task opens its page (rule, next runs, 立即运行, 管理), more open
 // a list; a failed refresh keeps the clock; the key reads out what it opens.
 
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/features_state.dart';
-import 'package:dsh_app/state/header_schedule_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/schedule_editor_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/chat_header.dart';
-import 'package:dsh_app/ui/chat/header_schedule.dart';
-import 'package:dsh_app/ui/chat/model_sheet.dart';
-import 'package:dsh_app/ui/common/status_dot.dart';
-import 'package:dsh_app/ui/features/schedule_editor/time_zones.dart';
-import 'package:dsh_app/ui/features/schedules_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/features_state.dart';
+import 'package:xrk_app/state/header_schedule_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/schedule_editor_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/chat_header.dart';
+import 'package:xrk_app/ui/chat/header_schedule.dart';
+import 'package:xrk_app/ui/chat/model_sheet.dart';
+import 'package:xrk_app/ui/common/status_dot.dart';
+import 'package:xrk_app/ui/features/schedule_editor/time_zones.dart';
+import 'package:xrk_app/ui/features/schedules_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,13 +64,13 @@ class _Schedules {
 
   Future<List<ScheduleTask>?> read() async {
     reads++;
-    if (fail) throw const DshRemoteException('internal_error', 'boom');
+    if (fail) throw const XrkRemoteException('internal_error', 'boom');
     // As the real source orders them.
     return soonestFirst(tasks);
   }
 }
 
-List<Override> _overrides(DshClient client, _Schedules schedules) => [
+List<Override> _overrides(XrkClient client, _Schedules schedules) => [
   activeConnectionProvider.overrideWithValue(AsyncData(fakeHost(client))),
   sessionsProvider.overrideWith(FakeSessions.new),
   currentSessionProvider.overrideWith(() => FixedSession('s1')),
@@ -83,7 +83,7 @@ List<Override> _overrides(DshClient client, _Schedules schedules) => [
   scheduleHistoryProvider.overrideWith((ref, task) async => const ScheduleHistory()),
 ];
 
-Future<void> _pump(WidgetTester tester, DshClient client, _Schedules schedules, {VoidCallback? onTitleTap}) async {
+Future<void> _pump(WidgetTester tester, XrkClient client, _Schedules schedules, {VoidCallback? onTitleTap}) async {
   usePhoneView(tester);
   await tester.pumpWidget(
     testApp(
@@ -110,7 +110,7 @@ final _key = find.byKey(const ValueKey('chat-schedule'));
 
 void main() {
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
 
   setUpAll(() async {
     await loadTestFonts();
@@ -119,7 +119,7 @@ void main() {
 
   setUp(() {
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
   });
   tearDown(() => client.close());
 
@@ -196,7 +196,7 @@ void main() {
   });
 
   testWidgets('「立即运行」 failing says so and stays open', (tester) async {
-    carrier.handlers['session/prompt'] = (_) => throw const DshRemoteException('internal_error', 'boom');
+    carrier.handlers['session/prompt'] = (_) => throw const XrkRemoteException('internal_error', 'boom');
     await _pump(tester, client, _Schedules([_daily()]));
     await tester.tap(_key);
     await tester.pumpAndSettle();

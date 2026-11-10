@@ -4,16 +4,16 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/plugins/seams/slot_catalog.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/plugins/seams/slot_catalog.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
 
 void main() {
-  final schema = jsonDecode(File('$appDir/assets/skills/dsh-go-ui/schema.json').readAsStringSync()) as Map;
+  final schema = jsonDecode(File('$appDir/assets/skills/xrk-ui/schema.json').readAsStringSync()) as Map;
   final defs = schema[r'$defs'] as Map;
-  final x = schema['x-dsh-go'] as Map;
+  final x = schema['x-xrk-mobile'] as Map;
   List<Object?> enumOf(String def) => (defs[def] as Map)['enum'] as List;
 
   test('value lists match UiSchema', () {
@@ -104,7 +104,7 @@ void main() {
   });
 
   test('the manifest lists every bundled file and SKILL.md is a valid managed skill', () async {
-    final dir = Directory('$appDir/assets/skills/dsh-go-ui');
+    final dir = Directory('$appDir/assets/skills/xrk-ui');
     final manifest = jsonDecode(File('${dir.path}/manifest.json').readAsStringSync()) as Map;
     final files = (manifest['files'] as Map).cast<String, String>();
     final onDisk = {for (final f in dir.listSync()) f.uri.pathSegments.last}..remove('manifest.json');
@@ -114,16 +114,16 @@ void main() {
     final bundle = await loadUiSkillBundle(readAssetFromDisk);
     expect(bundle.files.keys, unorderedEquals(files.values));
     final skill = bundle.skillMd;
-    expect(skill.split('\n').first, '---', reason: 'DSH ignores a skill whose first line is not ---');
-    expect(RegExp(r'^name: dsh-go-ui$', multiLine: true).hasMatch(skill), isTrue);
+    expect(skill.split('\n').first, '---', reason: 'XRK ignores a skill whose first line is not ---');
+    expect(RegExp(r'^name: xrk-ui$', multiLine: true).hasMatch(skill), isTrue);
     expect(RegExp(r'^description: \S', multiLine: true).hasMatch(skill), isTrue);
     expect(isManagedUiSkill(skill), isTrue);
-    expect(isManagedUiSkill(skill.replaceFirst(RegExp(r'^# dsh-go:managed.*\n', multiLine: true), '')), isFalse);
+    expect(isManagedUiSkill(skill.replaceFirst(RegExp(r'^# xrk-mobile:managed.*\n', multiLine: true), '')), isFalse);
   });
 
   test('the examples apply without issues', () {
     for (final name in ['example-full.json', 'example-header.json', 'example-quiet.json']) {
-      final load = parseUiConfig(File('$appDir/assets/skills/dsh-go-ui/$name').readAsStringSync());
+      final load = parseUiConfig(File('$appDir/assets/skills/xrk-ui/$name').readAsStringSync());
       expect(load.issues, isEmpty, reason: name);
     }
   });

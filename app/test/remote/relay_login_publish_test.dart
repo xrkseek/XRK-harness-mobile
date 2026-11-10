@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 
-import 'package:dsh_remote/dsh_remote.dart' as remote;
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/remote/relay_login_sheet.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_remote/xrk_remote.dart' as remote;
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/remote/relay_login_sheet.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'real_io_driver.dart';
-import '../../../packages/dsh_remote/test/support/fake_remote.dart';
+import '../../../packages/xrk_remote/test/support/fake_remote.dart';
 import '../shell/golden_harness.dart'
     show FakeRuntime, runningStatus, usePhoneSurface;
 

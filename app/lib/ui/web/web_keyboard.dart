@@ -91,8 +91,22 @@ class WebKeyboard {
   }
 
   /// The reports stopped at [raw]. True when [height] changed.
+  ///
+  /// Closing already snapped [_height] to 0 in [report]. A mid-close quiet
+  /// period must not resurrect a partial IME height (that parked the Host
+  /// composer mid-screen after the model picker stole focus).
+  ///
+  /// Only treat as mid-close when we already had a rest height ([_rest] > 0)
+  /// and [raw] is still below it. A cold first open has [_rest] == 0 — that
+  /// must settle normally. The old `raw < infinity` fallback swallowed every
+  /// first open and left `#root` / chrome laid out as if the keyboard were
+  /// closed (composer under the IME).
   bool settle(double raw, double width) {
     final before = _height;
+    if (_height == 0 && _rest > 0 && raw > 0 && raw < _rest) {
+      // Mid-close noise after we already floored the layout — stay closed.
+      return false;
+    }
     _rest = _height = raw;
     if (raw > 0 && _open[width.round()] != raw) {
       _open[width.round()] = raw;

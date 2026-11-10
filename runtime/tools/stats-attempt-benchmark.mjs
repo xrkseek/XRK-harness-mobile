@@ -6,9 +6,9 @@ import { pathToFileURL } from 'node:url';
 import { performance } from 'node:perf_hooks';
 const [prefix,label,scenario]=process.argv.slice(2);
 const require=createRequire(resolve(prefix,'package.json'));
-const {apply}=await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-session-stats')));
-const {Session}=await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-session')));
-const {AssistantStreamAccumulator}=await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-llm')));
+const {apply}=await import(pathToFileURL(require.resolve('@xrkseek/harness-cli-session-stats')));
+const {Session}=await import(pathToFileURL(require.resolve('@xrkseek/harness-cli-session')));
+const {AssistantStreamAccumulator}=await import(pathToFileURL(require.resolve('@xrkseek/harness-cli-llm')));
 let def;apply({sessionProjections:{register(value){def=value;}}});
 function stream(n,kind){const a=new AssistantStreamAccumulator();for(let i=0;i<n;i++)a.push({time:i,chunk:kind==='usage'?{type:'usage',usage:{outputTokens:0}}:{type:'text-delta',index:0,text:kind==='token'?'x':''}});a.push({time:n,chunk:{type:'finish',reason:{kind:'error',failure:{code:'NETWORK_ERROR',message:'retry'}}}});return a.snapshot();}
 const known=scenario.startsWith('known'), mismatch=scenario==='mismatch';

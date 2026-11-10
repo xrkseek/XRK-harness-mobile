@@ -55,7 +55,7 @@ class _SignInState extends ConsumerState<_SignIn> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final auth = widget.auth;
     final waiting = auth.phase == ForumAuthPhase.waiting;
     final host = Uri.tryParse(ref.watch(forumBaseUrlProvider))?.host ?? '';
@@ -139,7 +139,7 @@ class _SignedIn extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final auth = ref.watch(forumAuthProvider);
     final user = auth.user;
     final summary = user == null ? null : ref.watch(forumUserSummaryProvider(user.username)).value;
@@ -291,7 +291,7 @@ class _ForumSettingsSheetState extends ConsumerState<ForumSettingsSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final custom = ref.watch(forumBaseUrlProvider) != forumDefaultBaseUrl;
     return SafeArea(
       top: false,

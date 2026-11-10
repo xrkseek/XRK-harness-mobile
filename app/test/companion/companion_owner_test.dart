@@ -3,21 +3,21 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/companion/companion_keeper.dart';
-import 'package:dsh_app/companion/companion_pack.dart';
-import 'package:dsh_app/companion/companion_state.dart';
-import 'package:dsh_app/l10n/gen/app_localizations.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/companion/companion_chrome.dart';
-import 'package:dsh_app/ui/companion/companion_page.dart';
-import 'package:dsh_app/ui/companion/companion_stage.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/app_theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/companion/companion_keeper.dart';
+import 'package:xrk_app/companion/companion_pack.dart';
+import 'package:xrk_app/companion/companion_state.dart';
+import 'package:xrk_app/l10n/gen/app_localizations.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/companion/companion_chrome.dart';
+import 'package:xrk_app/ui/companion/companion_page.dart';
+import 'package:xrk_app/ui/companion/companion_stage.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/app_theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -115,7 +115,7 @@ class _Room {
   _Room(this.root) {
     final bridge = _Bridge('store-a');
     a = bridge;
-    final client = DshClient(bridge);
+    final client = XrkClient(bridge);
     clients.add(client);
     connections[HostRef.local] = HostConnection(client: client, isLocal: true);
     Directory('${root.path}/pack/runtime').createSync(recursive: true);
@@ -127,7 +127,7 @@ class _Room {
   late final _Bridge a;
   final host = _Host();
   final sessions = _Sessions();
-  final clients = <DshClient>[];
+  final clients = <XrkClient>[];
   final connections = <HostRef, HostConnection>{};
   final chats = <String, _Chat>{};
   final commands = <(String, Map<String, Object?>)>[];
@@ -159,7 +159,7 @@ class _Room {
 
   _Bridge connect(HostRef host) {
     final bridge = _Bridge('store-${host.id}');
-    final client = DshClient(bridge);
+    final client = XrkClient(bridge);
     clients.add(client);
     connections[host] = HostConnection(client: client, isLocal: host.isLocal, kind: host.kind, hostId: host.id);
     return bridge;

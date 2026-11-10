@@ -4,10 +4,10 @@
 // asked again in it. A stream made again while the app is away (a late host,
 // a system language change) still closes after the background grace.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/state/locale_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/state/locale_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

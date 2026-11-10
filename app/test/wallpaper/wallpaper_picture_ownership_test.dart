@@ -1,9 +1,9 @@
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/theme/accent.dart';
-import 'package:dsh_app/wallpaper/custom_wallpaper.dart';
-import 'package:dsh_app/wallpaper/wallpaper_look.dart';
-import 'package:dsh_app/wallpaper/wallpaper_render.dart';
+import 'package:xrk_app/ui/theme/accent.dart';
+import 'package:xrk_app/wallpaper/custom_wallpaper.dart';
+import 'package:xrk_app/wallpaper/wallpaper_look.dart';
+import 'package:xrk_app/wallpaper/wallpaper_render.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

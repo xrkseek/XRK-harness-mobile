@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CompanionWidget {
-  CompanionWidget([MethodChannel? channel]) : _channel = channel ?? const MethodChannel('dsh/companion_widget');
+  CompanionWidget([MethodChannel? channel]) : _channel = channel ?? const MethodChannel('xrk/companion_widget');
 
   final MethodChannel _channel;
 

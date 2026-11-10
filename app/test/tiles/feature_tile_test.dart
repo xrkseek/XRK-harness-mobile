@@ -14,10 +14,10 @@
 
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/state/tile_style_state.dart';
-import 'package:dsh_app/ui/common/feature_tile.dart';
-import 'package:dsh_app/ui/common/feature_tile_shapes.g.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/tile_style_state.dart';
+import 'package:xrk_app/ui/common/feature_tile.dart';
+import 'package:xrk_app/ui/common/feature_tile_shapes.g.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -135,7 +135,7 @@ void main() {
       }
       for (final b in Brightness.values) {
         final theme = tileTheme(b);
-        final colors = theme.extension<DshColors>()!;
+        final colors = theme.extension<XrkColors>()!;
         for (var slot = 0; slot < colors.identity.length; slot++) {
           check('identity $slot ${b.name}', TilePalette.identity(colors, slot, theme.colorScheme), theme.colorScheme);
         }
@@ -296,7 +296,7 @@ class _Label extends StatelessWidget {
     width: 64,
     child: Text(
       text,
-      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: DshColors.of(context).textTertiary),
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: XrkColors.of(context).textTertiary),
     ),
   );
 }
@@ -385,7 +385,7 @@ class _IdentitySheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Padding(
       padding: const EdgeInsets.all(16),
       child: _Card(

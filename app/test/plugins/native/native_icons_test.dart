@@ -5,10 +5,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/plugins/native/native_icons.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/plugins/native/native_icons.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -59,8 +59,8 @@ void main() {
         {'title': '锁', 'icon': 'lock'},
       ],
     });
-    final view = (parsed as DshUiParsed).view;
-    final list = view.root as DshUiList;
+    final view = (parsed as XrkUiParsed).view;
+    final list = view.root as XrkUiList;
     expect([for (final i in list.items) i.icon], ['gallery', 'group', '']);
     expect(view.issues.map((i) => i.path), contains('view.items[2].icon'));
   });

@@ -127,14 +127,14 @@ def build_snapshot(repo=ROOT):
             message_payload(payload, key)
             entries[key] = {**payload, 'sourceHash': canonical_hash(payload)}
     entries = dict(sorted(entries.items()))
-    return {'format': 'dsh-go-i18n-catalog', 'schemaVersion': 1,
+    return {'format': 'xrk-mobile-i18n-catalog', 'schemaVersion': 1,
             'sourceHashAlgorithm': HASH_ALGORITHM, 'entries': entries,
             'metrics': source_metrics(entries)}
 
 
 def validate_snapshot(snapshot):
     object_fields(snapshot, ('format', 'schemaVersion', 'sourceHashAlgorithm', 'entries', 'metrics'), 'catalog')
-    if snapshot['format'] != 'dsh-go-i18n-catalog' or type(snapshot['schemaVersion']) is not int or snapshot['schemaVersion'] != 1:
+    if snapshot['format'] != 'xrk-mobile-i18n-catalog' or type(snapshot['schemaVersion']) is not int or snapshot['schemaVersion'] != 1:
         raise CatalogError('unsupported catalog format/version')
     if snapshot['sourceHashAlgorithm'] != HASH_ALGORITHM or not isinstance(snapshot['entries'], dict):
         raise CatalogError('unsupported catalog hash algorithm or entries shape')
@@ -156,7 +156,7 @@ def validate_snapshot(snapshot):
 
 def validate_translations(state, locale, known_keys):
     object_fields(state, ('format', 'schemaVersion', 'locale', 'entries'), 'translation state')
-    if state['format'] != 'dsh-go-i18n-translations' or type(state['schemaVersion']) is not int or state['schemaVersion'] != 1:
+    if state['format'] != 'xrk-mobile-i18n-translations' or type(state['schemaVersion']) is not int or state['schemaVersion'] != 1:
         raise CatalogError('unsupported translation state format/version')
     if state['locale'] != locale or not isinstance(state['entries'], dict):
         raise CatalogError('translation state locale or entries shape does not match the request')
@@ -211,7 +211,7 @@ def make_plan(current, previous, locale, state=None):
             else:
                 translation_queue.append(request)
     return {
-        'format': 'dsh-go-i18n-plan', 'schemaVersion': 1, 'locale': locale,
+        'format': 'xrk-mobile-i18n-plan', 'schemaVersion': 1, 'locale': locale,
         'sourceHashAlgorithm': HASH_ALGORITHM, 'sourceDiff': diff,
         'preservedTranslations': kept, 'retiredTranslations': retired, 'freshness': freshness,
         'translationQueue': translation_queue, 'humanReviewQueue': review_queue,

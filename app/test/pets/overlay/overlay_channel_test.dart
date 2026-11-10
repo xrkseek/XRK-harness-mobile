@@ -1,12 +1,12 @@
-// The Dart side of the floating pet: what goes over `dsh/pet_overlay`, how the
+// The Dart side of the floating pet: what goes over `xrk/pet_overlay`, how the
 // status reads, and the switch's permission flow (docs/design/pets.md §6.4).
 
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:dsh_app/pets/overlay_channel.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
+import 'package:xrk_app/pets/overlay_channel.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../l10n/l10n.dart';
 import '../link_status.dart';
@@ -24,15 +24,15 @@ typedef HostKeyPrompter = Future<bool> Function(HostKeyPrompt prompt);
 /// Persists a newly trusted key for the host.
 typedef HostKeyPinner = Future<void> Function(PresentedHostKey key);
 
-/// Logs in to the `dsh web` behind the tunnel.
-typedef DshClientConnector = Future<DshClient> Function({
+/// Logs in to the `xrkh serve` behind the tunnel.
+typedef XrkClientConnector = Future<XrkClient> Function({
   required Uri baseUri,
   required String token,
   required String hostHeader,
 });
 
-Future<DshClient> _defaultConnector({required Uri baseUri, required String token, required String hostHeader}) =>
-    DshClient.connect(baseUri: baseUri, token: token, hostHeader: hostHeader);
+Future<XrkClient> _defaultConnector({required Uri baseUri, required String token, required String hostHeader}) =>
+    XrkClient.connect(baseUri: baseUri, token: token, hostHeader: hostHeader);
 
 /// Trust-on-first-use check against the pinned fingerprint.
 enum HostKeyVerdict { trusted, unknown, mismatch }
@@ -49,12 +49,12 @@ HostLinkError hostKeyMismatchError(SshHostConfig config, PresentedHostKey key) =
   detail: appL10n.remoteHostKeyMismatchDetail(config.hostKeyFingerprint.toString(), key.fingerprint, key.shortType),
 );
 
-/// SSH remote host: connect → verify host key → start/reuse `dsh web` →
-/// local forward → DshClient login; then keepalive and reconnect.
+/// SSH remote host: connect → verify host key → start/reuse `xrkh serve` →
+/// local forward → XrkClient login; then keepalive and reconnect.
 ///
 /// Mirrors dsh-tauri's SSH plugin flow (`bootstrap.utils.ts`, `transport.ts`):
 /// the remote server binds 127.0.0.1 only, the token comes from its log, and
-/// the client presents `Host: 127.0.0.1:<remote port>` so DSH's Host fence
+/// the client presents `Host: 127.0.0.1:<remote port>` so XRK's Host fence
 /// accepts requests that arrive through the tunnel.
 class SshHostLink implements HostLink {
   SshHostLink({
@@ -63,7 +63,7 @@ class SshHostLink implements HostLink {
     this.promptHostKey,
     this.pinHostKey,
     SshTransportFactory? transportFactory,
-    DshClientConnector? connectClient,
+    XrkClientConnector? connectClient,
     Stream<void>? kicks,
     Backoff? backoff,
     this.remoteEnvironment = const {},
@@ -82,7 +82,7 @@ class SshHostLink implements HostLink {
   final HostKeyPrompter? promptHostKey;
   final HostKeyPinner? pinHostKey;
   final SshTransportFactory _transportFactory;
-  final DshClientConnector _connectClient;
+  final XrkClientConnector _connectClient;
   final Backoff _backoff;
   final Map<String, String> remoteEnvironment;
   final Duration keepAliveInterval;
@@ -95,7 +95,7 @@ class SshHostLink implements HostLink {
   final bool retryFirstOpen;
 
   final _statuses = StreamController<HostLinkStatus>.broadcast(sync: true);
-  final _clients = StreamController<DshClient>.broadcast();
+  final _clients = StreamController<XrkClient>.broadcast();
   final _delay = InterruptibleDelay();
   StreamSubscription<void>? _kickSub;
   StreamSubscription<DshConnectionState>? _muxSub;
@@ -106,8 +106,8 @@ class SshHostLink implements HostLink {
   Completer<SshTransport> _ready = Completer<SshTransport>();
   LocalForwarder? _forwarder;
   RemoteDshEndpoint? _endpoint;
-  DshClient? _client;
-  Future<DshClient>? _opening;
+  XrkClient? _client;
+  Future<XrkClient>? _opening;
   Timer? _keepAlive;
   int _missedPings = 0;
   bool _closed = false;
@@ -140,13 +140,13 @@ class SshHostLink implements HostLink {
   HostLinkStatus get status => _status;
 
   @override
-  DshClient? get currentClient => _status.isConnected ? _client : null;
+  XrkClient? get currentClient => _status.isConnected ? _client : null;
 
   @override
   Stream<HostLinkStatus> get statuses => _statuses.stream;
 
   @override
-  Stream<DshClient> get clients => _clients.stream;
+  Stream<XrkClient> get clients => _clients.stream;
 
   void _emit(HostLinkStatus next) {
     if (_closed && next.phase != HostLinkPhase.idle) return;
@@ -155,14 +155,14 @@ class SshHostLink implements HostLink {
   }
 
   @override
-  Future<DshClient> open() {
+  Future<XrkClient> open() {
     if (_closed) return Future.error(StateError('link closed'));
     final client = _client;
     if (client != null && _status.isConnected) return Future.value(client);
     return _opening ??= _openFirst().whenComplete(() => _opening = null);
   }
 
-  Future<DshClient> _openFirst() async {
+  Future<XrkClient> _openFirst() async {
     _backoff.reset();
     _emit(const HostLinkStatus(HostLinkPhase.connecting, step: HostLinkStep.connect));
     try {
@@ -198,8 +198,8 @@ class SshHostLink implements HostLink {
   }
 
   /// One full attempt. Reuses the forwarder and, when the remote endpoint is
-  /// unchanged, the existing DshClient.
-  Future<DshClient> _connectOnce() async {
+  /// unchanged, the existing XrkClient.
+  Future<XrkClient> _connectOnce() async {
     var step = _status.withStep(HostLinkStep.connect);
     void at(HostLinkStep s, {String? detail}) {
       step = step.withStep(s, detail: detail);
@@ -267,7 +267,7 @@ class SshHostLink implements HostLink {
             .then((channel) => channel.destroy())
             .timeout(tunnelProbeTimeout);
       } catch (e) {
-        // A reused DSH whose port no longer answers: start a fresh one.
+        // A reused XRK whose port no longer answers: start a fresh one.
         if (endpoint.reused && e is TunnelRefused) _forceRestart = true;
         throw HostLinkError(
           HostLinkErrorKind.tunnelFailed,
@@ -316,7 +316,7 @@ class SshHostLink implements HostLink {
     }
   }
 
-  Future<DshClient> _ensureClient(RemoteDshEndpoint endpoint, RemoteDshEndpoint? previous) async {
+  Future<XrkClient> _ensureClient(RemoteDshEndpoint endpoint, RemoteDshEndpoint? previous) async {
     final existing = _client;
     final sameServer = previous != null && previous.port == endpoint.port && previous.token == endpoint.token;
     if (existing != null && sameServer && !_needsRelogin) {
@@ -325,7 +325,7 @@ class SshHostLink implements HostLink {
       existing.mux.reconnect();
       return existing;
     }
-    final DshClient client;
+    final XrkClient client;
     try {
       client = await _connectClient(
         baseUri: Uri(scheme: 'http', host: '127.0.0.1', port: _forwarder!.port),
@@ -360,7 +360,7 @@ class SshHostLink implements HostLink {
     return client;
   }
 
-  void _watchMux(DshClient client) {
+  void _watchMux(XrkClient client) {
     unawaited(_muxSub?.cancel());
     _muxSub = client.mux.states.listen((state) {
       if (state == DshConnectionState.unauthorized && identical(client, _client)) {
@@ -370,7 +370,7 @@ class SshHostLink implements HostLink {
     });
   }
 
-  /// SSH answers but the mux can't get through: if nothing listens on DSH's
+  /// SSH answers but the mux can't get through: if nothing listens on XRK's
   /// port any more, reconnect, which starts it again.
   Future<void> _probeDsh() async {
     final transport = _transport;
@@ -485,7 +485,7 @@ class SshHostLink implements HostLink {
   }
 
   /// Reconnect loop with backoff. Resolves with the (possibly new) client.
-  Future<DshClient> _recover(HostLinkError reason) async {
+  Future<XrkClient> _recover(HostLinkError reason) async {
     _recovering = true;
     var last = reason;
     try {

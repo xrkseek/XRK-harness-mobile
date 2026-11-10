@@ -8,7 +8,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart' show AppLifecycleState, WidgetsBinding;
 
 import '../l10n/l10n.dart';
@@ -31,8 +31,8 @@ final class UiConfigText extends UiConfigRead {
   final String? version;
 }
 
-/// There is no ui.json. On a remote host whose DSH home was only guessed,
-/// [skillMissing] says the dsh-go-ui skill is not installed there either.
+/// There is no ui.json. On a remote host whose XRK home was only guessed,
+/// [skillMissing] says the xrk-ui skill is not installed there either.
 final class UiConfigAbsent extends UiConfigRead {
   const UiConfigAbsent({this.skillMissing = false});
 
@@ -62,7 +62,7 @@ enum UiConfigUnavailableReason {
   /// A remote host with no conversation: `workspaceFiles/*` needs one.
   noSession,
 
-  /// A remote host where neither the skill nor `$HOME` reveal DSH home.
+  /// A remote host where neither the skill nor `$HOME` reveal XRK home.
   noSkill,
 
   /// The host does not offer `workspaceFiles/read` (some relays).
@@ -86,7 +86,7 @@ abstract interface class UiConfigStatusSink {
 
 // ── On-device engine ────────────────────────────────────────────────────────
 
-/// `<rootfs>/root/.dsh/dsh-go/ui.json`, followed with a directory watch
+/// `<rootfs>/root/.xrk/xrk-mobile/ui.json`, followed with a directory watch
 /// (inotify) and re-read on every [kicks] event (app resumes, runtime state
 /// changes); bursts settle for [debounce] first.
 class LocalUiConfigSource implements UiConfigSource, UiConfigStatusSink {
@@ -105,14 +105,14 @@ class LocalUiConfigSource implements UiConfigSource, UiConfigStatusSink {
   final Stream<void> kicks;
   final Duration debounce;
 
-  /// Whether the app may create `dsh-go/` or write `ui.status.json` now:
+  /// Whether the app may create `xrk-mobile/` or write `ui.status.json` now:
   /// not while an install swaps the rootfs and moves /root around
   /// (RuntimeInstaller.activateRootfs), where a new file could make the
   /// move fail.
   final bool Function() mayWrite;
 
-  /// DSH home inside the guest.
-  static const guestDshHome = '/root/.dsh';
+  /// XRK home inside the guest.
+  static const guestDshHome = '/root/.xrk';
 
   StreamController<UiConfigRead>? _out;
   StreamSubscription<void>? _kicks;
@@ -165,8 +165,8 @@ class LocalUiConfigSource implements UiConfigSource, UiConfigStatusSink {
     }
   }
 
-  /// Finds the directory and (re)starts the watch; creates `dsh-go/` once
-  /// DSH home exists.
+  /// Finds the directory and (re)starts the watch; creates `xrk-mobile/` once
+  /// XRK home exists.
   Future<void> _arm() async {
     Directory? root;
     try {
@@ -181,7 +181,7 @@ class LocalUiConfigSource implements UiConfigSource, UiConfigStatusSink {
       return;
     }
     final home = Directory('${root.path}$guestDshHome');
-    final dir = Directory('${home.path}/dsh-go');
+    final dir = Directory('${home.path}/xrk-mobile');
     if (_watch != null && _dir?.path == dir.path) return;
     await _disarm();
     _dir = dir;
@@ -263,7 +263,7 @@ class LocalUiConfigSource implements UiConfigSource, UiConfigStatusSink {
     }
   }
 
-  /// `dsh-go/ui.status.json`: what the app applied, for the agent. Written
+  /// `xrk-mobile/ui.status.json`: what the app applied, for the agent. Written
   /// only when it changes; removed when there is no ui.json.
   @override
   Future<void> writeStatus(UiConfigLoad? load) async {
@@ -299,7 +299,7 @@ class LocalUiConfigSource implements UiConfigSource, UiConfigStatusSink {
 
 // ── Remote hosts ────────────────────────────────────────────────────────────
 
-/// What [RemoteUiConfigSource] needs from a connected host; [DshUiRemoteHost]
+/// What [RemoteUiConfigSource] needs from a connected host; [XrkUiRemoteHost]
 /// is the real one, tests fake it.
 abstract interface class UiRemoteHost {
   bool supports(String endpoint);
@@ -307,7 +307,7 @@ abstract interface class UiRemoteHost {
   /// A conversation to scope `workspaceFiles/*` to (the most recent one).
   Future<String?> recentSessionId();
 
-  /// `skills/list`'s path of the `dsh-go-ui` skill (its SKILL.md).
+  /// `skills/list`'s path of the `xrk-ui` skill (its SKILL.md).
   Future<String?> skillFile(String sessionId);
 
   /// The host user's `$HOME` (from the connection handshake).
@@ -322,7 +322,7 @@ abstract interface class UiRemoteHost {
   Stream<void> get changes;
 }
 
-/// DSH home from the skill's SKILL.md path: `<home>/skills/dsh-go-ui/SKILL.md`
+/// XRK home from the skill's SKILL.md path: `<home>/skills/xrk-ui/SKILL.md`
 /// (or the folder itself). Null when the path does not have that shape.
 String? dshHomeFromSkillPath(String path) {
   final parts = path.split('/');
@@ -330,12 +330,12 @@ String? dshHomeFromSkillPath(String path) {
     parts.removeLast();
   }
   if (parts.isNotEmpty && parts.last == 'SKILL.md') parts.removeLast();
-  if (parts.length < 3 || parts.last != 'dsh-go-ui' || parts[parts.length - 2] != 'skills') return null;
+  if (parts.length < 3 || parts.last != 'xrk-ui' || parts[parts.length - 2] != 'skills') return null;
   final home = parts.sublist(0, parts.length - 2).join('/');
   return home.isEmpty ? null : home;
 }
 
-/// A remote host's `$DSH_HOME/dsh-go/ui.json` over `workspaceFiles/*`.
+/// A remote host's `$XRK_HOME/xrk-mobile/ui.json` over `workspaceFiles/*`.
 class RemoteUiConfigSource implements UiConfigSource {
   RemoteUiConfigSource({
     required this.host,
@@ -374,7 +374,7 @@ class RemoteUiConfigSource implements UiConfigSource {
   bool _reading = false;
   bool _readAgain = false;
 
-  /// The path being read, once DSH home is known (for tests and the UI).
+  /// The path being read, once XRK home is known (for tests and the UI).
   String? get path => _path;
 
   @override
@@ -449,7 +449,7 @@ class RemoteUiConfigSource implements UiConfigSource {
         return;
       }
       _session = session;
-      _path = '$home/dsh-go/ui.json';
+      _path = '$home/xrk-mobile/ui.json';
       _skillMissing = guessed;
       await _read();
     } finally {
@@ -509,7 +509,7 @@ class RemoteUiConfigSource implements UiConfigSource {
         );
       }
       _follow();
-    } on DshRemoteException catch (e) {
+    } on XrkRemoteException catch (e) {
       if (_out == null) return;
       switch (e.code) {
         case 'workspace-file/not-found' || 'workspace-file/not-regular-file':
@@ -592,7 +592,7 @@ class RemoteUiConfigSource implements UiConfigSource {
           _follow();
         }
       }
-    } on DshRemoteException catch (e) {
+    } on XrkRemoteException catch (e) {
       if ((e.code == 'workspace-file/not-found' || e.code == 'workspace-file/not-regular-file') && _version != null) {
         _version = null;
         _emit(UiConfigAbsent(skillMissing: _skillMissing));
@@ -601,11 +601,11 @@ class RemoteUiConfigSource implements UiConfigSource {
   }
 }
 
-/// [UiRemoteHost] over a connected [DshClient].
-class DshUiRemoteHost implements UiRemoteHost {
-  DshUiRemoteHost(this.client);
+/// [UiRemoteHost] over a connected [XrkClient].
+class XrkUiRemoteHost implements UiRemoteHost {
+  XrkUiRemoteHost(this.client);
 
-  final DshClient client;
+  final XrkClient client;
 
   @override
   bool supports(String endpoint) => client.supportsEndpoint(endpoint);
@@ -627,7 +627,7 @@ class DshUiRemoteHost implements UiRemoteHost {
   @override
   Future<String?> skillFile(String sessionId) async {
     for (final skill in await client.listSkills(sessionId)) {
-      if (skill.name == 'dsh-go-ui') return skill.path;
+      if (skill.name == 'xrk-ui') return skill.path;
     }
     return null;
   }

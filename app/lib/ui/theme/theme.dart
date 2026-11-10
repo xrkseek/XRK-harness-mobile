@@ -1,4 +1,4 @@
-/// 主题层统一出口:`import 'package:dsh_app/ui/theme/theme.dart';`
+/// 主题层统一出口:`import 'package:xrk_app/ui/theme/theme.dart';`
 library;
 
 export 'accent.dart';

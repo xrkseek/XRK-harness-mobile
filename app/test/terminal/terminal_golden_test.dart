@@ -4,7 +4,7 @@
 //
 //   flutter test --update-goldens test/terminal
 
-import 'package:dsh_app/ui/terminal/terminal_page.dart';
+import 'package:xrk_app/ui/terminal/terminal_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

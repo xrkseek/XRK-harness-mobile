@@ -7,7 +7,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_remote/dsh_remote.dart' show formatPairingFingerprint;
+import 'package:xrk_remote/xrk_remote.dart' show formatPairingFingerprint;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -282,7 +282,7 @@ class _ConfirmStep extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final notifier = ref.read(remotePairingProvider.notifier);
     final deepseekUserId = ref.watch(accountProvider.select((a) => a.profile?.id));
     Widget fact(String label, String value) => Padding(
@@ -384,7 +384,7 @@ class _CodeStepState extends ConsumerState<_CodeStep> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final session = widget.flow.session!;
     final left = session.codeExpiresAt.difference(DateTime.now());
     final expired = left.isNegative && !widget.flow.approved;
@@ -468,7 +468,7 @@ class _Digit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return AspectRatio(
       aspectRatio: 0.78,
       child: DecoratedBox(
@@ -538,7 +538,7 @@ class _FailedStep extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final notifier = ref.read(remotePairingProvider.notifier);
     final otherServer = error.kind == RelayPairingErrorKind.otherServer && error.server != null;
     return Column(
@@ -694,7 +694,7 @@ class _CameraUnavailable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return ColoredBox(
       color: colors.codeWellBg,
       child: Center(

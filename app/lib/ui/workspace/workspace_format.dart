@@ -1,7 +1,7 @@
 // Text for the workspace pages: folder paths as people read them on a phone,
 // and short errors for the workspace and directory-picker codes.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../l10n/l10n.dart';
 
@@ -53,7 +53,7 @@ String? folderNameProblem(String name) {
 
 /// One short line for a failed workspace or folder action.
 String workspaceErrorText(Object error, {String? fallback}) {
-  if (error is DshRemoteException) {
+  if (error is XrkRemoteException) {
     return switch (error.code) {
       WorkspaceErrors.nameConflict => appL10n.remoteWorkspaceErrNameConflict,
       WorkspaceErrors.invalidPath => appL10n.remoteWorkspaceErrInvalidPath,
@@ -66,7 +66,7 @@ String workspaceErrorText(Object error, {String? fallback}) {
       _ => fallback ?? appL10n.commonFailedTryAgain,
     };
   }
-  if (error is DshTransportException ||
+  if (error is XrkTransportException ||
       error is DshCarrierLostException ||
       error is DshClosedException ||
       error is DshHttpException) {

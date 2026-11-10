@@ -1,9 +1,9 @@
 // Goldens (light + dark) for the 文件 page and the file previews. Regenerate
 // with `flutter test --update-goldens test/files/files_golden_test.dart`.
 
-import 'package:dsh_app/ui/files/files_page.dart';
-import 'package:dsh_app/ui/session/workspace_files.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/files/files_page.dart';
+import 'package:xrk_app/ui/session/workspace_files.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -66,7 +66,7 @@ void main() {
 
     testWidgets('large file ($suffix)', (tester) async {
       final ws = sampleWorkspace()..write('dist/app.min.js', 'x');
-      ws.failures['read dist/app.min.js'] = const DshRemoteException('workspace-file/too-large', 'page over 2 MiB');
+      ws.failures['read dist/app.min.js'] = const XrkRemoteException('workspace-file/too-large', 'page over 2 MiB');
       await _preview(tester, ws, 'dist/app.min.js', brightness, bytes: 38 * 1024 * 1024);
       await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/preview_large_$suffix.png'));
     });

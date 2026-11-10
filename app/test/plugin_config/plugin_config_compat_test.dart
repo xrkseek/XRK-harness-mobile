@@ -1,5 +1,5 @@
 // Hosts whose plugin-config list does not say who carries an entry — 0.9.9's
-// runtime r12 (no dsh-go plugin-config routes: DSH's own settings/describe)
+// runtime r12 (no xrk-mobile plugin-config routes: XRK's own settings/describe)
 // and a bridge before R7 — see exactly what they saw before the R7 changes:
 // the same entries, the same names (a row's own title), no read-only mark,
 // the same page titles and search results. This file only uses what the app
@@ -8,18 +8,18 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_memory.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_hub.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_entries.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_page.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_app/ui/settings/search/settings_search_page.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsTile;
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_memory.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_hub.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_entries.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_page.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_app/ui/settings/search/settings_search_page.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart' show SettingsTile;
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -51,7 +51,7 @@ MemoryPluginConfigApi _kit() => MemoryPluginConfigApi([
 /// [configBundles] with the kit's rows and titles as the Host lists them.
 List<Object?> _kitBundles() => [
   for (final bundle in configBundles().cast<Map<String, Object?>>())
-    if (bundle['name'] == '@deepseek-ai/dsh-experimental-voice-input-bundle')
+    if (bundle['name'] == '@xrkseek/harness-cli-experimental-voice-input-bundle')
       {
         ...bundle,
         'rows': [
@@ -62,12 +62,12 @@ List<Object?> _kitBundles() => [
           ])
             {
               'rowId': id,
-              'moduleName': '@deepseek-ai/dsh-experimental-$id',
+              'moduleName': '@xrkseek/harness-cli-experimental-$id',
               'meta': {
                 'title': {'en': en, 'zh': zh},
               },
             },
-          {'rowId': 'ui-voice-input', 'moduleName': '@deepseek-ai/dsh-experimental-client-ui-voice-input'},
+          {'rowId': 'ui-voice-input', 'moduleName': '@xrkseek/harness-cli-experimental-client-ui-voice-input'},
         ],
       }
     else
@@ -122,7 +122,7 @@ void main() {
       await pumpPage(
         tester,
         const EngineSettingsHubPage(),
-        overrides: engineOverrides(DshClient.withCarrier(host())),
+        overrides: engineOverrides(XrkClient.withCarrier(host())),
         height: 1100,
       );
       expect(_hubPlugins(tester), ['思考过程翻译', '插件市场索引']);
@@ -137,11 +137,11 @@ void main() {
     testWidgets('the bundle\'s sheet: 设置, the page under the bundle\'s name', (tester) async {
       final fake = host();
       final bundle = PluginBundle.fromJson(fake.bundles.last);
-      await _openSheet(tester, bundle, engineOverrides(DshClient.withCarrier(fake)));
+      await _openSheet(tester, bundle, engineOverrides(XrkClient.withCarrier(fake)));
       expect(_sheetRows(tester), ['设置']);
       await tester.tap(find.text('设置'));
       await flush(tester);
-      expect(find.text('@deepseek-ai/dsh-experimental-plugin-market-bundle'), findsWidgets);
+      expect(find.text('@xrkseek/harness-cli-experimental-plugin-market-bundle'), findsWidgets);
     });
   });
 
@@ -215,7 +215,7 @@ void main() {
       expect(shown, ['speech-to-text', 'speech-to-text-sensevoice', 'api-speech-to-text', 'local-notes']);
       expect(
         [for (final ns in shown) pluginConfigTitle(ns, bundles, state: state)],
-        ['语音识别', 'SenseVoice 本地识别', '语音转写接口', 'dsh-go-fixture-local-notes'],
+        ['语音识别', 'SenseVoice 本地识别', '语音转写接口', 'xrk-mobile-fixture-local-notes'],
       );
     });
   });

@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-export async function load(prefix){const require=createRequire(resolve(prefix,'package.json'));return import(pathToFileURL(require.resolve('@deepseek-ai/dsh-tool-jobs')));}
+export async function load(prefix){const require=createRequire(resolve(prefix,'package.json'));return import(pathToFileURL(require.resolve('@xrkseek/harness-cli-tool-jobs')));}
 export function fixture(api,{text='',cap=262144,label='label',kind='task',id=kind+'-0123456789abcdef',lossy=false,channels,spillPaths=[],delivery='quiet'}={}){
  const tools=new Map();const hooks=new Map();const messages=[];let listener;let mode;
  let offset=lossy?100:0;const chunks=(channels??(text?[{text,channel:'stdout'}]:[])).map(chunk=>{const out={...chunk,at:offset};offset+=Buffer.byteLength(chunk.text);return out;});

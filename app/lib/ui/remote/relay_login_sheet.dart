@@ -7,7 +7,7 @@ import '../common/app_sheet.dart';
 import '../common/sheet_title_bar.dart';
 import '../theme/theme.dart';
 
-/// Advanced: sign in to a self-hosted DSH Remote server (ds-harness-remote
+/// Advanced: sign in to a self-hosted XRK Remote server (xrk-remote
 /// `apps/server`) with email + password. The hosted server keeps using the
 /// browser sign-in.
 Future<void> showSelfHostedLogin(BuildContext context) {
@@ -70,7 +70,7 @@ class _SelfHostedLoginSheetState extends ConsumerState<SelfHostedLoginSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final custom = ref.watch(relayServerProvider);
     final insets = MediaQuery.viewInsetsOf(context).bottom;
     return Padding(

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'support.dart' show tempRootfs;
 
 UiSkillBundle bundle([String name = uiSkillName]) =>
-    UiSkillBundle({'SKILL.md': '---\n# dsh-go:managed\nname: $name\n---\nfixture\n'}, name: name);
+    UiSkillBundle({'SKILL.md': '---\n# xrk-mobile:managed\nname: $name\n---\nfixture\n'}, name: name);
 
 class Runtime extends LocalRuntimeController {
   @override
@@ -114,7 +114,7 @@ void main() {
       await h.flush();
       expect(h.loads, 0);
       expect(h.bridge.requests, isEmpty);
-      expect(Directory('${h.root.path}/root/.dsh/skills').existsSync(), isFalse);
+      expect(Directory('${h.root.path}/root/.xrk/skills').existsSync(), isFalse);
     } finally {
       h.close();
     }
@@ -298,7 +298,7 @@ void main() {
       await h.running;
       expect(h.loads, 1);
       expect(h.c.read(uiSkillAutoInstallProvider), isNull);
-      expect(Directory('${h.root.path}/root/.dsh/skills').existsSync(), isFalse);
+      expect(Directory('${h.root.path}/root/.xrk/skills').existsSync(), isFalse);
     } finally {
       h.close();
     }

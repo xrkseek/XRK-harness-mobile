@@ -112,7 +112,7 @@ class _ReplyPrefsPageState extends ConsumerState<ReplyPrefsPage> {
                     padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
                     child: Text(
                       error,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).danger),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).danger),
                     ),
                   ),
               ],

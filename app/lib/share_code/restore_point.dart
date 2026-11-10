@@ -12,7 +12,7 @@
 // in step with LastKnownGood.kt (`load` / `save`).
 //
 // Skills and AGENTS.md aren't part of that record: what an import replaces is
-// copied under `/root/.dsh/backups/` (not a skill root).
+// copied under `/root/.xrk/backups/` (not a skill root).
 
 import 'dart:convert';
 import 'dart:io';
@@ -79,7 +79,7 @@ class RestorePoint {
     }
   }
 
-  /// `/root/.dsh/backups/share-import-<stamp>` for files an import replaces.
+  /// `/root/.xrk/backups/share-import-<stamp>` for files an import replaces.
   String backupDir(DateTime now) {
     String two(int n) => n.toString().padLeft(2, '0');
     final stamp = '${now.year}${two(now.month)}${two(now.day)}-${two(now.hour)}${two(now.minute)}${two(now.second)}';

@@ -1,13 +1,13 @@
 // Fakes for the composer's `@` references and voice input: an RPC carrier
-// that answers like DSH 0.2.1-rc.2 did against a throwaway `dsh web`
+// that answers like XRK 0.2.1-rc.2 did against a throwaway `xrkh serve`
 // (`fileReferences/list`, `sessionReferenceResolver/candidates`,
 // `session/list`, `speech/*`), and a scripted voice bridge.
 
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:dsh_app/ui/chat/voice/voice_bridge.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/voice/voice_bridge.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 typedef RpcHandler = Object? Function(Map<String, Object?> args);
 
@@ -41,7 +41,7 @@ class FakeRpcCarrier extends DshCarrier {
   }
 
   @override
-  Future<DshMuxLink> openLink(MuxOptions options) => Future.error(const DshTransportException('no mux in tests'));
+  Future<DshMuxLink> openLink(MuxOptions options) => Future.error(const XrkTransportException('no mux in tests'));
 
   @override
   Future<void> close() async {}

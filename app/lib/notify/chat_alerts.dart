@@ -1,8 +1,8 @@
-// Which DSH events become "看一眼" alerts, independent of how they are shown
+// Which XRK events become "看一眼" alerts, independent of how they are shown
 // (system notification or in-app banner).
 //
 // Event source: the Host-wide `$events` stream every client already holds
-// (`DshClient.hostEvents`). It covers all sessions at once and costs nothing
+// (`XrkClient.hostEvents`). It covers all sessions at once and costs nothing
 // extra while idle:
 // - `approval/request` / `user-questions/request` waterfalls: redelivered with
 //   the same eventId to each new connection while pending; `cancel` once any
@@ -19,7 +19,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../companion/companion_signals.dart';
 import '../l10n/host_text.dart';
@@ -350,11 +350,11 @@ abstract class AlertSource {
   Future<ToolCallPart?> approvalCall(ApprovalRequest request);
 }
 
-/// [AlertSource] over a [DshClient].
+/// [AlertSource] over a [XrkClient].
 class DshAlertSource implements AlertSource {
   DshAlertSource(this.client);
 
-  final DshClient client;
+  final XrkClient client;
 
   @override
   Stream<HostEvent> get events =>
@@ -928,7 +928,7 @@ final class CompanionAlertDelivery {
   CompanionAlertDelivery._(this.signal, this.provenance, this.client, this.connection, this._attached, this._pending);
   final CompanionSignalV1 signal;
   final MuxEventProvenance provenance;
-  final DshClient client;
+  final XrkClient client;
   final Object connection;
   final bool Function() _attached;
   final bool Function()? _pending;

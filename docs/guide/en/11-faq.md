@@ -15,7 +15,7 @@ Reset and uninstall both delete data on this phone; you rarely need them to fix 
 
 To report a problem, export a diagnostics bundle here. It includes the version, device, bounded engine logs and captured errors, not all system logs or a complete crash history. The app attempts to remove keys and tokens; still inspect the bundle before sharing it.
 
-To let the AI look into it, tap **Let the AI read diagnostics**. The app writes a bounded snapshot for the local engine, then ask the AI to "check the diagnostics". The bundled `dsh-go-support` skill walks the symptoms and drafts an issue you can paste.
+To let the AI look into it, tap **Let the AI read diagnostics**. The app writes a bounded snapshot for the local engine, then ask the AI to "check the diagnostics". The bundled `xrk-mobile-support` skill walks the symptoms and drafts an issue you can paste.
 
 ### Input-method or keyboard problems
 
@@ -32,7 +32,7 @@ Results stay in app memory. Only **Let the AI read diagnostics** or a manual bun
 
 Follow the guide to turn off battery optimization, keep the "engine running" notification, and lock the app in Recents. Limits vary by brand, and Android may still stop the engine.
 
-For notifications, also turn on the alerts you want in the app's **Notifications** and allow DSH Go notifications in system settings. Alerts from remote hosts need the app running and the connection online.
+For notifications, also turn on the alerts you want in the app's **Notifications** and allow XRK Go notifications in system settings. Alerts from remote hosts need the app running and the connection online.
 
 ## The engine keeps failing to start
 
@@ -48,11 +48,11 @@ The top of the phone control page says what's missing:
 
 - The switch is off, or the engine hasn't started.
 - You're connected to a remote host: switch to **This phone**.
-- DSH isn't installed on this phone: install it first.
+- XRK isn't installed on this phone: install it first.
 - Safe mode is on: return to normal mode.
 - Accessibility is off: tap **Turn on**. For a sideloaded app, allow restricted settings first.
 
-If a task stopped midway: turning the screen off, locking the phone, or DSH making no new move for 3 minutes ends it. See [Phone control](04-phone-control.md).
+If a task stopped midway: turning the screen off, locking the phone, or XRK making no new move for 3 minutes ends it. See [Phone control](04-phone-control.md).
 
 ## The floating bar is in the way
 
@@ -67,7 +67,7 @@ See [Pets](06-pets.md).
 
 ## A plugin is installed but doesn't show up
 
-Check that the plugin is enabled, and restart the engine if asked. A plugin's native UI needs the dsh-go bridge on the host: this phone's engine has it built in, remote hosts usually don't. A display place may also be turned off in the plugin's details. Plugin panels without a native UI appear in the Plugins group of All features, opening in the app or as Web entries. See [Plugins](08-plugins.md).
+Check that the plugin is enabled, and restart the engine if asked. A plugin's native UI needs the xrk-mobile bridge on the host: this phone's engine has it built in, remote hosts usually don't. A display place may also be turned off in the plugin's details. Plugin panels without a native UI appear in the Plugins group of All features, opening in the app or as Web entries. See [Plugins](08-plugins.md).
 
 ## What the app sends
 

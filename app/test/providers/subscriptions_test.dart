@@ -2,15 +2,15 @@
 // step of the sign-in sheet against a fake bridge, polling that stops with
 // the sheet, and the signed-in page's sign-out.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/account_state.dart' show accountBrowserProvider;
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/subscriptions_state.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/providers/providers_page.dart';
-import 'package:dsh_app/ui/providers/subscription_page.dart';
-import 'package:dsh_app/ui/providers/subscription_sheet.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/account_state.dart' show accountBrowserProvider;
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/subscriptions_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/providers/providers_page.dart';
+import 'package:xrk_app/ui/providers/subscription_page.dart';
+import 'package:xrk_app/ui/providers/subscription_sheet.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -312,7 +312,7 @@ void main() {
 
     testWidgets('begin refused', (tester) async {
       final bridge = FakeSubscriptionBackend()
-        ..beginError = const DshRemoteException('gateway/internal', 'could not reach https://auth.example.com');
+        ..beginError = const XrkRemoteException('gateway/internal', 'could not reach https://auth.example.com');
       await _openSheet(tester, bridge);
       expect(find.text('登录没有完成'), findsOneWidget);
       expect(find.text('连不上登录服务，检查网络后重试'), findsOneWidget);
@@ -320,7 +320,7 @@ void main() {
   });
 
   test('unrecognized login errors use local copy', () {
-    expect(describeLoginError(const DshRemoteException('gateway/internal', 'secret raw error')), '没能完成登录，再试一次');
+    expect(describeLoginError(const XrkRemoteException('gateway/internal', 'secret raw error')), '没能完成登录，再试一次');
   });
 
   group('session', () {
@@ -402,7 +402,7 @@ void main() {
     }
 
     testWidgets('[login-cancel] failed begin has no known attempt to cancel', (tester) async {
-      final bridge = _CancellationBridge()..beginError = const DshTransportException('timeout');
+      final bridge = _CancellationBridge()..beginError = const XrkTransportException('timeout');
       final session = LoginSession(bridge, Subscription.claude);
       try {
         await session.start();
@@ -460,7 +460,7 @@ void main() {
         expect(bridge.polls, 3);
         expect(session.step.phase, LoginPhase.failed);
 
-        bridge.beginError = const DshRemoteException('gateway/internal', 'could not reach https://auth.example.com');
+        bridge.beginError = const XrkRemoteException('gateway/internal', 'could not reach https://auth.example.com');
         await session.start();
         expect(bridge.calls.where((c) => c.startsWith('begin:')).toList(), ['begin:anthropic', 'begin:anthropic']);
         expect(session.step.phase, LoginPhase.failed);
@@ -551,7 +551,7 @@ class _FlakyBridge extends FakeSubscriptionBackend {
 
   @override
   Future<LoginStep> poll(String attemptId) async {
-    if (failures-- > 0) throw const DshTransportException('timeout');
+    if (failures-- > 0) throw const XrkTransportException('timeout');
     return const LoginStep(phase: LoginPhase.done);
   }
 }
@@ -568,13 +568,13 @@ class _CancellationBridge extends FakeSubscriptionBackend {
   Future<LoginStep> poll(String attemptId) async {
     if (!failPoll) return super.poll(attemptId);
     calls.add('poll:$attemptId');
-    throw const DshTransportException('timeout');
+    throw const XrkTransportException('timeout');
   }
 
   @override
   Future<void> answer(String attemptId, String value) async {
     await super.answer(attemptId, value);
-    if (failAnswer) throw const DshTransportException('timeout');
+    if (failAnswer) throw const XrkTransportException('timeout');
   }
 
   @override

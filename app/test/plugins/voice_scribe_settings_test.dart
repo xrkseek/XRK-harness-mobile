@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/voice_scribe_settings.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/voice_scribe_settings.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_plugin_host.dart';
@@ -62,7 +62,7 @@ class VoiceServer {
   static Future<VoiceServer> start() async => VoiceServer._(await HttpServer.bind(InternetAddress.loopbackIPv4, 0));
   Uri get uri => Uri.parse('http://127.0.0.1:${server.port}');
   Future<void> _handle(HttpRequest request) async {
-    // No other routes (the dsh-go bridge's plugin-config probe): 404, as a Host
+    // No other routes (the xrk-mobile bridge's plugin-config probe): 404, as a Host
     // without them answers.
     if (request.method == 'GET') {
       request.response.statusCode = 404;
@@ -102,13 +102,13 @@ class VoiceServer {
   }
 
   Future<void> close() => server.close(force: true);
-  Future<(DshClient, VoiceHttpCarrier)> client({bool ready = true}) async {
+  Future<(XrkClient, VoiceHttpCarrier)> client({bool ready = true}) async {
     final connection = DshConnection(
       uri,
       cookie: DshCookie(name: 'dsh-auth-fixture', value: 'test-session', authority: uri.authority),
     );
     final carrier = VoiceHttpCarrier(connection);
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     if (ready) await client.mux.ready();
     return (client, carrier);
   }

@@ -1,31 +1,24 @@
 #!/usr/bin/env bash
-# Builds the bundled Linux runtime for dsh-app (Ubuntu Base + Node.js + DeepSeek Harness,
-# run through Termux proot) for each Android ABI, entirely on an x86_64 Linux host without
-# executing any foreign-architecture code.
+# Builds the bundled Linux runtime for XRK Harness mobile (Ubuntu Base + Node.js +
+# @xrkseek/harness-cli, run through Termux proot) for each Android ABI, on an x86_64
+# Linux host without executing foreign-architecture code.
 #
 #   runtime/build-runtime.sh                 # both ABIs (x86_64 first)
-#   runtime/build-runtime.sh x86_64          # one ABI
+#   runtime/build-runtime.sh arm64-v8a       # one ABI
 #   COMPRESS=gz runtime/build-runtime.sh     # .tar.gz instead of .tar.xz
-#   RUNTIME_OUT=/path runtime/build-runtime.sh   # stage outputs outside runtime/out (not packaged)
-#
-# The DSH tree is patched with runtime/patches/*.diff (pinned per DSH version in
-# runtime/patches/pins.json; an unvetted DSH version fails the build) and the dsh-go-bridge
-# plugin (runtime/bridge/dsh-go-bridge) is installed at /opt/dsh-go/dsh-go-bridge and loaded by
-# the `dsh web` overlay. Check both on the host with runtime/tests/run-guard-tests.sh
-# runtime/.work/x86_64/dsh-prefix, or end to end with runtime/test-host.sh.
+#   RUNTIME_OUT=/path runtime/build-runtime.sh
+#   ENGINE_TGZ=/path/to/xrkseek-harness-cli-<ver>.tgz ENGINE_VERSION=<ver> …
 #
 # Outputs (consumed by app/android/app/build.gradle.kts flavors):
 #   runtime/out/<abi>/assets/runtime/rootfs-<abi>.tar.xz
-#   runtime/out/<abi>/assets/runtime/manifest.json      (versions, hashes, launch template)
+#   runtime/out/<abi>/assets/runtime/manifest.json
 #   runtime/out/<abi>/assets/runtime/licenses/...
 #   runtime/out/<abi>/jniLibs/<abi>/lib{proot,proot-loader,talloc,android-shmem}.so
-#   runtime/out/<abi>/build-report.json                  (ELF audit, pruned files, warnings)
-#   runtime/out/manifest.json                            (index of all built ABIs)
+#   runtime/out/<abi>/build-report.json
+#   runtime/out/manifest.json
 #
-# Idempotent: downloads are cached in runtime/.cache and verified on every run; the npm
-# trees are pinned by runtime/locks/dsh-<version>/package-lock.json and
-# runtime/locks/pnpm-<version>/package-lock.json (created on the first run, reused with
-# `npm ci` afterwards; pnpm's tarball integrity is additionally pinned below).
+# Idempotent: downloads cache in runtime/.cache; engine/pnpm trees pin under
+# runtime/locks/engine-<version>/ and runtime/locks/pnpm-<version>/.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -43,8 +36,8 @@ ENGINE_VERSION="${ENGINE_VERSION:-0.7.15}"
 # When set, install_engine uses that file instead of registry.npmjs.org — for
 # APK hand-tests of uncommitted / unpublished harness-cli (no git push required).
 ENGINE_TGZ="${ENGINE_TGZ:-}"
-# Keep DSH_VERSION as an alias for scripts/docs that still read it during the cutover.
-DSH_VERSION="${ENGINE_VERSION}"
+# Keep XRK_VERSION as an alias for scripts/docs that still read it during the cutover.
+ENGINE_VERSION="${ENGINE_VERSION}"
 NODE_VERSION="${NODE_VERSION:-26.12.1}"
 # pnpm remains available inside the guest for plugin installs.
 PNPM_VERSION="${PNPM_VERSION:-11.28.5}"
@@ -332,7 +325,7 @@ PYEOF
 # Back-compat name used by older docs / scripts.
 install_dsh() { install_engine "$@"; }
 
-# pnpm for the guest (zero dependencies, plain JS). Same lock-then-`npm ci` scheme as DSH; the
+# pnpm for the guest (zero dependencies, plain JS). Same lock-then-`npm ci` scheme as XRK; the
 # lock's integrity must equal PNPM_INTEGRITY, so a regenerated lock cannot swap the tarball.
 install_pnpm() {  # $1 = npm cpu, $2 = prefix dir
   local cpu="$1" prefix="$2" bin; bin="$(host_npm)"
@@ -446,7 +439,7 @@ PYEOF
   cp "$debx/data/data/com.termux/files/usr/share/doc/libandroid-shmem/copyright" "$assets/licenses/libandroid-shmem-copyright.txt"
   sed -n '1,/\*\//p' "$tprefix/include/talloc.h" > "$assets/licenses/libtalloc-notice.txt"
 
-  # -- Engine (@xrkseek/harness-cli); no DSH patches / dsh-go-bridge --
+  # -- Engine (@xrkseek/harness-cli); no XRK patches / xrk-bridge --
   local prefix="$work/engine-prefix"
   install_engine "$npm_cpu" "$prefix"
   printf '[]\n' > "$work/engine-patches.json"
@@ -466,21 +459,21 @@ PYEOF
     } | sha256sum | cut -c1-12 )"
   local runtime_version="${RUNTIME_REVISION}-xrk${ENGINE_VERSION}-node${NODE_VERSION}-ubuntu${UBUNTU_VERSION}-${inputs_sha}"
   local runtime_info
-  runtime_info="$(printf '{"runtimeVersion":"%s","abi":"%s","engineVersion":"%s","dshVersion":"%s","nodeVersion":"%s","pnpmVersion":"%s","ubuntuVersion":"%s","prootVersion":"%s","dshPatches":[],"dshGoBridge":null}' \
-    "$runtime_version" "$abi" "$ENGINE_VERSION" "$ENGINE_VERSION" "$NODE_VERSION" "$PNPM_VERSION" "$UBUNTU_VERSION" "$PROOT_VERSION")"
+  runtime_info="$(printf '{"runtimeVersion":"%s","abi":"%s","engineVersion":"%s","nodeVersion":"%s","pnpmVersion":"%s","ubuntuVersion":"%s","prootVersion":"%s","enginePatches":[],"xrkBridge":null}' \
+    "$runtime_version" "$abi" "$ENGINE_VERSION" "$NODE_VERSION" "$PNPM_VERSION" "$UBUNTU_VERSION" "$PROOT_VERSION")"
 
   # -- rootfs archive --
   local archive="$assets/rootfs-$abi.tar.$COMPRESS"
   local -a prune=(); [[ "$PRUNE_DEV_METADATA" == 1 ]] && prune=(--prune-dev-metadata)
   log "assembling rootfs ($COMPRESS)"
-  "${PY[@]}" assemble --abi "$abi" --base "$base" --node "$node" --dsh-prefix "$prefix" --pnpm-prefix "$pnpm_prefix" \
+  "${PY[@]}" assemble --abi "$abi" --base "$base" --node "$node" --engine-prefix "$prefix" --pnpm-prefix "$pnpm_prefix" \
     --out "$archive" --report "$out/build-report.json" --runtime-info "$runtime_info" \
     --compress "$COMPRESS" --xz-preset "$XZ_PRESET" --threads "$XZ_THREADS" --epoch "$SOURCE_DATE_EPOCH" "${prune[@]}" \
     "${extra_debs[@]/#/--deb=}" --python "$python"
 
   local versions
-  versions="$(printf '{"runtimeVersion":"%s","engineVersion":"%s","dshVersion":"%s","nodeVersion":"%s","pnpmVersion":"%s","ubuntuVersion":"%s","prootVersion":"%s","tallocVersion":"%s","androidShmemVersion":"%s","dshPatches":[],"dshGoBridge":null,"build":{"inputsSha256_12":"%s","ubuntuBaseSha256":"%s","nodeSha256":"%s","engineLockSha256":"%s","pnpmIntegrity":"%s","sourceDateEpoch":%s}}' \
-    "$runtime_version" "$ENGINE_VERSION" "$ENGINE_VERSION" "$NODE_VERSION" "$PNPM_VERSION" "$UBUNTU_VERSION" "$PROOT_VERSION" "$TALLOC_VERSION" "$SHMEM_VERSION" \
+  versions="$(printf '{"runtimeVersion":"%s","engineVersion":"%s","nodeVersion":"%s","pnpmVersion":"%s","ubuntuVersion":"%s","prootVersion":"%s","tallocVersion":"%s","androidShmemVersion":"%s","enginePatches":[],"xrkBridge":null,"build":{"inputsSha256_12":"%s","ubuntuBaseSha256":"%s","nodeSha256":"%s","engineLockSha256":"%s","pnpmIntegrity":"%s","sourceDateEpoch":%s}}' \
+    "$runtime_version" "$ENGINE_VERSION" "$NODE_VERSION" "$PNPM_VERSION" "$UBUNTU_VERSION" "$PROOT_VERSION" "$TALLOC_VERSION" "$SHMEM_VERSION" \
     "$inputs_sha" "$(sha256 "$base")" "$(sha256 "$node")" "$(sha256 "$lockfile")" "$PNPM_INTEGRITY" "$SOURCE_DATE_EPOCH")"
   "${PY[@]}" manifest --abi "$abi" --report "$out/build-report.json" --jnilibs "$work/jnilibs.json" \
     --versions "$versions" --out "$assets/manifest.json" >&2
@@ -513,7 +506,7 @@ for abi in ("x86_64", "arm64-v8a"):
     m = json.load(open(p))
     index["abis"][abi] = {k: m.get(k) for k in (  # .get: another ABI may still hold an older build
         "runtimeVersion", "rootfs", "rootfsSha256", "rootfsBytes", "uncompressedBytes", "entries",
-        "dshVersion", "nodeVersion", "pnpmVersion", "ubuntuVersion", "prootVersion")}
+        "engineVersion", "nodeVersion", "pnpmVersion", "ubuntuVersion", "prootVersion")}
     index["abis"][abi]["jniLibs"] = {n: {"sha256": v["sha256"], "bytes": v["bytes"]} for n, v in m["jniLibs"].items()}
 json.dump(index, open(os.path.join(out, "manifest.json"), "w"), indent=2)
 print("wrote " + os.path.join(out, "manifest.json"))

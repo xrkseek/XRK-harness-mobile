@@ -40,7 +40,7 @@ class SessionArtifactsSection extends ConsumerWidget {
     if (files.isEmpty) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final shown = files.take(shownCount).toList();
 
     return Padding(

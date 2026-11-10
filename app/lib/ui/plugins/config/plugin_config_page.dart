@@ -7,7 +7,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart' show PluginBundle;
+import 'package:xrk_client/xrk_client.dart' show PluginBundle;
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,7 +33,7 @@ import '../../settings/settings_widgets.dart' show SettingsSection;
 import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
-import '../../web/dsh_web_launcher.dart' show DshWebOpenScope;
+import '../../web/xrk_web_launcher.dart' show DshWebOpenScope;
 import '../../web/web_target.dart';
 import '../seats/seat_links.dart' show seatWebOpenerProvider;
 import 'plugin_config_entries.dart' show pluginConfigNamedByBundle, pluginConfigTitle, retryPluginList;
@@ -80,7 +80,7 @@ const pluginConfigFoldFrom = 12;
 PluginBundle? pluginConfigBundleOf(List<PluginBundle>? bundles, String ns) =>
     bundles?.where((b) => b.rows.any((r) => r.rowId == ns)).firstOrNull;
 
-/// Where [ns]'s own page is in DSH Web: its bundle's card on the Plugins
+/// Where [ns]'s own page is in XRK Web: its bundle's card on the Plugins
 /// page (titles in every language, then the package name).
 DshWebTarget pluginConfigWebTarget(String ns, {required String title, List<PluginBundle>? bundles}) {
   final bundle = pluginConfigBundleOf(bundles, ns);
@@ -242,7 +242,7 @@ class _PluginConfigPageState extends ConsumerState<PluginConfigPage> {
     };
   }
 
-  /// The plugin ships a settings page of its own in DSH Web (it said so, or
+  /// The plugin ships a settings page of its own in XRK Web (it said so, or
   /// the web client reported it in a config slot).
   bool _hasWebPage(PluginConfigForm form, List<PluginBundle>? bundles) {
     if (form.prefersOwnPage) return true;
@@ -261,7 +261,7 @@ class _PluginConfigPageState extends ConsumerState<PluginConfigPage> {
   bool _busy(PluginConfigState? state) =>
       state != null && (state.isApplying(ns) || (state.pending[ns]?.isNotEmpty ?? false));
 
-  /// Off to DSH Web, which edits the same configuration through its own
+  /// Off to XRK Web, which edits the same configuration through its own
   /// page. Not while [_busy]: it would land on a plugin in the middle of its
   /// reload. Held edits go first, when the person says so: kept, a later 保存
   /// would write them over what was set there. A row of the form that names
@@ -288,7 +288,7 @@ class _PluginConfigPageState extends ConsumerState<PluginConfigPage> {
   /// 「放弃修改？」, as when leaving the page with held edits.
   Future<bool> _confirmDiscard() async {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final ok = await showAppDialog<bool>(
       context: context,
       builder: (dialog) => AlertDialog(
@@ -309,7 +309,7 @@ class _PluginConfigPageState extends ConsumerState<PluginConfigPage> {
 
   Future<void> _resetAll() async {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final ok = await showAppDialog<bool>(
       context: context,
       builder: (dialog) => AlertDialog(
@@ -400,7 +400,7 @@ class _PluginConfigPageState extends ConsumerState<PluginConfigPage> {
             const FeatureLoading()
           else if (state == null)
             const FeatureOffline()
-          // DSH's core, the App's own rows, anything not a chosen bundle's:
+          // XRK's core, the App's own rows, anything not a chosen bundle's:
           // never drawn or written here; nor anything while the plugin list
           // is not the Host's confirmed answer (PluginConfigScope).
           else if (!state.isPlugin(ns))
@@ -490,7 +490,7 @@ class _PluginConfigPageState extends ConsumerState<PluginConfigPage> {
               EngineFieldRow(
                 title: l10n.pluginConfigNotStarted,
                 subtitle: form.error,
-                subtitleColor: DshColors.of(context).danger,
+                subtitleColor: XrkColors.of(context).danger,
               ),
             ],
           ),
@@ -538,7 +538,7 @@ class _PluginConfigPageState extends ConsumerState<PluginConfigPage> {
         isDirty: () => _dirty.value,
         child: Stack(
           children: [
-            // The form's own ways to DSH Web (「在网页版编辑此项」) go the page's way.
+            // The form's own ways to XRK Web (「在网页版编辑此项」) go the page's way.
             DshWebOpenScope(onOpen: (target) => unawaited(_openWeb(title, bundles, target)), child: page),
             _SaveBarSlot(ns: ns, controller: _controller),
           ],

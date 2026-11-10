@@ -1,4 +1,4 @@
-// `check`: what the dsh-go app and the bridge will say about a plugin, before
+// `check`: what the xrk-mobile app and the bridge will say about a plugin, before
 // you install it. Manifest problems come from the bridge's own parser
 // (lib/bridge/, copied from runtime/bridge), view problems from a line-by-line
 // twin of the app's parser (lib/view-check.js), with the app's words.
@@ -18,7 +18,7 @@ import { BUDGETS, bindingsIn, checkView, labeled } from './view-check.js'
 
 export { checkView, BUDGETS }
 
-const VIEW_KEY = 'dsh-go/view'
+const VIEW_KEY = 'xrk-mobile/view'
 const ICONS = new Set(JSON.parse(readFileSync(new URL('../schema/view.schema.json', import.meta.url), 'utf8')).$defs.icon.anyOf[0].enum)
 
 // ── words (the check's own; issue texts come from the app / bridge) ─────────
@@ -27,7 +27,7 @@ const WORDS = {
   zh: {
     error: '错误', warn: '提示', note: '提示', fatal: '错误',
     plugin: (name, version) => `${name}${version ? ` ${version}` : ''}`,
-    noDshGo: '没有 dshGo 清单：只有工具卡（presentationMeta）这类零成本扩展',
+    noDshGo: '没有 xrkGo 清单：只有工具卡（presentationMeta）这类零成本扩展',
     manifest: { ok: '原生界面能显示', invalid: '清单无效，原生部分不显示', unsupported: '协议版本不被支持，原生部分不显示', 'needs-app': 'App 版本太低，原生部分不显示', degraded: '已降级' },
     counts: (c) => [
       c['composer.actions'] && `胶囊 ${c['composer.actions']}`,
@@ -41,9 +41,9 @@ const WORDS = {
     view: (where, budget) => `视图 ${where}（${{ toolCard: '工具卡', panel: '面板', strip: '状态条' }[budget]}）`,
     viewOk: '能显示', viewFatal: '整块无法显示：', viewProblems: (n) => `，${n} 处问题`,
     unknownIcon: '不认识的图标，已换成默认图标',
-    notBundle: '不是 DSH 组合包：package.json 缺 dsh.bundle.patch，DSH 装不上',
+    notBundle: '不是 XRK 组合包：package.json 缺 dsh.bundle.patch，XRK 装不上',
     patchMissing: (p) => `找不到组合包补丁文件 ${p}`,
-    noEngines: '没写 engines.dsh：DSH 不检查版本，装到不兼容的 DSH 上会在运行时出错',
+    noEngines: '没写 engines.dsh：XRK 不检查版本，装到不兼容的 XRK 上会在运行时出错',
     noName: '缺少 name',
     cardBindings: '工具卡没有数据模型，绑定都会显示成「—」',
     cardTaps: '工具卡（第 0 期）不能点：按钮、确认不显示，选项只读',
@@ -51,8 +51,8 @@ const WORDS = {
     loaded: (n) => `已加载宿主半侧：${n} 项可用`,
     loadedTools: '已加载',
     loadFailed: (m) => `宿主半侧加载失败：${m}`,
-    optionalInject: "写成了 ctx.inject(['dshGo?'])：cordis 没有可选依赖语法，这个回调永远不执行，改成 ['dshGo']",
-    topInject: '插件顶层的 inject 里有 dshGo：没有桥接的主机上整个插件起不来，改用 ctx.inject([\'dshGo\'], …)',
+    optionalInject: "写成了 ctx.inject(['xrkGo?'])：cordis 没有可选依赖语法，这个回调永远不执行，改成 ['xrkGo']",
+    topInject: '插件顶层的 inject 里有 xrkGo：没有桥接的主机上整个插件起不来，改用 ctx.inject([\'xrkGo\'], …)',
     viewFailed: (id, m) => `面板 ${id} 的视图函数出错：${m}`,
     stripText: (id, n) => `状态条 ${id} 的文字超过 24 字（${n} 字），会被截断`,
     stripEmit: (id, m) => `状态条 ${id}：${m}`,
@@ -68,7 +68,7 @@ const WORDS = {
   en: {
     error: 'error', warn: 'note', note: 'note', fatal: 'error',
     plugin: (name, version) => `${name}${version ? ` ${version}` : ''}`,
-    noDshGo: 'No dshGo manifest: only zero-cost extensions such as tool cards (presentationMeta)',
+    noDshGo: 'No xrkGo manifest: only zero-cost extensions such as tool cards (presentationMeta)',
     manifest: { ok: 'Native UI shows', invalid: 'Invalid manifest; the native part is not shown', unsupported: 'Protocol version not supported; the native part is not shown', 'needs-app': 'App too old; the native part is not shown', degraded: 'Degraded' },
     counts: (c) => [
       c['composer.actions'] && `${c['composer.actions']} capsule(s)`,
@@ -82,9 +82,9 @@ const WORDS = {
     view: (where, budget) => `View ${where} (${{ toolCard: 'tool card', panel: 'panel', strip: 'strip' }[budget]})`,
     viewOk: 'renders', viewFatal: 'does not render: ', viewProblems: (n) => `, ${n} problem(s)`,
     unknownIcon: 'Unknown icon; drawn as the default icon',
-    notBundle: 'Not a DSH bundle: package.json lacks dsh.bundle.patch, DSH cannot install it',
+    notBundle: 'Not a XRK bundle: package.json lacks dsh.bundle.patch, XRK cannot install it',
     patchMissing: (p) => `Bundle patch file ${p} not found`,
-    noEngines: 'No engines.dsh: DSH does not check versions and an incompatible DSH fails at run time',
+    noEngines: 'No engines.dsh: XRK does not check versions and an incompatible XRK fails at run time',
     noName: 'Missing name',
     cardBindings: 'A tool card has no data model; every binding shows as "—"',
     cardTaps: 'Tool cards (phase 0) are not tappable: buttons and confirms are hidden, options read-only',
@@ -92,8 +92,8 @@ const WORDS = {
     loaded: (n) => `Host half loaded: ${n} item(s) ready`,
     loadedTools: 'Loaded',
     loadFailed: (m) => `Host half failed to load: ${m}`,
-    optionalInject: "ctx.inject(['dshGo?']) never runs: cordis has no optional syntax; write ['dshGo']",
-    topInject: "dshGo is in the plugin's top-level inject: the plugin will not start on hosts without the bridge; use ctx.inject(['dshGo'], …)",
+    optionalInject: "ctx.inject(['xrkGo?']) never runs: cordis has no optional syntax; write ['xrkGo']",
+    topInject: "xrkGo is in the plugin's top-level inject: the plugin will not start on hosts without the bridge; use ctx.inject(['xrkGo'], …)",
     viewFailed: (id, m) => `View function of panel ${id} failed: ${m}`,
     stripText: (id, n) => `Strip ${id} text is over 24 characters (${n}); it will be cut`,
     stripEmit: (id, m) => `Strip ${id}: ${m}`,
@@ -118,14 +118,14 @@ const LOCALES = ['zh-CN', 'en-US']
 /** App-side icon problems (the app draws unknown names as its default glyph). */
 function iconIssues(pkgJson, w) {
   const out = []
-  const m = pkgJson.dshGo
+  const m = pkgJson.xrkGo
   if (typeof m !== 'object' || m === null) return out
   const check = (icon, path) => {
     if (typeof icon === 'string' && ICON.test(icon) && !ICONS.has(icon)) out.push({ path, code: 'unknown-icon', severity: 'warn', message: w.unknownIcon })
   }
-  check(m.icon, '/dshGo/icon')
+  check(m.icon, '/xrkGo/icon')
   for (const [surface, list] of Object.entries(m.contributes ?? {})) {
-    if (Array.isArray(list)) list.forEach((item, i) => check(item?.icon, `/dshGo/contributes/${surface}/${i}/icon`))
+    if (Array.isArray(list)) list.forEach((item, i) => check(item?.icon, `/xrkGo/contributes/${surface}/${i}/icon`))
   }
   return out
 }
@@ -162,7 +162,7 @@ export function checkManifest(pkgJson, options = {}) {
   issues.push(...iconIssues(pkgJson, w))
   const row = first.plugin
   const counts = Object.fromEntries(Object.entries(row.contributes).map(([k, v]) => [k, v.length]))
-  const rawPanels = pkgJson.dshGo?.contributes?.panels
+  const rawPanels = pkgJson.xrkGo?.contributes?.panels
   const panels = Array.isArray(rawPanels) ? rawPanels : []
   return { state: row.state, title: row.title, counts, contributes: row.contributes, issues, panels }
 }
@@ -184,8 +184,8 @@ function packageIssues(pkgJson, dir, w) {
 let hooksInstalled = false
 
 /**
- * Let the plugin's `import … from '@deepseek-ai/…'` resolve: from an installed DSH (DSH_DIR,
- * or the `dsh` on PATH) by resolving as if imported from inside it; `dsh-tools` falls back to a
+ * Let the plugin's `import … from '@deepseek-ai/…'` resolve: from an installed XRK (XRK_DIR,
+ * or the `xrkh` on PATH) by resolving as if imported from inside it; `dsh-tools` falls back to a
  * stub whose defineTool returns the definition.
  */
 async function installHooks() {
@@ -198,7 +198,7 @@ async function installHooks() {
     const bin = join(pkgDir, 'lib', 'bin.js')
     if (existsSync(bin)) parents.push(pathToFileURL(bin).href)
   }
-  if (process.env.DSH_DIR) add(process.env.DSH_DIR)
+  if (process.env.XRK_DIR) add(process.env.XRK_DIR)
   for (const d of (process.env.PATH ?? '').split(delimiter)) {
     const bin = join(d, 'dsh')
     if (!existsSync(bin)) continue
@@ -218,7 +218,7 @@ async function installHooks() {
           return next(specifier, { ...context, parentURL })
         } catch {}
       }
-      if (specifier === '@deepseek-ai/dsh-tools') return { url: stub, shortCircuit: true }
+      if (specifier === '@xrkseek/harness-cli-tools') return { url: stub, shortCircuit: true }
       return next(specifier, context)
     },
   })
@@ -234,17 +234,17 @@ function entryOf(pkgJson, dir) {
 const SAMPLE_SCOPES = { 'session.tab': { sessionId: 'check-session' }, 'chat.panel': { sessionId: 'check-session' }, features: {}, plugin: {} }
 
 async function loadHostHalf(pkgJson, dir, w) {
-  // The plugin's code runs here: keep it away from the real DSH home.
-  const saved = process.env.DSH_HOME
+  // The plugin's code runs here: keep it away from the real XRK home.
+  const saved = process.env.XRK_HOME
   const { mkdtempSync, rmSync } = await import('node:fs')
   const { tmpdir } = await import('node:os')
-  const home = mkdtempSync(join(tmpdir(), 'dsh-go-check-'))
-  process.env.DSH_HOME = home
+  const home = mkdtempSync(join(tmpdir(), 'xrk-mobile-check-'))
+  process.env.XRK_HOME = home
   try {
     return await loadIn(pkgJson, dir, w)
   } finally {
-    if (saved === undefined) delete process.env.DSH_HOME
-    else process.env.DSH_HOME = saved
+    if (saved === undefined) delete process.env.XRK_HOME
+    else process.env.XRK_HOME = saved
     rmSync(home, { recursive: true, force: true })
   }
 }
@@ -268,7 +268,7 @@ async function loadIn(pkgJson, dir, w) {
   // As the newest app sees it: every v1.2 capability on offer.
   const { FEATURES } = await import('./bridge/capabilities.js')
   const host = createTestHost({ dir, pkg: pkgJson, services, caps: { features: [...FEATURES] } })
-  if (Array.isArray(mod.inject) ? mod.inject.includes('dshGo') : mod.inject && typeof mod.inject === 'object' && 'dshGo' in mod.inject) {
+  if (Array.isArray(mod.inject) ? mod.inject.includes('xrkGo') : mod.inject && typeof mod.inject === 'object' && 'xrkGo' in mod.inject) {
     notes.push({ path: '/runtime/inject', code: 'load', severity: 'error', message: w.topInject })
   }
   try {
@@ -328,7 +328,7 @@ async function loadIn(pkgJson, dir, w) {
 // ── plugin ────────────────────────────────────────────────────────────────
 
 /**
- * Check a plugin directory: package basics, the dshGo manifest (every locale),
+ * Check a plugin directory: package basics, the xrkGo manifest (every locale),
  * static view files, and with `load: true` the host half's registrations and views.
  */
 export async function checkPlugin(dirOrFile, options = {}) {
@@ -378,7 +378,7 @@ export async function checkPlugin(dirOrFile, options = {}) {
 
 // ── single view ───────────────────────────────────────────────────────────
 
-/** Check a view file (or a tool result meta `{ "dsh-go/view": … }`). */
+/** Check a view file (or a tool result meta `{ "xrk-mobile/view": … }`). */
 export function checkViewText(text, options = {}) {
   const w = words(options.lang)
   let json

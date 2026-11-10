@@ -3,10 +3,10 @@
 // plumbing, a translator mixing live fields, a reload field and a key, and a
 // market plugin that ships its own web page (`configure({ auto: false })`).
 
-import 'package:dsh_app/state/engine_settings_state.dart' show FieldRef;
-import 'package:dsh_app/state/plugin_config/plugin_config_memory.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart' show FieldRef;
+import 'package:xrk_app/state/plugin_config/plugin_config_memory.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -118,7 +118,7 @@ MemoryPluginEntry voiceEntry() => MemoryPluginEntry(
     'punctuation': true,
     'threads': 2,
     'modelOrigins': ['https://huggingface.co', 'https://hf-mirror.com'],
-    'dataRoot': '/root/.dsh/speech-to-text/sensevoice',
+    'dataRoot': '/root/.xrk/speech-to-text/sensevoice',
     'vad': {'threshold': 0.5, 'minSpeechSeconds': 0.25, 'minSilenceSeconds': 0.5, 'onsetPaddingSeconds': 0.3},
     'segments': {'segmentSeconds': 30, 'maxPending': 4},
     'limits': {'maxAudioBytes': 4194304, 'maxResponseBytes': 131072, 'maxLogBytes': 65536},
@@ -172,7 +172,7 @@ MemoryPluginConfigApi sampleConfigApi() => MemoryPluginConfigApi([voiceEntry(), 
 /// listed with who carries it. [r7] false: the same Host before R7, which
 /// covers SenseVoice too but does not say so in its list.
 MemoryPluginConfigApi voiceKitApi({bool r7 = true}) {
-  const voice = '@deepseek-ai/dsh-experimental-voice-input-bundle';
+  const voice = '@xrkseek/harness-cli-experimental-voice-input-bundle';
   MemoryPluginEntry listed(MemoryPluginEntry entry, String owner, String bundle) => r7
       ? (entry
           ..owner = owner
@@ -204,7 +204,7 @@ MemoryPluginConfigApi voiceKitApi({bool r7 = true}) {
       'optional',
       voice,
     ),
-    listed(translatorEntry(), 'optional', '@deepseek-ai/dsh-experimental-translator'),
+    listed(translatorEntry(), 'optional', '@xrkseek/harness-cli-experimental-translator'),
     listed(weatherEntry(), 'installed', '@acme/dsh-weather'),
   ]);
 }
@@ -213,7 +213,7 @@ MemoryPluginConfigApi voiceKitApi({bool r7 = true}) {
 /// the r14 Host lists them (fixtures/plugin_bundles_r14.json).
 List<Object?> voiceKitBundles() => [
   for (final bundle in configBundles().cast<Map<String, Object?>>())
-    if (bundle['name'] == '@deepseek-ai/dsh-experimental-voice-input-bundle')
+    if (bundle['name'] == '@xrkseek/harness-cli-experimental-voice-input-bundle')
       {
         ...bundle,
         'rows': [
@@ -230,7 +230,7 @@ List<Object?> voiceKitBundles() => [
           ])
             {
               'rowId': id,
-              'moduleName': '@deepseek-ai/dsh-experimental-$module',
+              'moduleName': '@xrkseek/harness-cli-experimental-$module',
               'entryId': 'include:$id',
               'meta': {
                 'title': {'en': en, 'zh': zh},
@@ -249,7 +249,7 @@ FakeSettingsHost voiceKitHost() => FakeSettingsHost()..bundles = voiceKitBundles
 /// weather plugin, and one plugin without settings.
 List<Object?> configBundles() => [
   {
-    'name': '@deepseek-ai/dsh-experimental-voice-input-bundle',
+    'name': '@xrkseek/harness-cli-experimental-voice-input-bundle',
     'official': true,
     'availability': 'installation',
     'version': '0.2.1-rc.4',
@@ -262,16 +262,16 @@ List<Object?> configBundles() => [
     'rows': [
       {
         'rowId': 'speech-to-text-sensevoice',
-        'moduleName': '@deepseek-ai/dsh-experimental-speech-to-text-sensevoice',
+        'moduleName': '@xrkseek/harness-cli-experimental-speech-to-text-sensevoice',
         'meta': {
           'title': {'zh': '本机语音识别', 'en': 'On-device recognition'},
         },
       },
-      {'rowId': 'ui-voice-input', 'moduleName': '@deepseek-ai/dsh-experimental-client-ui-voice-input'},
+      {'rowId': 'ui-voice-input', 'moduleName': '@xrkseek/harness-cli-experimental-client-ui-voice-input'},
     ],
   },
   {
-    'name': '@deepseek-ai/dsh-experimental-translator',
+    'name': '@xrkseek/harness-cli-experimental-translator',
     'official': true,
     'availability': 'installation',
     'version': '0.2.1-rc.4',
@@ -282,7 +282,7 @@ List<Object?> configBundles() => [
     'installed': true,
     'optional': true,
     'rows': [
-      {'rowId': 'translator', 'moduleName': '@deepseek-ai/dsh-experimental-translator'},
+      {'rowId': 'translator', 'moduleName': '@xrkseek/harness-cli-experimental-translator'},
     ],
   },
   {
@@ -319,7 +319,7 @@ List<Object?> configBundles() => [
 List<Override> configOverrides(MemoryPluginConfigApi api, {FakeSettingsHost? host, bool local = true}) {
   final fake = host ?? (FakeSettingsHost()..bundles = configBundles());
   return [
-    ...engineOverrides(DshClient.withCarrier(fake), local: local),
+    ...engineOverrides(XrkClient.withCarrier(fake), local: local),
     pluginConfigApiProvider.overrideWithValue(api),
   ];
 }

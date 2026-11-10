@@ -12,7 +12,7 @@ import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'plugin_widgets.dart';
 
-/// 「官方」 / 「适配 DSH Go」, then the risk tag: none for low, amber for
+/// 「官方」 / 「适配 XRK Go」, then the risk tag: none for low, amber for
 /// medium, red for high.
 List<Widget> marketEntryBadges(BuildContext context, MarketEntry entry) {
   final l10n = context.l10n;
@@ -56,7 +56,7 @@ class MarketRiskChip extends StatelessWidget {
 /// The dot before a flag: red for high, amber for medium, quiet for low (or
 /// a flag this app doesn't know).
 Color marketFlagColor(BuildContext context, String flag) {
-  final colors = DshColors.of(context);
+  final colors = XrkColors.of(context);
   return switch (marketRiskFlagLevels[flag]) {
     MarketRisk.high => colors.danger,
     MarketRisk.medium => colors.warning,
@@ -75,7 +75,7 @@ class MarketRiskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final checked = listing.checkedAt;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -139,7 +139,7 @@ class MarketBlockedBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return PluginFailureBox(
       failure: PluginFailure(PluginFailureKind.unknown, l10n.marketBlockedTitle, l10n.marketBlockedMessage(version)),
       actions: [
@@ -171,7 +171,7 @@ class MarketScreenshots extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final dpr = MediaQuery.devicePixelRatioOf(context);
     final placeholder = ColoredBox(
       color: scheme.surfaceContainerHighest,

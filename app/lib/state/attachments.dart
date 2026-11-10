@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dsh_client/dsh_client.dart' show ImageAttachment;
+import 'package:xrk_client/xrk_client.dart' show ImageAttachment;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,7 +12,7 @@ import 'connection_state.dart';
 
 /// Something picked in the composer and not sent yet.
 ///
-/// Images DSH takes inline (png, jpeg, webp, gif) ride in the prompt itself;
+/// Images XRK takes inline (png, jpeg, webp, gif) ride in the prompt itself;
 /// anything else is staged first (`fileUploads/upload`, or a streamed binary
 /// upload on hosts that support it) and referenced by its receipt. Which one
 /// is decided from the bytes, not the file name.
@@ -45,7 +45,7 @@ class PickedAttachments {
   final String? problem;
 }
 
-/// DSH's inline image limit (`SessionProjections.imageLimits` default).
+/// XRK's inline image limit (`SessionProjections.imageLimits` default).
 const maxImageBytes = 20 * 1024 * 1024;
 
 /// Files stream to the engine (`/api/session/uploadFileBinary`), so the
@@ -55,7 +55,7 @@ const maxImageBytes = 20 * 1024 * 1024;
 /// base64 and refuses what one RPC frame can't hold.
 const maxFileBytes = 200 * 1024 * 1024;
 
-/// At most this many attachments per message (DSH allows 20 images).
+/// At most this many attachments per message (XRK allows 20 images).
 const maxAttachments = 9;
 
 /// Bytes one message's attachments may hold. The picker and the tray keep
@@ -64,7 +64,7 @@ const maxAttachments = 9;
 /// (`MAX_TOTAL_BYTES`) matches this.
 const maxMessageBytes = 400 * 1024 * 1024;
 
-/// Media type when [bytes] is an image DSH accepts inline, else null.
+/// Media type when [bytes] is an image XRK accepts inline, else null.
 String? inlineImageType(Uint8List bytes) {
   bool at(int offset, List<int> sig) {
     if (bytes.length < offset + sig.length) return false;

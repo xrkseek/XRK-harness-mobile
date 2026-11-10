@@ -4,18 +4,18 @@
 // Regenerate with
 // `flutter test --update-goldens test/chat/run_info_golden_test.dart`.
 
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/diff_page.dart';
-import 'package:dsh_app/ui/chat/dock/dock_stack.dart' show DockFoldController;
-import 'package:dsh_app/ui/chat/empty_state.dart';
-import 'package:dsh_app/ui/chat/step_detail_page.dart';
-import 'package:dsh_app/ui/chat/trajectory_sheet.dart';
-import 'package:dsh_app/ui/chat/turn_summary.dart';
-import 'package:dsh_app/ui/chat/widgets/activity_strip.dart';
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart';
-import 'package:dsh_app/ui/chat/widgets/turn_footnote.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/diff_page.dart';
+import 'package:xrk_app/ui/chat/dock/dock_stack.dart' show DockFoldController;
+import 'package:xrk_app/ui/chat/empty_state.dart';
+import 'package:xrk_app/ui/chat/step_detail_page.dart';
+import 'package:xrk_app/ui/chat/trajectory_sheet.dart';
+import 'package:xrk_app/ui/chat/turn_summary.dart';
+import 'package:xrk_app/ui/chat/widgets/activity_strip.dart';
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart';
+import 'package:xrk_app/ui/chat/widgets/turn_footnote.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

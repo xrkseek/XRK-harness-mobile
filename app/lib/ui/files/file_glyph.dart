@@ -55,7 +55,7 @@ class FileGlyph extends ConsumerWidget {
       );
     }
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final dark = theme.brightness == Brightness.dark;
     final border = BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.6), width: 0.5);
     Widget inner;
@@ -101,7 +101,7 @@ class FileGlyph extends ConsumerWidget {
 
   /// A quiet amber, like the official tree's folders.
   static Color folderColor(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
     return dark
         ? Color.lerp(dsh.warning, const Color(0xFFF2C46A), 0.4)!

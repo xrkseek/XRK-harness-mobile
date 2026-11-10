@@ -1,7 +1,7 @@
 // Small sheets the Bot pages share: edit one text, pick Bots, confirm a
 // deletion.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
@@ -211,7 +211,7 @@ class _BotPickerSheetState extends State<_BotPickerSheet> {
                                       size: 22,
                                       color: _picked.contains(bot.id)
                                           ? theme.colorScheme.primary
-                                          : DshColors.of(context).textTertiary,
+                                          : XrkColors.of(context).textTertiary,
                                     )
                                   else if (_picked.contains(bot.id))
                                     Icon(AppIcons.selected, size: 20, color: theme.colorScheme.primary),
@@ -251,8 +251,8 @@ Future<bool> confirmDelete(BuildContext context, {required String title, require
         TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(context.l10n.commonCancel)),
         FilledButton(
           style: FilledButton.styleFrom(
-            backgroundColor: DshColors.of(dialog).danger,
-            foregroundColor: DshColors.of(dialog).onDanger,
+            backgroundColor: XrkColors.of(dialog).danger,
+            foregroundColor: XrkColors.of(dialog).onDanger,
           ),
           onPressed: () => Navigator.pop(dialog, true),
           child: Text(context.l10n.commonDelete),

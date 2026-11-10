@@ -95,7 +95,7 @@ class MathSource extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted = DshColors.of(context).textTertiary;
+    final muted = XrkColors.of(context).textTertiary;
     final mono = AppType.mono(size: (style.fontSize ?? 16) * 0.875, color: muted, height: display ? 1.55 : 1.3);
     final text = Text.rich(
       TextSpan(text: source.trim(), children: [?trailing]),

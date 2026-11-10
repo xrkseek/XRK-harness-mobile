@@ -1,4 +1,4 @@
-import 'package:dsh_app/update/version.dart';
+import 'package:xrk_app/update/version.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 AppVersion v(String s) => AppVersion.tryParse(s)!;

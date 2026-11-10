@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/features/feature_widgets.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/features/feature_widgets.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,7 +35,7 @@ void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final fixture =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_long_post.json').readAsStringSync()) as Map;
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_long_post.json').readAsStringSync()) as Map;
   final full = (fixture['full']['value'] as Map).cast<String, Object?>();
   final retired = find.byKey(const ValueKey('room-full-text-retired'));
   bool hasText(WidgetTester t) =>
@@ -112,7 +112,7 @@ void main() {
           await frames(t);
         }
         if (failure) {
-          pending.completeError(const DshTransportException('old file failed'));
+          pending.completeError(const XrkTransportException('old file failed'));
         } else {
           pending.complete(full);
         }
@@ -152,7 +152,7 @@ void main() {
   });
   testWidgets('current failure stays in its sheet and retry can read successfully', (t) async {
     final old = fake();
-    old.handlers['file-text'] = (_) => throw const DshTransportException('read failed');
+    old.handlers['file-text'] = (_) => throw const XrkTransportException('read failed');
     await open(t, old, fake());
     await t.tap(find.text('显示全部'));
     await frames(t);
@@ -166,7 +166,7 @@ void main() {
   });
   testWidgets('read failure and changed conversation sit centred, equal insets either side', (t) async {
     final old = fake();
-    old.handlers['file-text'] = (_) => throw const DshTransportException('read failed');
+    old.handlers['file-text'] = (_) => throw const XrkTransportException('read failed');
     final c = await open(t, old, fake());
     await t.tap(find.text('显示全部'));
     await frames(t);

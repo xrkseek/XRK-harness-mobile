@@ -1,10 +1,10 @@
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -52,7 +52,7 @@ void main() {
             b = FakeRpcCarrier({
               'session/cancel': (_) => {'accepted': true},
             });
-        final ca = DshClient.withCarrier(a), cb = DshClient.withCarrier(b);
+        final ca = XrkClient.withCarrier(a), cb = XrkClient.withCarrier(b);
         addTearDown(() async {
           await ca.close();
           await cb.close();

@@ -12,7 +12,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart' hide SettingsSection;
+import 'package:xrk_client/xrk_client.dart' hide SettingsSection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -417,7 +417,7 @@ class _ScheduleEditorPageState extends ConsumerState<ScheduleEditorPage> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final connected = ref.watch(activeConnectionProvider).value != null;
     final device = ref.watch(deviceTimeZoneProvider).value;
     if (_draft == null && device != null) _start(device);
@@ -731,7 +731,7 @@ String _workspaceTitle(Workspace w) => w.title.trim().isNotEmpty ? w.title.trim(
 
 String _short(Object error) => switch (error) {
   ScheduleCreateFailure(:final message) => message,
-  DshRemoteException() => appL10n.featuresRequestRefused,
+  XrkRemoteException() => appL10n.featuresRequestRefused,
   _ => appL10n.commonEngineUnreachable,
 };
 
@@ -859,7 +859,7 @@ class CronField extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final text = controller.text;
     final error = switch (parseCron(text.trim())) {
       CronError(:final message) when text.trim().isNotEmpty => message,
@@ -908,7 +908,7 @@ class SchedulePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final error = draft.validate(now);
     final runs = error == null ? draft.nextRuns(now, anchor: anchor) : const <DateTime>[];
     final foreign = draft.kind != RepeatKind.interval && draft.timeZone != deviceZone;

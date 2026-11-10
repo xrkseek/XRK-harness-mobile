@@ -66,7 +66,7 @@ class DeltaPatch {
       final input = open(patch);
       final header = input.readSync(_headerLength);
       if (header.length < _headerLength || String.fromCharCodes(header, 0, 8) != magic) {
-        throw const FormatException('not a DSHDLT01 patch');
+        throw const FormatException('not a XRKDLT01 patch');
       }
       if (_hex(header, 8) != baseSha256) throw const FormatException('the patch is for another base APK');
       if (_hex(header, 40) != targetSha256) throw const FormatException('the patch builds another APK');

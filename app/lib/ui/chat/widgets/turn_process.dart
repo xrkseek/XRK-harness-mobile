@@ -1,4 +1,4 @@
-// The whole-turn fold (DSH Web's foldCompletedTurns, dsh-TUI's settled groups)
+// The whole-turn fold (XRK Web's foldCompletedTurns, dsh-TUI's settled groups)
 // for the native chat list.
 
 import 'package:flutter/material.dart';
@@ -166,7 +166,7 @@ class _TurnProcessState extends State<TurnProcess> with SingleTickerProviderStat
         onTap: _toggle,
         child: Row(
           children: [
-            StreamLead(child: Icon(AppIcons.completed, size: 18, color: DshColors.of(context).textTertiary)),
+            StreamLead(child: Icon(AppIcons.completed, size: 18, color: XrkColors.of(context).textTertiary)),
             const SizedBox(width: StreamRow.gap),
             Expanded(
               child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: StreamRow.label(context)),

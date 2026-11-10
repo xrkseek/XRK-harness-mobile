@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,7 +55,7 @@ class NotifyPrefs {
   /// 向你提问.
   final bool question;
 
-  /// 实时活动: the status bar chip / island while DSH works (lib/notify/live_activity.dart).
+  /// 实时活动: the status bar chip / island while XRK works (lib/notify/live_activity.dart).
   final bool live;
   final bool loaded;
 
@@ -254,7 +254,7 @@ class _PhoneAlertPrompt {
   final Object lifetime;
   final String requestId;
   final ChatAlert alert;
-  final DshClient client;
+  final XrkClient client;
   final MuxGeneration? generation;
   final HostAlertTracker tracker;
   final Object requestScope;

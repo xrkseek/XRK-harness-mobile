@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:dsh_app/share_code/share_codec.dart';
-import 'package:dsh_app/share_code/share_code_state.dart';
-import 'package:dsh_app/share_code/share_link.dart';
-import 'package:dsh_app/share_code/share_models.dart';
+import 'package:xrk_app/share_code/share_codec.dart';
+import 'package:xrk_app/share_code/share_code_state.dart';
+import 'package:xrk_app/share_code/share_link.dart';
+import 'package:xrk_app/share_code/share_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_engine.dart';

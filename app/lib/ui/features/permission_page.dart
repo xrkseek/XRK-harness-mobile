@@ -6,7 +6,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -35,7 +35,7 @@ import 'feature_widgets.dart';
 /// notice, if any, was shown already). On the phone outside safe mode full
 /// access is the app's 「自动执行命令」 switch; any other default turns it
 /// off. Null when it worked, else the toast to show.
-Future<String?> writePermissionDefault(WidgetRef ref, DshClient client, String value, int revision) async {
+Future<String?> writePermissionDefault(WidgetRef ref, XrkClient client, String value, int revision) async {
   final localNormal =
       ref.read(activeConnectionProvider).value?.isLocal == true && !ref.read(localRuntimeProvider).status.inSafeMode;
   final settings = ref.read(settingsProvider.notifier);

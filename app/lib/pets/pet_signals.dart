@@ -8,7 +8,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -287,7 +287,7 @@ class _HostRuns {
   }
 
   final HostRef host;
-  final DshClient client;
+  final XrkClient client;
   final DateTime Function() clock;
   final void Function() onChange;
   late final StreamSubscription<HostEvent> _sub;

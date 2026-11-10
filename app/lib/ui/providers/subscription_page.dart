@@ -3,7 +3,7 @@
 // lists none for it; a failed read is an error with 「重试」, no connection is
 // the offline message.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,8 +50,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(context.l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(context.l10n.commonSignOut),
@@ -105,7 +105,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final snapshot = ref.watch(subscriptionsProvider).value;
     final status = snapshot?.of(widget.subscription);
     final signedIn = status?.signedIn ?? false;

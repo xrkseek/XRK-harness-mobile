@@ -4,12 +4,12 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 
 /// Why an island gave up (`empty` / `error` messages, or the app's own
-/// timers): every one of them falls back to "open in DSH Web".
+/// timers): every one of them falls back to "open in XRK Web".
 enum IslandFailure {
   /// The official client didn't come up.
   boot,
 
-  /// No outlet for the slot (a DSH upgrade renamed it, the plugin is off).
+  /// No outlet for the slot (a XRK upgrade renamed it, the plugin is off).
   slotMissing,
 
   /// The outlet is there with nothing in it.
@@ -54,7 +54,7 @@ final class IslandReady extends IslandMessage {
   final String slot;
   final String? cell;
 
-  /// DSH Web's release (`__DSH_BOOT__.release.version`).
+  /// XRK Web's release (`__XRK_BOOT__.release.version`).
   final String? release;
 
   /// Entries in the slot's outlet.

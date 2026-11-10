@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/companion/companion_adapt.dart';
-import 'package:dsh_app/companion/companion_light.dart';
+import 'package:xrk_app/companion/companion_adapt.dart';
+import 'package:xrk_app/companion/companion_light.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';

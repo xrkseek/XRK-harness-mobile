@@ -1,4 +1,4 @@
-// System permissions by what they are for: first run's 「想让 DSH Go 帮你做哪些
+// System permissions by what they are for: first run's 「想让 XRK Go 帮你做哪些
 // 事」 (lib/ui/onboarding/access_step.dart) and 设置 › 系统权限
 // (lib/ui/settings/system_access_page.dart) read and open the same items here.
 //
@@ -32,21 +32,13 @@ import 'engine_control.dart';
 import 'notify_state.dart';
 import 'phone_state.dart';
 import 'settings_state.dart';
-import 'voice_model_state.dart' show VoiceModelController, voiceModelDefaultBytes;
 import 'voice_state.dart';
 
-/// The offline voice model's download in MB as the voice settings show it,
-/// said before it is chosen (the voice feature downloads it once the engine
-/// is up).
-final voiceModelApproxMb = (voiceModelDefaultBytes / 1000000).round();
+/// Legacy prefs key from removed SenseVoice onboarding (kept only to clear).
+const onboardingWantsVoiceKey = 'onboarding_wants_voice';
 
-/// First run's answer about voice input, which [VoiceModelController] picks
-/// up: true when 语音输入 was picked (it starts the download once), false when
-/// the page was confirmed without it, absent when the page was skipped.
-const onboardingWantsVoiceKey = VoiceModelController.onboardingKey;
-
-/// What a person picks on first run: things DSH Go does, not permission names.
-enum AccessFeature { files, pet, phone, background, voice }
+/// What a person picks on first run: things the app does, not permission names.
+enum AccessFeature { files, pet, phone, background }
 
 /// One system permission or maker's switch, in the order first run walks
 /// them: the system's own dialogs first, then settings pages, the makers'
@@ -121,7 +113,6 @@ List<AccessItem> accessItemsFor(AccessFeature feature, String? vendor) {
       AccessItem.vendorBackground,
       AccessItem.autostart,
     ],
-    AccessFeature.voice => [AccessItem.mic],
   };
   return [
     for (final item in AccessItem.values)
@@ -249,7 +240,7 @@ class SystemAccessDriver implements AccessDriver {
 
   final Ref ref;
 
-  static const _voice = MethodChannel('dsh/voice');
+  static const _voice = MethodChannel('xrk/voice');
 
   static Future<T?> _safe<T>(Future<T?> Function() read) async {
     try {
@@ -473,8 +464,7 @@ class AccessSetupController extends Notifier<AccessSetup> {
     } catch (_) {}
   }
 
-  /// 「开启所选」: the walk starts, and the voice answer is written for the
-  /// voice feature to pick up. [phoneMode], picked with 手机操控, goes to the
+  /// 「开启所选」: the walk starts. [phoneMode], picked with 手机操控, goes to the
   /// phone's policies now, or as soon as they can be written
   /// ([PhoneController.chooseConfirmMode]).
   Future<void> choose(Set<AccessFeature> features, {PhoneConfirmMode? phoneMode}) async {
@@ -482,7 +472,8 @@ class AccessSetupController extends Notifier<AccessSetup> {
     await _save();
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(onboardingWantsVoiceKey, features.contains(AccessFeature.voice));
+      // Clear legacy SenseVoice onboarding flag from older builds.
+      await prefs.setBool(onboardingWantsVoiceKey, false);
     } catch (_) {}
     if (phoneMode != null && features.contains(AccessFeature.phone)) {
       try {

@@ -11,7 +11,7 @@ workspaceFiles/changes 在 ready 后等待 fs.stat 时，watcher 可能报告 I/
 使用真实 rc1 Cordis、LocalFileSystem、WorkspaceFiles 与真实目录/文件/watcher；测试只控制元数据 await 边界并将合成 EIO 送入实际注册的 watcher callback，不伪造业务结果、不等待真实时钟。该测试不声称在物理设备诱发了内核 watcher 错误。
 
 ```sh
-DSH_PREFIX=/absolute/patched-rc1 node --test runtime/tests/workspace-watch-error.test.mjs runtime/tests/workspace-observation-queue.test.mjs runtime/tests/workspace-lifecycle.test.mjs
+XRK_PREFIX=/absolute/patched-rc1 node --test runtime/tests/workspace-watch-error.test.mjs runtime/tests/workspace-observation-queue.test.mjs runtime/tests/workspace-lifecycle.test.mjs
 ```
 
 新增 6 例在当前累计基线为 4 pass / 2 fail，候选相关三模块 16/16。两失败覆盖 stat 遵从取消与仍成功返回两种情况；控制覆盖用户取消/服务释放后的迟到错误、idle 故障原身份、setup 错误代码与一次 unwatch。使用 Promise gate，不使用 sleep。Android 未编译。
@@ -20,6 +20,6 @@ DSH_PREFIX=/absolute/patched-rc1 node --test runtime/tests/workspace-watch-error
 
 源码补丁相对 ce00763，新增 vendor diff 按文件名排序接在本轮 K+606/607 的 57 条 rc1 链后，严格 58 条可应用，输出与测试模块逐字节相同。独立源码补丁可应用 ce，但运行它必须先使用本轮固定 0.2.2-rc.1 累计升级，不能将它当 rc4 运行时升级包。pins 由本机按最终构建链记录，本包不修改。
 
-vendor diff 用 Python difflib.unified_diff 比较严格 57 链的 dsh-api-workspace-files/lib/index.js 与候选，fromfile/tofile 为 a/b/node_modules/@deepseek-ai/dsh-api-workspace-files/lib/index.js。源码导出只选择本 diff、本测试和本文；没有覆盖已有 observation queue 补丁。无需 golden 更新。
+vendor diff 用 Python difflib.unified_diff 比较严格 57 链的 dsh-api-workspace-files/lib/index.js 与候选，fromfile/tofile 为 a/b/node_modules/@xrkseek/harness-cli-api-workspace-files/lib/index.js。源码导出只选择本 diff、本测试和本文；没有覆盖已有 observation queue 补丁。无需 golden 更新。
 
 真机复核：本机或远程正常打开文件观察，编辑目标应继续刷新；取消/切换会话后应释放观察、无错误提示。内核 watcher 错误仅可在可控测试环境触发，不以删除真实用户文件作故障注入。此修复不改变现有取消和重连策略。

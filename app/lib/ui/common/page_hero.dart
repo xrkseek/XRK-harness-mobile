@@ -11,7 +11,7 @@ import '../theme/theme.dart';
 ///   hero: PageHero(
 ///     leading: EngineRing(...),
 ///     title: '本机引擎',
-///     subtitle: const Text('运行中 · DSH 0.2.1'),
+///     subtitle: const Text('运行中 · XRK 0.2.1'),
 ///     stats: const [('2 小时', '已运行'), ('34', '对话'), ('1.2 GB', '占用')],
 ///   ),
 ///   slivers: [...],
@@ -53,7 +53,7 @@ class PageHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Padding(
       padding: padding,
       child: Column(
@@ -128,7 +128,7 @@ class HeroStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final numberStyle = AppType.tabular(theme.textTheme.titleLarge!);
     final unitStyle = theme.textTheme.labelMedium?.copyWith(color: colors.textTertiary, fontWeight: FontWeight.w400);
     final match = _numberThenUnit.firstMatch(value.trim());

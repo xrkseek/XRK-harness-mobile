@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/engine_settings/field_sheets.dart';
-import 'package:dsh_app/ui/plugins/plugin_inventory_page.dart';
-import 'package:dsh_app/ui/plugins/voice_scribe_settings_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/engine_settings/field_sheets.dart';
+import 'package:xrk_app/ui/plugins/plugin_inventory_page.dart';
+import 'package:xrk_app/ui/plugins/voice_scribe_settings_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -65,7 +65,7 @@ void main() {
         addTearDown(tester.view.reset);
         addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
         late VoiceServer server;
-        late DshClient client;
+        late XrkClient client;
         await tester.runAsync(() async {
           server = await VoiceServer.start();
           (client, _) = await server.client();
@@ -169,10 +169,10 @@ void main() {
   for (final mode in ['host-switch', 'host-return', 'loading-with-old-data', 'plugin-restart']) {
     voiceTest('old voice edit cannot write after $mode', (tester) async {
       late VoiceServer server;
-      late DshClient client;
+      late XrkClient client;
       late VoiceHttpCarrier carrier;
       late VoiceServer otherServer;
-      late DshClient otherClient;
+      late XrkClient otherClient;
       await tester.runAsync(() async {
         server = await VoiceServer.start();
         (client, carrier) = await server.client();
@@ -242,7 +242,7 @@ void main() {
 
   voiceTest('relay states the real unavailable reason and performs no REST request', (tester) async {
     late VoiceServer server;
-    late DshClient client;
+    late XrkClient client;
     await tester.runAsync(() async {
       server = await VoiceServer.start();
       (client, _) = await server.client();

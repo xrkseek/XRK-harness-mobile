@@ -1,4 +1,4 @@
-// 「接着聊」 on a replayed conversation. DSH has no way to import a conversation, so
+// 「接着聊」 on a replayed conversation. XRK has no way to import a conversation, so
 // a new one starts with this one attached as Markdown and a first line in the
 // composer; the person edits it and sends.
 

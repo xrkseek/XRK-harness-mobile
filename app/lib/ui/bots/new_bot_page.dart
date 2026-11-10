@@ -3,7 +3,7 @@
 
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart' hide SettingsSection;
+import 'package:xrk_client/xrk_client.dart' hide SettingsSection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,25 +1,25 @@
 // Which entries the plugin settings page offers, on what a real Host lists
 // (docs/design/plugin-config.md §7). The fixtures come from one r13 runtime
-// (DSH 0.2.1-rc.4 + dsh-go-bridge 0.4.0) launched like the App launches it —
+// (XRK 0.2.1-rc.4 + xrk-bridge 0.4.0) launched like the App launches it —
 // its own overlay, voice, sign-in, message search and phone control —
 // after the person switched on the official voice-input kit and installed a
 // local plugin (`local-notes`):
 //
-//   fixtures/bridge_catalog_r13.json   GET /dsh-go/v1/plugin-config, as served
+//   fixtures/bridge_catalog_r13.json   GET /xrk-mobile/v1/plugin-config, as served
 //   fixtures/plugin_bundles_r13.json   pluginManager/listBundles, same moment
 //                                      (`meta.icon` data URLs cut to "<icon>",
 //                                      the local plugin's source path shortened)
 //
-// 202 entries, 84 configurable: 79 of them DSH's own core rows, one the
+// 202 entries, 84 configurable: 79 of them XRK's own core rows, one the
 // App's phone control, four the person's plugins. The old namespace
 // blacklist let 58 core entries through, writable.
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/ui/plugins/config/plugin_config_entries.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/ui/plugins/config/plugin_config_entries.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_bridge.dart';
@@ -109,7 +109,7 @@ void main() {
         if (e.configurable && !_plugins.contains(e.entryId)) e.entryId,
     ];
     expect(hidden, hasLength(80));
-    final core = {..._rowsOf('@deepseek-ai/dsh-base'), ..._rowsOf('@deepseek-ai/dsh-web-app')};
+    final core = {..._rowsOf('@xrkseek/harness-cli-base'), ..._rowsOf('@xrkseek/harness-cli-web-app')};
     expect(hidden.where(core.contains), hasLength(79));
     expect(hidden.where((id) => !core.contains(id)).toList(), [
       'dsh-app-phone',
@@ -119,7 +119,7 @@ void main() {
       expect(hasPluginConfig(state, id), isFalse, reason: id);
     }
     // Nor the App's other rows, loaded by path.
-    for (final id in ['dsh-go-bridge', 'dsh-app-auth']) {
+    for (final id in ['xrk-bridge', 'dsh-app-auth']) {
       expect(state.isPlugin(id), isFalse, reason: id);
     }
   });
@@ -133,7 +133,7 @@ void main() {
 
   test('a market plugin is a plugin like a local one', () {
     final raw = _rawBundles();
-    final local = raw.firstWhere((b) => b['name'] == 'dsh-go-fixture-local-notes');
+    final local = raw.firstWhere((b) => b['name'] == 'xrk-mobile-fixture-local-notes');
     final market = {
       ...local,
       'name': 'dsh-hooks',
@@ -172,10 +172,10 @@ void main() {
     test('bundles the person did not choose, or that did not load, bring nothing', () {
       final raw = _rawBundles();
       Map<String, Object?> voice(Map<String, Object?> change) => {
-        ...raw.firstWhere((b) => b['name'] == '@deepseek-ai/dsh-experimental-voice-input-bundle'),
+        ...raw.firstWhere((b) => b['name'] == '@xrkseek/harness-cli-experimental-voice-input-bundle'),
         ...change,
       };
-      final others = raw.where((b) => b['name'] != '@deepseek-ai/dsh-experimental-voice-input-bundle').toList();
+      final others = raw.where((b) => b['name'] != '@xrkseek/harness-cli-experimental-voice-input-bundle').toList();
       expect(
         pluginConfigEntries(
           _state(
@@ -217,27 +217,27 @@ void main() {
     test('installation layers and alternatives repeating core ids are not plugins', () {
       final state = _state(_bundles());
       final bundles = {for (final b in _bundles()) b.name: b};
-      for (final name in ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app', '@deepseek-ai/dsh-sdk-minimal']) {
+      for (final name in ['@xrkseek/harness-cli-base', '@xrkseek/harness-cli-web-app', '@xrkseek/harness-cli-sdk-minimal']) {
         expect(PluginConfigScope.owns(bundles[name]!), isFalse, reason: name);
       }
       // dsh-sdk-minimal (not selected) declares rows under core ids.
-      expect(_rowsOf('@deepseek-ai/dsh-sdk-minimal'), containsAll(['llm-deepseek', 'sandbox']));
+      expect(_rowsOf('@xrkseek/harness-cli-sdk-minimal'), containsAll(['llm-deepseek', 'sandbox']));
       expect(state.isPlugin('llm-deepseek'), isFalse);
       expect(state.isPlugin('sandbox'), isFalse);
     });
 
     test('a chosen bundle claiming a core id under another module does not make it a plugin', () {
       final raw = _rawBundles();
-      final local = raw.firstWhere((b) => b['name'] == 'dsh-go-fixture-local-notes');
+      final local = raw.firstWhere((b) => b['name'] == 'xrk-mobile-fixture-local-notes');
       final claim = {
         ...local,
         'rows': [
           ...(local['rows']! as List),
-          {'rowId': 'webserver', 'moduleName': 'dsh-go-fixture-local-notes'},
+          {'rowId': 'webserver', 'moduleName': 'xrk-mobile-fixture-local-notes'},
         ],
       };
       final state = _state(_bundles([...raw.where((b) => b != local), claim]));
-      expect(state.entries['webserver']!.package, '@deepseek-ai/dsh-host-webserver');
+      expect(state.entries['webserver']!.package, '@xrkseek/harness-cli-host-webserver');
       expect(state.isPlugin('webserver'), isFalse);
       expect(pluginConfigEntries(state), _plugins);
     });
@@ -246,17 +246,17 @@ void main() {
       // The review's observation, asserted the right way round: the core
       // (dsh-web-app) declares `webserver` too: the id is not the chosen bundle's alone.
       final raw = _rawBundles();
-      final local = raw.firstWhere((b) => b['name'] == 'dsh-go-fixture-local-notes');
+      final local = raw.firstWhere((b) => b['name'] == 'xrk-mobile-fixture-local-notes');
       final claim = {
         ...local,
         'rows': [
           ...(local['rows']! as List),
-          {'rowId': 'webserver', 'moduleName': '@deepseek-ai/dsh-host-webserver', 'entryId': 'include:webserver'},
+          {'rowId': 'webserver', 'moduleName': '@xrkseek/harness-cli-host-webserver', 'entryId': 'include:webserver'},
         ],
       };
       final state = _state(_bundles([...raw.where((b) => b != local), claim]));
-      expect({..._rowsOf('@deepseek-ai/dsh-base'), ..._rowsOf('@deepseek-ai/dsh-web-app')}, contains('webserver'));
-      expect(state.entries['webserver']!.package, '@deepseek-ai/dsh-host-webserver');
+      expect({..._rowsOf('@xrkseek/harness-cli-base'), ..._rowsOf('@xrkseek/harness-cli-web-app')}, contains('webserver'));
+      expect(state.entries['webserver']!.package, '@xrkseek/harness-cli-host-webserver');
       expect(state.isPlugin('webserver'), isFalse);
       expect(hasPluginConfig(state, 'webserver'), isFalse);
       expect(pluginConfigEntries(state), _plugins);
@@ -264,7 +264,7 @@ void main() {
 
     test('one id inserted by two chosen bundles: neither', () {
       final raw = _rawBundles();
-      final local = raw.firstWhere((b) => b['name'] == 'dsh-go-fixture-local-notes');
+      final local = raw.firstWhere((b) => b['name'] == 'xrk-mobile-fixture-local-notes');
       final twin = {...local, 'name': 'another-notes', 'source': 'another-notes@1.0.0'};
       expect(
         pluginConfigEntries(_state(_bundles([...raw, twin]))),
@@ -277,7 +277,7 @@ void main() {
     final host = await FakeBridgeHost.start();
     addTearDown(host.close);
     host.listed = (_fixture('bridge_catalog_r13.json')! as Map)['entries'] as List<Object?>;
-    final client = await DshClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
+    final client = await XrkClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
     addTearDown(client.close);
     final scope = PluginConfigScope.of(_bundles());
     final api = BridgePluginConfigApi(client, _NoFallback(), scope: () => scope);
@@ -298,10 +298,10 @@ void main() {
       await expectLater(api.read(id), throwsA(isA<PluginConfigFailure>()), reason: id);
     }
     expect(host.writes(), isEmpty);
-    expect(host.requests.where((r) => r.$2.startsWith('$dshGoPluginConfigPath/')), isEmpty);
+    expect(host.requests.where((r) => r.$2.startsWith('$xrkGoPluginConfigPath/')), isEmpty);
     // A plugin of the same list goes out (404 here: the fake serves no form).
     await expectLater(api.read('local-notes'), completion(isNull));
-    expect(host.requests.where((r) => r.$2 == dshGoPluginConfigEntryPath('local-notes')), hasLength(1));
+    expect(host.requests.where((r) => r.$2 == xrkGoPluginConfigEntryPath('local-notes')), hasLength(1));
   });
 }
 

@@ -23,16 +23,16 @@ enum RouteGuard {
 }
 
 /// Turns islands on for the on-device engine without the route guard: for
-/// the PoC and the emulator only (`--dart-define=DSH_GO_LOCAL_ISLANDS=true`),
+/// the PoC and the emulator only (`--dart-define=XRK_GO_LOCAL_ISLANDS=true`),
 /// never in a build that ships.
-const islandsWithoutGuard = bool.fromEnvironment('DSH_GO_LOCAL_ISLANDS');
+const islandsWithoutGuard = bool.fromEnvironment('XRK_GO_LOCAL_ISLANDS');
 
 /// Whether a host may have islands at all (§9). Pure:
 ///
-/// - relay: never (no DSH Web over the relay);
+/// - relay: never (no XRK Web over the relay);
 /// - SSH: yes, the same exposure as the 网页版 entry that's already there;
 /// - on-device: only once the route guard ships with the runtime — the
-///   bridge says so ([reported], `routeGuard` in `/dsh-go/v1/inventory`)
+///   bridge says so ([reported], `routeGuard` in `/xrk-mobile/v1/inventory`)
 ///   *and* a cookieless call to a plugin route is refused ([probed]). Any
 ///   app on the phone can reach 127.0.0.1, so a self-report alone isn't
 ///   enough. [override] is [islandsWithoutGuard].
@@ -49,7 +49,7 @@ bool islandHostAllowed(
 
 /// The route that answers the probe: the bridge's own inventory, which the
 /// guard covers like every other plugin route.
-const routeGuardProbePath = '/dsh-go/v1/inventory';
+const routeGuardProbePath = '/xrk-mobile/v1/inventory';
 
 /// Calls [routeGuardProbePath] on [base] with no cookie and no credentials.
 Future<RouteGuard> probeRouteGuard(
@@ -126,7 +126,7 @@ final islandHostGateProvider = Provider.family<bool, HostRef>((ref, host) {
   return islandHostAllowed(host.kind, reported: reported, probed: probed, override: islandsWithoutGuard);
 });
 
-/// The DSH Web launch URL for [host]'s islands (same as the 网页版's,
+/// The XRK Web launch URL for [host]'s islands (same as the 网页版's,
 /// `localWebUri`): the on-device engine while it runs, an SSH host through
 /// the app's forward while connected, nothing over the relay.
 final islandHostUrlProvider = Provider.autoDispose.family<Uri?, HostRef>((ref, host) {

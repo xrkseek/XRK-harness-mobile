@@ -1,6 +1,6 @@
-import 'package:dsh_app/state/account_state.dart' show accountBrowserProvider;
-import 'package:dsh_app/ui/providers/subscription_sheet.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/account_state.dart' show accountBrowserProvider;
+import 'package:xrk_app/ui/providers/subscription_sheet.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -19,7 +19,7 @@ class _Bridge extends FakeSubscriptionBackend {
   _Bridge(this.failPostAck);
 
   final bool failPostAck;
-  final failure = const DshTransportException('post-ACK poll transport failure');
+  final failure = const XrkTransportException('post-ACK poll transport failure');
   final operations = <(String, Future<_Outcome>)>[];
   final settled = <String>[];
   bool postAckHadSettledAnswer = false;
@@ -150,7 +150,7 @@ void main() {
         final secondPoll = bridge.operations.singleWhere((operation) => operation.$1 == 'poll2');
         final outcome = await secondPoll.$2;
         expect(outcome.error, failPostAck ? same(bridge.failure) : isNull);
-        if (failPostAck) expect(outcome.error, isA<DshTransportException>());
+        if (failPostAck) expect(outcome.error, isA<XrkTransportException>());
         expect(bridge.calls.where((call) => call.startsWith('answer:')), ['answer:att-1:first-code#state']);
 
         // One normal UI frame after the reply: well before the unchanged one-second polling interval.

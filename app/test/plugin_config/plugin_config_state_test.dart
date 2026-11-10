@@ -1,15 +1,15 @@
 // The plugin configuration controller over the in-memory Host interface:
 // live fields at once, the rest held until 保存 and applied with a reload,
 // progress, a failed reload retried, put back or dropped, write-only secrets,
-// conflicts, and 全部恢复默认. Then the live-only adapter over DSH 0.2.1's
+// conflicts, and 全部恢复默认. Then the live-only adapter over XRK 0.2.1's
 // settings/describe and settings/mutate.
 
 import 'dart:async';
 
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/state/plugins_state.dart' show installedPluginsProvider;
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/state/plugins_state.dart' show installedPluginsProvider;
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -200,10 +200,10 @@ void main() {
     expect(api.entries['translator']!.secrets, {'apiKey': 'sk'});
   });
 
-  test('DSH 0.2.1: the engine settings serve live fields only, written through settings/mutate', () async {
+  test('XRK 0.2.1: the engine settings serve live fields only, written through settings/mutate', () async {
     // Thinking translation switched on: its rows are a plugin's.
     final host = FakeSettingsHost()..bundles = bridgeBundles();
-    final c = ProviderContainer(overrides: engineOverrides(DshClient.withCarrier(host)));
+    final c = ProviderContainer(overrides: engineOverrides(XrkClient.withCarrier(host)));
     addTearDown(c.dispose);
     final sub = c.listen(pluginConfigProvider, (_, _) {});
     addTearDown(sub.close);

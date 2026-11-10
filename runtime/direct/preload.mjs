@@ -7,7 +7,7 @@ import { installLookup } from './dns.mjs';
 import { installCommands } from './processes.mjs';
 import { installModules } from './modules.mjs';
 
-const rootfs = fileURLToPath(import.meta.url).replace(/\/opt\/dsh-go\/direct\/preload\.mjs$/u, '');
+const rootfs = fileURLToPath(import.meta.url).replace(/\/opt\/xrk-mobile\/direct\/preload\.mjs$/u, '');
 try {
   if (rootfs === fileURLToPath(import.meta.url)) throw new Error('preload is outside its runtime path');
   const config = JSON.parse(fs.readFileSync(`${rootfs}/opt/dsh-app/direct/config.json`, 'utf8'));
@@ -30,7 +30,7 @@ try {
   const processes = installCommands(config, paths);
   const adapter = Object.freeze({ ...paths, ...processes });
   globalThis[Symbol.for('dsh.go.direct')] = adapter;
-  const nativeModules = JSON.parse(fs.readFileSync(`${rootfs}/opt/dsh-go/direct/native-addons.json`, 'utf8'));
+  const nativeModules = JSON.parse(fs.readFileSync(`${rootfs}/opt/xrk-mobile/direct/native-addons.json`, 'utf8'));
   installModules(paths, nativeModules);
   installLookup({ resolvConf: `${rootfs}/etc/resolv.conf`, hostsFile: `${rootfs}/etc/hosts` });
   // pnpm 11's exact environment spelling is covered by the locked-source test.
@@ -41,7 +41,7 @@ try {
   if (main) fs.writeFileSync(`${rootfs}/tmp/dsh-web.pid`, `${process.pid}\n`, { mode: 0o600 });
   // Same hook point as the proot shim; the cache's physical-root support belongs
   // to the independent cache follow-up. Do not claim cache hits from this import.
-  if (main) await import(pathToFileURL(`${rootfs}/opt/dsh-go/boot-cache.mjs`).href);
+  if (main) await import(pathToFileURL(`${rootfs}/opt/xrk-mobile/boot-cache.mjs`).href);
 } catch (error) {
   console.error(`[dsh-app-direct] launch failed: ${error instanceof Error ? error.message : String(error)}`);
   throw error;

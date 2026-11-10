@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/bots/bot_details_page.dart';
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/bots/bot_details_page.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,7 +35,7 @@ void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final fixture =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_duplicate_bot.json').readAsStringSync()) as Map;
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_duplicate_bot.json').readAsStringSync()) as Map;
   final copy = (fixture['first']['value'] as Map).cast<String, Object?>();
   final row = find.byKey(const ValueKey('duplicate-bot-row'));
   final confirm = find.byKey(const ValueKey('duplicate-bot-confirm'));
@@ -125,7 +125,7 @@ void main() {
     await frames(t);
     expect(t.widget<ListPageRow>(row).onTap, isNull);
     expect(old.endpoints.where((x) => x == 'duplicate-bot'), hasLength(1));
-    pending.completeError(const DshTransportException('copy failed'));
+    pending.completeError(const XrkTransportException('copy failed'));
     await frames(t);
     expect(t.widget<ListPageRow>(row).onTap, isNotNull);
     expect(find.byType(SnackBar), findsOneWidget);
@@ -134,7 +134,7 @@ void main() {
   testWidgets('created copy with a failed team refresh is reported as created, not failed', (t) async {
     final old = fake();
     old.handlers['duplicate-bot'] = (_) {
-      old.handlers['state'] = (_) => throw const DshTransportException('state failed');
+      old.handlers['state'] = (_) => throw const XrkTransportException('state failed');
       return copy;
     };
     await open(t, old, fake());
@@ -216,7 +216,7 @@ void main() {
       await frames(t);
       final before = next.endpoints.length;
       if (failure) {
-        pending.completeError(const DshTransportException('late failure'));
+        pending.completeError(const XrkTransportException('late failure'));
       } else {
         pending.complete(copy);
       }

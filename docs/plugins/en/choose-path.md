@@ -2,14 +2,14 @@
 
 [中文](../choose-path.md)
 
-There are three ways into dsh-go. Start from what you have, take the cheapest path that is enough, and add to it later.
+There are three ways into xrk-mobile. Start from what you have, take the cheapest path that is enough, and add to it later.
 
 | You have | Take | You write | What the app shows |
 |---|---|---|---|
-| A DSH plugin with commands, skills, settings | [Nothing to change](#1-nothing-to-change) | Nothing | Slash menu, native settings form |
+| A XRK plugin with commands, skills, settings | [Nothing to change](#1-nothing-to-change) | Nothing | Slash menu, native settings form |
 | A plugin with tools, and you want better results | [Tool cards](#2-tool-cards) | The tool's `presentationMeta` | Tool results as native cards, on every host |
-| Buttons, panels or status on the chat page in mind | [Native plugin](#3-native-plugin) | `dshGo` in `package.json` + `ctx.dshGo` | Capsules, menus, status line, panels and more |
-| An existing DSH web interface | [Web plugin](#4-plugins-with-a-web-interface) | Nothing, or move piece by piece to native | Web island or "Open in web" |
+| Buttons, panels or status on the chat page in mind | [Native plugin](#3-native-plugin) | `xrkGo` in `package.json` + `ctx.xrkGo` | Capsules, menus, status line, panels and more |
+| An existing XRK web interface | [Web plugin](#4-plugins-with-a-web-interface) | Nothing, or move piece by piece to native | Web island or "Open in web" |
 
 ## 1. Nothing to change
 
@@ -48,7 +48,7 @@ They work unchanged. The app seats each slot you register in this order: native 
 
 **Moving pieces to native is better:** a web island takes 1–3 s to open first, costs about 200 MB and is limited in how many can be on screen. Native places open at once and look like the rest of the app.
 
-`dshGo` and `ctx.dshGo` only affect the app, so DSH Web keeps your web interface and the two don't interfere. A rough map:
+`xrkGo` and `ctx.xrkGo` only affect the app, so XRK Web keeps your web interface and the two don't interfere. A rough map:
 
 | Web slot | Becomes |
 |---|---|

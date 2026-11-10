@@ -1,9 +1,9 @@
 // `SeatRenderers.island`: the [IslandView] with what the seats know —
-// every name the occupants go by in DSH Web (how island.js finds a
+// every name the occupants go by in XRK Web (how island.js finds a
 // third-party section, panel or tab, which have no ids on screen), room for
 // the gesture bar, and a conversation a plugin asks for, opened natively.
 
-import 'package:dsh_client/dsh_client.dart' show BridgeInventory, ClientSlotOccupant;
+import 'package:xrk_client/xrk_client.dart' show BridgeInventory, ClientSlotOccupant;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -43,7 +43,7 @@ class SeatIslandView extends ConsumerWidget {
   }
 }
 
-/// Every name the occupants of [items] go by in DSH Web: their own labels,
+/// Every name the occupants of [items] go by in XRK Web: their own labels,
 /// in each language the bridge reported, and for a panel or a tab the label
 /// of its sidebar entry or tab title (the `main` or tab body itself is
 /// registered without one).

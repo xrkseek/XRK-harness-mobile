@@ -1,7 +1,7 @@
-// The dsh-go-support skill: troubleshooting playbook + issue draft, reading the
+// The xrk-mobile-support skill: troubleshooting playbook + issue draft, reading the
 // diagnostics snapshot the app writes into the engine.
 
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
@@ -11,11 +11,11 @@ void main() {
 
   test('the bundle ships SKILL.md only, managed and parseable', () async {
     final bundle = await loadUiSkillBundle(readAssetFromDisk, supportSkillName);
-    expect(bundle.name, 'dsh-go-support');
+    expect(bundle.name, 'xrk-mobile-support');
     expect(bundle.files.keys, ['SKILL.md']);
     expect(bundle.skillMd.startsWith('---'), isTrue);
-    expect(bundle.skillMd, contains('# dsh-go:managed'));
-    expect(bundle.skillMd, contains('name: dsh-go-support'));
+    expect(bundle.skillMd, contains('# xrk-mobile:managed'));
+    expect(bundle.skillMd, contains('name: xrk-mobile-support'));
   });
 
   test('it points at the diagnostics file and covers the playbook', () async {

@@ -1,4 +1,4 @@
-// 网页模式: the official DSH Web as the app's home. Where the native handle
+// 网页模式: the official XRK Web as the app's home. Where the native handle
 // sits in every layout (against the room the injected CSS reserves in the
 // page), how the two modes hand the conversation over, and how the rest of
 // the phone (shares, launcher shortcuts, 「在网页版打开」) lands in the page.
@@ -8,20 +8,20 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/ui_mode_state.dart';
-import 'package:dsh_app/ui/common/side_insets.dart';
-import 'package:dsh_app/ui/pets/pet_settings_page.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart';
-import 'package:dsh_app/ui/web/dsh_web_launcher.dart';
-import 'package:dsh_app/ui/web/mode_home.dart';
-import 'package:dsh_app/ui/web/web_back.dart';
-import 'package:dsh_app/ui/web/web_handle.dart';
-import 'package:dsh_app/ui/web/web_home.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_app/ui/web/web_view_page.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/ui_mode_state.dart';
+import 'package:xrk_app/ui/common/side_insets.dart';
+import 'package:xrk_app/ui/pets/pet_settings_page.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart';
+import 'package:xrk_app/ui/web/dsh_web_launcher.dart';
+import 'package:xrk_app/ui/web/mode_home.dart';
+import 'package:xrk_app/ui/web/web_back.dart';
+import 'package:xrk_app/ui/web/web_handle.dart';
+import 'package:xrk_app/ui/web/web_home.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_app/ui/web/web_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -106,8 +106,8 @@ Future<ProviderContainer> _pumpHome(
   DshWebTarget? initial,
 }) async {
   _useWindow(tester, window);
-  _shares = _Native(tester, 'dsh/share', 'share');
-  _entries = _Native(tester, 'dsh/shortcuts', 'entry');
+  _shares = _Native(tester, 'xrk/share', 'share');
+  _entries = _Native(tester, 'xrk/shortcuts', 'entry');
   _platformCalls = [];
   tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
     _platformCalls.add(call);
@@ -193,7 +193,7 @@ void main() {
   group('the conversation follows across modes', () {
     testWidgets('the page reports where it is; the app keeps it', (tester) async {
       final container = await _pumpHome(tester, _windows.first, session: 's1');
-      _page.post('DshAppState', jsonEncode({'session': 's9'}));
+      _page.post('XrkAppState', jsonEncode({'session': 's9'}));
       await tester.pump();
       expect(container.read(currentSessionProvider), 's9');
       // Its own report doesn't send the page anywhere.
@@ -225,7 +225,7 @@ void main() {
     testWidgets('the handle goes back to native with the conversation on screen', (tester) async {
       final container = await _pumpHome(tester, _windows.first, session: 's1');
       await container.read(uiModeProvider.notifier).set(UiMode.web);
-      _page.post('DshAppState', jsonEncode({'session': 's4'}));
+      _page.post('XrkAppState', jsonEncode({'session': 's4'}));
       await tester.tap(_handle);
       await tester.pumpAndSettle();
       expect(find.text('切回原生界面'), findsOneWidget);
@@ -281,7 +281,7 @@ void main() {
       await pumpFrames(tester, 3);
       expect(_opened().last, {'newSession': true});
       expect(_composeCalls().single, contains('"text":"帮我看看这份报价"'));
-      _page.post('DshAppCompose', jsonEncode({'text': true, 'files': 0}));
+      _page.post('XrkAppCompose', jsonEncode({'text': true, 'files': 0}));
       await pumpFrames(tester, 2);
       expect(find.byType(SnackBar), findsNothing);
     });
@@ -291,7 +291,7 @@ void main() {
       await _shares.push({'text': '一段分享', 'skipped': <Object>[]});
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
       await pumpFrames(tester, 3);
-      _page.post('DshAppCompose', jsonEncode({'text': false, 'files': 0}));
+      _page.post('XrkAppCompose', jsonEncode({'text': false, 'files': 0}));
       await pumpFrames(tester, 2);
       final copied = _platformCalls.where((c) => c.method == 'Clipboard.setData').single;
       expect((copied.arguments as Map)['text'], '一段分享');
@@ -315,7 +315,7 @@ void main() {
       expect(_composeCalls().single, contains('"name":"screenshot.png"'));
       expect(_composeCalls().single, contains('"type":"image/png"'));
       expect(image.existsSync(), isFalse);
-      _page.post('DshAppCompose', jsonEncode({'text': true, 'files': 1}));
+      _page.post('XrkAppCompose', jsonEncode({'text': true, 'files': 1}));
       await pumpFrames(tester, 2);
     });
 

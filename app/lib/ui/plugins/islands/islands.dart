@@ -1,4 +1,4 @@
-/// Web islands (docs/design/plugin-seams.md §6–§9): DSH Web's own client
+/// Web islands (docs/design/plugin-seams.md §6–§9): XRK Web's own client
 /// with everything hidden but one plugin slot, in a native seat.
 library;
 

@@ -1,20 +1,20 @@
 import 'dart:async';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/features_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/features/agent_presets_page.dart';
-import 'package:dsh_app/ui/features/feature_format.dart';
-import 'package:dsh_app/ui/features/feature_kit.dart';
-import 'package:dsh_app/ui/features/feature_widgets.dart';
-import 'package:dsh_app/ui/features/jobs_page.dart';
-import 'package:dsh_app/ui/features/permission_page.dart';
-import 'package:dsh_app/ui/features/schedules_page.dart';
-import 'package:dsh_app/ui/features/skills_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/features_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/features/agent_presets_page.dart';
+import 'package:xrk_app/ui/features/feature_format.dart';
+import 'package:xrk_app/ui/features/feature_kit.dart';
+import 'package:xrk_app/ui/features/feature_widgets.dart';
+import 'package:xrk_app/ui/features/jobs_page.dart';
+import 'package:xrk_app/ui/features/permission_page.dart';
+import 'package:xrk_app/ui/features/schedules_page.dart';
+import 'package:xrk_app/ui/features/skills_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -77,11 +77,11 @@ Future<void> _pump(WidgetTester tester, Widget page, List<Override> overrides) a
 
 void main() {
   final errors = <(Object, String?)>[
-    (const DshRemoteException('session/not-found', 'raw'), '这个对话已经不在了'),
-    (const DshRemoteException('gateway/not-found', 'raw'), '当前引擎版本不支持'),
-    (const DshRemoteException('gateway/internal', 'raw'), null),
-    (const DshRemoteException('settings/conflict', 'raw'), null),
-    (const DshTransportException('raw'), '没能连上引擎'),
+    (const XrkRemoteException('session/not-found', 'raw'), '这个对话已经不在了'),
+    (const XrkRemoteException('gateway/not-found', 'raw'), '当前引擎版本不支持'),
+    (const XrkRemoteException('gateway/internal', 'raw'), null),
+    (const XrkRemoteException('settings/conflict', 'raw'), null),
+    (const XrkTransportException('raw'), '没能连上引擎'),
     (TimeoutException('raw'), '没能连上引擎'),
     (const DshCarrierLostException('raw'), '没能连上引擎'),
     (const DshClosedException(), '没能连上引擎'),
@@ -96,7 +96,7 @@ void main() {
       expect(featureErrorText('没能读取', error), reason == null ? '没能读取' : '没能读取：$reason');
     });
   }
-  const failure = DshRemoteException('gateway/not-found', 'Unknown method Exception');
+  const failure = XrkRemoteException('gateway/not-found', 'Unknown method Exception');
   final pages = <Widget>[
     const SchedulesPage(),
     const JobsPage(sessionId: 's1'),
@@ -146,10 +146,10 @@ void main() {
   for (final conflict in [false, true]) {
     testWidgets('permission saves host preset and clears forced mode; conflict=$conflict', (tester) async {
       final carrier = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       addTearDown(client.close);
       carrier.handlers['settings/mutate'] = (_) {
-        if (conflict) throw const DshRemoteException('settings/conflict', 'raw');
+        if (conflict) throw const XrkRemoteException('settings/conflict', 'raw');
         return {
           'ns': 'permission',
           'value': {'defaultPreset': 'workspace-write'},
@@ -176,7 +176,7 @@ void main() {
 
   testWidgets('full access enables local override without mutating host default', (tester) async {
     final carrier = FakePluginCarrier();
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
     await _pump(tester, const PermissionPage(), [
       activeConnectionProvider.overrideWithValue(AsyncData(HostConnection(client: client, label: '本机', isLocal: true))),

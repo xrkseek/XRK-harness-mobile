@@ -204,7 +204,7 @@ class _ActivityStripState extends State<ActivityStrip> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final a = widget.activity;
     final whale = widget.whaleColor ?? (a.waiting ? dsh.warning : whaleColorFor(theme.brightness));
 
@@ -302,7 +302,7 @@ class _Line extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final a = activity;
 
     // Three tiers: what (title, onSurface 600) › on what (detail, secondary)
@@ -389,7 +389,7 @@ class TodoProgress extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final fraction = total == 0 ? 0.0 : (done / total).clamp(0.0, 1.0);
     return Semantics(
       label: l10n.chatTodoProgress(done, total),

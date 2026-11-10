@@ -10,16 +10,26 @@ import '../common/brief_notice.dart';
 
 final _ansi = RegExp(r'\x1B\[[0-9;?]*[ -/]*[@-~]');
 
-/// Strips ANSI escape sequences (DSH and node colour their output).
+/// Product shell log prefix (Kotlin runtime / installer). Legacy `[dsh-app]` still highlighted.
+const kAppLogPrefix = '[xrkh-app]';
+const kAppLogPrefixLegacy = '[dsh-app]';
+
+/// Strips ANSI escape sequences (XRK and node colour their output).
 String stripAnsi(String line) => line.replaceAll(_ansi, '');
 
-/// Live log well: monospace 12/1.5 in the code-well material, pinned to the newest
-/// line. Built as a reversed list, so it stays at the bottom without jump logic
-/// while the user hasn't scrolled up.
+bool _isAppLogLine(String line) =>
+    line.startsWith(kAppLogPrefix) || line.startsWith(kAppLogPrefixLegacy);
+
+/// Live log well: monospace 12/1.5 in the code-well material.
+///
+/// Lines are chronological (oldest → newest). When the list grows, the view
+/// sticks to the newest line unless the user has scrolled up. Sparse logs sit
+/// at the **top** of the well — a reversed ListView used to leave a huge blank
+/// band above a handful of install lines.
 ///
 /// [terminal] draws it as a bare dark terminal (dark palette in both themes,
 /// no well of its own) for [TerminalCard].
-class LogView extends StatelessWidget {
+class LogView extends StatefulWidget {
   const LogView({super.key, required this.lines, this.emptyText, this.terminal = false});
 
   final List<String> lines;
@@ -27,24 +37,71 @@ class LogView extends StatelessWidget {
   final bool terminal;
 
   @override
+  State<LogView> createState() => _LogViewState();
+}
+
+class _LogViewState extends State<LogView> {
+  final _controller = ScrollController();
+  int _lastLen = 0;
+  bool _stickToEnd = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _lastLen = widget.lines.length;
+    _controller.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeStick());
+  }
+
+  @override
+  void didUpdateWidget(covariant LogView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.lines.length != _lastLen) {
+      _lastLen = widget.lines.length;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _maybeStick());
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onScroll);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_controller.hasClients) return;
+    final pos = _controller.position;
+    // Within ~48px of the bottom → keep following new lines.
+    _stickToEnd = pos.maxScrollExtent - pos.pixels <= 48;
+  }
+
+  void _maybeStick() {
+    if (!_stickToEnd || !_controller.hasClients) return;
+    final max = _controller.position.maxScrollExtent;
+    if (max <= 0) return;
+    _controller.jumpTo(max);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = terminal ? TerminalCard.colorsOf(context) : DshColors.of(context);
-    final accent = terminal ? TerminalPalette.of(context).accent : Theme.of(context).colorScheme.primary;
+    final colors = widget.terminal ? TerminalCard.colorsOf(context) : XrkColors.of(context);
+    final accent = widget.terminal ? TerminalPalette.of(context).accent : Theme.of(context).colorScheme.primary;
     final base = AppType.monoSmall(color: colors.codeWellFg);
-    final body = lines.isEmpty
+    final body = widget.lines.isEmpty
         ? Center(
-            child: Text(emptyText ?? l10n.phoneLogEmpty, style: base.copyWith(color: colors.textTertiary)),
+            child: Text(widget.emptyText ?? l10n.phoneLogEmpty, style: base.copyWith(color: colors.textTertiary)),
           )
         : SelectionArea(
             child: ListView.builder(
-              reverse: true,
-              padding: terminal ? const EdgeInsets.fromLTRB(16, 4, 16, 14) : const EdgeInsets.fromLTRB(14, 12, 14, 12),
-              itemCount: lines.length,
+              controller: _controller,
+              padding: widget.terminal ? const EdgeInsets.fromLTRB(16, 4, 16, 14) : const EdgeInsets.fromLTRB(14, 12, 14, 12),
+              itemCount: widget.lines.length,
               itemBuilder: (context, index) {
-                final line = stripAnsi(lines[lines.length - 1 - index]);
+                final line = stripAnsi(widget.lines[index]);
                 final Color color;
-                if (line.startsWith('[dsh-app]')) {
+                if (_isAppLogLine(line)) {
                   color = accent;
                 } else if (_looksLikeError(line)) {
                   color = colors.danger;
@@ -55,7 +112,7 @@ class LogView extends StatelessWidget {
               },
             ),
           );
-    if (terminal) return body;
+    if (widget.terminal) return body;
     return DecoratedBox(
       decoration: ShapeDecoration(
         color: colors.codeWellBg,
@@ -108,8 +165,8 @@ class TerminalCard extends StatelessWidget {
 
   /// The dark semantic colours of the current palette: the card is dark in
   /// both themes, its neutrals follow the palette.
-  static DshColors colorsOf(BuildContext context) =>
-      DshColors.forAccent(Brightness.dark, DshSurfaces.of(context).accent);
+  static XrkColors colorsOf(BuildContext context) =>
+      XrkColors.forAccent(Brightness.dark, XrkSurfaces.of(context).accent);
 
   @override
   Widget build(BuildContext context) {

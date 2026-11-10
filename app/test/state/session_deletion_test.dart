@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/composer_quote.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/draft_store.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/session_deletion_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/composer_quote.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/draft_store.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/session_deletion_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,12 +32,12 @@ class _Backend implements SessionDeletionBackend {
   void Function(String)? afterDelete;
 
   @override
-  Future<bool> supported(DshClient client) async {
+  Future<bool> supported(XrkClient client) async {
     supportCalls++;
     return support;
   }
   @override
-  Future<void> delete(DshClient client, String sessionId) async {
+  Future<void> delete(XrkClient client, String sessionId) async {
     calls.add(sessionId);
     if (gates[sessionId] case final gate?) await gate.future;
     if (failures[sessionId] case final error?) throw error;
@@ -89,7 +89,7 @@ void main() {
     container.read(composerQuoteProvider.notifier).set('s1', 'quote');
     container.read(currentSessionProvider.notifier).select('s1');
     await container.read(drawerViewProvider.notifier).createFolder('Folder', sessionIds: ['s1', 's2']);
-    backend.failures['s2'] = const DshRemoteException('writer-held', 'private details');
+    backend.failures['s2'] = const XrkRemoteException('writer-held', 'private details');
     final result = await container.read(sessionDeletionProvider.notifier).delete(['s1', 's2'], owner: owner(container));
     expect(result.deleted, ['s1']);
     expect(result.failures, {'s2': 'writer-held'});
@@ -120,7 +120,7 @@ void main() {
     // A Host that has no deletion route answers the POST with 404, which the
     // client surfaces as a stable `unavailable` refusal. There is no separate
     // pre-flight capability call in the delete path.
-    backend.failures['s1'] = const DshRemoteException('unavailable', 'controlled fake refusal');
+    backend.failures['s1'] = const XrkRemoteException('unavailable', 'controlled fake refusal');
     final result = await container.read(sessionDeletionProvider.notifier).delete(['s1'], owner: owner(container));
     expect(result.failures, {'s1': 'unavailable'});
     expect(backend.calls, ['s1']);
@@ -172,7 +172,7 @@ void main() {
 
   test('lost or invalid response stops batch without retry; remaining items not attempted', () async {
     final (container, _, backend) = await start();
-    backend.failures['s1'] = const DshTransportException('reply lost');
+    backend.failures['s1'] = const XrkTransportException('reply lost');
     final result = await container.read(sessionDeletionProvider.notifier).delete(['s1', 's2'], owner: owner(container));
     expect(backend.calls, ['s1']);
     expect(result.failures, {'s1': 'connection-lost', 's2': 'not-attempted'});

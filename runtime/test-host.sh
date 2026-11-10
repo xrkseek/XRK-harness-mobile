@@ -3,7 +3,7 @@
 # Termux proot is a bionic binary). Runs the guest half of manifest.launch.argv (from
 # `/usr/bin/env -i` on) exactly as the app would, then checks: pnpm and its registry plus a
 # real `dsh plugin` add/remove, token line, auth exchange, static health URL, graceful SIGTERM
-# via the pid file, an offline start, and the route guard patch plus dsh-go-bridge
+# via the pid file, an offline start, and the route guard patch plus xrk-bridge
 # (runtime/tests/route-guard.mjs against every registered route), and the native plugin protocol
 # end to end (runtime/tests/native-bridge.mjs --shipped) and its v1.2 capabilities
 # (runtime/tests/native-capabilities-live.mjs). bwrap has real hard links, so
@@ -82,25 +82,25 @@ run --share-net -- "${GUEST[@]:0:${#GUEST[@]}-3}" /bin/bash -c '
   set -e
   echo "pnpm $(pnpm --version); pnpm registry: $(pnpm config get registry); npm registry: $(npm config get registry)"
   test "$(pnpm config get registry)" = https://registry.npmmirror.com/
-  export DSH_HOME=/tmp/dsh-plugin-test; rm -rf "$DSH_HOME"
+  export XRK_HOME=/tmp/dsh-plugin-test; rm -rf "$XRK_HOME"
   SECONDS=0; dsh plugin --profile web add "$1" > /tmp/plugin-add.log 2>&1 || { tail -30 /tmp/plugin-add.log; exit 1; }
-  echo "added $1 in ${SECONDS}s; profile $(du -sh "$DSH_HOME/profiles/web" | cut -f1), store $(du -sh "$(pnpm store path)" | cut -f1)"
-  grep -q "\"${1%@*}\"" "$DSH_HOME/profiles/web/package.json"
+  echo "added $1 in ${SECONDS}s; profile $(du -sh "$XRK_HOME/profiles/web" | cut -f1), store $(du -sh "$(pnpm store path)" | cut -f1)"
+  grep -q "\"${1%@*}\"" "$XRK_HOME/profiles/web/package.json"
   dsh plugin --profile web remove "${1%@*}" > /tmp/plugin-remove.log 2>&1 || { tail -30 /tmp/plugin-remove.log; exit 1; }
-  if grep -q "\"${1%@*}\"" "$DSH_HOME/profiles/web/package.json"; then echo "still a dependency after remove"; exit 1; fi
-  rm -rf "$DSH_HOME"
+  if grep -q "\"${1%@*}\"" "$XRK_HOME/profiles/web/package.json"; then echo "still a dependency after remove"; exit 1; fi
+  rm -rf "$XRK_HOME"
 ' _ "$PLUGIN" && pass "pnpm on PATH, npmmirror registry, dsh plugin add/remove $PLUGIN" || fail "pnpm / plugin install"
 else echo "  (skipped: NETWORK=0)"; fi
 
-echo "== dsh web (online, port $PORT)"; SECONDS=0
+echo "== xrkh serve (online, port $PORT)"; SECONDS=0
 LOG="$HERE/.work/$ABI/dsh-web.log"
 run --share-net -- "${GUEST[@]}" > "$LOG" 2>&1 &
 BG=$!
 token=""; for _ in $(seq 1 240); do
-  token="$(sed -n 's#^dsh web: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$LOG" | head -1)"
+  token="$(sed -n 's#^xrkh serve: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$LOG" | head -1)"
   [[ -n "$token" ]] && break; sleep 0.5
 done
-if [[ -n "$token" ]]; then pass "token line after ${SECONDS}s: $(grep -m1 '^dsh web:' "$LOG" | sed 's/token=.*/token=<redacted>/')"; else fail "no token line"; cat "$LOG"; fi
+if [[ -n "$token" ]]; then pass "token line after ${SECONDS}s: $(grep -m1 '^xrkh serve:' "$LOG" | sed 's/token=.*/token=<redacted>/')"; else fail "no token line"; cat "$LOG"; fi
 B="http://127.0.0.1:$PORT"
 code="$(curl -s -o /dev/null -w '%{http_code}' "$B/")"; [[ "$code" == 401 ]] && pass "GET / without cookie -> 401" || fail "GET / -> $code"
 hdr="$(curl -s -D - -o /dev/null "$B/?token=$token")"
@@ -122,31 +122,31 @@ for _ in $(seq 1 40); do kill -0 "$BG" 2>/dev/null || break; sleep 0.25; done
 if kill -0 "$BG" 2>/dev/null; then fail "still running 10s after SIGTERM"; kill -KILL "$BG"
 else rc=0; wait "$BG" || rc=$?; pass "dsh exited after SIGTERM (rc=$rc)"; fi
 
-echo "== dsh web offline (no network namespace access)"
+echo "== xrkh serve offline (no network namespace access)"
 LOG2="$HERE/.work/$ABI/dsh-web-offline.log"
 run --unshare-net -- "${GUEST[@]}" > "$LOG2" 2>&1 &
 BG=$!
-ok=0; for _ in $(seq 1 240); do grep -q '^dsh web: http' "$LOG2" && { ok=1; break; }; kill -0 "$BG" 2>/dev/null || break; sleep 0.5; done
+ok=0; for _ in $(seq 1 240); do grep -q '^xrkh serve: http' "$LOG2" && { ok=1; break; }; kill -0 "$BG" 2>/dev/null || break; sleep 0.5; done
 [[ $ok == 1 ]] && pass "starts and prints the token line without network" || { fail "offline start"; tail -20 "$LOG2"; }
 kill -TERM "$BG" 2>/dev/null || true; wait "$BG" 2>/dev/null || true
 
-echo "== route guard patch and dsh-go-bridge (port $((PORT + 1)))"
-python3 -I - "$ROOT" "$HERE/patches/pins.json" "$MANIFEST" <<'PY' && pass "patched webserver matches pins.json; bridge at /opt/dsh-go; overlay loads it" || fail "patch / bridge layout"
+echo "== route guard patch and xrk-bridge (port $((PORT + 1)))"
+python3 -I - "$ROOT" "$HERE/patches/pins.json" "$MANIFEST" <<'PY' && pass "patched webserver matches pins.json; bridge at /opt/xrk-mobile; overlay loads it" || fail "patch / bridge layout"
 import hashlib, json, os, sys
 root, pins, manifest = sys.argv[1:4]
 m = json.load(open(manifest))
 terminal = {}
 for name, versions in sorted(json.load(open(pins))["patches"].items()):
-    for rel, pin in versions[m["dshVersion"]].items():
+    for rel, pin in versions[m["engineVersion"]].items():
         if rel in terminal:
             assert terminal[rel] == pin["before"], (name, rel, 'broken ordered hash chain')
         terminal[rel] = pin["after"]
-    assert name in m["dshPatches"], m["dshPatches"]
+    assert name in m["enginePatches"], m["enginePatches"]
 for rel, expected in terminal.items():
     got = hashlib.sha256(open(os.path.join(root, "opt/dsh", rel), "rb").read()).hexdigest()
     assert got == expected, (rel, got)
-assert os.path.isfile(os.path.join(root, "opt/dsh-go/dsh-go-bridge/lib/client.js"))
-assert "/opt/dsh-go/dsh-go-bridge/lib/index.js" in open(os.path.join(root, "etc/dsh-app/dsh-web.patch.yml")).read()
+assert os.path.isfile(os.path.join(root, "opt/xrk-mobile/xrk-bridge/lib/client.js"))
+assert "/opt/xrk-mobile/xrk-bridge/lib/index.js" in open(os.path.join(root, "etc/dsh-app/dsh-web.patch.yml")).read()
 PY
 rm -rf "$ROOT/tmp/route-probe"; mkdir -p "$ROOT/tmp/route-probe"
 cp "$HERE/tests/route-probe/"* "$HERE/tests/route-guard.mjs" "$ROOT/tmp/route-probe/"
@@ -160,7 +160,7 @@ LOG3="$HERE/.work/$ABI/dsh-web-guard.log"
 run --share-net -- "${GUARD_GUEST[@]}" > "$LOG3" 2>&1 &
 BG=$!
 token=""; for _ in $(seq 1 240); do
-  token="$(sed -n 's#^dsh web: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$LOG3" | head -1)"
+  token="$(sed -n 's#^xrkh serve: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$LOG3" | head -1)"
   [[ -n "$token" ]] && break; kill -0 "$BG" 2>/dev/null || break; sleep 0.5
 done
 if [[ -n "$token" ]]; then
@@ -168,7 +168,7 @@ if [[ -n "$token" ]]; then
     && pass "every route guarded; official client, WebView and Dart client flows unchanged; bridge API" \
     || fail "route guard / bridge checks (see above)"
 else
-  fail "dsh web with the route probe did not start"; tail -20 "$LOG3"
+  fail "xrkh serve with the route probe did not start"; tail -20 "$LOG3"
 fi
 pid="$(cat "$ROOT/tmp/dsh-web.pid" 2>/dev/null || true)"
 [[ -n "$pid" ]] && kill -TERM "$pid" 2>/dev/null || kill -TERM "$BG" 2>/dev/null || true
@@ -188,16 +188,16 @@ LOG4="$HERE/.work/$ABI/dsh-web-native.log"
 run --share-net -- "${NATIVE_GUEST[@]}" > "$LOG4" 2>&1 &
 BG=$!
 token=""; for _ in $(seq 1 240); do
-  token="$(sed -n 's#^dsh web: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$LOG4" | head -1)"
+  token="$(sed -n 's#^xrkh serve: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$LOG4" | head -1)"
   [[ -n "$token" ]] && break; kill -0 "$BG" 2>/dev/null || break; sleep 0.5
 done
 if [[ -n "$token" ]]; then
-  run --share-net --setenv DSH_GO_BRIDGE_LIB /opt/dsh-go/dsh-go-bridge/lib/native -- \
+  run --share-net --setenv XRK_GO_BRIDGE_LIB /opt/xrk-mobile/xrk-bridge/lib/native -- \
     /opt/node/bin/node /tmp/native-test/native-bridge.mjs "http://127.0.0.1:$NPORT" "$token" --shipped \
     && pass "native plugin protocol: contributions, views, stream, invoke, deferred results, guard, degrade, reload" \
     || fail "native plugin protocol checks (see above)"
 else
-  fail "dsh web with the native fixtures did not start"; tail -20 "$LOG4"
+  fail "xrkh serve with the native fixtures did not start"; tail -20 "$LOG4"
 fi
 pid="$(cat "$ROOT/tmp/dsh-web.pid" 2>/dev/null || true)"
 [[ -n "$pid" ]] && kill -TERM "$pid" 2>/dev/null || kill -TERM "$BG" 2>/dev/null || true
@@ -218,23 +218,23 @@ LOG5="$HERE/.work/$ABI/dsh-web-native-v12.log"
 run --share-net -- "${VOICE_GUEST[@]}" > "$LOG5" 2>&1 &
 BG=$!
 token=""; for _ in $(seq 1 240); do
-  token="$(sed -n 's#^dsh web: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$LOG5" | head -1)"
+  token="$(sed -n 's#^xrkh serve: http://127\.0\.0\.1:[0-9]*/?token=\([A-Za-z0-9_-]*\).*#\1#p' "$LOG5" | head -1)"
   [[ -n "$token" ]] && break; kill -0 "$BG" 2>/dev/null || break; sleep 0.5
 done
 if [[ -n "$token" ]]; then
-  run --share-net --setenv DSH_GO_BRIDGE_LIB /opt/dsh-go/dsh-go-bridge/lib/native -- \
+  run --share-net --setenv XRK_GO_BRIDGE_LIB /opt/xrk-mobile/xrk-bridge/lib/native -- \
     /opt/node/bin/node /tmp/native-test/native-capabilities-live.mjs "http://127.0.0.1:$VPORT" "$token" \
     && pass "native plugins v1.2: declarations, negotiation, media, micro, capability events, leases" \
     || fail "native plugins v1.2 checks (see above)"
 else
-  fail "dsh web with the v1.2 fixture did not start"; tail -20 "$LOG5"
+  fail "xrkh serve with the v1.2 fixture did not start"; tail -20 "$LOG5"
 fi
 pid="$(cat "$ROOT/tmp/dsh-web.pid" 2>/dev/null || true)"
 [[ -n "$pid" ]] && kill -TERM "$pid" 2>/dev/null || kill -TERM "$BG" 2>/dev/null || true
 wait "$BG" 2>/dev/null || true
 rm -rf "$ROOT/tmp/native-test"
 
-echo "== dsh home after runs"; ls -A "$ROOT/root/.dsh" | head -20
+echo "== dsh home after runs"; ls -A "$ROOT/root/.xrk" | head -20
 echo "== direct glibc launch (Linux source build; Android permission/lifecycle still needs a device)"
 if [[ -n "${DIRECT_PROOT:-}" ]]; then
   # Earlier plugin/route tests exercise mutable profile state. Use another

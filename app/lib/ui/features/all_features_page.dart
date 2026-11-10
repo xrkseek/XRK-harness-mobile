@@ -1,4 +1,4 @@
-// 全部功能: every official DSH Web feature with a way in — the app's own page
+// 全部功能: every official XRK Web feature with a way in — the app's own page
 // or the official page inside the app — as a hub of two-column cards in the
 // accent; the nine headline features carry their tile in the user's style.
 // It holds what you go to do now; settings live in 设置, and the last group
@@ -22,7 +22,7 @@ import '../common/tile_grid.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import '../web/dsh_web_launcher.dart';
+import '../web/xrk_web_launcher.dart';
 import '../web/web_target.dart';
 import '../plugins/seats/seat_probe.dart';
 import '../settings/search/settings_search_page.dart';
@@ -30,7 +30,7 @@ import '../settings/settings_screen.dart';
 import 'feature_catalog.dart';
 import 'feature_widgets.dart';
 
-/// Opens DSH Web on a target; tests swap it for a recorder.
+/// Opens XRK Web on a target; tests swap it for a recorder.
 typedef DshWebOpener = void Function(BuildContext context, WidgetRef ref, DshWebTarget target);
 
 final dshWebOpenerProvider = Provider<DshWebOpener>(
@@ -127,7 +127,7 @@ class AllFeaturesPage extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
               child: Text(
                 note,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
               ),
             ),
         ],

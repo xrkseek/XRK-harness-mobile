@@ -8,14 +8,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/update_state.dart';
-import 'package:dsh_app/ui/update/update_sheet.dart';
-import 'package:dsh_app/update/installer.dart';
-import 'package:dsh_app/update/release.dart';
-import 'package:dsh_app/update/update_config.dart';
-import 'package:dsh_app/update/version.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/update_state.dart';
+import 'package:xrk_app/ui/update/update_sheet.dart';
+import 'package:xrk_app/update/installer.dart';
+import 'package:xrk_app/update/release.dart';
+import 'package:xrk_app/update/update_config.dart';
+import 'package:xrk_app/update/version.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,11 +25,11 @@ import '../shell/golden_harness.dart';
 import 'support.dart';
 
 const _version = '1.2.0+11011200';
-const _apk = 'dsh-go-1.2.0-arm64.apk';
-const _patchName = 'dsh-go-1.0.0-to-1.2.0-arm64.dshdlt';
+const _apk = 'xrk-harness-1.2.0-arm64.apk';
+const _patchName = 'xrk-harness-1.0.0-to-1.2.0-arm64.dshdlt';
 const _feed = 'https://dl.dshtui.com/update.json';
 const _dl = 'https://dl.dshtui.com/download/1.2.0';
-const _github = 'https://github.com/ccch1mneyyy/dsh-go/releases/download/v1.2.0';
+const _github = 'https://github.com/xrkseek/XRK-harness-mobile/releases/download/v1.2.0';
 
 final _old = utf8.encode('PK the installed 1.0.0, ${'resources ' * 300}${'classes ' * 300}');
 final _new = [..._old.sublist(0, 2000), ...utf8.encode('the 1.2.0 code'), ..._old.sublist(2400)];
@@ -96,7 +96,11 @@ void main() {
       overrides: [
         updateHttpProvider.overrideWithValue(http),
         updateInstallerProvider.overrideWithValue(installer),
-        updateSourcesProvider.overrideWithValue(buildUpdateSources()),
+        // Delta fixtures serve from a self-hosted feed URL; pin that mirror
+        // explicitly — product default is GitHub + accelerators only.
+        updateSourcesProvider.overrideWithValue(
+          buildUpdateSources(mirror: 'https://dl.dshtui.com', timezoneOffset: Duration.zero),
+        ),
         updateClockProvider.overrideWithValue(() => DateTime(2026, 11, 2, 9)),
         updateFlavorNameProvider.overrideWithValue('arm64'),
         updateDirectoryProvider.overrideWithValue(() async => downloads()),

@@ -3,15 +3,15 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/companion/companion_initiative.dart';
-import 'package:dsh_app/companion/companion_initiative_owner.dart';
-import 'package:dsh_app/companion/companion_keeper.dart';
-import 'package:dsh_app/companion/companion_pack.dart';
-import 'package:dsh_app/l10n/gen/app_localizations.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/companion/companion_page.dart';
-import 'package:dsh_app/ui/companion/companion_stage.dart';
-import 'package:dsh_app/ui/theme/app_theme.dart';
+import 'package:xrk_app/companion/companion_initiative.dart';
+import 'package:xrk_app/companion/companion_initiative_owner.dart';
+import 'package:xrk_app/companion/companion_keeper.dart';
+import 'package:xrk_app/companion/companion_pack.dart';
+import 'package:xrk_app/l10n/gen/app_localizations.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/companion/companion_page.dart';
+import 'package:xrk_app/ui/companion/companion_stage.dart';
+import 'package:xrk_app/ui/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

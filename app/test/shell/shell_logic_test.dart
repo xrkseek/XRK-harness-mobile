@@ -1,31 +1,31 @@
 // Behaviour of the startup gate, onboarding helpers and small formatters.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_app/state/onboarding_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/update_state.dart';
-import 'package:dsh_app/ui/chat/render/markdown_body.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/progress_halo.dart';
-import 'package:dsh_app/ui/engine/engine_screen.dart';
-import 'package:dsh_app/ui/engine/engine_status.dart';
-import 'package:dsh_app/ui/engine/log_view.dart';
-import 'package:dsh_app/ui/onboarding/api_key_page.dart';
-import 'package:dsh_app/ui/onboarding/connect_page.dart';
-import 'package:dsh_app/ui/onboarding/onboarding_flow.dart';
-import 'package:dsh_app/ui/onboarding/runtime_setup_page.dart';
-import 'package:dsh_app/ui/onboarding/welcome_page.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/shell/root_gate.dart';
-import 'package:dsh_app/ui/shell/sessions_drawer.dart';
-import 'package:dsh_app/ui/update/update_sheet.dart';
-import 'package:dsh_app/update/release.dart';
-import 'package:dsh_app/update/version.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_app/state/onboarding_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/update_state.dart';
+import 'package:xrk_app/ui/chat/render/markdown_body.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/progress_halo.dart';
+import 'package:xrk_app/ui/engine/engine_screen.dart';
+import 'package:xrk_app/ui/engine/engine_status.dart';
+import 'package:xrk_app/ui/engine/log_view.dart';
+import 'package:xrk_app/ui/onboarding/api_key_page.dart';
+import 'package:xrk_app/ui/onboarding/connect_page.dart';
+import 'package:xrk_app/ui/onboarding/onboarding_flow.dart';
+import 'package:xrk_app/ui/onboarding/runtime_setup_page.dart';
+import 'package:xrk_app/ui/onboarding/welcome_page.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/shell/root_gate.dart';
+import 'package:xrk_app/ui/shell/sessions_drawer.dart';
+import 'package:xrk_app/ui/update/update_sheet.dart';
+import 'package:xrk_app/update/release.dart';
+import 'package:xrk_app/update/version.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -181,7 +181,7 @@ void main() {
 
     test('runtime errors read as sentences', () {
       expect(humanizeRuntimeError('install failed: 存储空间不足：需要约 640 MB，当前可用 212 MB'), '存储空间不足：需要约 640 MB，当前可用 212 MB');
-      expect(humanizeRuntimeError('DSH exited unexpectedly (code 137)'), '引擎意外退出了');
+      expect(humanizeRuntimeError('XRK exited unexpectedly (code 137)'), '引擎意外退出了');
       expect(humanizeRuntimeError(null), isNull);
       expect(humanizeRuntimeError('install failed: raw native exception'), isNull);
       expect(humanizeRuntimeError('start failed: token=secret'), isNull);

@@ -4,15 +4,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../../packages/xrk_client/test/support/fake_dsh.dart';
 
 class RealSyncHttp extends HttpOverrides {}
 
@@ -76,7 +76,7 @@ Map<String, Object?> syncSnapshot(int turn) => {
 class SyncHarness {
   SyncHarness(this.host, this.client);
   final FakeDsh host;
-  final DshClient client;
+  final XrkClient client;
   late final ProviderContainer container;
   final follows = <({FakeMuxSocket socket, String id})>[];
   final cancelledBackendRuns = <int>[];
@@ -101,7 +101,7 @@ class SyncHarness {
     final carrier = DshHttpCarrier(connection);
     final transport = hold == null ? carrier : HeldReplyCarrier(carrier, hold);
     final client = observe == null
-        ? DshClient.withCarrier(transport, muxOptions: _muxOptions)
+        ? XrkClient.withCarrier(transport, muxOptions: _muxOptions)
         : ObservedSyncClient(transport, observe);
     await client.mux.ready();
     final h = SyncHarness(host, client);
@@ -278,7 +278,7 @@ class HeldReplyCarrier extends DshCarrier {
 }
 
 // A passive tap only: all watch frames still come from the real implementation.
-class ObservedSyncClient extends DshClient {
+class ObservedSyncClient extends XrkClient {
   ObservedSyncClient(super.carrier, this.observe) : super.withCarrier(muxOptions: _muxOptions);
   final void Function(DshEvent) observe;
   @override

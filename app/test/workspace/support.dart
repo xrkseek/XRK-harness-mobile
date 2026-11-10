@@ -1,19 +1,19 @@
-// An in-memory DSH host for the workspace tests: the workspace registry
+// An in-memory XRK host for the workspace tests: the workspace registry
 // (`workspace/*` + the `workspace/follow` stream), a folder tree for
 // `directoryPicker/*`, and `session/list` / `session/create`. It behaves
-// like DSH 0.2.1-rc.2 did against a throwaway `dsh web`: new workspaces go
+// like XRK 0.2.1-rc.2 did against a throwaway `xrkh serve`: new workspaces go
 // to the front, only `workspaceId` attaches a conversation, removal keeps
 // folders and conversations.
 
 import 'dart:async';
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
@@ -34,7 +34,7 @@ class FakeWorkspaceHost extends DshCarrier {
 
   final String home;
 
-  /// False imitates the DSH Remote allow-list (listing only).
+  /// False imitates the XRK Remote allow-list (listing only).
   final bool canCreate;
 
   /// False imitates a Host that composes the native picker.
@@ -119,7 +119,7 @@ class FakeWorkspaceHost extends DshCarrier {
   bool allowsEndpoint(String endpoint) => canCreate || endpoint != 'directoryPicker/createDirectory';
 
   static RpcResult _fail(String code, [Map<String, Object?> details = const {}]) =>
-      RpcError(DshRemoteException(code, code, details));
+      RpcError(XrkRemoteException(code, code, details));
 
   @override
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
@@ -296,7 +296,7 @@ class _Link implements DshMuxLink {
 /// A connected host backed by [carrier].
 HostConnection workspaceHost(FakeWorkspaceHost carrier, {bool local = true, String? workingDirectory}) =>
     HostConnection(
-      client: DshClient.withCarrier(carrier),
+      client: XrkClient.withCarrier(carrier),
       label: local ? '本机' : '电脑',
       isLocal: local,
       kind: local ? HostKind.local : HostKind.ssh,

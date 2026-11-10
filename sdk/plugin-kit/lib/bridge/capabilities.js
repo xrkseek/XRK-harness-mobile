@@ -51,11 +51,11 @@ export function microModel(value) {
  * under v1.1: an unknown surface or field, ignored.
  */
 export function parseCapabilities(raw, out) {
-  const ptr = (...parts) => `/dshGo/${parts.map((p) => String(p).replaceAll("~", "~0").replaceAll("/", "~1")).join("/")}`;
+  const ptr = (...parts) => `/xrkGo/${parts.map((p) => String(p).replaceAll("~", "~0").replaceAll("/", "~1")).join("/")}`;
   const push = (path, code, severity, message) => out.issues.push({ path, code, severity, message });
   if (raw.capabilities === undefined) {
     for (const kind of RESOURCE_KINDS) {
-      if (raw.contributes[kind] !== undefined) push(ptr("contributes", kind), "unknown-surface", "warn", `unknown surface ${kind}; declare dshGo.capabilities to use it`);
+      if (raw.contributes[kind] !== undefined) push(ptr("contributes", kind), "unknown-surface", "warn", `unknown surface ${kind}; declare xrkGo.capabilities to use it`);
     }
     return;
   }

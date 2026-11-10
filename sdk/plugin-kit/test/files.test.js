@@ -44,16 +44,16 @@ test('wire schemas preserve files negotiation and readonly callback metadata', (
 })
 
 test('SDK test-host runs the real negotiation and gesture validator', async () => {
-  const host = createTestHost({ pkg: { name: 'files', dshGo: { v: 1, capabilities: ['files'], contributes: {
+  const host = createTestHost({ pkg: { name: 'files', xrkGo: { v: 1, capabilities: ['files'], contributes: {
     'composer.actions': [{ id: 'choose', label: 'Choose', requires: ['files'] }],
   } } }, caps: { features: ['files'] } })
-  host.dshGo.on('choose', () => effects.pickFile('selected'))
+  host.xrkGo.on('choose', () => effects.pickFile('selected'))
   assert.equal((await host.invoke('choose')).effects.length, 0)
   const result = await host.invoke('choose', { userGesture: true })
   assert.equal(result.effects[0].type, 'pickFile')
   // The author harness validates effects; production HTTP/WS tests cover upload authority.
   assert.equal(result.effects[0].request, undefined)
-  assert.throws(() => host.dshGo.readPickedFile('made-up'), /production bridge upload routes/)
+  assert.throws(() => host.xrkGo.readPickedFile('made-up'), /production bridge upload routes/)
   host.dispose()
 })
 
@@ -61,7 +61,7 @@ test('wire validator checks selected-file routes and rejects callback side effec
   const dir = mkdtempSync(join(tmpdir(), 'dsh-files-wire-'))
   t.after(() => rmSync(dir, { recursive: true, force: true }))
   const capture = join(dir, 'capture.jsonl')
-  const row = { kind: 'http', method: 'POST', path: `/dsh-go/v1/files/${'a'.repeat(32)}/complete?stream=c1`, status: 200,
+  const row = { kind: 'http', method: 'POST', path: `/xrk-mobile/v1/files/${'a'.repeat(32)}/complete?stream=c1`, status: 200,
     req: { status: 'cancelled' }, res: { v: 1, effects: [{ type: 'toast', text: 'Cancelled' }], issues: [] } }
   const validator = fileURLToPath(new URL('../scripts/validate-wire.mjs', import.meta.url))
   writeFileSync(capture, JSON.stringify(row) + '\n')

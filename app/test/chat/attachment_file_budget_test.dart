@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/draft_store.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/draft_store.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';

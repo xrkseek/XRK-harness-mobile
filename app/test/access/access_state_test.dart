@@ -1,8 +1,8 @@
 // What each feature needs on each maker's phone, the walk's order, the
 // states, the restricted-settings steps, and what first run keeps.
 
-import 'package:dsh_app/phone/phone_channel.dart';
-import 'package:dsh_app/state/access_state.dart';
+import 'package:xrk_app/phone/phone_channel.dart';
+import 'package:xrk_app/state/access_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,7 +45,7 @@ void main() {
         AccessItem.vendorBackground,
         AccessItem.autostart,
       ]);
-      expect(accessItemsFor(AccessFeature.voice, 'vivo'), [AccessItem.mic]);
+      expect(accessItemsFor(AccessFeature.files, 'vivo'), isNotEmpty);
     });
 
     test('on stock Android nothing of a maker\'s', () {
@@ -137,20 +137,20 @@ void main() {
       return c;
     }
 
-    test('the picks and skips, and voice as true or false', () async {
+    test('the picks and skips; legacy voice flag stays cleared', () async {
       SharedPreferences.setMockInitialValues({});
       var c = await container();
       expect(c.read(accessSetupProvider).loaded, isTrue);
       expect(c.read(accessSetupProvider).features, isNull);
 
-      await c.read(accessSetupProvider.notifier).choose({AccessFeature.voice, AccessFeature.phone});
+      await c.read(accessSetupProvider.notifier).choose({AccessFeature.files, AccessFeature.phone});
       await c.read(accessSetupProvider.notifier).skip(AccessItem.popup);
       final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getBool(onboardingWantsVoiceKey), isTrue);
+      expect(prefs.getBool(onboardingWantsVoiceKey), isFalse);
 
       // A new launch finds the same walk.
       c = await container();
-      expect(c.read(accessSetupProvider).features, {AccessFeature.voice, AccessFeature.phone});
+      expect(c.read(accessSetupProvider).features, {AccessFeature.files, AccessFeature.phone});
       expect(c.read(accessSetupProvider).skipped, {AccessItem.popup});
 
       await c.read(accessSetupProvider.notifier).choose({AccessFeature.files});
@@ -158,7 +158,6 @@ void main() {
 
       await c.read(accessSetupProvider.notifier).clear();
       expect(prefs.getString(AccessSetupController.prefsKey), isNull);
-      // The answer about voice stays for the voice feature.
       expect(prefs.getBool(onboardingWantsVoiceKey), isFalse);
     });
 

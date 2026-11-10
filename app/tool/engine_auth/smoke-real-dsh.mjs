@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 //
-// Smoke test of the auth bridge against a real `dsh web`, with a throwaway HOME
-// and DSH_HOME. Mounts app/assets/engine/auth/ through an overlay shaped like
+// Smoke test of the auth bridge against a real `xrkh serve`, with a throwaway HOME
+// and XRK_HOME. Mounts app/assets/engine/auth/ through an overlay shaped like
 // the one AppAuthGuest.kt writes, then checks over HTTP:
 //   - appAuth/list on a fresh home (nothing signed in, no route);
 //   - begin → poll reaches `open` with the real authorize URL and pi-ai's
@@ -21,7 +21,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((pairs, arg, i, all) => (arg.startsWith('--') ? [...pairs, [arg.slice(2), all[i + 1]]] : pairs), []))
-const DSH = resolve(args.dsh ?? join(homedir(), '.dsh-runtime/npm/lib/node_modules/@deepseek-ai/dsh'))
+const XRK = resolve(args.dsh ?? join(homedir(), '.dsh-runtime/npm/lib/node_modules/@xrkseek/harness-cli'))
 const WORK = resolve(args.work ?? mkdtempSync(join(tmpdir(), 'dsh-auth-smoke-')))
 const PORT = Number(args.port ?? 38931)
 const BRIDGE = resolve(dirname(fileURLToPath(import.meta.url)), '../../assets/engine/auth')
@@ -48,11 +48,11 @@ for (const name of ['index.mjs', 'bridge.mjs']) copyFileSync(join(BRIDGE, name),
 const overlay = join(guest, 'auth.patch.yml')
 writeFileSync(overlay, `- insert:\n    - id: dsh-app-auth\n      name: ${join(guest, 'index.mjs')}\n`)
 
-// ── start dsh web ─────────────────────────────────────────────────────────
+// ── start xrkh serve ─────────────────────────────────────────────────────────
 const log = []
 const child = spawn(process.execPath, [join(DSH, 'lib/bin.js'), 'web', '--patch', overlay, '--host', '127.0.0.1', '--port', String(PORT), '--no-open'], {
   cwd: WORK,
-  env: { PATH: `${dirname(process.execPath)}:/usr/bin:/bin`, HOME: home, DSH_HOME: dshHome, TMPDIR: join(WORK, 'tmp'), LANG: 'C.UTF-8' },
+  env: { PATH: `${dirname(process.execPath)}:/usr/bin:/bin`, HOME: home, XRK_HOME: dshHome, TMPDIR: join(WORK, 'tmp'), LANG: 'C.UTF-8' },
   stdio: ['ignore', 'pipe', 'pipe'],
 })
 child.stdout.on('data', (chunk) => log.push(String(chunk)))
@@ -76,14 +76,14 @@ const listening = (port) =>
 try {
   let line
   for (let i = 0; i < 120 && line === undefined && child.exitCode === null; i++) {
-    line = log.join('').split('\n').find((l) => l.startsWith('dsh web: http'))
+    line = log.join('').split('\n').find((l) => l.startsWith('xrkh serve: http'))
     if (line === undefined) await sleep(500)
   }
-  if (line === undefined) throw new Error(`dsh web did not start:\n${log.join('').slice(-3000)}`)
-  console.log(`== dsh web up (${DSH})`)
+  if (line === undefined) throw new Error(`xrkh serve did not start:\n${log.join('').slice(-3000)}`)
+  console.log(`== xrkh serve up (${DSH})`)
   check(!/did not activate/.test(log.join('')), 'every entry activated (the bridge loaded)')
 
-  const url = new URL(line.slice('dsh web: '.length).trim())
+  const url = new URL(line.slice('xrkh serve: '.length).trim())
   const base = `${url.protocol}//${url.host}`
   const login = await fetch(`${base}/?token=${url.searchParams.get('token')}`, { redirect: 'manual' })
   const cookie = (login.headers.get('set-cookie') ?? '').split(';')[0]

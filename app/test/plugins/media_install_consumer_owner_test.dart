@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/ui/settings/media_settings_page.dart';
-import 'package:dsh_app/update/version.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/ui/settings/media_settings_page.dart';
+import 'package:xrk_app/update/version.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,8 +34,8 @@ void main() {
     testWidgets('real media sheet owns its completion: $scenario', (tester) async {
       final a = _RecoveryCarrier();
       final b = FakePluginCarrier();
-      final ac = DshClient.withCarrier(a);
-      final bc = DshClient.withCarrier(b);
+      final ac = XrkClient.withCarrier(a);
+      final bc = XrkClient.withCarrier(b);
       addTearDown(ac.close);
       addTearDown(bc.close);
       final ah = fakeHost(ac, label: 'A');
@@ -146,7 +146,7 @@ void main() {
         expect(container.read(pluginHostProvider), isNull);
         expect(container.read(activeConnectionProvider).value?.client, same(ac));
         expect(sheetRoute.isCurrent, isTrue);
-        reply.completeError(const DshTransportException('controlled lost install response'));
+        reply.completeError(const XrkTransportException('controlled lost install response'));
         await tester.pump();
         await tester.pump();
         expect(a.argsOf('pluginManager/waitForInstall'), hasLength(1));
@@ -162,7 +162,7 @@ void main() {
         expect(restoredHost.client, same(ac));
         expect(ac.mux.generation, isNot(same(originalGeneration)));
         expect(container.read(activeHostProvider), HostRef.local);
-        recoveredReply.complete(installResult(target: '@dsh-go/media', application: 'applied'));
+        recoveredReply.complete(installResult(target: '@xrk-mobile/media', application: 'applied'));
       }
       if (scenario == 'closed') {
         navigator.pop();
@@ -173,9 +173,9 @@ void main() {
         await tester.pumpAndSettle();
       }
       if (scenario == 'failure') {
-        reply.completeError(const DshRemoteException('DENIED', 'controlled installation failure'));
+        reply.completeError(const XrkRemoteException('DENIED', 'controlled installation failure'));
       } else if (scenario != 'recover') {
-        reply.complete(installResult(target: '@dsh-go/media', application: 'applied'));
+        reply.complete(installResult(target: '@xrk-mobile/media', application: 'applied'));
       }
       await tester.pumpAndSettle();
       expect(b.argsOf('pluginManager/installBundle'), isEmpty);

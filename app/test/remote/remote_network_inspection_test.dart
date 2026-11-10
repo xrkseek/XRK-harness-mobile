@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/relay/relay_backend.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/relay/relay_backend.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_relay.dart';
@@ -13,15 +13,15 @@ class _Backend extends FakeRelayBackend implements RelayNetworkBackend {
   int inspections = 0;
   RelayStateCallback? stateChanged;
   @override
-  Future<DshClient> connectHost(RelayHost host, {RelayStateCallback? onState}) {
+  Future<XrkClient> connectHost(RelayHost host, {RelayStateCallback? onState}) {
     stateChanged = onState;
     return super.connectHost(host, onState: onState);
   }
 
   @override
-  RemoteNetworkStatus? networkOf(DshClient client) => const RemoteNetworkStatus(path: RelayPath.p2p);
+  RemoteNetworkStatus? networkOf(XrkClient client) => const RemoteNetworkStatus(path: RelayPath.p2p);
   @override
-  Future<RemoteNetworkStatus?> inspectNetwork(DshClient client) {
+  Future<RemoteNetworkStatus?> inspectNetwork(XrkClient client) {
     inspections++;
     return pending.future;
   }

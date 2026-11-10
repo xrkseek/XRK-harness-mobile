@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_controls_state.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_controls_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-DshUiInput input({String name = 'name', DshUiAction? onChange, bool required = false, int maxLength = 256}) =>
-    DshUiInput(
+XrkUiInput input({String name = 'name', XrkUiAction? onChange, bool required = false, int maxLength = 256}) =>
+    XrkUiInput(
       path: 'view.$name',
       kind: 'textField',
       label: name,
@@ -16,11 +16,11 @@ DshUiInput input({String name = 'name', DshUiAction? onChange, bool required = f
       required: required,
       maxLength: maxLength,
     );
-DshUiControlContainer form(List<DshUiInput> fields) => DshUiControlContainer(
+XrkUiControlContainer form(List<XrkUiInput> fields) => XrkUiControlContainer(
   path: 'view',
   kind: 'form',
-  sections: [DshUiControlSection('', fields)],
-  submit: const DshUiAction('save'),
+  sections: [XrkUiControlSection('', fields)],
+  submit: const XrkUiAction('save'),
 );
 
 void main() {
@@ -81,8 +81,8 @@ void main() {
   });
 
   testWidgets('different fields share a maximum four-change-per-second lane', (tester) async {
-    final first = input(name: 'first', onChange: const DshUiAction('changed'));
-    final second = input(name: 'second', onChange: const DshUiAction('changed'));
+    final first = input(name: 'first', onChange: const XrkUiAction('changed'));
+    final second = input(name: 'second', onChange: const XrkUiAction('changed'));
     final sent = <PluginAction>[];
     final state = PluginDraftController()
       ..syncInputs([first, second])
@@ -104,7 +104,7 @@ void main() {
   });
 
   testWidgets('change coalesces trailing edits and sends at 250 ms', (tester) async {
-    final field = input(onChange: const DshUiAction('changed'));
+    final field = input(onChange: const XrkUiAction('changed'));
     final sent = <PluginAction>[];
     final state = PluginDraftController()
       ..syncInputs([field])
@@ -130,7 +130,7 @@ void main() {
   });
 
   testWidgets('one lane, frozen submit and newer edits survive older patch', (tester) async {
-    final field = input(onChange: const DshUiAction('changed'));
+    final field = input(onChange: const XrkUiAction('changed'));
     final sent = <PluginAction>[];
     final replies = <Completer<bool>>[];
     final state =
@@ -218,7 +218,7 @@ void main() {
   });
 
   testWidgets('disconnect cancels pending changes with no automatic replay', (tester) async {
-    final field = input(onChange: const DshUiAction('changed'));
+    final field = input(onChange: const XrkUiAction('changed'));
     var calls = 0;
     Future<bool> send(PluginAction _) async {
       calls++;
@@ -241,8 +241,8 @@ void main() {
   });
 
   testWidgets('removing a field cancels its queued change and state', (tester) async {
-    final first = input(name: 'first', onChange: const DshUiAction('changed'));
-    final second = input(name: 'second', onChange: const DshUiAction('changed'));
+    final first = input(name: 'first', onChange: const XrkUiAction('changed'));
+    final second = input(name: 'second', onChange: const XrkUiAction('changed'));
     final reply = Completer<bool>();
     final sent = <PluginAction>[];
     final state = PluginDraftController()
@@ -285,7 +285,7 @@ void main() {
   });
 
   testWidgets('null draft, copy-on-write and disposal preserve boundaries', (tester) async {
-    final field = input(onChange: const DshUiAction('changed'));
+    final field = input(onChange: const XrkUiAction('changed'));
     final remote = {
       'form': {'name': 'remote'},
       'other': 7,

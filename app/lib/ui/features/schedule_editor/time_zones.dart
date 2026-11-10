@@ -207,7 +207,7 @@ Future<String> detectDeviceTimeZone() async {
 /// makes the existing fallback deterministic in channel tests.
 Future<String> detectAndroidTimeZone({Duration? fallbackOffset}) async {
   try {
-    final name = (await const MethodChannel('dsh/app').invokeMethod<String>('getTimeZoneId'))?.trim();
+    final name = (await const MethodChannel('xrk/app').invokeMethod<String>('getTimeZoneId'))?.trim();
     if (name != null && name.isNotEmpty && isKnownZone(name)) return name;
   } on Object {
     // A missing activity channel or platform failure uses the same fallback.

@@ -76,7 +76,7 @@ class _NodeSubtitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final style = Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary);
+    final style = Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary);
     String line(Duration? elapsed) => [
       subagentModeLabel(node.mode),
       if (elapsed != null && elapsed > Duration.zero) formatSpan(elapsed),
@@ -136,7 +136,7 @@ class AgentRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final titleText = Text(
       title,
       maxLines: 1,
@@ -311,7 +311,7 @@ class LineageSummary extends StatelessWidget {
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
           ),
         ),
       ],

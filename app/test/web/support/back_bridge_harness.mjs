@@ -1,7 +1,7 @@
 // Runs assets/web/dsh_web_back.js against a page model (node, no DOM
 // library) and prints what each press of back did, as JSON. Used by
 // test/web/web_back_bridge_test.dart. The selectors are the bridge's own:
-// the model answers exactly those (checked against DSH 0.2.1-rc.4's client
+// the model answers exactly those (checked against XRK 0.2.1-rc.4's client
 // in a browser).
 //
 //   node back_bridge_harness.mjs <bridge.js> <scenario JSON>
@@ -14,7 +14,7 @@
 //   layout     'drawer' | 'desktop' | ''      (html[data-dsh-app-layout])
 //   drawer     the app's drawer is open (window.__dshApp)
 //   noPhoneLayout  no window.__dshApp at all
-//   officialDrawer  DSH Web's own sidebar is a drawer over the page (official
+//   officialDrawer  XRK Web's own sidebar is a drawer over the page (official
 //                   layout, phone widths), open
 //   rightFull  the right panel covers the conversation
 //   page       'conversation' | 'page'      what the main area shows
@@ -104,7 +104,7 @@ const app = s.noPhoneLayout
     };
 
 const frame = new El('frame', s.rightFull ? { 'data-rightbar-fullscreen': 'true' } : {});
-// DSH Web as shipped at phone widths: its sidebar slides over the page as a
+// XRK Web as shipped at phone widths: its sidebar slides over the page as a
 // drawer, folded through the toggle in the sidebar's logo row.
 if (s.officialDrawer) frame.attrs['data-sidebar-drawer'] = '';
 const sidebarToggle = new El('sidebarToggle', { tag: 'BUTTON', class: 'x_iconButton' });

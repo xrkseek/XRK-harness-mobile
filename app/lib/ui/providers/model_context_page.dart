@@ -8,7 +8,7 @@
 // The written value sizes the engine's own context accounting (compaction and
 // the usage sheet), not just this screen: it takes effect on the next request.
 
-import 'package:dsh_client/dsh_client.dart' hide SettingsSection;
+import 'package:xrk_client/xrk_client.dart' hide SettingsSection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -119,7 +119,7 @@ class _ModelContextPageState extends ConsumerState<ModelContextPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = theme.colorScheme;
     final page = AppPage.list(
       title: widget.modelName,

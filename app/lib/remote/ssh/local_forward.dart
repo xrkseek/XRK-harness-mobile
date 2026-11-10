@@ -3,16 +3,16 @@ import 'dart:io';
 
 import 'ssh_transport.dart';
 
-/// Opens a channel to the remote `dsh web` over whatever SSH connection is
+/// Opens a channel to the remote `xrkh serve` over whatever SSH connection is
 /// current; may wait for a reconnect.
 typedef TunnelOpener = Future<TunnelChannel> Function();
 
-/// `127.0.0.1:<ephemeral>` on the phone, piped to the remote `dsh web`.
+/// `127.0.0.1:<ephemeral>` on the phone, piped to the remote `xrkh serve`.
 ///
 /// The listener outlives individual SSH connections: when SSH drops, open
-/// sockets die (so DshClient's mux notices and retries), and new sockets wait
+/// sockets die (so XrkClient's mux notices and retries), and new sockets wait
 /// in [TunnelOpener] until the link has reconnected. The local port, and so
-/// the DshClient's base URL, stays the same across reconnects.
+/// the XrkClient's base URL, stays the same across reconnects.
 class LocalForwarder {
   LocalForwarder._(this._server, this._open);
 

@@ -80,10 +80,10 @@ class NativeDiagnostics {
   final Map<String, Object?> voice;
 }
 
-/// MethodChannel `dsh/diagnostics`. Without the native side (tests, other
+/// MethodChannel `xrk/diagnostics`. Without the native side (tests, other
 /// platforms) it answers empty.
 class DiagnosticsChannel {
-  const DiagnosticsChannel([this.channel = const MethodChannel('dsh/diagnostics')]);
+  const DiagnosticsChannel([this.channel = const MethodChannel('xrk/diagnostics')]);
 
   final MethodChannel channel;
 

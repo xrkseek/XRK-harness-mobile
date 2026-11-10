@@ -1,10 +1,10 @@
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../notify/answer_native_request.dart';
 
 /// Answers one native phone card only in the generation that presented it.
 Future<bool> answerPhoneApproval({
-  required DshClient client,
+  required XrkClient client,
   required MuxGeneration generation,
   required ApprovalRequest request,
   required ApprovalDecision decision,

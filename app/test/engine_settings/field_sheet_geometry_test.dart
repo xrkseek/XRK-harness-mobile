@@ -2,8 +2,8 @@
 // grid spanning the field with equal outer insets, and an array row's ⊖
 // inked to the trailing edge of 添加 under it.
 
-import 'package:dsh_app/ui/engine_settings/field_sheets.dart';
-import 'package:dsh_app/ui/engine_settings/sequence_field.dart';
+import 'package:xrk_app/ui/engine_settings/field_sheets.dart';
+import 'package:xrk_app/ui/engine_settings/sequence_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

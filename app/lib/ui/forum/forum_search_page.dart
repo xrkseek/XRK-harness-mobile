@@ -43,7 +43,7 @@ class _ForumSearchPageState extends ConsumerState<ForumSearchPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final term = _query.trim();
     final async = term.isEmpty ? null : ref.watch(forumSearchProvider(term));
     final site = ref.watch(forumSiteProvider).value;
@@ -150,7 +150,7 @@ class ForumSearchRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final meta = theme.textTheme.bodySmall!.copyWith(color: colors.textTertiary);
     return InkWell(
       onTap: onTap,

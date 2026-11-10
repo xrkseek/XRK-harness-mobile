@@ -4,13 +4,13 @@
 // when the phone can't take it yet or the write fails, and written on the
 // next read of the policies.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/access_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/access/phone_mode_sheet.dart';
-import 'package:dsh_app/ui/onboarding/access_step.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/access_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/access/phone_mode_sheet.dart';
+import 'package:xrk_app/ui/onboarding/access_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -96,7 +96,7 @@ void main() {
       expect(find.text('这些仍由你来操作'), findsOneWidget);
       expect(
         find.text(
-          '系统设置和权限页面、密码和验证码、DSH Go 自身仍由你来操作；银行、支付类 App 默认不碰，可在设置里调整。\n'
+          '系统设置和权限页面、密码和验证码、XRK Go 自身仍由你来操作；银行、支付类 App 默认不碰，可在设置里调整。\n'
           '如需让 AI 操作系统设置、密码等，可在 设置 › 手机操控 › 解除限制 中开启。',
         ),
         findsOneWidget,
@@ -259,7 +259,7 @@ void main() {
     test('without 手机操控 among the picks, no mode is written', () async {
       final native = FakePhoneNative()..install();
       final c = container();
-      await c.read(accessSetupProvider.notifier).choose({AccessFeature.voice}, phoneMode: PhoneConfirmMode.always);
+      await c.read(accessSetupProvider.notifier).choose({AccessFeature.files}, phoneMode: PhoneConfirmMode.always);
       expect(native.callsOf('setPolicies'), isEmpty);
       expect(await _pending(), isNull);
     });

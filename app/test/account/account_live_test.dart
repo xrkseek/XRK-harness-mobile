@@ -1,8 +1,8 @@
-// Live check of the account flow against a real `dsh web` (DSH 0.2.1-rc.2).
-// Skipped unless DSH_LIVE_LAUNCH_URL is set; plain `test`s (no widget binding),
+// Live check of the account flow against a real `xrkh serve` (XRK 0.2.1-rc.2).
+// Skipped unless XRK_LIVE_LAUNCH_URL is set; plain `test`s (no widget binding),
 // so dart:io HTTP reaches the Host for real.
 //
-//   DSH_LIVE_LAUNCH_URL='http://127.0.0.1:38433/?token=…' DSH_LIVE_MODE=mock \
+//   XRK_LIVE_LAUNCH_URL='http://127.0.0.1:38433/?token=…' XRK_LIVE_MODE=mock \
 //     flutter test test/account/account_live_test.dart
 //
 // mode=mock  the Host's deepseek-account row points at a loopback mock Platform:
@@ -16,8 +16,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -80,13 +80,13 @@ Future<T> _until<T>(ProviderContainer c, bool Function(AccountState) ok, T Funct
 }
 
 void main() {
-  final skip = _launch == null ? 'set DSH_LIVE_LAUNCH_URL to run against a live dsh web' : null;
+  final skip = _launch == null ? 'set XRK_LIVE_LAUNCH_URL to run against a live xrkh serve' : null;
 
   test(
     'account flow against a live Host ($_mode)',
     () async {
       final launch = DshLaunchUrl.tryParse(_launch!)!;
-      final client = await DshClient.connect(launchUrl: _launch);
+      final client = await XrkClient.connect(launchUrl: _launch);
       addTearDown(client.close);
       final origin = loopbackCallbackOrigin(launch.baseUri.toString())!;
       final api = DshAccountApi(client, callbackOrigin: origin);

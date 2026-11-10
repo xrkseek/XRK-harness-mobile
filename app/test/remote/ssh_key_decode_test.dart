@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/ssh/ssh_host_config.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/ssh/ssh_host_config.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Synthetic ED25519 key generated only for this regression. It has never

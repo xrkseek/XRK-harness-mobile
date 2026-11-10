@@ -138,7 +138,7 @@ class _SheetTableState extends State<SheetTable> {
     _measure(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final dark = theme.brightness == Brightness.dark;
     final widths = _widths!;
     final gutter = _gutter!;
@@ -287,7 +287,7 @@ class _CellBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.6), width: 0.5)),

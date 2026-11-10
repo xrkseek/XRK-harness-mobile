@@ -1,7 +1,7 @@
 // The real binding, driven by hand: widget tests have their own binding with fake
 // time, which never goes through SteadyFrameBinding. So no testWidgets in this file.
 
-import 'package:dsh_app/ui/theme/frame_clock.dart';
+import 'package:xrk_app/ui/theme/frame_clock.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
 

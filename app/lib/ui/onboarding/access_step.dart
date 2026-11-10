@@ -89,7 +89,6 @@ class _AccessStepPageState extends ConsumerState<AccessStepPage> {
           ? AccessSummaryPage(
               key: const ValueKey('summary'),
               items: items,
-              voice: features.contains(AccessFeature.voice),
               onDone: () => unawaited(_finish()),
             )
           : AccessWalk(

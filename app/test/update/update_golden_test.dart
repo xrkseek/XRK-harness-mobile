@@ -6,19 +6,19 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/star_prompt.dart';
-import 'package:dsh_app/state/update_state.dart';
-import 'package:dsh_app/ui/settings/about_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/update/update_launch_check.dart';
-import 'package:dsh_app/ui/update/update_tiles.dart';
-import 'package:dsh_app/update/release.dart';
-import 'package:dsh_app/update/version.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/star_prompt.dart';
+import 'package:xrk_app/state/update_state.dart';
+import 'package:xrk_app/ui/settings/about_page.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/update/update_launch_check.dart';
+import 'package:xrk_app/ui/update/update_tiles.dart';
+import 'package:xrk_app/update/release.dart';
+import 'package:xrk_app/update/version.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -215,7 +215,7 @@ void main() {
       final update = await pump(tester, FakeUpdate(_offer()));
       await _openSheet(tester);
       expect(find.text('发现新版本'), findsOneWidget);
-      expect(find.text('DSH 1.2.0'), findsOneWidget);
+      expect(find.text('XRK 1.2.0'), findsOneWidget);
       expect(find.textContaining('171.8 MB'), findsOneWidget);
       expect(find.byKey(const ValueKey('update-star')), findsNothing);
       await tester.tap(find.text('立即更新'));
@@ -343,7 +343,7 @@ void main() {
     });
   });
 
-  testWidgets('设置 marks 关于 DSH Go; the rows are on that page', (tester) async {
+  testWidgets('设置 marks 关于 XRK Go; the rows are on that page', (tester) async {
     usePhoneSurface(tester);
     await tester.pumpWidget(
       goldenApp(
@@ -356,9 +356,9 @@ void main() {
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -5000));
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.widgetWithText(UpdateBadge, '有新版本'), findsOneWidget);
-    await tester.ensureVisible(find.text('关于 DSH Go'));
+    await tester.ensureVisible(find.text('关于 XRK Go'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('关于 DSH Go'));
+    await tester.tap(find.text('关于 XRK Go'));
     await tester.pumpAndSettle();
     expect(find.byType(AboutPage), findsOneWidget);
     expect(find.byType(AppUpdateTiles), findsOneWidget);

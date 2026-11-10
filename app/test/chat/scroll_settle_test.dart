@@ -3,14 +3,14 @@
 // the reply / the sent bubble only ever move one way while a turn ends or a
 // message is echoed (no "pushed up, then falls back").
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/composer_quote.dart';
-import 'package:dsh_app/ui/chat/chat_list.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/widgets/assistant_message.dart';
-import 'package:dsh_app/ui/chat/widgets/user_bubble.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/composer_quote.dart';
+import 'package:xrk_app/ui/chat/chat_list.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/widgets/assistant_message.dart';
+import 'package:xrk_app/ui/chat/widgets/user_bubble.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -7,9 +7,9 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:dsh_app/companion/companion_state.dart';
-import 'package:dsh_app/companion/companion_voice.dart';
-import 'package:dsh_app/companion/companion_voice_source.dart';
+import 'package:xrk_app/companion/companion_state.dart';
+import 'package:xrk_app/companion/companion_voice.dart';
+import 'package:xrk_app/companion/companion_voice_source.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -386,7 +386,7 @@ void main() {
   });
 
   group('speaker', () {
-    const channel = MethodChannel('dsh/companion_voice');
+    const channel = MethodChannel('xrk/companion_voice');
     late List<MethodCall> calls;
     late Directory folder;
 

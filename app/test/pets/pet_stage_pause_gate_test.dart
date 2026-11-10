@@ -2,16 +2,16 @@
 // body fades out, freezes once it is fully transparent, and resumes before a
 // fade-in. Component state only, not pixels or timing. A synthetic three-cell
 // sheet with one-minute frames keeps the sprite's own clock out of the way.
-import 'package:dsh_app/pets/pet_overlay_bridge.dart';
-import 'package:dsh_app/pets/pet_pack.dart';
-import 'package:dsh_app/pets/pet_prefs.dart';
-import 'package:dsh_app/pets/pet_sheets.dart';
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/state/ui_mode_state.dart';
-import 'package:dsh_app/ui/pets/pet_perch.dart';
-import 'package:dsh_app/ui/pets/pet_sprite.dart';
-import 'package:dsh_app/ui/pets/pet_stage.dart';
+import 'package:xrk_app/pets/pet_overlay_bridge.dart';
+import 'package:xrk_app/pets/pet_pack.dart';
+import 'package:xrk_app/pets/pet_prefs.dart';
+import 'package:xrk_app/pets/pet_sheets.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/state/ui_mode_state.dart';
+import 'package:xrk_app/ui/pets/pet_perch.dart';
+import 'package:xrk_app/ui/pets/pet_sprite.dart';
+import 'package:xrk_app/ui/pets/pet_stage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

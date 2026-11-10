@@ -4,11 +4,11 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/ui/chat/artifact_preview.dart';
-import 'package:dsh_app/ui/chat/render/code_block.dart';
-import 'package:dsh_app/ui/files/table_view.dart';
-import 'package:dsh_app/ui/session/workspace_files.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/artifact_preview.dart';
+import 'package:xrk_app/ui/chat/render/code_block.dart';
+import 'package:xrk_app/ui/files/table_view.dart';
+import 'package:xrk_app/ui/session/workspace_files.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -125,7 +125,7 @@ void main() {
     addTearDown(() => dir.deleteSync(recursive: true));
     final file = File('${dir.path}/book.xlsx');
     await tester.runAsync(() => file.writeAsBytes(book));
-    const files = MethodChannel('dsh/files');
+    const files = MethodChannel('xrk/files');
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(files, (call) async {
       return call.method == 'resolveGuest' ? file.path : null;
     });
@@ -147,7 +147,7 @@ void main() {
 
   testWidgets('one enormous line: 文件较大 and the way out', (tester) async {
     final ws = sampleWorkspace()..write('min.js', 'x' * 4000);
-    ws.failures['read min.js'] = const DshRemoteException('workspace-file/too-large', 'page over 2 MiB');
+    ws.failures['read min.js'] = const XrkRemoteException('workspace-file/too-large', 'page over 2 MiB');
     await _open(tester, 'min.js', workspace: ws);
     expect(find.text('文件较大'), findsOneWidget);
     expect(find.textContaining('3.9 KB'), findsOneWidget);

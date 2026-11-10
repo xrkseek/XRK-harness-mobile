@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:dsh_app/ui_config/ui_config.dart';
-import 'package:dsh_app/ui_config/ui_json_reader.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
+import 'package:xrk_app/ui_config/ui_json_reader.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';

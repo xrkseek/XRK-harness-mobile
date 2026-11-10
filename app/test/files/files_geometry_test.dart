@@ -3,12 +3,12 @@
 // list card on the same 16 margins, the search field's two end slots
 // mirrored and its height unchanged by typing, glyphs centred in their slot.
 
-import 'package:dsh_app/ui/common/breadcrumb_row.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/files/file_glyph.dart';
-import 'package:dsh_app/ui/files/files_page.dart';
-import 'package:dsh_app/ui/files/workspace_browser.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/common/breadcrumb_row.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/files/file_glyph.dart';
+import 'package:xrk_app/ui/files/files_page.dart';
+import 'package:xrk_app/ui/files/workspace_browser.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

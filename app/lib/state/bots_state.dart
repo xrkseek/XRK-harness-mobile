@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,7 +81,7 @@ class DsBotStatus {
 
   bool get ready => availability == DsBotAvailability.ready && team != null;
 
-  /// Another DSH holds the team: it shows but cannot change.
+  /// Another XRK holds the team: it shows but cannot change.
   String? get readOnly => team?.readOnly ?? hello?.readOnly;
 
   bool supports(String capability) => hello?.supports(capability) ?? false;
@@ -109,11 +109,11 @@ class DsBotStatus {
 /// A short human line for a failed call; DS Bot's own (English) wording stays
 /// out of the interface.
 String describeDsBotError(Object error) => switch (error) {
-  DshRemoteException(:final code) when code == 'bot/read-only' => appL10n.stateBotTeamBusy,
-  DshRemoteException() => appL10n.stateBotOperationFailed,
+  XrkRemoteException(:final code) when code == 'bot/read-only' => appL10n.stateBotTeamBusy,
+  XrkRemoteException() => appL10n.stateBotOperationFailed,
   DshHttpException(:final statusCode) when statusCode == 404 => appL10n.stateBotMissing,
   DshHttpException(:final statusCode) when statusCode == 401 || statusCode == 403 => appL10n.stateHostAuthFailed,
-  DshTransportException() => appL10n.commonEngineUnreachable,
+  XrkTransportException() => appL10n.commonEngineUnreachable,
   _ => appL10n.stateUnexpectedError,
 };
 
@@ -237,10 +237,10 @@ class DsBotController extends Notifier<DsBotStatus> {
       if (!_current(generation)) return;
       final availability = switch (error) {
         DshHttpException(:final statusCode) when statusCode == 404 => DsBotAvailability.missing,
-        DshRemoteException(:final code) when code == 'bot/not-found' || code == 'bot/read-only' =>
+        XrkRemoteException(:final code) when code == 'bot/not-found' || code == 'bot/read-only' =>
           DsBotAvailability.outdated,
         // The relay's allow-list does not carry `dsBot/*` yet.
-        DshRemoteException(:final code) when code == 'METHOD_NOT_ALLOWED' => DsBotAvailability.relay,
+        XrkRemoteException(:final code) when code == 'METHOD_NOT_ALLOWED' => DsBotAvailability.relay,
         _ => DsBotAvailability.failed,
       };
       state = state.copyWith(availability: availability, error: () => describeDsBotError(error));
@@ -462,7 +462,7 @@ class DsBotController extends Notifier<DsBotStatus> {
 
 final dsBotProvider = NotifierProvider<DsBotController, DsBotStatus>(DsBotController.new);
 
-/// Every DSH Session the active host's team uses (Bots' chats in all their
+/// Every XRK Session the active host's team uses (Bots' chats in all their
 /// parts, groups, members' hidden group Sessions). The sessions drawer leaves
 /// them out; empty without DS Bot.
 final dsBotOwnedSessionsProvider = Provider<Set<String>>(
@@ -1085,7 +1085,7 @@ final dsBotMemoryProvider = FutureProvider.autoDispose.family<DsBotMemoryView, (
   final hub = ref.watch(dsBotProvider.notifier);
   final identity = ref.watch(dsBotProvider.select((s) => (s.host, s.hello?.boot, s.ready, hub.api)));
   final api = identity.$4;
-  if (api == null || !identity.$3) throw const DshTransportException('not connected');
+  if (api == null || !identity.$3) throw const XrkTransportException('not connected');
   return api.memory(botId: key.botId, roomId: key.roomId);
 });
 

@@ -3,7 +3,7 @@
 // group chats; each row says who it is, what it said or does, and whether
 // something is unread. Without a usable DS Bot, the install card.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -160,13 +160,13 @@ class BotRow extends StatelessWidget {
     if (doing != null) {
       final room = team.room(work?.roomId);
       subtitle = room == null ? doing : '$doing · ${room.name}';
-      subtitleColor = DshColors.of(context).info;
+      subtitleColor = XrkColors.of(context).info;
     } else if (question) {
       subtitle = l10n.commonWaitingAnswer;
-      subtitleColor = DshColors.of(context).warning;
+      subtitleColor = XrkColors.of(context).warning;
     } else if (bot.waiting) {
       subtitle = l10n.botsChooseModelStart;
-      subtitleColor = DshColors.of(context).warning;
+      subtitleColor = XrkColors.of(context).warning;
     } else if (notice != null && notice.roomId == null && notice.text.isNotEmpty) {
       subtitle = notice.text;
     } else {
@@ -219,13 +219,13 @@ class RoomRow extends StatelessWidget {
     Color? subtitleColor;
     if (waiting) {
       subtitle = l10n.botsMemberNeedsApproval;
-      subtitleColor = DshColors.of(context).warning;
+      subtitleColor = XrkColors.of(context).warning;
     } else if (working.isNotEmpty) {
       final names = [for (final w in working) team.bot(w.botId)?.name ?? 'Bot'];
       subtitle = names.length == 1
           ? l10n.botsNamedWorking(names.first)
           : l10n.botsNamesWorking(names.take(2).join(l10n.botsNameSeparator));
-      subtitleColor = DshColors.of(context).info;
+      subtitleColor = XrkColors.of(context).info;
     } else {
       final preview = roomPreview(room, team);
       subtitle = preview.isEmpty ? l10n.botsMemberCount(room.members.length) : preview;
@@ -294,7 +294,7 @@ class BotTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return DecoratedBox(
       decoration: ShapeDecoration(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.07),

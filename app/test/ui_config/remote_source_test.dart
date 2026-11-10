@@ -1,10 +1,10 @@
-// The remote source against a fake host: DSH home from the skill or $HOME,
+// The remote source against a fake host: XRK home from the skill or $HOME,
 // reads, paging, `workspaceFiles/changes`, the polling fallback, refusals.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_client/xrk_client.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
@@ -14,7 +14,7 @@ class FakeRemoteHost implements UiRemoteHost {
 
   Set<String> endpoints;
   String? session = 's1';
-  String? skillPath = '/home/u/.dsh-custom/skills/dsh-go-ui/SKILL.md';
+  String? skillPath = '/home/u/.dsh-custom/skills/xrk-ui/SKILL.md';
   @override
   String? userHome = '/home/u';
 
@@ -24,9 +24,9 @@ class FakeRemoteHost implements UiRemoteHost {
   int pageLines = 5000;
   int reads = 0;
   int probes = 0;
-  DshRemoteException? refuse;
+  XrkRemoteException? refuse;
 
-  /// Older hosts refuse to watch a file that does not exist; DSH 0.2.1
+  /// Older hosts refuse to watch a file that does not exist; XRK 0.2.1
   /// watches it and reports the creation.
   bool watchMissingFails = false;
   final watchers = <String, StreamController<DshWorkspaceWatchFrame>>{};
@@ -63,7 +63,7 @@ class FakeRemoteHost implements UiRemoteHost {
     }
     if (refuse case final e?) throw e;
     final text = files[path];
-    if (text == null) throw DshRemoteException('workspace-file/not-found', 'no such file');
+    if (text == null) throw XrkRemoteException('workspace-file/not-found', 'no such file');
     final lines = text.split('\n');
     final take = limit.clamp(1, pageLines);
     final page = lines.skip(offset - 1).take(take).toList();
@@ -84,7 +84,7 @@ class FakeRemoteHost implements UiRemoteHost {
     final controller = StreamController<DshWorkspaceWatchFrame>();
     if (!files.containsKey(path) && watchMissingFails) {
       scheduleMicrotask(() {
-        controller.addError(DshRemoteException('workspace-file/not-found', 'no such file'));
+        controller.addError(XrkRemoteException('workspace-file/not-found', 'no such file'));
         controller.close();
       });
     } else {
@@ -99,8 +99,8 @@ class FakeRemoteHost implements UiRemoteHost {
 }
 
 void main() {
-  const customPath = '/home/u/.dsh-custom/dsh-go/ui.json';
-  const guessedPath = '/home/u/.dsh/dsh-go/ui.json';
+  const customPath = '/home/u/.dsh-custom/xrk-mobile/ui.json';
+  const guessedPath = '/home/u/.xrk/xrk-mobile/ui.json';
 
   late FakeRemoteHost host;
   late List<UiConfigRead> reads;
@@ -138,14 +138,14 @@ void main() {
     await kicks.close();
   });
 
-  test('DSH home from the skill path', () {
-    expect(dshHomeFromSkillPath('/srv/dsh/skills/dsh-go-ui/SKILL.md'), '/srv/dsh');
-    expect(dshHomeFromSkillPath('/srv/dsh/skills/dsh-go-ui/'), '/srv/dsh');
+  test('XRK home from the skill path', () {
+    expect(dshHomeFromSkillPath('/srv/dsh/skills/xrk-ui/SKILL.md'), '/srv/dsh');
+    expect(dshHomeFromSkillPath('/srv/dsh/skills/xrk-ui/'), '/srv/dsh');
     expect(dshHomeFromSkillPath('/srv/dsh/skills/other/SKILL.md'), isNull);
-    expect(dshHomeFromSkillPath('skills/dsh-go-ui/SKILL.md'), isNull);
+    expect(dshHomeFromSkillPath('skills/xrk-ui/SKILL.md'), isNull);
   });
 
-  test('reads the file under the skill\'s DSH home and follows its changes', () async {
+  test('reads the file under the skill\'s XRK home and follows its changes', () async {
     host.write(customPath, '{"version": 1, "density": "compact"}');
     start();
     await until(() => lastText() != null);
@@ -157,7 +157,7 @@ void main() {
     await until(() => lastText()?.contains('comfortable') ?? false);
   });
 
-  test('no skill: guesses ~/.dsh from \$HOME and says the skill is missing', () async {
+  test('no skill: guesses ~/.xrk from \$HOME and says the skill is missing', () async {
     host.skillPath = null;
     start();
     await until(() => reads.isNotEmpty);
@@ -265,7 +265,7 @@ void main() {
     expect(reads.last, isA<UiConfigBroken>());
   });
 
-  test('DshUiRemoteHost: newest top-level conversation, the skill path, pages, \$HOME', () async {
+  test('XrkUiRemoteHost: newest top-level conversation, the skill path, pages, \$HOME', () async {
     final carrier = _Carrier();
     carrier.handlers['session/list'] = (_) => {
       'items': [
@@ -280,25 +280,25 @@ void main() {
       return {
         'skills': [
           {'name': 'other', 'description': '', 'path': '/x/skills/other/SKILL.md'},
-          {'name': 'dsh-go-ui', 'description': '', 'path': '/srv/dsh/skills/dsh-go-ui/SKILL.md'},
+          {'name': 'xrk-ui', 'description': '', 'path': '/srv/dsh/skills/xrk-ui/SKILL.md'},
         ],
       };
     };
     carrier.handlers['workspaceFiles/read'] = (args) {
       expect(args['workspaceFileScopeId'], 'new');
-      expect(args['path'], '/srv/dsh/dsh-go/ui.json');
+      expect(args['path'], '/srv/dsh/xrk-mobile/ui.json');
       return {'text': '{"version": 1}', 'lines': 1, 'eof': true, 'offset': 1, 'version': 'v1', 'bytes': 14};
     };
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
-    final remote = DshUiRemoteHost(client);
+    final remote = XrkUiRemoteHost(client);
     expect(remote.supports('workspaceFiles/read'), isTrue);
     expect(remote.supports('workspaceFiles/changes'), isFalse);
     expect(await remote.recentSessionId(), 'new');
     final skill = await remote.skillFile('new');
-    expect(skill, '/srv/dsh/skills/dsh-go-ui/SKILL.md');
+    expect(skill, '/srv/dsh/skills/xrk-ui/SKILL.md');
     expect(dshHomeFromSkillPath(skill!), '/srv/dsh');
-    final page = await remote.read('new', '/srv/dsh/dsh-go/ui.json');
+    final page = await remote.read('new', '/srv/dsh/xrk-mobile/ui.json');
     expect(page.text, '{"version": 1}');
     expect(page.version, 'v1');
     await client.mux.ready();
@@ -307,14 +307,14 @@ void main() {
 
   test('a refusal is denied', () async {
     host.write(customPath, '{"version": 1}');
-    host.refuse = DshRemoteException('workspace-file/outside-workspace', 'outside');
+    host.refuse = XrkRemoteException('workspace-file/outside-workspace', 'outside');
     start();
     await until(() => reads.isNotEmpty);
     expect(reads.last, isA<UiConfigUnavailable>().having((u) => u.reason, 'reason', UiConfigUnavailableReason.denied));
   });
 }
 
-/// RPC answers for [DshUiRemoteHost], plus a mux link whose handshake reports
+/// RPC answers for [XrkUiRemoteHost], plus a mux link whose handshake reports
 /// the host's $HOME.
 class _Carrier extends DshCarrier {
   final calls = <String>[];
@@ -333,10 +333,10 @@ class _Carrier extends DshCarrier {
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
     calls.add(endpoint);
     final handler = handlers[endpoint];
-    if (handler == null) return RpcError(DshRemoteException('gateway/method-not-found', endpoint));
+    if (handler == null) return RpcError(XrkRemoteException('gateway/method-not-found', endpoint));
     try {
       return RpcOk(handler(args));
-    } on DshRemoteException catch (e) {
+    } on XrkRemoteException catch (e) {
       return RpcError(e);
     }
   }

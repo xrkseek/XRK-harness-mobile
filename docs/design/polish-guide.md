@@ -1,4 +1,4 @@
-# dsh-go 打磨规范（2026-10）
+# xrk-mobile 打磨规范（2026-10）
 
 目标：从"能用"到"精致"。气质参考 Apple 系统应用与 Claude App：**克制、留白、层级清楚、动效顺手不抢戏、文案像正经产品**。允许大改布局和组件，但不改功能和数据流。
 
@@ -7,9 +7,9 @@
 | 规则 | 怎么做 |
 |---|---|
 | 对称与等距（硬性） | 胶囊里的圆键四周等距、与胶囊两端同心；左右对应的元素镜像；相邻的浮层控件同高（顶栏 44）；同一层浮层与屏幕两边等距（顶栏 / 输入区 / 浮动胶囊都是 12）；pill 左右内边距相等，只有一侧有图标自带留白时才做光学补偿。**量出来，别目测**：关键布局写几何测试（参考 `app/test/chat/composer_geometry_test.dart`） |
-| 层级 | 一屏只有一个视觉重心。标题 600 字重，其余 400–500。次要信息用 `DshColors.textTertiary`，不要靠缩小字号堆层级 |
+| 层级 | 一屏只有一个视觉重心。标题 600 字重，其余 400–500。次要信息用 `XrkColors.textTertiary`，不要靠缩小字号堆层级 |
 | 字号 | 只用主题 `textTheme` 的档位，少造自定义字号。数字用 `AppType.tabular` |
-| 颜色 | 主色只给"可点的主操作"和品牌时刻（思考胶囊、鲸尾用官方蓝 `#4D6BFE`）。状态色只表示状态。大面积用中性色。界面代码一律从主题取色（`colorScheme`、`DshSurfaces`、`DshColors`、`NeutralTones.current`），不写十六进制、不引用 `DshPalette` 常量，见 §1.1 |
+| 颜色 | 主色只给"可点的主操作"和品牌时刻（思考胶囊、鲸尾用官方蓝 `#4D6BFE`）。状态色只表示状态。大面积用中性色。界面代码一律从主题取色（`colorScheme`、`XrkSurfaces`、`XrkColors`、`NeutralTones.current`），不写十六进制、不引用 `DshPalette` 常量，见 §1.1 |
 | 表面 | 用现有的 `GlassSurface` 层级、`SheetGroup` 卡片组；不要盒子套盒子；能用间距分组就别画分割线 |
 | 图标 | **Phosphor Regular**（1.5 描边、圆端），选中 / 点亮 / 开启态用同骨架 **Fill**；实心圆键里的停止、回放的播放 / 暂停也用 Fill，行和胶囊里的操作一律描边。只经 `AppIcons.<角色>` 使用（`app/lib/ui/theme/app_icons.dart`），按角色命名；**禁止直接写 `Icons.*`**（`test/icons/app_icons_test.dart` 会拦）。缺角色就在 `AppIcons` 加一行，再跑 `tool/make_icon_font.py`；Phosphor 没有的，按它的网格和 `*-slash` 画法补画。设置行 32 圆底 18 图标；浮层圆钮 44 / 图标 22；回复操作栏 20 / `textTertiary`；同一列图标同尺寸 |
 | 空状态 / 加载 / 出错 | 都要有设计过的样子：一个图形 + 一句话 + 至多一个按钮。加载优先骨架或安静的小环，不要整屏转圈 |
@@ -103,7 +103,7 @@
 |---|---|
 | 对话 | 会话（"会话详情"改"对话详情"） |
 | 本机 / 远程主机 | 本地引擎实例、Host |
-| 引擎 | DSH 进程、runtime |
+| 引擎 | XRK 进程、runtime |
 | 思考深度 | 推理强度、effort |
 | 插件 / 技能 | 扩展 |
 | 网页版 | Web UI |

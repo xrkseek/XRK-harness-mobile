@@ -2,7 +2,7 @@
 // only loads a skill from a whitespace-bounded `/name`, so the insert keeps
 // that boundary wherever the caret is.
 
-import 'package:dsh_app/state/composer_insert.dart';
+import 'package:xrk_app/state/composer_insert.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

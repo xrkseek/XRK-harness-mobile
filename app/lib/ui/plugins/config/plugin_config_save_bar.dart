@@ -56,7 +56,7 @@ class PluginConfigSaveBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final job = this.job;
     final failure = job?.failure;
     final running = job?.running ?? false;

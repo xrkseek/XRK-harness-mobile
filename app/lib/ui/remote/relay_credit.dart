@@ -1,4 +1,4 @@
-// The line under the DSH Remote card: who provides the service, with the
+// The line under the XRK Remote card: who provides the service, with the
 // upstream project as a link to its GitHub page.
 
 import 'dart:async';
@@ -17,7 +17,7 @@ import '../../state/star_prompt.dart' show starLinkOpenerProvider;
 import '../settings/settings_widgets.dart';
 import '../theme/app_icons.dart';
 
-/// 「服务由 liguobao/ds-harness-remote 提供」. Only the project name and its
+/// 「服务由 liguobao/xrk-remote 提供」. Only the project name and its
 /// glyph open the project page, in the browser app as 给项目点 Star does
 /// (signed in to GitHub there, a star is one tap away).
 /// They take taps up to 48dp tall by reaching into the empty space above and

@@ -234,7 +234,7 @@
   "shellJsonControlCharacter": "String contains a control character",
   "shellJsonBadNumber": "Invalid number format",
   "shellSkillInstallPrompt": "Install the XRK Harness interface skill {skill} on this host:",
-  "shellSkillInstallDirectory": "1. Create the target folder `$DSH_HOME/skills/{skill}/` if needed (or `~/.dsh/skills/{skill}/` if DSH_HOME isn’t set).",
+  "shellSkillInstallDirectory": "1. Create the target folder `$XRK_HOME/skills/{skill}/` if needed (or `~/.xrk/skills/{skill}/` if XRK_HOME isn’t set).",
   "shellSkillInstallFiles": "2. Write each file below at its given relative path, keeping the contents exactly as provided.",
   "shellSkillInstallConfirm": "4. Tell me when it’s installed.",
   "shellSkillInstallFile": "File `{path}`:",

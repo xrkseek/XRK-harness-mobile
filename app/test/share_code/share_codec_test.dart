@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/share_code/settings_sanitizer.dart';
-import 'package:dsh_app/share_code/share_codec.dart';
-import 'package:dsh_app/share_code/share_link.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/settings_sanitizer.dart';
+import 'package:xrk_app/share_code/share_codec.dart';
+import 'package:xrk_app/share_code/share_link.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _plugin = SharedPlugin(
@@ -30,7 +30,7 @@ ProfileShare _profile() => ProfileShare(
   plugins: const [
     _plugin,
     SharedPlugin(name: 'dsh-writer', source: PluginSourceKind.github, spec: 'github:acme/dsh-writer#v2.0.0'),
-    SharedPlugin(name: '@deepseek-ai/dsh-experimental-session-titles-bundle', source: PluginSourceKind.official),
+    SharedPlugin(name: '@xrkseek/harness-cli-experimental-session-titles-bundle', source: PluginSourceKind.official),
   ],
   presets: const [SharedPreset(id: 'writer', name: '写作', bundle: 'dsh-writer')],
   skills: const [
@@ -186,7 +186,7 @@ void main() {
     test('app link and landing link carry the same code', () {
       final code = encodeShareCode(const PluginShare(_plugin));
       final link = ShareLink.inline(ShareKind.plugin, code);
-      expect(link.appLink.toString(), 'dshgo://share/plugin?p=$code');
+      expect(link.appLink.toString(), 'xrkharness://share/plugin?p=$code');
       expect(link.webLink, '$shareLandingUrl#p=$code');
 
       final fromApp = ShareLink.parse(link.appLink)!;
@@ -201,25 +201,25 @@ void main() {
 
     test('gist links', () {
       const link = ShareLink.gist('aa5a315d61ae9438b18d', 'AbCdEf12');
-      expect(link.appLink.toString(), 'dshgo://share/profile?gist=aa5a315d61ae9438b18d&c=AbCdEf12');
+      expect(link.appLink.toString(), 'xrkharness://share/profile?gist=aa5a315d61ae9438b18d&c=AbCdEf12');
       final back = ShareLink.parse(Uri.parse(link.webLink))!;
       expect(back.gistId, 'aa5a315d61ae9438b18d');
       expect(back.gistSum, 'AbCdEf12');
-      expect(ShareLink.parse(Uri.parse('dshgo://share/profile?gist=../../x&c=AbCdEf12')), isNull);
+      expect(ShareLink.parse(Uri.parse('xrkharness://share/profile?gist=../../x&c=AbCdEf12')), isNull);
     });
 
     test('other hosts and links are not share links', () {
-      expect(ShareLink.parse(Uri.parse('dshgo://forum/auth?p=a.b')), isNull);
-      expect(ShareLink.parse(Uri.parse('https://evil.example/dsh-go/share/#p=a.b')), isNull);
-      expect(ShareLink.parse(Uri.parse('dshgo://share/plugin')), isNull);
-      expect(isLandingUri(Uri.parse('https://ccch1mneyyy.github.io/dsh-go/sharer/')), isFalse);
+      expect(ShareLink.parse(Uri.parse('xrkharness://forum/auth?p=a.b')), isNull);
+      expect(ShareLink.parse(Uri.parse('https://evil.example/xrk-mobile/share/#p=a.b')), isNull);
+      expect(ShareLink.parse(Uri.parse('xrkharness://share/plugin')), isNull);
+      expect(isLandingUri(Uri.parse('https://xrkseek.github.io/xrk-mobile/sharer/')), isFalse);
     });
 
     test('finds the link in a pasted message', () {
       final code = encodeShareCode(const PluginShare(_plugin));
       final text = '试试这个插件：$shareLandingUrl#p=$code 很好用';
       expect(ShareLink.find(text)?.code, code);
-      expect(ShareLink.find('dshgo://share/plugin?p=$code\n')?.kind, ShareKind.plugin);
+      expect(ShareLink.find('xrkharness://share/plugin?p=$code\n')?.kind, ShareKind.plugin);
       expect(ShareLink.find('没有链接'), isNull);
     });
   });

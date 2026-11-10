@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds dsh-go APKs. Every APK that goes onto a phone or emulator comes from
+# Builds XRK Harness mobile APKs. Every APK that goes onto a phone or emulator comes from
 # here, dev and release alike: each build gets a fresh versionCode (the build
 # minute, see tooling/build_number.py), so it installs over the previous one and
 # the system refreshes what it cached for the old build (icons included).
@@ -23,7 +23,7 @@
 # The version name comes from app/pubspec.yaml; its `+N` is only a placeholder.
 # Public release builds ask GitHub only. `--beta` embeds the beta channel token
 # (lib/update/update_config.dart) for internal builds; the token file is
-# ~/keys/dshgo-beta-channel.token (mode 600), DSH_BETA_TOKEN_FILE points
+# ~/keys/xrk-mobile-beta-channel.token (mode 600), XRK_BETA_TOKEN_FILE points
 # elsewhere. Never printed, never part of a public release.
 # This script takes no machine locks; callers add their own.
 set -euo pipefail
@@ -70,7 +70,12 @@ for arg in "${extra[@]}"; do
   esac
 done
 
-# Version name: pubspec's `version:` without the `+N` placeholder.
+# Version name: prefer sibling XRK-harness apps/cli package.json (0.7.15), else pubspec.
+HARNESS_CLI_PKG="${XRK_HARNESS_ROOT:-$ROOT/../XRK-harness}/apps/cli/package.json"
+if [[ -z $name && -f $HARNESS_CLI_PKG ]]; then
+  name=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1],encoding='utf-8'))['version'])" "$HARNESS_CLI_PKG" 2>/dev/null || true)
+fi
+# Fallback: pubspec's `version:` without the `+N` placeholder.
 if [[ -z $name ]]; then
   name=$(sed -n 's/^version:[[:space:]]*\([^+[:space:]]*\).*/\1/p' "$APP/pubspec.yaml")
 fi
@@ -89,7 +94,7 @@ platform_of() { case "$1" in arm64) echo android-arm64 ;; x64) echo android-x64 
 
 # Beta channel token: handed to flutter in a JSON file (600, shredded on exit),
 # so it never shows up in the commands printed here.
-beta_file=${DSH_BETA_TOKEN_FILE-$HOME/keys/dshgo-beta-channel.token}
+beta_file=${XRK_BETA_TOKEN_FILE-$HOME/keys/xrk-mobile-beta-channel.token}
 beta_json="$APP/build/.beta-channel.json"
 beta=0
 # Public builds never carry the channel token: a stale beta feed would outrank
@@ -106,14 +111,14 @@ fi
 commands=()
 for f in "${flavors[@]}"; do
   cmd=(flutter build apk "--$mode" --flavor "$f" --target-platform "$(platform_of "$f")"
-    --build-name "$name" --build-number "$code" "--dart-define=DSH_APP_VERSION=$name+$code")
+    --build-name "$name" --build-number "$code" "--dart-define=XRK_APP_VERSION=$name+$code")
   [[ -n $target ]] && cmd+=(-t "$target")
   ((beta)) && cmd+=("--dart-define-from-file=$beta_json")
   cmd+=("${extra[@]}")
   commands+=("$(printf '%q ' "${cmd[@]}")")
 done
 
-echo "dsh-go $name ($code, $when) · $mode · ${flavors[*]}$( ((beta)) && echo ' · beta channel')"
+echo "XRK Harness $name ($code, $when) · $mode · ${flavors[*]}$( ((beta)) && echo ' · beta channel')"
 if ((dry)); then
   for c in "${commands[@]}"; do echo "(cd app && ${c% })"; done
   ((keep_daemon)) || echo "(cd app/android && ./gradlew --stop)"
@@ -137,7 +142,7 @@ drop_beta() { [[ -f $beta_json ]] && shred -u "$beta_json" 2>/dev/null || rm -f 
 trap 'drop_beta; stop_daemon' EXIT
 if ((beta)); then
   mkdir -p "$APP/build"
-  (umask 077; python3 -c 'import json, sys; print(json.dumps({"DSH_BETA_CHANNEL_TOKEN": open(sys.argv[1]).read().strip()}))' \
+  (umask 077; python3 -c 'import json, sys; print(json.dumps({"XRK_BETA_CHANNEL_TOKEN": open(sys.argv[1]).read().strip()}))' \
     "$beta_file" >"$beta_json")
 fi
 
@@ -166,5 +171,5 @@ for i in "${!flavors[@]}"; do
 done
 
 echo
-echo "dsh-go $name ($code, $when)"
+echo "XRK Harness $name ($code, $when)"
 for apk in "${built[@]}"; do echo "  ${apk#"$ROOT/"}"; done

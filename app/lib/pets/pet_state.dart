@@ -1,6 +1,6 @@
 // What the pet shows, as reduced from the app's signals by the mood reducer
 // (pet_mood.dart). The chat page's pet layer and the out-of-app overlay
-// (Kotlin, `dsh/pet_overlay`) both draw from this one value; the overlay
+// (Kotlin, `xrk/pet_overlay`) both draw from this one value; the overlay
 // never reduces anything itself. Product rules: `docs/design/pets.md`.
 //
 // State names are Clawd on Desk's (the keys of `states` in pack.json).
@@ -268,7 +268,7 @@ class PetBubble {
 }
 
 /// A host the floating pet's 切换主机 offers: one that switches without a
-/// question (本机, a pinned SSH or DSH Remote host).
+/// question (本机, a pinned SSH or XRK Remote host).
 @immutable
 class PetHostChoice {
   const PetHostChoice(this.host, this.label, {this.current = false});

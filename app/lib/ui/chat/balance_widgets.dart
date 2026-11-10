@@ -60,7 +60,7 @@ class _BalanceSettingsLineState extends ConsumerState<BalanceSettingsLine> {
     final state = ref.watch(balanceProvider);
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final balance = state.balance;
 
     final Widget value;
@@ -167,7 +167,7 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
     final state = ref.watch(balanceProvider);
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final balance = state.balance;
 
     Widget status(String text, {Color? color, IconData? icon}) => Padding(
@@ -339,7 +339,7 @@ class LowBalanceBanner extends ConsumerWidget {
     if (!state.showBanner || balance == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final text = balance.available ? l10n.viewBalanceRemaining(formatMoney(balance)) : l10n.viewBalanceModelDisabled;
     final detail = balance.available && state.threshold > 0
         ? l10n.viewBalanceBelow(formatThreshold(state.threshold, balance.symbol))

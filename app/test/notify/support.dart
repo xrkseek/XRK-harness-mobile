@@ -2,10 +2,10 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 /// Lets queued microtasks and zero-length timers run.
 Future<void> settle() async {
@@ -142,7 +142,7 @@ class FakeNotifyChannel extends NotifyChannel {
 /// A connection object that is never used: [FakeAlertSource] stands in.
 HostConnection fakeHostConnection({bool local = true, HostKind kind = HostKind.local, String? hostId}) =>
     HostConnection(
-      client: DshClient(DshConnection(Uri.parse('http://127.0.0.1:9'))),
+      client: XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9'))),
       label: local ? '本机' : '电脑 · SSH',
       isLocal: local,
       kind: kind,

@@ -1,5 +1,5 @@
 // The diagnostics snapshot as one compact Markdown file. The app writes it
-// inside the engine's rootfs (`$DSH_HOME/dsh-app/diagnostics.md`) so the
+// inside the engine's rootfs (`$XRK_HOME/dsh-app/diagnostics.md`) so the
 // agent there can read it by itself when the person reports a problem.
 
 import 'dart:convert';
@@ -95,7 +95,7 @@ void _environment(StringBuffer b, DiagnosticsSnapshot s) {
   }
   if (manifest.isNotEmpty) {
     b.writeln(
-      '- 内置运行时：${_join([manifest['runtimeVersion'], manifest['dshVersion'], manifest['nodeVersion']], mono: true)}',
+      '- 内置运行时：${_join([manifest['runtimeVersion'], manifest['engineVersion'], manifest['nodeVersion']], mono: true)}',
     );
   }
   b
@@ -105,7 +105,7 @@ void _environment(StringBuffer b, DiagnosticsSnapshot s) {
       '${st.strikes > 0 ? ' · 连续失败 ${st.strikes}' : ''}',
     )
     ..writeln(
-      '- 版本：内置 ${_short(st.bundledVersion)} · 已装 ${_short(st.installedVersion)} · 引擎 ${st.dshVersion ?? '—'} · Node ${st.nodeVersion ?? '—'}',
+      '- 版本：内置 ${_short(st.bundledVersion)} · 已装 ${_short(st.installedVersion)} · 引擎 ${st.engineVersionAlias ?? '—'} · Node ${st.nodeVersion ?? '—'}',
     )
     ..writeln(
       '- 启动方式：${st.currentExecutionMode ?? st.launchSelectedMode ?? (st.directEngineEnabled ? 'direct（未观测）' : 'proot')}'

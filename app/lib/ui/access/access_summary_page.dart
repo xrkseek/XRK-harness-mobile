@@ -1,5 +1,5 @@
-// First run, after the walk: where each item ended up, a way back to any
-// that is still off, and what happens next for voice.
+// First run, after the walk: where each item ended up, and a way
+// back to any that is still off.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,21 +16,16 @@ import 'system_access_route.dart';
 ///   ▣  还有 1 项没开
 ///      随时可在「设置 › 系统权限」补开
 ///   ╭──────────────────────────────────╮
-///   │ ▢ 允许使用麦克风          已开启   │
 ///   │ ▢ 允许通知               未开启 › │
 ///   │ ▢ 允许后台高耗电          已去设置 › │
 ///   ╰──────────────────────────────────╯
-///   语音模型（约 241 MB）会在引擎就绪后开始下载…
 ///   (               继续               )
 /// ```
 class AccessSummaryPage extends ConsumerWidget {
-  const AccessSummaryPage({super.key, required this.items, required this.voice, required this.onDone});
+  const AccessSummaryPage({super.key, required this.items, required this.onDone});
 
   /// What the picked features need, in walk order.
   final List<AccessItem> items;
-
-  /// 语音输入 was picked: its model downloads once the engine is up.
-  final bool voice;
   final VoidCallback onDone;
 
   @override
@@ -55,7 +50,6 @@ class AccessSummaryPage extends ConsumerWidget {
         SettingsSection(
           key: const ValueKey('access-summary-card'),
           margin: EdgeInsets.zero,
-          footer: voice ? Text(l10n.accessVoiceDownload(voiceModelApproxMb), key: const ValueKey('access-voice')) : null,
           children: [
             for (final (item, state) in rows)
               AccessItemTile(

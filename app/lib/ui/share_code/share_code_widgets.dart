@@ -49,7 +49,7 @@ class ShareActionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final dark = theme.brightness == Brightness.dark;
     final duration = AppMotion.of(context, AppMotion.quick);
     return Row(
@@ -133,7 +133,7 @@ class ShareCheck extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final on = value && enabled;
     final ink = scheme.onSurface;
     return AnimatedContainer(
@@ -162,8 +162,8 @@ class ProfileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
-    final slot = DshColors.identityIndex('dsh-go profile');
+    final colors = XrkColors.of(context);
+    final slot = XrkColors.identityIndex('xrk-mobile profile');
     return DecoratedBox(
       decoration: ShapeDecoration(color: colors.identity[slot], shape: Squircle.border(size * 0.25)),
       child: SizedBox.square(
@@ -186,7 +186,7 @@ class ShareHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Row(
       children: [
         leading,

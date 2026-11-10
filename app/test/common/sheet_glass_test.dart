@@ -3,9 +3,9 @@
 //
 //   flutter test test/common/sheet_glass_test.dart
 
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/discard_guard.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/discard_guard.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -136,7 +136,7 @@ void main() {
   testWidgets('at rest the glass is the plain glass', (tester) async {
     await _open(tester, (_) => const SizedBox(height: 240, child: Text('内容')));
     await tester.pumpAndSettle();
-    final glass = DshSurfaces.of(tester.element(find.text('内容'))).glass(GlassTier.sheet);
+    final glass = XrkSurfaces.of(tester.element(find.text('内容'))).glass(GlassTier.sheet);
     final fill = find.descendant(of: find.byType(GlassSurface), matching: find.byType(DecoratedBox));
     final decoration = tester.widgetList<DecoratedBox>(fill).first.decoration as ShapeDecoration;
     expect(decoration.color, glass.fill);

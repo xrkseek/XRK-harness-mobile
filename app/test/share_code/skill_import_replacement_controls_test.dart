@@ -1,24 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/share_code/share_import.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/share_code/share_import.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_engine.dart';
 
 const _root = '${GuestFs.skillsRoot}/outline';
-const _backup = '/root/.dsh/backups/share-import-20261024-153012/skills/outline';
+const _backup = '/root/.xrk/backups/share-import-20261024-153012/skills/outline';
 
 void main() {
   late GuestFs fs;
-  late DshClient client;
+  late XrkClient client;
   setUp(() {
     fs = tempGuest();
-    client = DshClient.withCarrier(FakeEngine());
+    client = XrkClient.withCarrier(FakeEngine());
   });
   tearDown(() async {
     try {

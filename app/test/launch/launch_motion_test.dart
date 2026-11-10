@@ -1,6 +1,6 @@
 // 启动画面的时间线：关键帧上的位置和透明度，按 launch_motion.dart 顶部的设计量出来。
 
-import 'package:dsh_app/launch/launch_motion.dart';
+import 'package:xrk_app/launch/launch_motion.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -27,7 +27,7 @@ class FolderMarkGlyph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final Widget glyph;
     if (emoji case final e?) {
       glyph = Text(

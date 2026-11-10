@@ -210,7 +210,7 @@ class FormFieldBlock extends StatelessWidget {
                           child: Text(
                             error ?? helper!,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: error != null ? DshColors.of(context).danger : DshColors.of(context).textTertiary,
+                              color: error != null ? XrkColors.of(context).danger : XrkColors.of(context).textTertiary,
                             ),
                           ),
                         ),
@@ -289,7 +289,7 @@ class FormBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.viewInsetsOf(context).bottom > 0 ? 0.0 : MediaQuery.viewPaddingOf(context).bottom;
-    final base = DshSurfaces.of(context).backdropBottom;
+    final base = XrkSurfaces.of(context).backdropBottom;
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(

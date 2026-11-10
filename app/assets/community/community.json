@@ -8,7 +8,7 @@
     { "name": "@liustack/modsearch", "note": "免费的联网搜索" },
     { "name": "@liustack/modlens", "note": "让纯文本模型看懂图片" },
     { "name": "dsh-context", "note": "看清并管理上下文用量" },
-    { "name": "@xmanrui/dsh-im", "note": "把飞书、微信、QQ 机器人接进 DSH" },
+    { "name": "@xmanrui/dsh-im", "note": "把飞书、微信、QQ 机器人接进 XRK" },
     { "name": "dsh-univer-office", "note": "表格和文档的办公环境" }
   ],
   "prompts": [
@@ -57,7 +57,7 @@
       "kind": "github",
       "title": "问题反馈",
       "subtitle": "GitHub Issues",
-      "url": "https://github.com/ccch1mneyyy/dsh-go/issues"
+      "url": "https://github.com/xrkseek/XRK-harness-mobile/issues"
     }
   ],
   "updates": [
@@ -65,7 +65,7 @@
       "date": "2026-10-24",
       "title": "社区页上线",
       "summary": "精选插件、玩法和交流群都在这里，内容会持续更新。",
-      "url": "https://github.com/ccch1mneyyy/dsh-go"
+      "url": "https://github.com/xrkseek/XRK-harness-mobile"
     }
   ]
 }

@@ -13,7 +13,7 @@
 import 'dart:async';
 import 'dart:async' as dart_async show AsyncError; // Riverpod exports its own AsyncError.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,7 +49,7 @@ abstract class TerminalBackend {
 class ClientTerminalBackend implements TerminalBackend {
   ClientTerminalBackend(this.client, this.sessionId);
 
-  final DshClient client;
+  final XrkClient client;
   final String sessionId;
 
   @override
@@ -230,10 +230,10 @@ abstract final class TerminalCopy {
   static String get disabledOnHost => appL10n.stateTerminalDisabledOnHost;
 
   /// A Remote Host whose owner switched the terminal off in its local Remote
-  /// settings (ds-harness-remote `TERMINAL_DISABLED`); only they can turn it on.
+  /// settings (xrk-remote `TERMINAL_DISABLED`); only they can turn it on.
   /// Also inside the [ParallelWaitError] of the first load's `(a, b).wait`.
   static bool isDisabledOnHost(Object error) => switch (error) {
-    DshRemoteException(code: 'TERMINAL_DISABLED') => true,
+    XrkRemoteException(code: 'TERMINAL_DISABLED') => true,
     ParallelWaitError(:final errors) => switch (errors) {
       (final dart_async.AsyncError? a, final dart_async.AsyncError? b) => [
         a?.error,
@@ -606,7 +606,7 @@ class TerminalWorkspace extends Notifier<TerminalWorkspaceState> {
       if (_stale(epoch) || !_links.containsKey(id)) return;
       _update(id, (t) => t.copyWith(info: info, title: info.title));
       _connect(id);
-    } on DshRemoteException catch (error) {
+    } on XrkRemoteException catch (error) {
       if (_stale(epoch)) return;
       final message = switch (error.code) {
         'terminal/limit-reached' => TerminalCopy.limit,
@@ -655,7 +655,7 @@ class TerminalWorkspace extends Notifier<TerminalWorkspaceState> {
               ..onRetained = null;
             if (link.wanted) {
               _onError(link, link.generation, error);
-            } else if (error is DshRemoteException && error.code == 'terminal/unavailable') {
+            } else if (error is XrkRemoteException && error.code == 'terminal/unavailable') {
               _update(link.id, (t) => t.copyWith(phase: TerminalPhase.missing, writable: false));
             }
           },
@@ -733,7 +733,7 @@ class TerminalWorkspace extends Notifier<TerminalWorkspaceState> {
   void _onError(_Link link, int token, Object error) {
     if (token != link.generation) return;
     link.detach();
-    final missing = error is DshRemoteException && error.code == 'terminal/unavailable';
+    final missing = error is XrkRemoteException && error.code == 'terminal/unavailable';
     // Still reconnectable once the Host owner turns the terminal back on.
     final off = TerminalCopy.isDisabledOnHost(error) ? TerminalCopy.disabledOnHost : null;
     _update(link.id, (t) {

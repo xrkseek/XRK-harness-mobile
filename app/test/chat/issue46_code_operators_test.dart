@@ -1,7 +1,7 @@
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/chat/render/code_block.dart';
-import 'package:dsh_app/ui/theme/typography.dart';
+import 'package:xrk_app/ui/chat/render/code_block.dart';
+import 'package:xrk_app/ui/theme/typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';

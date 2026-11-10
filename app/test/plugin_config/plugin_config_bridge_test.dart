@@ -1,19 +1,19 @@
-// The plugin configuration on the dsh-go bridge's routes (PLUGIN-CONFIG-
+// The plugin configuration on the xrk-mobile bridge's routes (PLUGIN-CONFIG-
 // CONTRACT R1), against a fake Host over real HTTP: the capability probe and
 // its fallback, entries read one at a time, the opaque revision sent back,
 // held edits in one write, and every refusal with its rollback path —
 // 400 invalid-operation, 404 entry-unavailable, 409 conflict / overridden /
 // apply-failed, 422 invalid-config, 503 host-unavailable, 500
 // recovery-failed, a dropped connection — then bound and bare secrets, and
-// the scope: DSH's own entries, listed and configurable on the Host, are
+// the scope: XRK's own entries, listed and configurable on the Host, are
 // never read or written from here.
 
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_memory.dart';
-import 'package:dsh_app/state/plugin_config/plugin_config_state.dart';
-import 'package:dsh_app/state/plugins_state.dart' show installedPluginsProvider;
-import 'package:dsh_app/ui/plugins/config/plugin_config_entries.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_memory.dart';
+import 'package:xrk_app/state/plugin_config/plugin_config_state.dart';
+import 'package:xrk_app/state/plugins_state.dart' show installedPluginsProvider;
+import 'package:xrk_app/ui/plugins/config/plugin_config_entries.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -38,7 +38,7 @@ Future<_Rig> _rig({
   host.routes = routes;
   host.entries[_ns] = sensevoiceEntry();
   host.unavailable['nested'] = ('unsupported', 'nested-include');
-  final client = await DshClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
+  final client = await XrkClient.connect(baseUri: host.baseUri, token: FakeBridgeHost.token, startMux: false);
   addTearDown(client.close);
   final c = ProviderContainer(
     overrides: [
@@ -93,7 +93,7 @@ Future<void> _reread(_Rig rig) => _until(() {
 /// Every request that named [entryId]'s own route.
 List<(String, String, Object?)> _touched(_Rig rig, String entryId) => [
   for (final r in rig.host.requests)
-    if (r.$2 == dshGoPluginConfigEntryPath(entryId)) r,
+    if (r.$2 == xrkGoPluginConfigEntryPath(entryId)) r,
 ];
 
 PluginConfigState _state(_Rig rig) => rig.c.read(pluginConfigProvider).value!;
@@ -113,17 +113,17 @@ void main() {
       expect(state.complete, isFalse);
       expect(state.lazy, isFalse);
       expect(state['cot-translation']!.allLive, isTrue);
-      expect(state[_ns], isNull, reason: 'DSH 0.2.1 lists no ordinary-only plugin');
+      expect(state[_ns], isNull, reason: 'XRK 0.2.1 lists no ordinary-only plugin');
       expect((rig.c.read(pluginConfigApiProvider)! as BridgePluginConfigApi).supported, isFalse);
       expect(rig.host.requests.where((r) => r.$2 == '/api/settings/describe'), isNotEmpty);
       // Asked once; a refresh does not knock again.
-      final asked = rig.host.requests.where((r) => r.$2 == dshGoPluginConfigPath).length;
+      final asked = rig.host.requests.where((r) => r.$2 == xrkGoPluginConfigPath).length;
       await rig.controller.refresh();
-      expect(rig.host.requests.where((r) => r.$2 == dshGoPluginConfigPath).length, asked);
+      expect(rig.host.requests.where((r) => r.$2 == xrkGoPluginConfigPath).length, asked);
     });
 
     test('a connection that cannot reach the bridge (the relay) never asks it', () async {
-      final c = ProviderContainer(overrides: engineOverrides(DshClient.withCarrier(FakeSettingsHost())));
+      final c = ProviderContainer(overrides: engineOverrides(XrkClient.withCarrier(FakeSettingsHost())));
       addTearDown(c.dispose);
       expect(c.read(pluginConfigApiProvider), isNot(isA<BridgePluginConfigApi>()));
     });
@@ -142,7 +142,7 @@ void main() {
       expect(state[_ns]!.revision, 'r1');
       expect(state[_ns]!.isLive(['language']), isTrue);
       expect(state[_ns]!.isLive(['threads']), isFalse);
-      expect(rig.host.requests.where((r) => r.$1 == 'GET').map((r) => r.$2), contains('$dshGoPluginConfigPath/$_ns'));
+      expect(rig.host.requests.where((r) => r.$1 == 'GET').map((r) => r.$2), contains('$xrkGoPluginConfigPath/$_ns'));
     });
   });
 
@@ -361,7 +361,7 @@ void main() {
   });
 
   group('scope', () {
-    test('the Host lists DSH\'s own web server, configurable: no page, no read', () async {
+    test('the Host lists XRK\'s own web server, configurable: no page, no read', () async {
       final rig = await _rig();
       rig.host.entries['webserver'] = webserverEntry();
       await rig.controller.refresh();
@@ -405,7 +405,7 @@ void main() {
     test('the package the Host names must be the bundle row\'s', () async {
       final rig = await _rig();
       // A core entry under a plugin row's id: the id alone does not make it one.
-      rig.host.entries[_ns] = BridgeEntry(_ns, webserverEntry().schema, package: '@deepseek-ai/dsh-host-webserver');
+      rig.host.entries[_ns] = BridgeEntry(_ns, webserverEntry().schema, package: '@xrkseek/harness-cli-host-webserver');
       await rig.controller.refresh();
       expect(_state(rig).isPlugin(_ns), isFalse);
       await expectLater(
@@ -423,7 +423,7 @@ void main() {
       await rig.controller.set(_threads, 4);
       rig.host.bundles = [
         for (final b in bridgeBundles().cast<Map<String, Object?>>())
-          {...b, 'enabled': b['name'] != '@deepseek-ai/dsh-experimental-voice-input-bundle'},
+          {...b, 'enabled': b['name'] != '@xrkseek/harness-cli-experimental-voice-input-bundle'},
       ];
       await rig.c.read(installedPluginsProvider.notifier).refresh();
       await _until(() => _state(rig).scope.confirmed && !_state(rig).isPlugin(_ns), what: 'the confirmed list');

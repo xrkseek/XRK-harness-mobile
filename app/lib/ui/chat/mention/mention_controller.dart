@@ -1,10 +1,10 @@
-// The `@` picker's state, after DSH's `dsh-client-ui-reference` source: files
+// The `@` picker's state, after XRK's `dsh-client-ui-reference` source: files
 // first, then the current conversation's subagents, then other conversations;
 // one domain failing leaves the others listed.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 

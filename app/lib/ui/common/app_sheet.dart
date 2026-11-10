@@ -27,7 +27,7 @@ const double kSheetGutter = SheetTitleBar.inset;
 
 /// 分组小标题的字:[SheetGroup]、`ListPageCard`、`SettingsSection` 共用一种。
 TextStyle? groupTitleStyle(BuildContext context) =>
-    Theme.of(context).textTheme.labelLarge?.copyWith(color: DshColors.of(context).textTertiary);
+    Theme.of(context).textTheme.labelLarge?.copyWith(color: XrkColors.of(context).textTertiary);
 
 /// 标记"这里是 showAppSheet 弹出的弹层",让 [SheetGroup] 默认用弹层留白。
 class _InAppSheet extends InheritedWidget {

@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/bots/memory_card.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/bots/memory_card.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -96,7 +96,7 @@ void main() {
           expect(find.text('OLD_HOST_MEMORY'), findsNothing);
         }
         if (mode == 'new-error') {
-          nextRead.completeError(const DshTransportException('new read failed'));
+          nextRead.completeError(const XrkTransportException('new read failed'));
         } else {
           nextRead.complete(memory('NEW_HOST_MEMORY'));
         }

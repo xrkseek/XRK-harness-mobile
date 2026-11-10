@@ -3,18 +3,18 @@
 // through `/permission`, 计划模式 through `/plan` and `/plan off`, 确认方式
 // through `setPolicies`; and the permission pill on the composer's edge.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/features_state.dart';
-import 'package:dsh_app/state/risk_notice_store.dart';
-import 'package:dsh_app/state/session_modes.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/widgets/permission_pill.dart';
-import 'package:dsh_app/ui/chat/widgets/plus_panel.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/features_state.dart';
+import 'package:xrk_app/state/risk_notice_store.dart';
+import 'package:xrk_app/state/session_modes.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/widgets/permission_pill.dart';
+import 'package:xrk_app/ui/chat/widgets/plus_panel.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';

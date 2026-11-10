@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/chat/chat_list.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/chat/chat_list.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,7 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'harness.dart';
 
 /// Only transport is controlled: parsing, transcript, controller and list are real.
-class PendingNoticeClient extends DshClient {
+class PendingNoticeClient extends XrkClient {
   PendingNoticeClient() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
 
   final events = StreamController<DshEvent>.broadcast();

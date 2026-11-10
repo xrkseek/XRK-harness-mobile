@@ -6,7 +6,7 @@ import '../../state/hosts_state.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 
-/// Step-by-step connect progress: 连接服务器 → 验证主机指纹 → 启动 DSH →
+/// Step-by-step connect progress: 连接服务器 → 验证主机指纹 → 启动 XRK →
 /// 建立隧道 → 登录, each done / running / failed / waiting, with the error
 /// (and its technical detail, copyable) under the step that failed.
 class LinkProgressCard extends StatelessWidget {
@@ -19,7 +19,7 @@ class LinkProgressCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final failed = status.phase == HostLinkPhase.failed;
     final done = status.isConnected;
     final current = status.step;
@@ -67,7 +67,7 @@ class _StepRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final Widget mark = switch (state) {
       _StepState.done => Icon(AppIcons.success, size: 20, color: colors.success),
       _StepState.failed => Icon(AppIcons.stepFailed, size: 20, color: colors.danger),
@@ -143,7 +143,7 @@ class _LinkErrorBoxState extends State<LinkErrorBox> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final error = widget.error;
     final detail = error.detail?.trim();
     final security = error.kind == HostLinkErrorKind.hostKeyMismatch;

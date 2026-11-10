@@ -1,5 +1,5 @@
 // What sits where the composer would in a conversation that can't take
-// messages (a one-shot subagent: DSH Web shows it read-only).
+// messages (a one-shot subagent: XRK Web shows it read-only).
 
 import 'package:flutter/material.dart';
 
@@ -22,7 +22,7 @@ class ReadOnlyBar extends StatelessWidget {
     final l10n = context.l10n;
     final text = this.text ?? l10n.chatReadOnlySubagent;
     final theme = Theme.of(context);
-    final tertiary = DshColors.of(context).textTertiary;
+    final tertiary = XrkColors.of(context).textTertiary;
     return Semantics(
       label: text,
       excludeSemantics: true,

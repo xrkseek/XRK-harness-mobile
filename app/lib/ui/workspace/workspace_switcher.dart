@@ -42,7 +42,7 @@ class WorkspaceSwitcher extends ConsumerWidget {
     if (!ready && retained == null) return const SizedBox(width: double.infinity);
     final selected = ref.watch(selectedWorkspaceProvider);
     final theme = Theme.of(context);
-    final tertiary = DshColors.of(context).textTertiary;
+    final tertiary = XrkColors.of(context).textTertiary;
     final retainedLabel = retained?.workspaceLabel;
     final label = retainedLabel != null
         ? retainedLabel == 'default-workspace'

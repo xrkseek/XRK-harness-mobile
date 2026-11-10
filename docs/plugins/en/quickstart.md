@@ -1,8 +1,8 @@
 # Quick start: a native tool card for your plugin
 
-Five minutes. You need a DSH plugin that registers a tool with `defineTool`. Afterwards the tool shows as a native card in the dsh-go app; the DSH web UI keeps its generic card.
+Five minutes. You need a XRK plugin that registers a tool with `defineTool`. Afterwards the tool shows as a native card in the xrk-mobile app; the XRK web UI keeps its generic card.
 
-A complete, runnable example: [`examples/plugins/dsh-go-example-weather`](../../../examples/plugins/dsh-go-example-weather/).
+A complete, runnable example: [`examples/plugins/xrk-example-weather`](../../../examples/plugins/xrk-example-weather/).
 
 ## 1. Write a view function
 
@@ -29,8 +29,8 @@ Components and their fields: [Components](components.md).
 ## 2. Return it from `presentationMeta`
 
 ```js
-import { defineTool } from '@deepseek-ai/dsh-tools'
-import { toolCard } from './tool-card.js'          // or toolCard from @dsh-go/plugin-kit
+import { defineTool } from '@xrkseek/harness-cli-tools'
+import { toolCard } from './tool-card.js'          // or toolCard from @xrkseek/plugin-kit
 import { weatherView } from './view.js'
 
 ctx.tools.register(defineTool({
@@ -44,9 +44,9 @@ ctx.tools.register(defineTool({
 }))
 ```
 
-`toolCard()` puts the view under `{ "dsh-go/view": view }` and guards against three things that **fail the whole tool call**:
+`toolCard()` puts the view under `{ "xrk-mobile/view": view }` and guards against three things that **fail the whole tool call**:
 
-| DSH rule | What `toolCard()` does |
+| XRK rule | What `toolCard()` does |
 |---|---|
 | `presentationMeta` throws → the call fails | Catches it and returns `{}` (no card) |
 | Not lossless JSON (`undefined`, `NaN`, `Infinity`, `-0`, `Date`, `Map`) → the call fails | Round-trips through JSON: `undefined` fields go, non-finite numbers become `null` |
@@ -61,7 +61,7 @@ export function toolCard(build, maxBytes = 8 * 1024) {
     try {
       const text = JSON.stringify(build(args, value))
       if (text === undefined || Buffer.byteLength(text, 'utf8') > maxBytes) return {}
-      return { 'dsh-go/view': JSON.parse(text) }
+      return { 'xrk-mobile/view': JSON.parse(text) }
     } catch {
       return {}
     }
@@ -72,14 +72,14 @@ export function toolCard(build, maxBytes = 8 * 1024) {
 ## 3. Check it
 
 ```sh
-node sdk/plugin-kit/bin/check.mjs card.json --lang en     # one view; { "dsh-go/view": … } files get tool-card limits
+node sdk/plugin-kit/bin/check.mjs card.json --lang en     # one view; { "xrk-mobile/view": … } files get tool-card limits
 node sdk/plugin-kit/bin/check.mjs . --load --lang en      # plugin dir: package.json, manifest, and loads your code
 ```
 
 In unit tests, check the view function's output directly:
 
 ```js
-import { checkView } from '@dsh-go/plugin-kit/check'
+import { checkView } from '@xrkseek/plugin-kit/check'
 const result = checkView(weatherView(sample), { budget: 'toolCard', lang: 'en' })
 assert.deepEqual(result.issues, [])
 ```

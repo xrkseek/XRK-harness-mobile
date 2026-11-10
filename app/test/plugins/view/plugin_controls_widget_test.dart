@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_controls.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_controls.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -206,14 +206,14 @@ void main() {
       size(tester, 390, scale);
       final buttons = [
         for (final label in ['Short', 'Longer text wraps to more lines'])
-          DshUiControlButton(label: label, onPressed: () {}),
+          XrkUiControlButton(label: label, onPressed: () {}),
       ];
       await tester.pumpWidget(
         testApp(
           Scaffold(
             body: Padding(
               padding: const EdgeInsets.all(16),
-              child: DshUiControlChoices(columns: 2, buttons: buttons),
+              child: XrkUiControlChoices(columns: 2, buttons: buttons),
             ),
           ),
         ),
@@ -249,8 +249,8 @@ void main() {
         Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(16),
-            child: DshUiControlChoices(
-              buttons: [for (var i = 0; i < 5; i++) DshUiControlButton(label: '$i', onPressed: () {})],
+            child: XrkUiControlChoices(
+              buttons: [for (var i = 0; i < 5; i++) XrkUiControlButton(label: '$i', onPressed: () {})],
             ),
           ),
         ),

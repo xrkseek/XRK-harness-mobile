@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/draft_store.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/draft_store.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -92,7 +92,7 @@ class _HistoryLink implements DshMuxLink {
 class _Rig {
   _Rig({DshCarrier? carrier})
     : first = HostConnection(
-        client: DshClient.withCarrier(
+        client: XrkClient.withCarrier(
           carrier ?? FakeRpcCarrier({}),
           muxOptions: carrier is _HistoryCarrier ? const MuxOptions(retryCaps: [Duration.zero]) : const MuxOptions(),
         ),
@@ -101,7 +101,7 @@ class _Rig {
 
   final picker = _PendingPicker();
   final HostConnection first;
-  final second = HostConnection(client: DshClient.withCarrier(FakeRpcCarrier({})), isLocal: true);
+  final second = HostConnection(client: XrkClient.withCarrier(FakeRpcCarrier({})), isLocal: true);
   late ProviderContainer container;
 
   Future<void> pump(WidgetTester tester) async {
@@ -185,7 +185,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       final picker = _PendingPicker();
       final ui = ChatHarness(picker: picker);
-      final connection = HostConnection(client: DshClient.withCarrier(FakeRpcCarrier({})), isLocal: true);
+      final connection = HostConnection(client: XrkClient.withCarrier(FakeRpcCarrier({})), isLocal: true);
       addTearDown(() async {
         await tester.pumpWidget(const SizedBox.shrink());
         if (!picker.result.isCompleted) picker.result.complete([]);

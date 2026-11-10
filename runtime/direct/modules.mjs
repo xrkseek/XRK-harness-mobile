@@ -14,7 +14,7 @@ const { openSync, closeSync, readFileSync, readlinkSync, fstatSync, statSync, co
 const identityError = (cause) => Object.assign(new Error(
   'this file needs compatible launch; stop the engine and turn off Direct engine',
   cause === undefined ? undefined : { cause },
-), { name: 'DshDirectModuleIdentityError', code: 'DSH_DIRECT_MODULE_IDENTITY' });
+), { name: 'DshDirectModuleIdentityError', code: 'XRK_DIRECT_MODULE_IDENTITY' });
 
 let nativeLoadSerial = 0n;
 
@@ -46,7 +46,7 @@ export function installModules(paths, inventory = { schema: 1, files: {} }) {
   }
   function current(file) {
     try { return allowed(realpath(allowed(file))); }
-    catch (error) { throw error.code === 'DSH_DIRECT_MODULE_IDENTITY' ? error : identityError(error); }
+    catch (error) { throw error.code === 'XRK_DIRECT_MODULE_IDENTITY' ? error : identityError(error); }
   }
   const sameIdentity = (a, b) => a.dev === b.dev && a.ino === b.ino;
   const sameContents = (a, b) => sameIdentity(a, b) && a.size === b.size &&

@@ -1,6 +1,6 @@
 // A Bot modal may stay open while the active connection changes. Capture the
 // target before opening it, then check again before writing or presenting a result.
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

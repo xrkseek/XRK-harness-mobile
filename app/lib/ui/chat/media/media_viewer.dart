@@ -12,7 +12,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +25,7 @@ import '../../shell/page_frame.dart' show GlassIconButton;
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import '../artifact_preview.dart' show ArtifactPreviewPage;
-import '../dsh_ui/dsh_ui_blocks.dart' show ViewerPicture;
+import '../xrk_ui/xrk_ui_blocks.dart' show ViewerPicture;
 import '../render/markdown_image.dart';
 import '../widgets/image_actions.dart';
 import '../widgets/image_gallery.dart';
@@ -70,7 +70,7 @@ Future<void> openPictureViewer(
   );
 }
 
-/// A plugin gallery's tap (`DshUiPictureViewer` in plugin views and genui
+/// A plugin gallery's tap (`XrkUiPictureViewer` in plugin views and genui
 /// cards): its pictures in this viewer.
 void openGalleryPictures(BuildContext context, List<ViewerPicture> pictures, int index, String? source) {
   unawaited(openPictureViewer(context, pictures: pictures, index: index, source: source));
@@ -150,7 +150,7 @@ class _MediaViewerPageState extends ConsumerState<MediaViewerPage> {
     final item = _items[_index];
     final title = _items.length > 1 ? l10n.mediaPageOf(_index + 1, _items.length) : item.name;
     final duration = AppMotion.of(context, AppMotion.quick);
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final prompt = meta.promptToCopy;
     final onEdit = widget.onEdit;
     final actions = <(IconData, String, VoidCallback)>[
@@ -293,7 +293,7 @@ class _MediaViewerPageState extends ConsumerState<MediaViewerPage> {
     final picture = pictures[_index.clamp(0, pictures.length - 1)];
     final title = pictures.length > 1 ? l10n.mediaPageOf(_index + 1, pictures.length) : picture.name;
     final duration = AppMotion.of(context, AppMotion.quick);
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final bytes = picture.bytes;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
@@ -581,7 +581,7 @@ class _MediaDetailsState extends State<MediaDetails> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final meta = widget.meta;
     final item = widget.item;
     final shown = meta.revisedPrompt ?? meta.prompt;

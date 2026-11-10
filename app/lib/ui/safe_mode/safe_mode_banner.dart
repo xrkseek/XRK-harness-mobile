@@ -38,7 +38,7 @@ class SafeModeBanner extends ConsumerWidget {
     final status = ref.watch(localRuntimeProvider.select((s) => s.status));
     if (!visibleFor(status)) return const SizedBox.shrink();
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final safe = status.inSafeMode;
     final background = safe ? colors.warningContainer : colors.infoContainer;
     final foreground = safe ? colors.onWarningContainer : colors.onInfoContainer;

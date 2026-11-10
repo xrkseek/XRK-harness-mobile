@@ -2,24 +2,23 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/diagnostics/diagnostics_export.dart';
-import 'package:dsh_app/runtime/local_footprint.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/onboarding_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/side_insets.dart';
-import 'package:dsh_app/ui/engine/diagnostics_export_card.dart';
-import 'package:dsh_app/ui/onboarding/runtime_setup_page.dart';
-import 'package:dsh_app/ui/shell/root_gate.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/diagnostics/diagnostics_export.dart';
+import 'package:xrk_app/runtime/local_footprint.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/onboarding_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/side_insets.dart';
+import 'package:xrk_app/ui/engine/diagnostics_export_card.dart';
+import 'package:xrk_app/ui/onboarding/runtime_setup_page.dart';
+import 'package:xrk_app/ui/shell/root_gate.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -113,16 +112,6 @@ class _Phone extends PhoneChannel {
   Future<PhoneStatus> status() async => const PhoneStatus.notReady();
 }
 
-class _Files extends FilesChannel {
-  final saved = <({String name, String mime, Uint8List bytes})>[];
-
-  @override
-  Future<String> saveToDownloads(String hostPath, {required String name, required String mime}) async {
-    saved.add((name: name, mime: mime, bytes: await File(hostPath).readAsBytes()));
-    return 'Download/XRK-Harness/$name';
-  }
-}
-
 class _Active extends ActiveHostController {
   _Active(this.host);
   final HostRef host;
@@ -140,25 +129,17 @@ class _NoConnection extends LocalConnectionController {
   }
 }
 
-// Only expose the completion of the real exporter. Both operations delegate
-// to production code, including collectDiagnostics, ZIP creation and cleanup.
+// Only expose the completion of the real exporter. Share delegates to
+// production code, including collectDiagnostics, ZIP creation and cleanup.
 class _ObservedExporter extends DiagnosticsExporter {
   _ObservedExporter({
     required super.collect,
-    required super.files,
     required super.share,
     required super.cacheRoot,
     required super.clock,
   });
 
   Future<Object?>? operation;
-
-  @override
-  Future<String> saveToDownloads({void Function(DiagnosticsStep step)? onStep}) {
-    final result = super.saveToDownloads(onStep: onStep);
-    operation = result;
-    return result;
-  }
 
   @override
   Future<bool> share({void Function(DiagnosticsStep step)? onStep}) {
@@ -180,7 +161,6 @@ class _Fixture {
   final _Native native;
   final Directory cache;
   final bridge = _Bridge();
-  final files = _Files();
   final shared = <({ShareParams params, Uint8List bytes})>[];
   late _ObservedExporter exporter;
   int exporterBuilds = 0;
@@ -226,8 +206,7 @@ class _Fixture {
             exporterBuilds++;
             return exporter = _ObservedExporter(
               collect: (at) => collectDiagnostics(ref, at),
-              files: files,
-              cacheRoot: () async => cache,
+                      cacheRoot: () async => cache,
               clock: () => _at,
               share: (params) async {
                 shared.add((params: params, bytes: await params.files!.single.readAsBytes()));
@@ -285,8 +264,8 @@ Future<void> _openExport(WidgetTester tester) async {
   await tester.tap(_exportEntry);
   await tester.pumpAndSettle();
   expect(find.byType(DiagnosticsExportCard), findsOneWidget);
-  expect(find.text('存到「下载」'), findsOneWidget);
   expect(find.text('分享诊断包'), findsOneWidget);
+  expect(find.text('存到「下载」'), findsNothing);
 }
 
 Map<String, String> _unzip(Uint8List bytes) => {
@@ -328,25 +307,23 @@ void _expectBundle(
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets('RootGate first-install failure saves real diagnostics without starting or connecting', (tester) async {
+  testWidgets('RootGate first-install failure shares real diagnostics without starting or connecting', (tester) async {
     const status = RuntimeStatus(phase: RuntimePhase.error, bundledVersion: _newRuntime, error: _installError);
     final fixture = _Fixture(status);
     await fixture.pump(tester, rootGate: true);
     expect(find.byType(RuntimeSetupPage), findsOneWidget);
     expect(find.text('finished-home'), findsNothing);
     await _openExport(tester);
-    await fixture.export(tester, '存到「下载」');
+    await fixture.export(tester, '分享诊断包');
 
-    final saved = fixture.files.saved.single;
-    expect(saved.name, 'xrk-harness-diagnostics-20261105-123456.zip');
-    expect(saved.mime, 'application/zip');
-    _expectBundle(saved.bytes, status: status, log: _diskLog, hasNativeFacts: true);
+    final shared = fixture.shared.single;
+    expect(shared.params.files!.single.mimeType, 'application/zip');
+    expect(shared.params.fileNameOverrides, ['xrk-harness-diagnostics-20261105-123456.zip']);
+    _expectBundle(shared.bytes, status: status, log: _diskLog, hasNativeFacts: true);
     expect(fixture.native.infoReads, 1);
     expect(fixture.native.logReads, 1);
     expect(fixture.bridge.logReads, 0);
     expect(find.byType(BottomSheet), findsNothing);
-    expect(find.text('已存到 下载/XRK-Harness/${saved.name}'), findsOneWidget);
-    expect(fixture.cache.listSync(recursive: true).whereType<File>(), isEmpty);
     expect(find.byType(RuntimeSetupPage), findsOneWidget);
     fixture.expectNoExportSideEffects();
     expect(tester.takeException(), isNull);
@@ -375,7 +352,6 @@ void main() {
     expect(fixture.native.infoReads, 1);
     expect(fixture.native.logReads, 1);
     expect(fixture.bridge.logReads, 1);
-    expect(fixture.files.saved, isEmpty);
     expect(find.byType(BottomSheet), findsNothing);
     fixture.expectNoExportSideEffects();
     expect(tester.takeException(), isNull);
@@ -415,9 +391,9 @@ void main() {
     expect(fixture.runtime.mutations, ['install']);
     expect(find.widgetWithText(FilledButton, '重试'), findsOneWidget);
     await _openExport(tester);
-    await fixture.export(tester, '存到「下载」');
+    await fixture.export(tester, '分享诊断包');
 
-    _expectBundle(fixture.files.saved.single.bytes, status: status, log: _diskLog, hasNativeFacts: true);
+    _expectBundle(fixture.shared.single.bytes, status: status, log: _diskLog, hasNativeFacts: true);
     fixture.expectNoExportSideEffects(earlierMutations: ['install']);
     expect(tester.takeException(), isNull);
   });
@@ -461,7 +437,7 @@ void main() {
         phase: RuntimePhase.error,
         bundledVersion: _newRuntime,
         installedVersion: _newRuntime,
-        error: 'DSH exited unexpectedly (code 1)',
+        error: 'XRK exited unexpectedly (code 1)',
       ),
     );
     await fixture.pump(tester);

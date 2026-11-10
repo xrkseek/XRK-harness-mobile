@@ -1,8 +1,8 @@
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/share_code/share_import.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/ui/settings/reply_prefs_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/share_code/share_import.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/ui/settings/reply_prefs_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -14,14 +14,14 @@ void main() {
   test('personal preferences round-trip, replace on import, and delete when cleared', () async {
     final fs = tempGuest();
     addTearDown(() => fs.root.parent.deleteSync(recursive: true));
-    writeGuest(fs, '/root/.dsh/AGENTS.md', '$managedAgentsMarker -->\nmanaged');
+    writeGuest(fs, '/root/.xrk/AGENTS.md', '$managedAgentsMarker -->\nmanaged');
     const text = '回答用中文。\n保留空行。\n';
     await fs.writeImportedAgentsMd(text);
     expect(await fs.readImportedAgentsMd(), text);
     expect(await fs.readUserAgentsMd(), text);
     final plan = await planImport(
       const ProfileShare(agentsMd: '另一份偏好'),
-      localTarget(DshClient.withCarrier(FakeEngine())),
+      localTarget(XrkClient.withCarrier(FakeEngine())),
       net: FakeShareNet(),
       fs: fs,
     );

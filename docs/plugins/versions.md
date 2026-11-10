@@ -4,11 +4,11 @@
 
 | 版本 | 在哪 | 谁管 | 现在 |
 |---|---|---|---|
-| 协议 `v` | 清单 `dshGo.v` | 主版本，不兼容才升 | `1` |
+| 协议 `v` | 清单 `xrkGo.v` | 主版本，不兼容才升 | `1` |
 | 视图格式 `v` | 视图根节点 `v`（可选） | 样式和组件语言，独立于 NA | `1` 与 `2` 并存；省略为 `1` |
-| App 版本 `minApp` | 清单 `dshGo.minApp` | 你写，插件依赖某个 App 版本才有的东西时 | 不写 |
+| App 版本 `minApp` | 清单 `xrkGo.minApp` | 你写，插件依赖某个 App 版本才有的东西时 | 不写 |
 
-另外，`package.json` 的 `engines.dsh` 写插件支持的 DSH 版本（DSH 安装时检查）。
+另外，`package.json` 的 `engines.dsh` 写插件支持的 XRK 版本（XRK 安装时检查）。
 
 ## v1 内怎么演进
 
@@ -68,7 +68,7 @@ v1 golden 仍用原基准，不因 v2 更新；v2 的浅深色、窄屏、大字
 视图函数的第二个参数 `caps` 告诉你 App 能画什么：
 
 ```js
-import { hasComponent, adaptView, localize } from '@dsh-go/plugin-kit'
+import { hasComponent, adaptView, localize } from '@xrkseek/plugin-kit'
 
 view: (scope, caps) => {
   const v = buildView(scope)
@@ -88,16 +88,16 @@ view: (scope, caps) => {
 
 ## 工具卡永久兼容
 
-工具卡写进对话记录，一年后打开老对话也要能画。App 对 `meta["dsh-go/view"]` 只增不删，老格式永久能画。你这边：
+工具卡写进对话记录，一年后打开老对话也要能画。App 对 `meta["xrk-mobile/view"]` 只增不删，老格式永久能画。你这边：
 
 - 改工具卡结构时，不要删老字段的含义；
 - 不要在工具卡里放会过期的东西（临时链接、带时效的图片地址）。
 
-## 和 DSH 版本的关系
+## 和 XRK 版本的关系
 
-| DSH | 状态 |
+| XRK | 状态 |
 |---|---|
-| 0.2.2-rc.1 | DSH Go 内置的引擎：插槽目录（109 个）和网页岛配方按它核对 |
+| 0.2.2-rc.1 | XRK Go 内置的引擎：插槽目录（109 个）和网页岛配方按它核对 |
 | 0.2.1-rc.4 | 开发基线：插槽目录（103 个）和网页岛配方按它核对 |
 | 0.2.1-rc.2 | 已验证（工具卡链路、插件安装、桥接） |
 | 0.2.x 其他 | 按 `engines.dsh` 自行声明；`presentationMeta` 自 0.2.0 起存在 |

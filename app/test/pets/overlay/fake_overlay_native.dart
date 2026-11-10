@@ -1,4 +1,4 @@
-// A stand-in for android/.../pet/PetOverlayPlugin.kt on `dsh/pet_overlay`.
+// A stand-in for android/.../pet/PetOverlayPlugin.kt on `xrk/pet_overlay`.
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,7 +14,7 @@ class FakeOverlayNative {
     this.opens = true,
   });
 
-  static const channel = MethodChannel('dsh/pet_overlay');
+  static const channel = MethodChannel('xrk/pet_overlay');
 
   String permission;
   bool enabled;

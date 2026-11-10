@@ -1,10 +1,10 @@
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/settings/reply_prefs_page.dart';
-import 'package:dsh_app/ui/settings/personalization_page.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/settings/reply_prefs_page.dart';
+import 'package:xrk_app/ui/settings/personalization_page.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

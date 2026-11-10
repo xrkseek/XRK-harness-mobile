@@ -78,7 +78,7 @@ abstract final class PlusPanelMetrics {
   static const square = 60.0;
 }
 
-/// The ＋ panel. [files] false (DSH Remote stages no files) leaves 文件 out;
+/// The ＋ panel. [files] false (XRK Remote stages no files) leaves 文件 out;
 /// [generate] adds 生成; [sessionId] adds 本对话 (a new chat has no
 /// conversation to set yet).
 Future<PlusChoice?> showPlusPanel(BuildContext context, {bool files = true, bool generate = false, String? sessionId}) {
@@ -206,7 +206,7 @@ class PlusTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final bg = colors.identity[tint % colors.identity.length];
     final fg = colors.onIdentity[tint % colors.onIdentity.length];
     return Semantics(
@@ -371,7 +371,7 @@ class _SessionPermissionPageState extends ConsumerState<SessionPermissionPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final async = ref.watch(permissionStateProvider(widget.sessionId));
     final logged = ref.watch(sessionModesProvider(widget.sessionId)).preset;
     final state = async.value;

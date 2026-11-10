@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -146,8 +146,8 @@ Future<bool> confirmRemoveWorkspace(BuildContext context, String name) async {
         TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
         FilledButton(
           style: FilledButton.styleFrom(
-            backgroundColor: DshColors.of(dialog).danger,
-            foregroundColor: DshColors.of(dialog).onDanger,
+            backgroundColor: XrkColors.of(dialog).danger,
+            foregroundColor: XrkColors.of(dialog).onDanger,
           ),
           onPressed: () => Navigator.pop(dialog, true),
           child: Text(l10n.remoteWorkspaceRemove),
@@ -179,7 +179,7 @@ class _WorkspaceActions extends ConsumerWidget {
     final count = ref.watch(workspaceCountsProvider.select((c) => c[workspaceId] ?? 0));
     final local = ref.watch(activeConnectionProvider.select((c) => c.value?.isLocal ?? true));
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     if (workspace == null) {
       // Removed elsewhere while the sheet was open.
       return SafeArea(top: false, child: SheetTitleBar(l10n.remoteWorkspace));

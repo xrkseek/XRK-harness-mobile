@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,7 +40,7 @@ class SessionSearchBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final tertiary = DshColors.of(context).textTertiary;
+    final tertiary = XrkColors.of(context).textTertiary;
     return Padding(
       padding: padding,
       child: Semantics(
@@ -239,7 +239,7 @@ class _SearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final tertiary = DshColors.of(context).textTertiary;
+    final tertiary = XrkColors.of(context).textTertiary;
     const none = InputBorder.none;
     return GlassSurface(
       tier: GlassTier.chrome,
@@ -388,7 +388,7 @@ class _SearchBody extends ConsumerWidget {
   }
 
   /// Archived conversations can't be opened as they are (the Host stops their
-  /// work); offer to restore first, like DSH Web's search does.
+  /// work); offer to restore first, like XRK Web's search does.
   Future<void> _openArchived(BuildContext context, WidgetRef ref, SessionSummary session) async {
     final container = ProviderScope.containerOf(context, listen: false);
     final owner = container.read(activeHostProvider);
@@ -475,7 +475,7 @@ class SearchResultTile extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final shape = Squircle.border(AppShape.md);
     final session = result.session;
     final title = sessionTitle(session);
@@ -642,7 +642,7 @@ class _ContentFooter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final style = theme.textTheme.bodySmall?.copyWith(color: colors.textTertiary);
     Widget line(Widget child) => Padding(
       padding: const EdgeInsets.fromLTRB(12, 14, 12, 0),
@@ -696,7 +696,7 @@ class _Eyebrow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 18, 12, 6),
-      child: Text(text, style: AppType.eyebrow(color: DshColors.of(context).textTertiary)),
+      child: Text(text, style: AppType.eyebrow(color: XrkColors.of(context).textTertiary)),
     );
   }
 }

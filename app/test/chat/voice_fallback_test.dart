@@ -1,6 +1,6 @@
-import 'package:dsh_app/ui/chat/voice/voice_bridge.dart';
-import 'package:dsh_app/ui/chat/voice/voice_controller.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/voice/voice_bridge.dart';
+import 'package:xrk_app/ui/chat/voice/voice_controller.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -18,7 +18,7 @@ void main() {
       // Not ready at the start (a ready model is used directly), ready by the fallback.
       var phase = 'unprepared';
       final carrier = FakeRpcCarrier({'speech/catalog': (_) => readySpeechCatalog(phase: phase)});
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       final bridge = FakeVoiceBridge();
       final input = TextEditingController();
       final voice = VoiceInputController(input: input, bridge: bridge, client: () => client, observeLifecycle: false);
@@ -38,7 +38,7 @@ void main() {
 
   testWidgets('fallback restores the selected draft before asking to speak again', (tester) async {
     var phase = 'unprepared';
-    final client = DshClient.withCarrier(FakeRpcCarrier({'speech/catalog': (_) => readySpeechCatalog(phase: phase)}));
+    final client = XrkClient.withCarrier(FakeRpcCarrier({'speech/catalog': (_) => readySpeechCatalog(phase: phase)}));
     final bridge = FakeVoiceBridge();
     final input = TextEditingController.fromValue(
       const TextEditingValue(text: 'hello draft world', selection: TextSelection(baseOffset: 6, extentOffset: 11)),

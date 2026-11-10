@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 import 'support/session_sync_host.dart';
 
 const _remote = HostRef.relay('controlled-B');
@@ -26,7 +26,7 @@ class _Peer {
   _Peer(this.label, this.host, this.client, this.hold);
   final String label;
   final FakeDsh host;
-  final DshClient client;
+  final XrkClient client;
   final ReplyHold hold;
   final answers = <Map<String, Object?>>[];
   int follows = 0;
@@ -36,7 +36,7 @@ class _Peer {
     final connection = DshConnection(host.baseUri);
     await connection.login(FakeDsh.token);
     final hold = ReplyHold();
-    final client = DshClient.withCarrier(HeldReplyCarrier(DshHttpCarrier(connection), hold));
+    final client = XrkClient.withCarrier(HeldReplyCarrier(DshHttpCarrier(connection), hold));
     final peer = _Peer(label, host, client, hold);
     host.handlers[r'$events/result'] = (args) {
       peer.answers.add(args);

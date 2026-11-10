@@ -3,7 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,7 +24,7 @@ abstract class MentionSource {
 
 class ClientMentionSource implements MentionSource {
   ClientMentionSource(this.client);
-  final DshClient client;
+  final XrkClient client;
 
   @override
   Future<List<FileReferenceCandidate>> files(String sessionId, String query) => client.fileReferences(sessionId, query);

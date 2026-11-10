@@ -63,7 +63,7 @@ class _MediaServiceDetailBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final view = settings[ns]!;
     final servicesField = FieldRef(ns, const ['services']);
     final services = mediaServicesOf(settings.valueOf(servicesField));
@@ -107,7 +107,7 @@ class _MediaServiceDetailBody extends ConsumerWidget {
     // Only the media plugin's own references are ours to write: a reused
     // OpenAI/Ark environment credential belongs to whichever setting owns it,
     // and overwriting it here would silently break that integration.
-    final owned = service.keyRef.startsWith('DSH_MEDIA_');
+    final owned = service.keyRef.startsWith('XRK_MEDIA_');
     final writable = owned && credential?.writable != false;
     final keyRow = EngineFieldRow(
       title: l10n.mediaSettingsApiKey,
@@ -442,8 +442,8 @@ class _MediaServiceDetailBody extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(l10n.commonDelete),

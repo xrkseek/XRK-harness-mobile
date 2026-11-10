@@ -66,8 +66,8 @@
       }
     }
   },
-  "remoteErrDshMissing": "主机上没有 dsh，装好后重试，或在启动命令里填完整路径",
-  "remoteStartCommandExample": "启动命令示例：~/.nvm/versions/node/v22.0.0/bin/dsh web",
+  "remoteErrDshMissing": "主机上没有 xrkh，装好后重试，或在启动命令里填完整路径",
+  "remoteStartCommandExample": "启动命令示例：~/.nvm/versions/node/v22.0.0/bin/xrkh serve",
   "remoteErrDshStartTimeout": "远端 XRK 启动超时",
   "remoteErrDshExited": "远端 XRK 启动后立即退出",
   "remoteErrDshStart": "没能在远端启动 XRK",
@@ -568,11 +568,11 @@
   "remoteRelayLoginRequired": "填写服务器地址、邮箱和密码",
   "remoteErrSignIn": "没能登录",
   "remoteSelfHostedServer": "自建服务器",
-  "remoteSelfHostedSignInHelp": "用邮箱和密码登录自己部署的 liguobao/ds-harness-remote",
+  "remoteSelfHostedSignInHelp": "用邮箱和密码登录自己部署的 liguobao/xrk-remote",
   "remoteServerAddress": "服务器地址",
   "remoteEmail": "邮箱",
   "remotePassword": "密码",
-  "remoteRestoreServer": "改回默认服务器 dsh.r2049.cn",
+  "remoteRestoreServer": "改回默认服务器",
   "remoteConsole": "远程控制台",
   "remoteHostsIntro": "在手机上接着用电脑或服务器上的 XRK",
   "remoteSshHosts": "SSH 主机",
@@ -581,7 +581,7 @@
   "remoteSshDirect": "不经过第三方服务器",
   "remoteOtherMethods": "其他方式",
   "remoteWebConsole": "网页版远程控制台",
-  "remoteWebConsoleProvider": "dsh.r2049.cn · 第三方页面",
+  "remoteWebConsoleProvider": "第三方页面",
   "remoteActiveHost": "正在使用「{name}」",
   "@remoteActiveHost": {
     "placeholders": {
@@ -965,7 +965,7 @@
   },
   "remoteRelayProvider": "服务由 {project} 提供",
   "@remoteRelayProvider": {
-    "description": "Under the XRK Remote card; project is the upstream GitHub project (liguobao/ds-harness-remote), drawn as a link.",
+    "description": "Under the XRK Remote card; project is the upstream GitHub project (liguobao/xrk-remote), drawn as a link.",
     "placeholders": {
       "project": {
         "type": "String"

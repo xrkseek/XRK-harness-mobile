@@ -1,5 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dsh_remote/dsh_remote.dart' as remote;
+import 'package:xrk_remote/xrk_remote.dart' as remote;
 
 enum RemoteNetworkRoute { local, remote, unknown }
 

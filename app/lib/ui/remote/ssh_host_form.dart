@@ -303,8 +303,8 @@ class _SshHostFormPageState extends ConsumerState<SshHostFormPage> {
           // 「重新信任」 has.
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(context.l10n.remoteReset),
@@ -332,8 +332,8 @@ class _SshHostFormPageState extends ConsumerState<SshHostFormPage> {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(context.l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(context.l10n.commonDelete),
@@ -380,11 +380,11 @@ class _SshHostFormPageState extends ConsumerState<SshHostFormPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    const installCommand = 'npm i -g @deepseek-ai/dsh';
+    const installCommand = 'npm i -g @xrkseek/harness-cli';
     final installHint = l10n.remoteSshInstallCommand(installCommand).split(installCommand);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final testing = _test != null;
     final mono = AppType.mono(size: 15, color: scheme.onSurface, height: 1.4);
 
@@ -743,7 +743,7 @@ class _FormBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.viewInsetsOf(context).bottom > 0 ? 0.0 : MediaQuery.viewPaddingOf(context).bottom;
-    final base = DshSurfaces.of(context).backdropBottom;
+    final base = XrkSurfaces.of(context).backdropBottom;
     // The page fades out above the keys; under them the bar is solid, so
     // nothing scrolls through a tonal or disabled fill.
     return Column(

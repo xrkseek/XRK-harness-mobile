@@ -2,8 +2,8 @@
 // halves under the buttons (or stacked when they don't fit), 50 tall, on the
 // same edges as the primary button.
 
-import 'package:dsh_app/ui/safe_mode/recovery_actions.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/safe_mode/recovery_actions.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

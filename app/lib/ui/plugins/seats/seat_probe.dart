@@ -1,6 +1,6 @@
 // The bridge's occupancy table on a cold start (docs/design/plugin-seams.md
 // §5.2): when it's missing or belongs to another boot graph, a hidden probe
-// island loads DSH Web once so the bridge reports, then goes; the inventory
+// island loads XRK Web once so the bridge reports, then goes; the inventory
 // is read again and the seats that need the table fill in. Sits beside the
 // pages that list seats (设置, 全部功能), outside their lists, taking no
 // room: nothing at all otherwise.

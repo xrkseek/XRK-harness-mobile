@@ -1,19 +1,19 @@
 // Safe mode UI: the failure card's buttons, the banner, the repair draft, notices,
 // and goldens of the engine page in both states.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/safe_mode_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/engine/engine_screen.dart';
-import 'package:dsh_app/ui/engine/log_view.dart';
-import 'package:dsh_app/ui/safe_mode/engine_failure_card.dart';
-import 'package:dsh_app/ui/safe_mode/recovery_actions.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_actions.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_banner.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_card.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_notice_listener.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_settings.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/safe_mode_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/engine/engine_screen.dart';
+import 'package:xrk_app/ui/engine/log_view.dart';
+import 'package:xrk_app/ui/safe_mode/engine_failure_card.dart';
+import 'package:xrk_app/ui/safe_mode/recovery_actions.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_actions.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_banner.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_card.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_notice_listener.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -58,7 +58,7 @@ void main() {
 
   testWidgets('failure card: restoring the last good config confirms, restores, starts normally', (tester) async {
     await pump(tester, page(const EngineFailureCard()), failedStatus());
-    expect(find.text('DSH 启动失败'), findsOneWidget);
+    expect(find.text('XRK 启动失败'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, '恢复配置'), findsOneWidget);
     expect(find.widgetWithText(OutlinedButton, '进入安全模式'), findsOneWidget);
     expect(find.text('查看日志'), findsOneWidget);
@@ -77,7 +77,7 @@ void main() {
 
   testWidgets('failure card: entering safe mode offers to move home-level files aside', (tester) async {
     bridge = FakeBridge(
-      hazards: const [SafeHazard(path: '/root/.dsh/.env', kind: 'homeEnv', detail: '设置了 NODE_OPTIONS，DSH 会拒绝启动。')],
+      hazards: const [SafeHazard(path: '/root/.xrk/.env', kind: 'homeEnv', detail: '设置了 NODE_OPTIONS，XRK 会拒绝启动。')],
     );
     await pump(tester, page(const EngineFailureCard()), failedStatus());
     // No useful LKG: safe mode is the primary action.
@@ -87,11 +87,11 @@ void main() {
     await tester.tap(find.text('进入安全模式'));
     await tester.pumpAndSettle();
     expect(find.text('先移开这些文件？'), findsOneWidget);
-    expect(find.text('/root/.dsh/.env'), findsOneWidget);
+    expect(find.text('/root/.xrk/.env'), findsOneWidget);
     await tester.tap(find.text('移开并启动'));
     await tester.pumpAndSettle();
     expect(bridge.moved, [
-      ['/root/.dsh/.env'],
+      ['/root/.xrk/.env'],
     ]);
     expect(runtime.starts, ['safe']);
   });
@@ -100,7 +100,7 @@ void main() {
     bridge = FakeBridge(
       lkg: lkgUseful,
       hazards: const [
-        SafeHazard(path: '/root/.dsh/cordis.patch.yml', kind: 'homePatch', detail: '全局补丁文件：对所有配置（包括安全模式）都生效。'),
+        SafeHazard(path: '/root/.xrk/cordis.patch.yml', kind: 'homePatch', detail: '全局补丁文件：对所有配置（包括安全模式）都生效。'),
       ],
     );
     await pump(tester, page(const SafeModeCard()), safeStatus());
@@ -116,7 +116,7 @@ void main() {
     await tester.tap(find.text('移开补丁'));
     await tester.pumpAndSettle();
     expect(bridge.moved, [
-      ['/root/.dsh/cordis.patch.yml'],
+      ['/root/.xrk/cordis.patch.yml'],
     ]);
     expect(runtime.starts, ['safe']);
   });
@@ -141,7 +141,7 @@ void main() {
 
   testWidgets('failure card stays hidden while the engine runs', (tester) async {
     await pump(tester, page(const EngineFailureCard()), const RuntimeStatus(phase: RuntimePhase.running));
-    expect(find.text('DSH 启动失败'), findsNothing);
+    expect(find.text('XRK 启动失败'), findsNothing);
     expect(find.byType(FilledButton), findsNothing);
   });
 
@@ -152,7 +152,7 @@ void main() {
     await tester.tap(find.text('帮我修复'));
     await tester.pump();
     final draft = container.read(repairDraftProvider);
-    expect(draft, startsWith('我的 DSH 正常模式出了问题（启动失败，可疑插件：break-required）'));
+    expect(draft, startsWith('我的 XRK 正常模式出了问题（启动失败，可疑插件：break-required）'));
     expect(container.read(repairDraftProvider.notifier).take(), draft);
     expect(container.read(repairDraftProvider), isNull);
 
@@ -184,9 +184,9 @@ void main() {
 
   testWidgets('notices show once as snack bars', (tester) async {
     await pump(tester, page(const SafeModeNoticeListener(child: SizedBox.expand())), safeStatus());
-    runtime.emit(runtime.state.copyWith(notice: const RuntimeNotice(1, 'DSH 连续两次启动失败，已用安全模式启动。你的对话都在。')));
+    runtime.emit(runtime.state.copyWith(notice: const RuntimeNotice(1, 'XRK 连续两次启动失败，已用安全模式启动。你的对话都在。')));
     await tester.pump();
-    expect(find.text('DSH 连续两次启动失败，已用安全模式启动。你的对话都在。'), findsOneWidget);
+    expect(find.text('XRK 连续两次启动失败，已用安全模式启动。你的对话都在。'), findsOneWidget);
   });
 
   testWidgets('settings tiles switch automatic safe mode natively', (tester) async {
@@ -213,7 +213,7 @@ void main() {
         bridge = FakeBridge(
           lkg: lkgUseful,
           hazards: const [
-            SafeHazard(path: '/root/.dsh/cordis.patch.yml', kind: 'homePatch', detail: '全局补丁文件：对所有配置（包括安全模式）都生效。'),
+            SafeHazard(path: '/root/.xrk/cordis.patch.yml', kind: 'homePatch', detail: '全局补丁文件：对所有配置（包括安全模式）都生效。'),
           ],
         );
         return overrides(safeStatus());

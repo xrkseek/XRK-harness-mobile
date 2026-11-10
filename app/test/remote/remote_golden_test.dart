@@ -4,21 +4,21 @@
 //
 //   flutter test --update-goldens test/remote/remote_golden_test.dart
 
-import 'package:dsh_app/remote/relay/relay_backend.dart';
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/remote/host_key_dialog.dart';
-import 'package:dsh_app/ui/remote/host_switcher.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/remote/network_details_sheet.dart';
-import 'package:dsh_app/ui/remote/ssh_host_form.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/remote/relay/relay_backend.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/remote/host_key_dialog.dart';
+import 'package:xrk_app/ui/remote/host_switcher.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/remote/network_details_sheet.dart';
+import 'package:xrk_app/ui/remote/ssh_host_form.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -57,7 +57,7 @@ const _lab = SshHostConfig(
 const _connected = HostLinkStatus(
   HostLinkPhase.connected,
   completed: {...HostLinkStep.values},
-  detail: '复用了远端已在运行的 DSH',
+  detail: '复用了远端已在运行的 XRK',
 );
 
 final _mismatch = HostLinkStatus(
@@ -162,7 +162,7 @@ void main() {
         HostLinkPhase.connecting,
         step: HostLinkStep.startDsh,
         completed: {HostLinkStep.connect, HostLinkStep.verifyHostKey},
-        detail: '正在远端启动 DSH…',
+        detail: '正在远端启动 XRK…',
       ),
     ),
     overrides: _remote,
@@ -180,7 +180,7 @@ void main() {
         error: HostLinkError(
           HostLinkErrorKind.dshNotFound,
           '主机上没有 dsh，装好后重试，或在启动命令里填完整路径',
-          detail: 'npm install -g @deepseek-ai/dsh\n启动命令示例：~/.nvm/versions/node/v22.0.0/bin/dsh web',
+          detail: 'npm install -g @xrkseek/harness-cli\n启动命令示例：~/.nvm/versions/node/v22.0.0/bin/xrkh serve',
         ),
       ),
     ),

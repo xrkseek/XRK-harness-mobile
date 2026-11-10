@@ -3,12 +3,12 @@
 // using a schema-declared secret slot, so the engine's snapshot affinity has
 // to cover that path too).
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,7 +33,7 @@ void main() {
   test('a credential editor from host A cannot write to host B', () async {
     final a = FakeSettingsHost();
     final b = FakeSettingsHost();
-    _initialActive.value = fakeConnection(DshClient.withCarrier(a));
+    _initialActive.value = fakeConnection(XrkClient.withCarrier(a));
     final container = ProviderContainer(
       overrides: [
         activeConnectionProvider.overrideWith((ref) => ref.watch(_activeHostProvider)),
@@ -48,7 +48,7 @@ void main() {
     await container.read(engineSettingsProvider.future);
     final old = container.read(engineSettingsProvider.notifier).edit(container.read(engineSettingsProvider).value!);
 
-    container.read(_activeHostProvider.notifier).set(fakeConnection(DshClient.withCarrier(b)));
+    container.read(_activeHostProvider.notifier).set(fakeConnection(XrkClient.withCarrier(b)));
     await container.read(engineSettingsProvider.future);
 
     await expectLater(

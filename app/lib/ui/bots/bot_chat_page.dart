@@ -1,10 +1,10 @@
 // A Bot's own chat: the whole conversation across its parts as DS Bot lays
 // it out, the reply it is writing, its cards (a question, a view, a model to
-// pick, a DSH approval) and the chat's composer.
+// pick, a XRK approval) and the chat's composer.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -269,7 +269,7 @@ class _Thinking extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 6),
-    child: SizedBox(height: 14, child: TypingIndicator(color: DshColors.of(context).textTertiary)),
+    child: SizedBox(height: 14, child: TypingIndicator(color: XrkColors.of(context).textTertiary)),
   );
 }
 
@@ -290,14 +290,14 @@ class _Intro extends StatelessWidget {
         Text(bot.name, style: theme.textTheme.titleLarge),
         if (bot.role.isNotEmpty) ...[
           const SizedBox(height: 4),
-          Text(bot.role, style: theme.textTheme.bodyMedium?.copyWith(color: DshColors.of(context).textTertiary)),
+          Text(bot.role, style: theme.textTheme.bodyMedium?.copyWith(color: XrkColors.of(context).textTertiary)),
         ],
       ],
     );
   }
 }
 
-/// DSH's own approval requests in the Bot's chat (a member's in a group are
+/// XRK's own approval requests in the Bot's chat (a member's in a group are
 /// answered in the group's details).
 class _OwnApprovals extends ConsumerStatefulWidget {
   const _OwnApprovals({required this.sessionId});
@@ -310,10 +310,10 @@ class _OwnApprovals extends ConsumerStatefulWidget {
 
 class _OwnApprovalsState extends ConsumerState<_OwnApprovals> {
   StreamSubscription<HostEvent>? _sub;
-  DshClient? _client;
+  XrkClient? _client;
   List<ApprovalRequest> _requests = const [];
 
-  void _attach(DshClient? client) {
+  void _attach(XrkClient? client) {
     if (identical(client, _client)) return;
     unawaited(_sub?.cancel());
     _client = client;

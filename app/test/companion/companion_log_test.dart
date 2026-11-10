@@ -1,10 +1,10 @@
-import 'package:dsh_app/companion/companion_light.dart';
-import 'package:dsh_app/companion/companion_reply.dart';
-import 'package:dsh_app/l10n/gen/app_localizations.dart';
-import 'package:dsh_app/ui/companion/companion_chrome.dart';
-import 'package:dsh_app/ui/companion/companion_log.dart';
-import 'package:dsh_app/ui/theme/app_theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/companion/companion_light.dart';
+import 'package:xrk_app/companion/companion_reply.dart';
+import 'package:xrk_app/l10n/gen/app_localizations.dart';
+import 'package:xrk_app/ui/companion/companion_chrome.dart';
+import 'package:xrk_app/ui/companion/companion_log.dart';
+import 'package:xrk_app/ui/theme/app_theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

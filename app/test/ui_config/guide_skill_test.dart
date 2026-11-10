@@ -1,15 +1,15 @@
-// The dsh-go-guide skill (docs/guide, built by tool/guide_sync.py): it ships in
+// The xrk-guide skill (docs/guide, built by tool/guide_sync.py): it ships in
 // the app's assets, the engine-start auto-install puts it in
-// `$DSH_HOME/skills/dsh-go-guide/` next to the other two, keeps it current
+// `$XRK_HOME/skills/xrk-guide/` next to the other two, keeps it current
 // while SKILL.md carries the managed line, and leaves it alone once the person
 // removes that line.
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -27,7 +27,7 @@ void main() {
     if (root.existsSync()) root.deleteSync(recursive: true);
   });
 
-  Directory installed() => Directory('${root.path}/root/.dsh/skills/$guideSkillName');
+  Directory installed() => Directory('${root.path}/root/.xrk/skills/$guideSkillName');
 
   test('the bundle: every asset mapped, both languages page for page, links resolve, SKILL.md managed and last', () {
     final assets = Directory('$appDir/assets/skills/$guideSkillName');
@@ -82,16 +82,16 @@ void main() {
     // The person deletes the managed line: the folder is theirs from now on.
     final skill = File('${installed().path}/SKILL.md');
     skill.writeAsStringSync(
-      skill.readAsStringSync().replaceFirst(RegExp(r'^# dsh-go:managed.*\n', multiLine: true), ''),
+      skill.readAsStringSync().replaceFirst(RegExp(r'^# xrk-mobile:managed.*\n', multiLine: true), ''),
     );
     page.writeAsStringSync('my notes');
     expect(await installUiSkill(root, guide), UiSkillInstallResult.userOwned);
     expect(page.readAsStringSync(), 'my notes');
     expect(skill.readAsStringSync(), isNot(contains(uiSkillManagedMarker)));
-    expect(installed().listSync(recursive: true).where((f) => f.path.endsWith('.dsh-go-tmp')), isEmpty);
+    expect(installed().listSync(recursive: true).where((f) => f.path.endsWith('.xrk-mobile-tmp')), isEmpty);
   });
 
-  test('no DSH home yet: nothing is created', () async {
+  test('no XRK home yet: nothing is created', () async {
     root.deleteSync(recursive: true);
     root = tempRootfs(withHome: false);
     expect(await installUiSkill(root, guide), UiSkillInstallResult.noHome);
@@ -115,7 +115,7 @@ void main() {
     await until(() => c.read(uiSkillAutoInstallProvider) != null);
     await c.read(uiSkillAutoInstallProvider.notifier).running;
     for (final name in [uiSkillName, pluginSkillName, guideSkillName]) {
-      expect(File('${root.path}/root/.dsh/skills/$name/SKILL.md').existsSync(), isTrue, reason: name);
+      expect(File('${root.path}/root/.xrk/skills/$name/SKILL.md').existsSync(), isTrue, reason: name);
     }
     for (final MapEntry(key: path, value: text) in guide.files.entries) {
       expect(File('${installed().path}/$path').readAsStringSync(), text, reason: path);

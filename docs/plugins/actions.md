@@ -66,13 +66,13 @@ App 从用户点按算起，3 秒内收到的效果才执行，迟到的静默�
 handler 先回一个 `pending`，App 立刻在被点的元素上显示等待状态；真正的结果最多 60 秒后到。
 
 ```js
-import { effects } from '@dsh-go/plugin-kit'
+import { effects } from '@xrkseek/plugin-kit'
 
-ctx.dshGo.on('translate', (scope, event) =>
+ctx.xrkGo.on('translate', (scope, event) =>
   effects.deferred(async (signal) => ({ insert: await translate(scope.clipboard, signal) }), { label: '正在翻译' }))
 
 // 不用 SDK 的等价写法
-ctx.dshGo.on('translate', (scope) => ({
+ctx.xrkGo.on('translate', (scope) => ({
   pending: { label: '正在翻译', timeoutMs: 60_000 },
   result: async (signal) => ({ insert: await translate(scope.clipboard, signal) }),
 }))
@@ -94,14 +94,14 @@ ctx.dshGo.on('translate', (scope) => ({
 
 - `insert` 是在**结果到达时**插到光标处：用户这期间可能已经改了输入框，所以只插入，不要假设输入框是空的。
 - 用到模型就会消耗用户的额度：只在用户点按后调用，一次点按一次调用，提示里写清在做什么（如「正在翻译」）。
-- 示例：[`examples/plugins/dsh-go-example-quick`](../../examples/plugins/dsh-go-example-quick/) 的「译成英文」用 DSH 里设的默认模型翻译剪贴板，没有模型服务时退回成「把请求放进输入框」。
+- 示例：[`examples/plugins/xrk-example-quick`](../../examples/plugins/xrk-example-quick/) 的「译成英文」用 XRK 里设的默认模型翻译剪贴板，没有模型服务时退回成「把请求放进输入框」。
 
 ## 在测试里看效果
 
 SDK 的 `checkEffects` / `checkPending` 就是桥接自己的代码，单测里直接用：
 
 ```js
-import { checkEffects, checkPending } from '@dsh-go/plugin-kit'
+import { checkEffects, checkPending } from '@xrkseek/plugin-kit'
 
 checkEffects({ copy: md, toast: '已复制' })
 // → { effects: [{ type: 'copy', … }, { type: 'toast', … }], issues: [], violation: false }
@@ -110,7 +110,7 @@ checkEffects({ open: 'panel:usage' }, { panels: ['usage'] })
 checkPending(result)                                    // 延后请求怎么被读：{ ok, label, timeoutMs, … }
 ```
 
-要连 handler 一起跑，用测试宿主 `createTestHost`（`@dsh-go/plugin-kit/testing`）：`await host.invoke('translate', { context: { clipboard } })` 返回 `{ effects, pending?, settled? }`，`await settled` 得到 `{ t: 'done', effects }` 或 `{ t: 'void', reason }`。
+要连 handler 一起跑，用测试宿主 `createTestHost`（`@xrkseek/plugin-kit/testing`）：`await host.invoke('translate', { context: { clipboard } })` 返回 `{ effects, pending?, settled? }`，`await settled` 得到 `{ t: 'done', effects }` 或 `{ t: 'void', reason }`。
 
 ## 选择文件与图片（NA v1.3）
 

@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/ui/chat/widgets/attachments.dart';
-import 'package:dsh_app/ui/chat/widgets/image_gallery.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart' show SettingsTile;
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart';
+import 'package:xrk_app/ui/chat/widgets/image_gallery.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart' show SettingsTile;
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,10 +44,10 @@ void _expectPage(int current, int total) {
 
 List<MethodCall> _mockGallery(WidgetTester tester) {
   final calls = <MethodCall>[];
-  const channel = MethodChannel('dsh/media');
+  const channel = MethodChannel('xrk/media');
   tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
     calls.add(call);
-    return 'Pictures/DSH Go/saved.png';
+    return 'Pictures/XRK Go/saved.png';
   });
   addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
   return calls;

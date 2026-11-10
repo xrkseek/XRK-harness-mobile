@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/usage_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/usage_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 
 // The baseline/snapshot JSON is emitted by the real fixed Cordis services,
 // SessionStore, SessionProjectionRegistry, SessionControlController and
@@ -20,7 +20,7 @@ void main() {
       final host = await FakeDsh.start();
       final connection = DshConnection(host.baseUri);
       await connection.login(FakeDsh.token);
-      final client = DshClient.withCarrier(
+      final client = XrkClient.withCarrier(
         DshHttpCarrier(connection),
         muxOptions: const MuxOptions(retryCaps: [Duration(milliseconds: 20)]),
       );

@@ -12,7 +12,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -386,7 +386,7 @@ Future<bool> _invoke(
   } on DshException catch (e) {
     if (!guard.current) return false;
     diagnostics.invoked(package, clock().difference(invokedAt));
-    final code = e is DshRemoteException && e.code.startsWith('dsh-go/') ? e.code.substring(7) : null;
+    final code = e is XrkRemoteException && e.code.startsWith('xrk-mobile/') ? e.code.substring(7) : null;
     final known = code != null && !code.startsWith('http-') && code != 'unsupported';
     diagnostics.report(package, '/runtime/$id', [
       NativeIssue('', nativeIssueText(known ? code : 'timeout'), code: known ? code : 'timeout'),

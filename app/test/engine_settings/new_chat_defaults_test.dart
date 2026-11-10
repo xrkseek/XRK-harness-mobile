@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/model_defaults_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/ui/providers/new_chat_defaults_card.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/model_defaults_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/ui/providers/new_chat_defaults_card.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -70,7 +70,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   Future<ProviderContainer> start(FakeSettingsHost host) async {
-    final client = DshClient.withCarrier(host);
+    final client = XrkClient.withCarrier(host);
     final container = ProviderContainer(overrides: engineOverrides(client));
     addTearDown(() async {
       container.dispose();
@@ -102,7 +102,7 @@ void main() {
 
   test('an editor from the prior mux cannot write after same-client reconnect', () async {
     final host = FakeSettingsHost(describe: defaultsDescribe());
-    final client = DshClient.withCarrier(host);
+    final client = XrkClient.withCarrier(host);
     final container = ProviderContainer(overrides: engineOverrides(client));
     addTearDown(() async {
       container.dispose();
@@ -127,8 +127,8 @@ void main() {
   });
 
   test('pending model never follows host A -> B -> A', () async {
-    final a = HostConnection(client: DshClient.withCarrier(FakeSettingsHost()), isLocal: true);
-    final b = HostConnection(client: DshClient.withCarrier(FakeSettingsHost()), isLocal: true);
+    final a = HostConnection(client: XrkClient.withCarrier(FakeSettingsHost()), isLocal: true);
+    final b = HostConnection(client: XrkClient.withCarrier(FakeSettingsHost()), isLocal: true);
     final container = ProviderContainer(
       overrides: [
         ...engineOverrides(a.client).skip(1),
@@ -154,8 +154,8 @@ void main() {
   });
 
   test('retained catalog cannot supply the effective default while new host loads', () async {
-    final a = HostConnection(client: DshClient.withCarrier(FakeSettingsHost()), isLocal: true);
-    final b = HostConnection(client: DshClient.withCarrier(FakeSettingsHost()), isLocal: true);
+    final a = HostConnection(client: XrkClient.withCarrier(FakeSettingsHost()), isLocal: true);
+    final b = HostConnection(client: XrkClient.withCarrier(FakeSettingsHost()), isLocal: true);
     final gate = Completer<ModelCatalog?>();
     final catalog = ModelCatalog.fromJson(sampleCatalog);
     final container = ProviderContainer(
@@ -192,7 +192,7 @@ void main() {
       describe: defaultsDescribe(mode: mode, baseEffort: effort),
       writable: writable,
     );
-    final client = DshClient.withCarrier(host);
+    final client = XrkClient.withCarrier(host);
     addTearDown(client.close);
     await pumpPage(
       tester,
@@ -269,7 +269,7 @@ void main() {
 
   testWidgets('a picker left open on the old host cannot write the replacement host', (tester) async {
     final a = FakeSettingsHost(describe: defaultsDescribe());
-    final aClient = DshClient.withCarrier(a);
+    final aClient = XrkClient.withCarrier(a);
     addTearDown(aClient.close);
     await pumpPage(
       tester,
@@ -283,7 +283,7 @@ void main() {
     await tester.tap(find.text('DeepSeek-V4.1-Flash'));
     await settle(tester);
     final b = FakeSettingsHost(describe: defaultsDescribe(revision: 40));
-    final bClient = DshClient.withCarrier(b);
+    final bClient = XrkClient.withCarrier(b);
     addTearDown(bClient.close);
     final container = ProviderScope.containerOf(tester.element(find.byType(NewChatDefaultsCard)));
     container.read(_host.notifier).state = fakeConnection(bClient);
@@ -296,7 +296,7 @@ void main() {
 
   testWidgets('missing schema explicitly disables default editing', (tester) async {
     final host = FakeSettingsHost(describe: {'namespaces': <Object?>[]});
-    final client = DshClient.withCarrier(host);
+    final client = XrkClient.withCarrier(host);
     addTearDown(client.close);
     await pumpPage(tester, const Scaffold(body: NewChatDefaultsCard()), overrides: engineOverrides(client));
     expect(find.text(appL10n.engineNewChatDefaultsUnsupported), findsOneWidget);
@@ -309,7 +309,7 @@ void main() {
     ) async {
       final host = FakeSettingsHost(describe: defaultsDescribe(baseEffort: 'high'))
         ..modelCatalog = thinkingCatalog(high: removeWhileOpen);
-      final client = DshClient.withCarrier(host);
+      final client = XrkClient.withCarrier(host);
       addTearDown(client.close);
       await tester.runAsync(() => client.mux.ready());
       await pumpPage(

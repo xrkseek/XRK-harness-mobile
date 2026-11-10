@@ -8,7 +8,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,10 +39,7 @@ import '../../state/connection_state.dart';
 import '../../state/hosts_state.dart';
 import '../../state/sessions_state.dart';
 import '../../state/settings_state.dart';
-import '../../state/voice_model_state.dart';
-import '../../state/voice_settings.dart';
 import '../../state/voice_state.dart';
-import '../chat/voice/voice_controller.dart';
 import '../common/app_dialog.dart';
 import '../common/app_sheet.dart';
 import '../common/sheet_title_bar.dart';
@@ -93,7 +90,6 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
   final _input = TextEditingController();
   final _focus = FocusNode();
   final _random = Random();
-  late final VoiceInputController _voice;
 
   CompanionPackStore? _store;
   CompanionCharacter _character = const CompanionCharacter();
@@ -117,7 +113,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
   String? _sessionId;
   ProviderSubscription<ChatState>? _chat;
   late HostRef _bindingHost;
-  DshClient? _bindingClient;
+  XrkClient? _bindingClient;
   int _bindingEpoch = 0;
 
   /// Light or full when the page last bound (see _bindingChanged).
@@ -237,23 +233,6 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
     _bindingHost = ref.read(activeHostProvider);
     _bindingClient = ref.read(activeConnectionProvider).value?.client;
     _boundLight = _light;
-    _voice = VoiceInputController(
-      input: _input,
-      bridge: ref.read(voiceBridgeProvider),
-      mode: () => ref.read(voiceSettingsProvider.notifier).ready(),
-      modelReady: () =>
-          mounted &&
-          (ref.read(activeConnectionProvider).value?.isLocal ?? false) &&
-          ref.read(voiceModelProvider).status == VoiceModelStatus.ready,
-      client: () => mounted ? ref.read(activeConnectionProvider).value?.client : null,
-      onRecognized: () {
-        final current = _currentRoom();
-        scheduleMicrotask(() {
-          if (current() && _input.text.trim().isNotEmpty) unawaited(_send());
-        });
-      },
-    );
-    _voice.addListener(_voiceChanged);
     _agentEvents = ref.read(petEventBusProvider).events.listen(_onAgentEvent);
     _speaker = ref.read(companionSpeakerProvider);
     _ttsEvents = _speaker.events.listen(_onTts);
@@ -314,8 +293,6 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
     if (_ttsPending.isNotEmpty) _speaker.stop();
     _voiceNoticeTimer?.cancel();
     _agentPillTimer?.cancel();
-    _voice.removeListener(_voiceChanged);
-    _voice.dispose();
     _focus.dispose();
     _input.dispose();
     super.dispose();
@@ -421,7 +398,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
         try {
           final next = await keeper.event(read, type);
           if (current()) _applyVitals(next);
-        } on DshRemoteException catch (error) {
+        } on XrkRemoteException catch (error) {
           if (!current() || (!error.code.endsWith('conflict') && !error.code.endsWith('store-changed'))) return;
           final again = await keeper.snapshot();
           if (current() && again != null) _applyVitals(again);
@@ -1035,15 +1012,10 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
 
   void _refreshMood() {
     if (_running || _sending) return;
-    _stage.command('mood', {'mood': _focus.hasFocus || _voice.active ? 'listening' : 'idle'});
+    _stage.command('mood', {'mood': _focus.hasFocus ? 'listening' : 'idle'});
     if (mounted) setState(() {});
   }
 
-  void _voiceChanged() {
-    if (!mounted) return;
-    setState(() {});
-    _refreshMood();
-  }
 
   void _inputChanged() {
     if (mounted) setState(() {});
@@ -1053,7 +1025,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
     if (_asleep) return CompanionActivity.sleeping;
     if (_sending || (_running && _bubble == null)) return CompanionActivity.thinking;
     if (_running) return CompanionActivity.speaking;
-    if (_focus.hasFocus || _voice.active) return CompanionActivity.listening;
+    if (_focus.hasFocus) return CompanionActivity.listening;
     return switch (_home) {
       'snack' => CompanionActivity.snacking,
       'play' => CompanionActivity.playing,
@@ -1076,7 +1048,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
     inputBusy: _focus.hasFocus || _input.text.trim().isNotEmpty,
     generating: _sending || _running || _lightReply != null,
     // Her mouth still settling counts: the words may still be on their way out.
-    audioBusy: _voice.active || (_settleTimer?.isActive ?? false) || _ttsPending.isNotEmpty,
+    audioBusy: (_settleTimer?.isActive ?? false) || _ttsPending.isNotEmpty,
     activityBusy: _home != 'idle' || _asleep || (_objectTimer?.isActive ?? false),
     approvalPending: _needsAttention,
     externalPromptBusy: _bubble != null || _myLine != null || _agentPill != null || _logOpen || _adaptOffer != null,
@@ -1219,7 +1191,6 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
     _bindingEpoch++;
     _greetingPending = true;
     _hush();
-    if (_voice.active) unawaited(_voice.cancel());
     _bubbleTimer?.cancel();
     _settleTimer?.cancel();
     _objectTimer?.cancel();
@@ -1451,7 +1422,6 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
     _acted();
     _hush();
     _retireGreeting();
-    if (_voice.active) unawaited(_voice.cancel());
     final current = _currentRoom();
     _input.clear();
     _bubbleTimer?.cancel();
@@ -2146,7 +2116,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
       Timer(const Duration(milliseconds: 450), () => _renamedTo(name));
     });
     _queueObserve();
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -2336,16 +2306,12 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
                     hint: l10n.companionInputHint(name),
                     running: _running,
                     busy: _sending,
-                    listening: _voice.active,
-                    voiceAvailable: _voice.available,
+                    listening: false,
+                    voiceAvailable: false,
                     onSend: _send,
                     onStop: _stop,
                     onVoice: () {
-                      // Reaching for the microphone is already doing something.
-                      _acted();
-                      // Her voice off before the microphone opens.
-                      _hush();
-                      _voice.active ? _voice.stop() : _voice.start();
+                      // Mobile product: no ASR.
                     },
                   ),
                 ],

@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_plugin_styles.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_plugin_styles.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,7 +48,7 @@ Map<String, Object?> actionNode(int count) => {
 
 void expectRealTargets(WidgetTester tester) {
   final boundary = tester.getRect(find.byKey(const ValueKey('plugin-v2-boundary')));
-  final buttons = find.byType(DshUiV2ActionButton);
+  final buttons = find.byType(XrkUiV2ActionButton);
   expect(buttons, findsWidgets);
   for (final element in buttons.evaluate()) {
     final rect = tester.getRect(find.byWidget(element.widget));
@@ -144,7 +144,7 @@ void main() {
             var maximum = 1.0;
             for (var y = rect.top.ceil(); y < rect.bottom.floor(); y++) {
               for (var x = rect.left.ceil(); x < rect.right.floor(); x++) {
-                maximum = math.max(maximum, dshUiContrast(rgb(x, y), background));
+                maximum = math.max(maximum, xrkUiContrast(rgb(x, y), background));
               }
             }
             return maximum;
@@ -157,7 +157,7 @@ void main() {
             'numberMaxRasterContrast': maxInkContrast(numberRect),
             'unitMaxRasterContrast': maxInkContrast(unitRect),
             'keyRgb': keyPixel,
-            'keyRasterContrast': dshUiContrast(keyPixel, background),
+            'keyRasterContrast': xrkUiContrast(keyPixel, background),
           };
         } finally {
           picture.dispose();
@@ -178,8 +178,8 @@ void main() {
           'theme': brightness.name,
           'opacity': faded.opacity,
           'background': background.toRadixString(16),
-          'labelDesignRatioAfterOpacity': dshUiContrast(blendedLabel.toARGB32() & 0xFFFFFF, background),
-          'percentDesignRatioAfterOpacity': dshUiContrast(blendedPercent.toARGB32() & 0xFFFFFF, background),
+          'labelDesignRatioAfterOpacity': xrkUiContrast(blendedLabel.toARGB32() & 0xFFFFFF, background),
+          'percentDesignRatioAfterOpacity': xrkUiContrast(blendedPercent.toARGB32() & 0xFFFFFF, background),
           ...measured,
         }),
       );
@@ -209,7 +209,7 @@ void main() {
           {'type': 'text', 'text': 'ok'},
         ],
       };
-      final parsed = parseDshUiPluginUncached(jsonDecode(jsonEncode(view)), profile: DshUiProfile.panel) as DshUiParsed;
+      final parsed = parseXrkUiPluginUncached(jsonDecode(jsonEncode(view)), profile: XrkUiProfile.panel) as XrkUiParsed;
       final style = parsed.view.styles['view']!;
       debugPrint(
         jsonEncode({
@@ -243,11 +243,11 @@ void main() {
       };
     }
     view['v'] = 2;
-    final parsed = parseDshUiPluginUncached(view, profile: DshUiProfile.panel) as DshUiParsed;
-    expect(parsed.view.nodes.whereType<DshUiActions>(), hasLength(1));
+    final parsed = parseXrkUiPluginUncached(view, profile: XrkUiProfile.panel) as XrkUiParsed;
+    expect(parsed.view.nodes.whereType<XrkUiActions>(), hasLength(1));
     await tester.pumpWidget(page(view, Brightness.light));
     await tester.pumpAndSettle();
-    final button = find.byType(DshUiV2ActionButton);
+    final button = find.byType(XrkUiV2ActionButton);
     final size = tester.getSize(button);
     debugPrint(
       jsonEncode({
@@ -272,8 +272,8 @@ void main() {
           usePhoneView(tester);
           tester.view.physicalSize = Size(width * 2, 4000);
           final view = paddedNode(actionNode(count), 7)..['v'] = 2;
-          final parsed = parseDshUiPluginUncached(view, profile: DshUiProfile.panel) as DshUiParsed;
-          expect(parsed.view.nodes.whereType<DshUiActions>(), hasLength(1));
+          final parsed = parseXrkUiPluginUncached(view, profile: XrkUiProfile.panel) as XrkUiParsed;
+          expect(parsed.view.nodes.whereType<XrkUiActions>(), hasLength(1));
           await tester.pumpWidget(
             testApp(
               MediaQuery(
@@ -290,7 +290,7 @@ void main() {
           await tester.pumpAndSettle();
           expectRealTargets(tester);
           if (count == 2) {
-            final buttons = find.byType(DshUiV2ActionButton);
+            final buttons = find.byType(XrkUiV2ActionButton);
             expect(tester.getTopLeft(buttons.at(1)).dy, greaterThan(tester.getBottomRight(buttons.at(0)).dy));
           }
           final reduced = find.byWidgetPredicate(
@@ -324,9 +324,9 @@ void main() {
             paddedNode({'type': 'confirm', 'id': 'sure', 'confirmLabel': 'Continue', 'cancelLabel': 'Back'}, 6),
           ],
         };
-        final parsed = parseDshUiPluginUncached(view, profile: DshUiProfile.panel) as DshUiParsed;
-        expect(parsed.view.nodes.whereType<DshUiActions>(), hasLength(1));
-        expect(parsed.view.nodes.whereType<DshUiConfirm>(), hasLength(1));
+        final parsed = parseXrkUiPluginUncached(view, profile: XrkUiProfile.panel) as XrkUiParsed;
+        expect(parsed.view.nodes.whereType<XrkUiActions>(), hasLength(1));
+        expect(parsed.view.nodes.whereType<XrkUiConfirm>(), hasLength(1));
         await tester.pumpWidget(
           testApp(
             MediaQuery(
@@ -360,7 +360,7 @@ void main() {
         }, brightness),
       );
       await tester.pumpAndSettle();
-      final finder = find.byType(DshUiV2ActionButton);
+      final finder = find.byType(XrkUiV2ActionButton);
       final mouse = await tester.createGesture(kind: ui.PointerDeviceKind.mouse);
       await mouse.addPointer(location: Offset.zero);
       await mouse.moveTo(tester.getCenter(finder));
@@ -388,10 +388,10 @@ void main() {
           'case': 'hover',
           'theme': brightness.name,
           'background': rgb.toRadixString(16),
-          'ratio': dshUiContrast(fg, rgb),
+          'ratio': xrkUiContrast(fg, rgb),
         }),
       );
-      expect(dshUiContrast(fg, rgb), greaterThanOrEqualTo(4.5));
+      expect(xrkUiContrast(fg, rgb), greaterThanOrEqualTo(4.5));
       await mouse.removePointer();
       expect(tester.takeException(), isNull);
     }

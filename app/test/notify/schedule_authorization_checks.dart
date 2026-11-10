@@ -3,8 +3,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/ui/features/schedule_editor/schedule_authorization.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/features/schedule_editor/schedule_authorization.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 class _Carrier extends DshCarrier {
   final results = <Map<String, Object?>>[];
@@ -71,7 +71,7 @@ Map<String, Object?> scheduleQuestionFrame(
   String id, {
   String session = 's1',
   String purpose = 'schedule-authorization',
-  String prefix = 'dsh-go-schedule-authorization-',
+  String prefix = 'xrk-mobile-schedule-authorization-',
 }) => {
   'type': 'waterfall',
   'event': 'user-questions/request',
@@ -106,13 +106,13 @@ Future<void> _flush() => Future<void>.delayed(Duration.zero);
 Future<void> runScheduleAuthorizationChecks() async {
   _checks = 0;
   final silentCarrier = _Carrier()..ready = false;
-  final silentClient = DshClient.withCarrier(silentCarrier);
+  final silentClient = XrkClient.withCarrier(silentCarrier);
   final silent = ScheduleAuthorization(silentClient, sessionId: 's1');
   try {
     var timedOut = false;
     try {
       await silent.start(timeout: const Duration(milliseconds: 5));
-    } on DshTransportException {
+    } on XrkTransportException {
       timedOut = true;
     }
     _check(timedOut, 'missing events ready left saving unbounded');
@@ -122,7 +122,7 @@ Future<void> runScheduleAuthorizationChecks() async {
     await silentClient.close();
   }
   final carrier = _Carrier();
-  final client = DshClient.withCarrier(carrier);
+  final client = XrkClient.withCarrier(carrier);
   ScheduleAuthorization? scope;
   try {
     // The ready burst can precede the save's awaited connection startup.
@@ -254,7 +254,7 @@ Future<void> runScheduleAuthorizationChecks() async {
     // Retired page/Host scope cancels only its own pending authorization, on
     // the original client; stale callbacks cannot authorize it or the new Host.
     final nextCarrier = _Carrier();
-    final nextClient = DshClient.withCarrier(nextCarrier);
+    final nextClient = XrkClient.withCarrier(nextCarrier);
     final next = ScheduleAuthorization(nextClient, sessionId: 's1');
     try {
       await next.start();

@@ -3,23 +3,23 @@
 // page that runs beside the unpack at 320 dp with 1.3× and 2× text, in both
 // languages, without an overflow or a cut-off line.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/performance/performance_state.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/onboarding_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/balance_state.dart';
-import 'package:dsh_app/ui/common/progress_halo.dart';
-import 'package:dsh_app/ui/common/side_insets.dart';
-import 'package:dsh_app/ui/onboarding/appearance_step.dart';
-import 'package:dsh_app/ui/onboarding/connect_page.dart';
-import 'package:dsh_app/ui/onboarding/onboarding_scaffold.dart';
-import 'package:dsh_app/ui/onboarding/runtime_setup_page.dart';
-import 'package:dsh_app/ui/onboarding/setup_progress.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/performance/performance_state.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/onboarding_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/balance_state.dart';
+import 'package:xrk_app/ui/common/progress_halo.dart';
+import 'package:xrk_app/ui/common/side_insets.dart';
+import 'package:xrk_app/ui/onboarding/appearance_step.dart';
+import 'package:xrk_app/ui/onboarding/connect_page.dart';
+import 'package:xrk_app/ui/onboarding/onboarding_scaffold.dart';
+import 'package:xrk_app/ui/onboarding/runtime_setup_page.dart';
+import 'package:xrk_app/ui/onboarding/setup_progress.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

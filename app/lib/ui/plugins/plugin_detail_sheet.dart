@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -380,7 +380,7 @@ class BundleSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final host = ref.watch(pluginHostProvider);
     final bundles = ref.watch(installedPluginsProvider).value;
     final bundle = bundles?.where((b) => b.name == name).firstOrNull ?? initial;
@@ -392,7 +392,7 @@ class BundleSheet extends ConsumerWidget {
     final config = ref.watch(pluginConfigProvider).value;
     final configurable = bundleSettingsRows(bundle, config);
     // Every plugin with fields gets its native page; a third-party one
-    // without any keeps its config seat (an island page, or DSH Web).
+    // without any keeps its config seat (an island page, or XRK Web).
     final configSeat = PluginSeat(slot: Slots.bundleConfig, placement: SeatPlacement.row, package: bundle.name);
     final configSeated =
         !bundle.official && !gone && configurable.isEmpty && !ref.watch(seatPlanProvider(configSeat.request)).isEmpty;
@@ -502,8 +502,8 @@ class BundleSheet extends ConsumerWidget {
                 ),
               if (!gone) PluginReloadAction(bundle: bundle),
               if (configSeated) ...[
-                // A third-party plugin's own config page in DSH Web: its
-                // schema form, its island page, or the way to DSH Web.
+                // A third-party plugin's own config page in XRK Web: its
+                // schema form, its island page, or the way to XRK Web.
                 const SizedBox(height: 16),
                 ListPageCard(margin: EdgeInsets.zero, children: [configSeat]),
               ] else if (configurable.isNotEmpty) ...[
@@ -582,7 +582,7 @@ class BundleSheet extends ConsumerWidget {
 
   Widget _action(BuildContext context, PluginHost? host, PluginBundle bundle, PluginInstallJob? job, bool gone) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     const size = Size.fromHeight(48);
     if (host == null || gone) return const SizedBox.shrink();
     if (bundle.isOnDemand) {
@@ -684,7 +684,7 @@ class PluginHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Row(
       children: [
         avatar,
@@ -730,7 +730,7 @@ class PluginStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final line = theme.colorScheme.outlineVariant.withValues(alpha: 0.7);
     return IntrinsicHeight(
       child: Row(

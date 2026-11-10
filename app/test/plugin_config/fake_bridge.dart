@@ -1,4 +1,4 @@
-// A fake `dsh web` with the dsh-go bridge's plugin-config routes
+// A fake `xrkh serve` with the xrk-mobile bridge's plugin-config routes
 // (PLUGIN-CONFIG-CONTRACT R1 §4–§5) over real HTTP: login, the entry list,
 // one entry's complete form with an opaque revision, `{revision, ops}`
 // writes, every refusal the contract names, and the RPCs the page also uses
@@ -9,7 +9,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../engine_settings/support.dart' show recordedDescribe;
 
@@ -138,7 +138,7 @@ class FakeBridgeHost {
 
   List<Object?> writes() => [
     for (final (method, path, body) in requests)
-      if (method == 'POST' && path.startsWith(dshGoPluginConfigPath)) body,
+      if (method == 'POST' && path.startsWith(xrkGoPluginConfigPath)) body,
   ];
 
   Future<void> close() => _server.close(force: true);
@@ -174,9 +174,9 @@ class FakeBridgeHost {
     if (path.startsWith('/api/')) {
       if (holds[path.substring(5)] case final hold?) await hold.future;
       json(200, {'type': 'server-response', 'rpcId': (body as Map)['rpcId'], 'result': _rpc(path.substring(5), body)});
-    } else if (!routes && path.startsWith(dshGoPluginConfigPath)) {
+    } else if (!routes && path.startsWith(xrkGoPluginConfigPath)) {
       response.statusCode = 404;
-    } else if (path == dshGoPluginConfigPath) {
+    } else if (path == xrkGoPluginConfigPath) {
       json(200, {
         'v': 1,
         'entries':
@@ -188,8 +188,8 @@ class FakeBridgeHost {
                 {'entryId': key, 'state': state, 'configurable': false, 'reason': reason},
             ],
       });
-    } else if (path.startsWith('$dshGoPluginConfigPath/')) {
-      final id = Uri.decodeComponent(path.substring(dshGoPluginConfigPath.length + 1));
+    } else if (path.startsWith('$xrkGoPluginConfigPath/')) {
+      final id = Uri.decodeComponent(path.substring(xrkGoPluginConfigPath.length + 1));
       final entry = entries[id];
       if (recorded[id] case final answer? when request.method == 'GET') {
         json(200, answer);
@@ -312,7 +312,7 @@ class FakeBridgeHost {
 /// (`cot-translation` in the recorded `settings/describe`).
 List<Object?> bridgeBundles() => [
   {
-    'name': '@deepseek-ai/dsh-experimental-voice-input-bundle',
+    'name': '@xrkseek/harness-cli-experimental-voice-input-bundle',
     'official': true,
     'availability': 'installation',
     'enabled': true,
@@ -320,13 +320,13 @@ List<Object?> bridgeBundles() => [
     'optional': true,
     'removable': false,
     'rows': [
-      {'rowId': 'speech-to-text', 'moduleName': '@deepseek-ai/dsh-experimental-speech-to-text'},
-      {'rowId': 'speech-to-text-sensevoice', 'moduleName': '@deepseek-ai/dsh-experimental-speech-to-text-sensevoice'},
+      {'rowId': 'speech-to-text', 'moduleName': '@xrkseek/harness-cli-experimental-speech-to-text'},
+      {'rowId': 'speech-to-text-sensevoice', 'moduleName': '@xrkseek/harness-cli-experimental-speech-to-text-sensevoice'},
     ],
     'overrides': <Object?>[],
   },
   {
-    'name': '@deepseek-ai/dsh-experimental-cot-translation-bundle',
+    'name': '@xrkseek/harness-cli-experimental-cot-translation-bundle',
     'official': true,
     'availability': 'installation',
     'enabled': true,
@@ -334,14 +334,14 @@ List<Object?> bridgeBundles() => [
     'optional': true,
     'removable': false,
     'rows': [
-      {'rowId': 'translator', 'moduleName': '@deepseek-ai/dsh-experimental-translator'},
-      {'rowId': 'cot-translation', 'moduleName': '@deepseek-ai/dsh-experimental-client-ui-cot-translation'},
+      {'rowId': 'translator', 'moduleName': '@xrkseek/harness-cli-experimental-translator'},
+      {'rowId': 'cot-translation', 'moduleName': '@xrkseek/harness-cli-experimental-client-ui-cot-translation'},
     ],
     'overrides': <Object?>[],
   },
 ];
 
-/// DSH's own web server (a `dsh-base` row): listed by the Host, configurable
+/// XRK's own web server (a `dsh-base` row): listed by the Host, configurable
 /// there, and never a plugin.
 BridgeEntry webserverEntry() => BridgeEntry(
   'webserver',
@@ -364,7 +364,7 @@ BridgeEntry webserverEntry() => BridgeEntry(
     },
   },
   base: {'host': '127.0.0.1', 'port': 0},
-  package: '@deepseek-ai/dsh-host-webserver',
+  package: '@xrkseek/harness-cli-host-webserver',
 );
 
 /// SenseVoice-like: a live language, two ordinary fields, a bound key and a
@@ -423,7 +423,7 @@ BridgeEntry sensevoiceEntry() => BridgeEntry(
     },
   },
   base: {'language': 'auto', 'threads': 2, 'precision': 'int8'},
-  package: '@deepseek-ai/dsh-experimental-speech-to-text-sensevoice',
+  package: '@xrkseek/harness-cli-experimental-speech-to-text-sensevoice',
   secrets: [
     {'path': ['apiKey'], 'configured': false, 'credentialRef': 'SENSEVOICE_KEY', 'writable': true},
     {'path': ['token'], 'configured': true},

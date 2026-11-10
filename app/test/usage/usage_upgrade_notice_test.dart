@@ -9,18 +9,18 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/settings/index/spot_anchor.dart';
-import 'package:dsh_app/ui/settings/privacy_page.dart';
-import 'package:dsh_app/ui/shell/root_gate.dart';
-import 'package:dsh_app/ui/shell/usage_upgrade_notice.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_app/usage/usage_net.dart';
-import 'package:dsh_app/usage/usage_stats.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/settings/index/spot_anchor.dart';
+import 'package:xrk_app/ui/settings/privacy_page.dart';
+import 'package:xrk_app/ui/shell/root_gate.dart';
+import 'package:xrk_app/ui/shell/usage_upgrade_notice.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_app/usage/usage_net.dart';
+import 'package:xrk_app/usage/usage_stats.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -39,7 +39,7 @@ VoidCallback? resume;
 
 List<Override> _overrides() => [
   ...usageOverrides(clock: () => now, http: http, onResumes: (r) => resume = r),
-  ...engine.engineOverrides(DshClient.withCarrier(engine.FakeSettingsHost())),
+  ...engine.engineOverrides(XrkClient.withCarrier(engine.FakeSettingsHost())),
 ];
 
 /// The home stand-in, under the notice as the root gate puts it.

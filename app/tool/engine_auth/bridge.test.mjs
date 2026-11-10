@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 //
 // Unit tests for the engine-side auth bridge (app/assets/engine/auth/), against
-// a fake DSH context: an authorization seam that runs scripted flows shaped like
+// a fake XRK context: an authorization seam that runs scripted flows shaped like
 // pi-ai's logins as llm-pi-ai relays them, a credential store and a settings
 // service.
 //
 //   node --test app/tool/engine_auth/bridge.test.mjs      (Node 22+)
 //
-// The plugin shell test (index.mjs) also needs a DSH install; it is skipped
-// when DSH_INSTALL (default: ~/.dsh-runtime's global npm install) is missing.
+// The plugin shell test (index.mjs) also needs a XRK install; it is skipped
+// when XRK_INSTALL (default: ~/.xrk-runtime's global npm install) is missing.
 
 import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
@@ -393,7 +393,7 @@ test('describeFailure and redact', () => {
   const jwt = fakeCodexToken({ a: 1 })
   assert.equal(redact(`token ${jwt}`).includes(jwt), false)
   assert.equal(redact(`x sk-ant-oat01-${'a'.repeat(40)}`).includes('a'.repeat(40)), false)
-  assert.equal(redact('/opt/dsh/node_modules/@deepseek-ai/dsh/lib/bin.js'), '/opt/dsh/node_modules/@deepseek-ai/dsh/lib/bin.js')
+  assert.equal(redact('/opt/dsh/node_modules/@xrkseek/harness-cli/lib/bin.js'), '/opt/dsh/node_modules/@xrkseek/harness-cli/lib/bin.js')
 })
 
 test('device code notices map to the device phase', async () => {
@@ -494,13 +494,13 @@ test('dispose withdraws live attempts', async () => {
   await waitFor(bridge, attemptId, phase('cancelled'))
 })
 
-// ── the plugin shell against a real DSH install ───────────────────────────
+// ── the plugin shell against a real XRK install ───────────────────────────
 
-const DSH_INSTALL = process.env.DSH_INSTALL ?? join(homedir(), '.dsh-runtime/npm/lib/node_modules/@deepseek-ai/dsh')
+const XRK_INSTALL = process.env.DSH_INSTALL ?? join(homedir(), '.dsh-runtime/npm/lib/node_modules/@xrkseek/harness-cli')
 
-test('index.mjs loads the host protocol package and exposes SRC-compatible Remote methods', { skip: !existsSync(join(DSH_INSTALL, 'lib/bin.js')) && `no DSH install at ${DSH_INSTALL}` }, async () => {
+test('index.mjs loads the host protocol package and exposes SRC-compatible Remote methods', { skip: !existsSync(join(DSH_INSTALL, 'lib/bin.js')) && `no XRK install at ${DSH_INSTALL}` }, async () => {
   const argv1 = process.argv[1]
-  process.argv[1] = join(DSH_INSTALL, 'lib/bin.js') // what the `dsh` launcher runs
+  process.argv[1] = join(DSH_INSTALL, 'lib/bin.js') // what the `xrkh` launcher runs
   let AppAuth
   try {
     ;({ default: AppAuth } = await import('../../assets/engine/auth/index.mjs'))

@@ -38,7 +38,7 @@ class DrawerFolderHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final open = !folder.collapsed;
     return Semantics(
       button: true,
@@ -147,7 +147,7 @@ class _EmptyFolderLine extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Text(
             l10n.shellNoChatsYet,
-            style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+            style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
           ),
         ),
       ),

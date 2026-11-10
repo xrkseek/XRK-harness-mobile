@@ -2,14 +2,14 @@
 // a budget that says which islands may open, and a stand-in for the island
 // (a WebView can't draw in a widget test).
 
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/plugins/seats/seat_links.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/plugins/seats/seat_links.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -32,7 +32,7 @@ final petBundle = PluginBundle.fromJson(bundleJson(pet, version: '0.4.2', title:
 SlotOccupant occupant(String slot, String package, String cell, {String? label}) =>
     SlotOccupant(slot: slot, package: package, cell: cell, label: label);
 
-/// A host with the bridge (Tier B), the route guard and DSH Web.
+/// A host with the bridge (Tier B), the route guard and XRK Web.
 SeatInventory seatInventory({
   Map<String, List<SlotOccupant>> occupancy = const {},
   ClientInventoryTier tier = ClientInventoryTier.bridge,
@@ -92,7 +92,7 @@ class NoEngineSettings extends EngineSettingsController {
   Future<EngineSettings?> build() async => null;
 }
 
-/// Where the seats tried to open DSH Web.
+/// Where the seats tried to open XRK Web.
 final openedWeb = <DshWebTarget>[];
 
 /// The real web entries; [island] stands in for the IslandView.
@@ -137,7 +137,7 @@ class FakeIsland extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     Widget line(String title, String value) => Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(

@@ -1,29 +1,29 @@
 // The plugin seats on the app's pages (docs/design/plugin-seams.md §3) over a
 // fake inventory — the plugin detail's config row, a plugin's own page (island
-// or the way to DSH Web), the 对话详情 插件 tab, 全部功能's plugin panels, the
+// or the way to XRK Web), the 对话详情 插件 tab, 全部功能's plugin panels, the
 // settings hub rows and the Cordis interactive region. Goldens (light + dark)
 // and behaviour. Without third-party occupants the pages' own goldens
 // (test/plugins, test/session, …) are unaffected.
 // Regenerate with `flutter test --update-goldens test/plugins/seats`.
 
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart' show chatClock;
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart' show runClock;
-import 'package:dsh_app/ui/cordis/cordis_page.dart';
-import 'package:dsh_app/ui/features/all_features_page.dart';
-import 'package:dsh_app/ui/features/feature_catalog.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_app/ui/plugins/seats/cordis_island_seat.dart';
-import 'package:dsh_app/ui/plugins/seats/plugin_seat_page.dart';
-import 'package:dsh_app/ui/plugins/seats/session_plugins_tab.dart';
-import 'package:dsh_app/ui/session/session_detail_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart' show chatClock;
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart' show runClock;
+import 'package:xrk_app/ui/cordis/cordis_page.dart';
+import 'package:xrk_app/ui/features/all_features_page.dart';
+import 'package:xrk_app/ui/features/feature_catalog.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_app/ui/plugins/seats/cordis_island_seat.dart';
+import 'package:xrk_app/ui/plugins/seats/plugin_seat_page.dart';
+import 'package:xrk_app/ui/plugins/seats/session_plugins_tab.dart';
+import 'package:xrk_app/ui/session/session_detail_page.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -66,7 +66,7 @@ Future<void> _reveal(WidgetTester tester, Finder finder) async {
 /// The installed list on a fake local host.
 List<Override> _pluginHost() {
   final carrier = FakePluginCarrier();
-  final client = DshClient.withCarrier(carrier);
+  final client = XrkClient.withCarrier(carrier);
   carrier.handlers['pluginManager/listBundles'] = (_) => const <Object?>[];
   addTearDown(client.close);
   // seatOverrides selects the host.
@@ -135,7 +135,7 @@ void main() {
       Future<void> match(String name, [Finder? at]) =>
           expectLater(at ?? find.byType(MaterialApp), matchesGoldenFile('goldens/${name}_$mode.png'));
 
-      testWidgets('plugin detail: config only in DSH Web ($mode)', (tester) async {
+      testWidgets('plugin detail: config only in XRK Web ($mode)', (tester) async {
         await _pump(
           tester,
           const PluginsScreen(),
@@ -168,7 +168,7 @@ void main() {
         await match('seat_island_page');
       });
 
-      testWidgets('a plugin page that only opens in DSH Web ($mode)', (tester) async {
+      testWidgets('a plugin page that only opens in XRK Web ($mode)', (tester) async {
         await _pump(
           tester,
           const PluginSeatPage(
@@ -230,7 +230,7 @@ void main() {
   });
 
   group('plugin detail', () {
-    testWidgets('a third-party config only DSH Web has: 设置 · 网页版, opening its card there', (tester) async {
+    testWidgets('a third-party config only XRK Web has: 设置 · 网页版, opening its card there', (tester) async {
       await _pump(
         tester,
         const PluginsScreen(),
@@ -270,7 +270,7 @@ void main() {
       expect(openedWeb, isEmpty);
     });
 
-    testWidgets('no seat on a host without islands or DSH Web: the sheet as before', (tester) async {
+    testWidgets('no seat on a host without islands or XRK Web: the sheet as before', (tester) async {
       await _pump(tester, const PluginsScreen(), extra: _pluginHost(), seats: seatOverrides(inventory: null));
       await _openProbeSheet(tester);
       expect(find.byType(BundleSheet), findsOneWidget);
@@ -412,7 +412,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('a tab whose island can\'t come up is the way to DSH Web alone', (tester) async {
+    testWidgets('a tab whose island can\'t come up is the way to XRK Web alone', (tester) async {
       await _pumpDetail(
         tester,
         tab: SessionTab.plugins,
@@ -429,7 +429,7 @@ void main() {
       expect(openedWeb.single, const DshWebTarget(sessionId: 's1'));
     });
 
-    testWidgets('several plugin tabs are a list, each opening its page or DSH Web', (tester) async {
+    testWidgets('several plugin tabs are a list, each opening its page or XRK Web', (tester) async {
       await _pumpDetail(
         tester,
         tab: SessionTab.plugins,
@@ -477,7 +477,7 @@ void main() {
       expect((petPanel.title, petPanel.webOnly, petPanel.web), ('桌宠面板', true, const DshWebTarget(sidebar: true)));
     });
 
-    testWidgets('a panel with an island opens its page; the other opens DSH Web', (tester) async {
+    testWidgets('a panel with an island opens its page; the other opens XRK Web', (tester) async {
       await _pump(
         tester,
         const AllFeaturesPage(),
@@ -497,7 +497,7 @@ void main() {
   });
 
   group('settings hub', () {
-    testWidgets('a section with an island opens its page; one without, DSH Web', (tester) async {
+    testWidgets('a section with an island opens its page; one without, XRK Web', (tester) async {
       await _pump(
         tester,
         const SettingsScreen(),

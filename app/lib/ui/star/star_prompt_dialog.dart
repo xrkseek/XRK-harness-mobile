@@ -6,7 +6,7 @@
 // ```
 // ╭──────────────────────────────────╮
 // │            ( 鲸娘 )              │  192 at most, a soft glow of the palette behind
-// │  本鱼已经在 DSH Go 里陪你半个小时啦~ │  titleLarge · centred
+// │  本鱼已经在 XRK Go 里陪你半个小时啦~ │  titleLarge · centred
 // │   这是一个免费开源的项目，如果它……   │  bodyMedium · onSurfaceVariant
 // │      拜托你啦~ 这真的很重要！！      │  bodyMedium w600 · primary
 // │ ┌──────────────────────────────┐ │
@@ -100,7 +100,7 @@ class StarPromptDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final l10n = context.l10n;
     final scale = MediaQuery.textScalerOf(context);
     const quietSize = Size.fromHeight(44);

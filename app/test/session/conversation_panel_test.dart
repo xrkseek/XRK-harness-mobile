@@ -1,24 +1,24 @@
 // A phone's header and side panel: the title gets the header's width, the model moves
 // beside the composer, and the panel shows the conversation's panes.
 
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/state/agents_state.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/quick_panel_state.dart';
-import 'package:dsh_app/ui/chat/chat_header.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart' show chatClock;
-import 'package:dsh_app/ui/chat/model_sheet.dart';
-import 'package:dsh_app/ui/chat/widgets/attachments.dart' show AttachButton;
-import 'package:dsh_app/ui/session/conversation_overview.dart';
-import 'package:dsh_app/ui/session/conversation_panel.dart';
-import 'package:dsh_app/ui/session/conversation_panes.dart';
-import 'package:dsh_app/ui/session/session_tab.dart';
-import 'package:dsh_app/ui/shell/drawer/drawer_destination.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/state/agents_state.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/quick_panel_state.dart';
+import 'package:xrk_app/ui/chat/chat_header.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart' show chatClock;
+import 'package:xrk_app/ui/chat/model_sheet.dart';
+import 'package:xrk_app/ui/chat/widgets/attachments.dart' show AttachButton;
+import 'package:xrk_app/ui/session/conversation_overview.dart';
+import 'package:xrk_app/ui/session/conversation_panel.dart';
+import 'package:xrk_app/ui/session/conversation_panes.dart';
+import 'package:xrk_app/ui/session/session_tab.dart';
+import 'package:xrk_app/ui/shell/drawer/drawer_destination.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;

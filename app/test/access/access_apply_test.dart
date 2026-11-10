@@ -3,12 +3,12 @@
 // disclosure was accepted on the pick), the pet only once it can be drawn.
 // An engine already on its way restarts once, so its start has them.
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/pets/overlay_channel.dart';
-import 'package:dsh_app/state/access_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/pets/overlay_channel.dart';
+import 'package:xrk_app/state/access_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -136,7 +136,7 @@ void main() {
 
   test('what wasn\'t picked is left alone', () async {
     final c = await container();
-    await c.read(accessSetupProvider.notifier).choose({AccessFeature.voice});
+    await c.read(accessSetupProvider.notifier).choose({AccessFeature.files});
     await c.read(accessSetupProvider.notifier).apply(readingsWith(offPhone, storage: true, overlay: true));
     expect(c.read(settingsProvider).phoneStorage, isFalse);
     expect(phone.methods, isNot(contains('setEnabled')));

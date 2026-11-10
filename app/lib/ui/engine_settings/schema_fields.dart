@@ -4,7 +4,7 @@
 
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart' show LocalizedText;
+import 'package:xrk_client/xrk_client.dart' show LocalizedText;
 
 import '../../l10n/l10n.dart';
 import '../../state/engine_settings_state.dart';

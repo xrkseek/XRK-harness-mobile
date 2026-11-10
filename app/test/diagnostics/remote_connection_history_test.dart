@@ -1,22 +1,22 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/diagnostics/diagnostics_markdown.dart';
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/relay/dsh_remote_backend.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/phone_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/voice_settings.dart';
-import 'package:dsh_client/dsh_client.dart';
-import 'package:dsh_remote/dsh_remote.dart' as remote;
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/diagnostics/diagnostics_markdown.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/relay/xrk_remote_backend.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/phone_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/voice_settings.dart';
+import 'package:xrk_client/xrk_client.dart';
+import 'package:xrk_remote/xrk_remote.dart' as remote;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,7 +100,7 @@ class _Voice extends VoiceSettingsController {
 
 class _ManualLink implements HostLink {
   HostLinkStatus value = const HostLinkStatus(HostLinkPhase.connecting, step: HostLinkStep.connect);
-  final opening = Completer<DshClient>();
+  final opening = Completer<XrkClient>();
   final changes = StreamController<HostLinkStatus>.broadcast(sync: true);
   var opens = 0;
   var kicks = 0;
@@ -118,11 +118,11 @@ class _ManualLink implements HostLink {
   @override
   Stream<HostLinkStatus> get statuses => changes.stream;
   @override
-  DshClient? get currentClient => null;
+  XrkClient? get currentClient => null;
   @override
-  Stream<DshClient> get clients => const Stream.empty();
+  Stream<XrkClient> get clients => const Stream.empty();
   @override
-  Future<DshClient> open() {
+  Future<XrkClient> open() {
     opens++;
     if (closed) return Future.error(StateError('closed synthetic link'));
     return opening.future;
@@ -229,10 +229,10 @@ class _OfflineCarrier extends DshCarrier {
   DshTracer? get tracer => null;
   @override
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) =>
-      throw StateError('unexpected DSH RPC in passive diagnostic test');
+      throw StateError('unexpected XRK RPC in passive diagnostic test');
   @override
   Future<DshMuxLink> openLink(MuxOptions options) async =>
-      throw const DshTransportException('no network carrier in diagnostic test');
+      throw const XrkTransportException('no network carrier in diagnostic test');
   @override
   Future<void> close() async {}
 }
@@ -301,7 +301,7 @@ SshHostLink _sshLink(FakeTransport transport, {Duration keepAliveInterval = cons
   loadSecrets: () async => const SshSecrets(password: 'synthetic-password'),
   transportFactory: (_, _) async => transport,
   connectClient: ({required baseUri, required token, required hostHeader}) async =>
-      DshClient.withCarrier(_OfflineCarrier()),
+      XrkClient.withCarrier(_OfflineCarrier()),
   keepAliveInterval: keepAliveInterval,
   backoff: Backoff(maxAttempts: 0),
   retryFirstOpen: false,
@@ -615,7 +615,7 @@ void main() {
     ('private-protocol-code token=private-token', 'unknown', HostLinkErrorKind.other, false),
   ]) {
     test('relay safe reason $expected preserves the original failure semantics', () async {
-      final error = DshRemoteRelayBackend.describe(
+      final error = XrkRemoteRelayBackend.describe(
         remote.RemoteFailure(code, 'private-server-detail', retryable: retryable),
         'private-host-name',
       );

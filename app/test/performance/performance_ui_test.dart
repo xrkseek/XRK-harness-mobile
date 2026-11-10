@@ -4,24 +4,24 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/app.dart';
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/performance/performance_state.dart';
-import 'package:dsh_app/pets/pet_pack.dart';
-import 'package:dsh_app/pets/pet_sheets.dart';
-import 'package:dsh_app/state/locale_state.dart';
-import 'package:dsh_app/state/ui_mode_state.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/display_image.dart';
-import 'package:dsh_app/ui/onboarding/runtime_choice.dart';
-import 'package:dsh_app/runtime/local_footprint.dart';
-import 'package:dsh_app/ui/pets/pet_sprite.dart';
-import 'package:dsh_app/ui/plugins/plugin_widgets.dart';
-import 'package:dsh_app/ui/settings/performance_page.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_app/ui/web/mode_home.dart';
-import 'package:dsh_app/ui/web/web_view_page.dart';
+import 'package:xrk_app/app.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/performance/performance_state.dart';
+import 'package:xrk_app/pets/pet_pack.dart';
+import 'package:xrk_app/pets/pet_sheets.dart';
+import 'package:xrk_app/state/locale_state.dart';
+import 'package:xrk_app/state/ui_mode_state.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/display_image.dart';
+import 'package:xrk_app/ui/onboarding/runtime_choice.dart';
+import 'package:xrk_app/runtime/local_footprint.dart';
+import 'package:xrk_app/ui/pets/pet_sprite.dart';
+import 'package:xrk_app/ui/plugins/plugin_widgets.dart';
+import 'package:xrk_app/ui/settings/performance_page.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/web/mode_home.dart';
+import 'package:xrk_app/ui/web/web_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,7 +65,7 @@ Future<ProviderContainer> mount(
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: DshApp(home: home),
+      child: XrkApp(home: home),
     ),
   );
   return container;
@@ -141,11 +141,11 @@ void main() {
     final c = await mount(tester, body, tier: DeviceTier.low);
     await tester.pumpAndSettle();
     BuildContext context() => tester.element(find.byKey(const ValueKey('policy-probe')));
-    expect(DshSurfaces.of(context()).blurEnabled, isFalse);
+    expect(XrkSurfaces.of(context()).blurEnabled, isFalse);
     expect(AppMotion.of(context(), AppMotion.standard), Duration.zero);
     await c.read(performancePrefsProvider.notifier).setMode(PerformanceMode.full);
     await tester.pumpAndSettle();
-    expect(DshSurfaces.of(context()).blurEnabled, isTrue);
+    expect(XrkSurfaces.of(context()).blurEnabled, isTrue);
     expect(AppMotion.of(context(), AppMotion.standard), AppMotion.standard);
   });
 
@@ -157,7 +157,7 @@ void main() {
     await tester.pumpAndSettle();
     final context = tester.element(find.byKey(const ValueKey('system-probe')));
     expect(AppMotion.reduced(context), isTrue);
-    expect(DshSurfaces.of(context).blurEnabled, isTrue);
+    expect(XrkSurfaces.of(context).blurEnabled, isTrue);
   });
 
   testWidgets('remove animations turned on with the app open takes the transition off pages', (tester) async {

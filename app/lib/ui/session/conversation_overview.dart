@@ -1,7 +1,7 @@
 // 基础信息: what a phone's header has no room for. The whole title, where the conversation
 // runs and with which model, and how far it has come.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,10 +10,13 @@ import '../../state/agents_state.dart' show subagentParentProvider;
 import '../../state/chat_state.dart';
 import '../../state/connection_state.dart';
 import '../../state/models_state.dart';
+import '../../state/session_export.dart';
 import '../../state/session_search.dart' show folderLabel;
 import '../../state/sessions_state.dart';
 import '../../plugins/native/native_state.dart';
 import '../chat/model_sheet.dart';
+import '../common/brief_notice.dart';
+import '../features/session_export_page.dart';
 import '../plugins/native/native_taps.dart' show runNativeAction;
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
@@ -81,6 +84,25 @@ class ConversationOverview extends ConsumerWidget {
           onTap: readOnly ? null : () => _pickModel(context, ref, effective),
         ),
         _Row(icon: AppIcons.remoteHosts, label: l10n.shellPanelHost, value: host ?? l10n.commonThisPhone),
+        // Web Overview「会话日志」: built-in, not a plugin row (those can look tappable but do nothing).
+        _Row(
+          key: const ValueKey('overview-session-log'),
+          icon: AppIcons.exportLog,
+          label: l10n.featuresExportTitle,
+          value: ref.watch(sessionLogExporterProvider).supported
+              ? l10n.catalogExportSummary
+              : l10n.featuresExportUnavailable,
+          onTap: () {
+            final exporter = ref.read(sessionLogExporterProvider);
+            if (!exporter.supported) {
+              showBriefNotice(context, l10n.featuresExportRemoteHint);
+              return;
+            }
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => SessionExportPage(sessionId: sessionId)),
+            );
+          },
+        ),
         // What plugins can do to this conversation, each signed with whose it is.
         for (final action in ref.watch(nativeSessionActionsProvider))
           _Row(

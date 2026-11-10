@@ -4,7 +4,7 @@
 //
 //   flutter test test/shell/adaptive/adaptive_layout_test.dart
 
-import 'package:dsh_app/ui/shell/adaptive/adaptive_layout.dart';
+import 'package:xrk_app/ui/shell/adaptive/adaptive_layout.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 

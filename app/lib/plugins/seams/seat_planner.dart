@@ -1,12 +1,12 @@
 // Native adapters and the seat planner (docs/design/plugin-seams.md §4):
 // each third-party occupant of a seat gets one presentation, native adapter
-// first, web island second, "open in DSH Web" last.
+// first, web island second, "open in XRK Web" last.
 
-import 'package:dsh_client/dsh_client.dart' show ClientInventoryTier;
+import 'package:xrk_client/xrk_client.dart' show ClientInventoryTier;
 import 'package:flutter/widgets.dart';
 
 import 'adapters/cordis_adapter.dart';
-import 'adapters/dsh_ui_panel_adapter.dart';
+import 'adapters/xrk_ui_panel_adapter.dart';
 import 'adapters/pet_adapter.dart';
 import 'adapters/schema_config_adapter.dart';
 import 'seat_inventory.dart';
@@ -104,7 +104,7 @@ class SlotAdapterRegistry {
 
   /// The first batch (§4.2): schema forms, Cordis, declarative panels, pets.
   factory SlotAdapterRegistry.standard() =>
-      SlotAdapterRegistry(const [SchemaConfigAdapter(), CordisAdapter(), DshUiPanelAdapter(), PetAdapter()]);
+      SlotAdapterRegistry(const [SchemaConfigAdapter(), CordisAdapter(), XrkUiPanelAdapter(), PetAdapter()]);
 
   final List<NativeSlotAdapter> _adapters = [];
 
@@ -131,7 +131,7 @@ class SlotAdapterRegistry {
 
   /// Pure: drops official occupants and repeated cells, orders by `order`
   /// (reported order on ties), then per occupant: ui.json override →
-  /// native adapter → island → "open in DSH Web" → hidden. A slot the app
+  /// native adapter → island → "open in XRK Web" → hidden. A slot the app
   /// never seats (a replacement point of its own UI) plans to nothing.
   List<SeatItem> plan(
     String slot,

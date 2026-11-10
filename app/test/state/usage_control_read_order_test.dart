@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/usage_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/usage_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../packages/dsh_client/test/support/fake_dsh.dart';
+import '../../../packages/xrk_client/test/support/fake_dsh.dart';
 import '../chat/support/session_sync_host.dart' show HeldReplyCarrier, ReplyHold;
 
 const _id = 'cold-projection-probe';
@@ -18,7 +18,7 @@ class _Probe {
   _Probe(this.raw, this.host, this.client, this.hold);
   final Map raw;
   final FakeDsh host;
-  final DshClient client;
+  final XrkClient client;
   final ReplyHold hold;
   late final ProviderContainer container;
   var baseline = 'latestResident';
@@ -36,7 +36,7 @@ class _Probe {
     final connection = DshConnection(host.baseUri);
     await connection.login(FakeDsh.token);
     final hold = ReplyHold();
-    final client = DshClient.withCarrier(
+    final client = XrkClient.withCarrier(
       HeldReplyCarrier(DshHttpCarrier(connection), hold),
       muxOptions: const MuxOptions(retryCaps: [Duration(milliseconds: 20)]),
     );

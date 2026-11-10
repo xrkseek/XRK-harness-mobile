@@ -5,7 +5,7 @@
 // unit-tested without a host.
 //
 // A service's key is any environment-style credential name the host has
-// (`DSH_MEDIA_ARK_API_KEY` here). The page creates one per provider group and
+// (`XRK_MEDIA_ARK_API_KEY` here). The page creates one per provider group and
 // reuses it for that provider's other services, so pictures and video of the
 // same provider never ask for the key twice. The plugin's older fixed slots
 // still work and appear as ordinary references.
@@ -312,11 +312,11 @@ String nextMediaServiceId(MediaPreset preset, Iterable<String> used) {
 }
 
 /// A credential name for [preset]'s provider group not in [used]:
-/// `DSH_MEDIA_ARK_API_KEY`, then `DSH_MEDIA_ARK_2_API_KEY`.
+/// `XRK_MEDIA_ARK_API_KEY`, then `XRK_MEDIA_ARK_2_API_KEY`.
 String nextMediaCredentialRef(MediaPreset preset, Iterable<String> used) {
   final taken = used.toSet();
   final group = preset.keyGroup.toUpperCase().replaceAll(RegExp(r'[^A-Z0-9]+'), '_');
-  final stem = 'DSH_MEDIA_${group.isEmpty ? 'SERVICE' : group}';
+  final stem = 'XRK_MEDIA_${group.isEmpty ? 'SERVICE' : group}';
   var ref = '${stem}_API_KEY';
   var suffix = 2;
   while (taken.contains(ref) || !_credentialRef.hasMatch(ref)) {

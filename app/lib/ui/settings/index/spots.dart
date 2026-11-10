@@ -1,8 +1,7 @@
 // The settings index: every settings page and every row on them that a
 // person may look for, in one table. A row takes its title from here (the
 // `spot:` of SettingsTile and friends), so the page and the index can't drift
-// apart; search, page links (`dshgo://open/<id>`) and the guide's paths all
-// read the same entries. docs/design/settings-ia.md §4.5.
+// apart; search, page links and the guide's paths all read the same entries.
 //
 // Pure data: no page widgets here (they are in settings_pages.dart), so any
 // row can import it.
@@ -74,7 +73,6 @@ enum SettingsPageId {
   pets,
   interface,
   notifications,
-  voice,
   performance,
   background,
   systemAccess,
@@ -116,6 +114,7 @@ class SettingsPageMeta {
     this.links = const [],
     this.condition,
     this.row = true,
+    this.shell = true,
   });
 
   final SettingsPageId id;
@@ -131,13 +130,18 @@ class SettingsPageMeta {
   final Label? keywords;
   final Freq freq;
 
-  /// `dshgo://open/<id>` names, old ones included.
+  /// `xrkharness://open/<id>` names, old ones included.
   final List<String> links;
   final SpotCondition? condition;
 
   /// Whether [parent] draws a row for it. 全部功能 has none: the drawer opens
   /// it, and search still finds it.
   final bool row;
+
+  /// Flutter thin-shell surface. `false` = owned by in-guest Web Settings
+  /// (models / plugins / account / engine YAML…): kept for deep-link ids but
+  /// not searchable and not opened from the phone hub.
+  final bool shell;
 
   /// The row on [parent] that opens this page.
   late final SettingSpot entry = SettingSpot(
@@ -182,7 +186,7 @@ class SettingSpot {
   final Label? keywords;
   final Freq freq;
 
-  /// `dshgo://open/<link>` opens [page] at this row.
+  /// `xrkharness://open/<link>` opens [page] at this row.
   final String? link;
   final SpotCondition? condition;
 
@@ -206,11 +210,15 @@ abstract final class SettingsIndex {
   /// Rows that aren't page entries.
   static final List<SettingSpot> rows = List.unmodifiable(_rows);
 
-  /// Every spot: the rows and each page's entry.
+  /// Whether [id] is a phone-shell settings page (not Web Host UI).
+  static bool isShellPage(SettingsPageId id) => pages[id]?.shell ?? false;
+
+  /// Every spot: the rows and each page's entry (shell surface only).
   static final List<SettingSpot> spots = [
     for (final p in _pages)
-      if (p.parent != null) p.entry,
-    ..._rows,
+      if (p.parent != null && p.shell) p.entry,
+    for (final s in _rows)
+      if (isShellPage(s.page) || (s.opens != null && isShellPage(s.opens!))) s,
   ];
 
   static final Map<String, SettingSpot> _byId = {for (final s in spots) s.id: s};
@@ -224,10 +232,10 @@ abstract final class SettingsIndex {
   /// The spots on [page], entries to its child pages included.
   static Iterable<SettingSpot> on(SettingsPageId page) => spots.where((s) => s.page == page);
 
-  /// The page a `dshgo://open/<id>` link names, by its page links.
+  /// The page a `xrkharness://open/<id>` link names, by its page links.
   static SettingsPageMeta? pageForLink(String id) => _pages.where((p) => p.links.contains(id)).firstOrNull;
 
-  /// The row a `dshgo://open/<id>` link names.
+  /// The row a `xrkharness://open/<id>` link names.
   static SettingSpot? spotForLink(String id) => _rows.where((s) => s.link == id).firstOrNull;
 
   /// The row showing the engine setting [path] of namespace [ns].
@@ -298,7 +306,7 @@ String _help(L10n l) => l.hubGroupHelp;
 
 final _pages = <SettingsPageMeta>[
   SettingsPageMeta(SettingsPageId.hub, title: (l) => l.commonSettings, parent: null, links: const ['settings']),
-  // AI
+  // AI — Web Host owns these; phone hub/search must not surface them.
   SettingsPageMeta(
     SettingsPageId.models,
     title: (l) => l.hubSettingsProviders,
@@ -306,6 +314,7 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwModels,
     freq: Freq.medium,
     links: const ['models'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.permission,
@@ -314,6 +323,7 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwPermission,
     freq: Freq.medium,
     links: const ['permission'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.personalization,
@@ -321,6 +331,7 @@ final _pages = <SettingsPageMeta>[
     group: _ai,
     keywords: (l) => l.searchKwPersonalization,
     links: const ['personalization'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.replyPrefs,
@@ -328,6 +339,7 @@ final _pages = <SettingsPageMeta>[
     parent: SettingsPageId.personalization,
     keywords: (l) => l.searchKwReplyPrefs,
     condition: SpotCondition.localHost,
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.agentPresets,
@@ -335,6 +347,7 @@ final _pages = <SettingsPageMeta>[
     parent: SettingsPageId.personalization,
     keywords: (l) => l.searchKwAgentPresets,
     links: const ['agent-presets'],
+    shell: false,
   ),
   // 能力
   SettingsPageMeta(
@@ -373,6 +386,7 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwWebSearch,
     freq: Freq.medium,
     links: const ['web-search'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.media,
@@ -381,6 +395,7 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwMediaGeneration,
     freq: Freq.medium,
     links: const ['media'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.plugins,
@@ -389,8 +404,9 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwPlugins,
     freq: Freq.medium,
     links: const ['plugins'],
+    shell: false,
   ),
-  // 外观
+  // 外观（壳主题 + 性能）
   SettingsPageMeta(
     SettingsPageId.appearance,
     title: (l) => l.pluginsTheme,
@@ -406,14 +422,18 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwPets,
     freq: Freq.medium,
     links: const ['pets'],
+    shell: false,
   ),
-  // 通用
+  // Retired: LocalHostShell is the only product home. Native/web dual-home and
+  // nested 「网页版」 settings were XRK leftovers (web-inside-web). Host UI
+  // preferences live in the in-guest Web Settings via the shell ball.
   SettingsPageMeta(
     SettingsPageId.interface,
     title: (l) => l.hubSettingsInterface,
     group: _general,
     keywords: (l) => l.searchKwInterface,
     links: const ['interface'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.notifications,
@@ -423,17 +443,11 @@ final _pages = <SettingsPageMeta>[
     freq: Freq.medium,
     links: const ['notifications'],
   ),
-  SettingsPageMeta(
-    SettingsPageId.voice,
-    title: (l) => l.voiceSettingsTitle,
-    group: _general,
-    keywords: (l) => l.searchKwVoice,
-    links: const ['voice'],
-  ),
+  // Merged under 外观; still shell-owned for deep links / search.
   SettingsPageMeta(
     SettingsPageId.performance,
     title: (l) => l.performanceTitle,
-    group: _general,
+    parent: SettingsPageId.appearance,
     keywords: (l) => l.searchKwPerformance,
     links: const ['performance'],
   ),
@@ -459,6 +473,7 @@ final _pages = <SettingsPageMeta>[
     group: _general,
     keywords: (l) => l.searchKwPrivacy,
     links: const ['privacy'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.sharedLinks,
@@ -466,6 +481,7 @@ final _pages = <SettingsPageMeta>[
     parent: SettingsPageId.privacy,
     keywords: (l) => l.searchKwSharedLinks,
     links: const ['shared-links'],
+    shell: false,
   ),
   // 主机
   SettingsPageMeta(
@@ -483,6 +499,7 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwRemote,
     freq: Freq.medium,
     links: const ['remote'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.engineParams,
@@ -490,6 +507,7 @@ final _pages = <SettingsPageMeta>[
     group: _hosts,
     keywords: (l) => l.searchKwEngineParams,
     links: const ['engine-settings'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.subagent,
@@ -497,6 +515,7 @@ final _pages = <SettingsPageMeta>[
     parent: SettingsPageId.engineParams,
     keywords: (l) => l.searchKwSubagent,
     links: const ['subagent-settings'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.agentLoop,
@@ -504,6 +523,7 @@ final _pages = <SettingsPageMeta>[
     parent: SettingsPageId.engineParams,
     keywords: (l) => l.searchKwAgentLoop,
     links: const ['agent-loop'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.shell,
@@ -511,6 +531,7 @@ final _pages = <SettingsPageMeta>[
     parent: SettingsPageId.engineParams,
     keywords: (l) => l.searchKwShell,
     links: const ['shell-settings'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.pluginInventory,
@@ -518,6 +539,7 @@ final _pages = <SettingsPageMeta>[
     parent: SettingsPageId.engineParams,
     keywords: (l) => l.searchKwPluginInventory,
     links: const ['plugin-inventory'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.allFeatures,
@@ -525,6 +547,7 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwAllFeatures,
     links: const ['all-features'],
     row: false,
+    shell: false,
   ),
   // 帮助与关于
   SettingsPageMeta(
@@ -541,13 +564,14 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwAbout,
     links: const ['about'],
   ),
-  // The overview card.
+  // DeepSeek account / API Key — Web Host Settings owns credentials.
   SettingsPageMeta(
     SettingsPageId.account,
     title: (l) => l.engineAccountTitle,
     keywords: (l) => l.searchKwAccount,
     freq: Freq.medium,
     links: const ['account'],
+    shell: false,
   ),
 ];
 
@@ -556,6 +580,8 @@ final _pages = <SettingsPageMeta>[
 /// Rows by name, for the pages that draw them.
 abstract final class Spots {
   // 设置 (the hub).
+  // Orphans kept for compile / deep-link id stability — intentionally omitted
+  // from [_rows] so phone search never opens a hub row the shell no longer draws.
   static final chatTextSize = SettingSpot(
     'chat-text-size',
     page: SettingsPageId.hub,
@@ -579,7 +605,7 @@ abstract final class Spots {
     title: (l) => l.localeTitle,
     keywords: (l) => l.searchKwLanguage,
   );
-  // 「问 AI」已下线：不进搜索索引。
+  // 「问 AI」/社区入口已下线：不进 [_rows] / 搜索索引。
   static final community = SettingSpot(
     'community',
     page: SettingsPageId.hub,
@@ -707,35 +733,11 @@ abstract final class Spots {
     title: (l) => l.pluginsColors,
     keywords: (l) => l.searchKwAccent,
   );
-  static final tileStyle = SettingSpot(
-    'tile-style',
-    page: SettingsPageId.appearance,
-    title: (l) => l.pluginsFeatureIcons,
-    keywords: (l) => l.searchKwTileStyle,
-  );
-  static final appIcon = SettingSpot(
-    'app-icon',
-    page: SettingsPageId.appearance,
-    title: (l) => l.pluginsAppIcon,
-    keywords: (l) => l.searchKwAppIcon,
-  );
-  static final iconShortcut = SettingSpot(
-    'icon-shortcut',
-    page: SettingsPageId.appearance,
-    title: (l) => l.iconShortcutRow,
-    keywords: (l) => l.searchKwIconShortcut,
-  );
   static final launchScreen = SettingSpot(
     'launch-screen',
     page: SettingsPageId.appearance,
     title: (l) => l.launchScreenTitle,
     keywords: (l) => l.searchKwLaunchScreen,
-  );
-  static final wallpaper = SettingSpot(
-    'wallpaper',
-    page: SettingsPageId.appearance,
-    title: (l) => l.wallpaperTitle,
-    keywords: (l) => l.searchKwWallpaper,
   );
 
   // 宠物.
@@ -1015,7 +1017,7 @@ abstract final class Spots {
     condition: SpotCondition.engineField,
   );
 
-  // 关于 dsh-go.
+  // 关于 xrk-mobile.
   static final version = SettingSpot(
     'version',
     page: SettingsPageId.about,
@@ -1048,45 +1050,20 @@ abstract final class Spots {
   );
 }
 
+/// Searchable rows on the phone shell. Web-owned rows (models / plugins /
+/// account / chat text size / open-web…) stay defined on [Spots] for compile
+/// references but are not indexed here.
 final _rows = <SettingSpot>[
-  Spots.chatTextSize,
-  Spots.foldTurns,
   Spots.language,
-  Spots.community,
-  Spots.addProvider,
-  Spots.permissionCurrent,
-  Spots.permissionDefault,
-  Spots.phoneFiles,
-  Spots.permissionPhoneConfirm,
-  Spots.visualReplies,
   Spots.phoneA11yRestore,
   Spots.phoneConfirm,
   Spots.phoneAutoCollapse,
   Spots.phoneReturn,
   Spots.phoneBackgroundGuide,
-  Spots.pluginsMarket,
-  Spots.webSearchKey,
   Spots.darkMode,
   Spots.accent,
-  Spots.tileStyle,
-  Spots.appIcon,
-  Spots.iconShortcut,
+  // 功能图标 / 桌面图标 / 图片快捷方式 / 壁纸已撤出外观页，不进搜索。
   Spots.launchScreen,
-  Spots.wallpaper,
-  Spots.petSize,
-  Spots.petQuiet,
-  Spots.petOutsideApp,
-  Spots.petDisplayWhen,
-  Spots.uiMode,
-  Spots.hardwareEnterSends,
-  Spots.quickPanel,
-  Spots.tableTint,
-  Spots.webApp,
-  Spots.openWeb,
-  Spots.webPhoneLayout,
-  Spots.webCodingView,
-  Spots.webCollapse,
-  Spots.webBusySend,
   Spots.refreshRate,
   Spots.blur,
   Spots.animations,
@@ -1098,21 +1075,12 @@ final _rows = <SettingSpot>[
   Spots.notifyQuestion,
   Spots.notifyLive,
   Spots.notifySystem,
-  Spots.shareConfig,
-  Spots.usageStats,
-  Spots.chatLogUpload,
   Spots.autoStart,
   Spots.autoSafe,
   Spots.safeMode,
   Spots.workspaceRecovery,
   Spots.engineReset,
   Spots.engineUninstall,
-  Spots.addSshHost,
-  Spots.remoteAutoConnect,
-  Spots.remoteCompactHistory,
-  Spots.subagentDepth,
-  Spots.parallelCalls,
-  Spots.commandTimeout,
   Spots.version,
   Spots.updateCheck,
   Spots.updateAuto,

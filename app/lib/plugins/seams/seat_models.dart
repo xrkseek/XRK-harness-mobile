@@ -35,7 +35,7 @@ class SlotOccupant {
   /// The registration's label in the app's language.
   final String? label;
 
-  /// Ships with DSH (or is the app's own bridge): the planner skips it.
+  /// Ships with XRK (or is the app's own bridge): the planner skips it.
   final bool official;
 
   /// Guessed on a Tier A host from the package list (§5.1), not reported by
@@ -94,8 +94,8 @@ class SeatContext {
   final String? sessionId;
   final SeatPlacement placement;
 
-  /// The host serves DSH Web to this connection (not over the relay): islands
-  /// and "open in DSH Web" entries are possible.
+  /// The host serves XRK Web to this connection (not over the relay): islands
+  /// and "open in XRK Web" entries are possible.
   final bool webAvailable;
 
   @override
@@ -230,7 +230,7 @@ class IslandSpec {
 /// planner only asks whether an island may be planned; it never creates one.
 abstract interface class IslandBudget {
   /// Cheap and side-effect free: memory tier and live islands, renderer
-  /// health, specs that failed their ready gate for this DSH release.
+  /// health, specs that failed their ready gate for this XRK release.
   bool canOpen(IslandSpec spec);
 }
 

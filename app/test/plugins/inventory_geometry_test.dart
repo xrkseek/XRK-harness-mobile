@@ -1,7 +1,7 @@
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/status_chip.dart';
-import 'package:dsh_app/ui/plugins/plugin_inventory_page.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/status_chip.dart';
+import 'package:xrk_app/ui/plugins/plugin_inventory_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

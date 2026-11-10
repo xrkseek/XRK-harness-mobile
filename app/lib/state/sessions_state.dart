@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +16,8 @@ import 'read_list_identity.dart';
 import 'settings_state.dart';
 import 'workspaces_state.dart';
 
-/// Default working directory for sessions created on the phone (inside the rootfs).
+/// Optional local project folder shortcut (not auto-registered by Host).
+/// New chats without a drawer selection omit cwd — Face attaches to 向阳空间.
 const localWorkspaceDir = '/root/workspace';
 
 class ArchiveCommitResult {
@@ -94,10 +95,10 @@ final sessionTitleClockProvider = Provider<DateTime Function()>((ref) => DateTim
 ///
 /// Titles: `session/list` serves a conversation the Host process isn't
 /// holding (a cold one) with the title from its projection cache, which the
-/// process reads once, when it starts (DSH 0.2.1-rc.4). A conversation
-/// another DSH process on the same machine wrote since — the desktop app, the
-/// TUI, a headless run, a second `dsh web`; on an SSH host the app's own
-/// `dsh web` lives on between connections — comes with no title at all until
+/// process reads once, when it starts (XRK 0.2.1-rc.4). A conversation
+/// another XRK process on the same machine wrote since — the desktop app, the
+/// TUI, a headless run, a second `xrkh serve`; on an SSH host the app's own
+/// `xrkh serve` lives on between connections — comes with no title at all until
 /// something opens it. Those rows get their title read
 /// (`session/projections`, which doesn't open the conversation), a few at a
 /// time, once per change of the row.
@@ -158,7 +159,7 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
   /// token keeps its client), each still folding a log on the Host. The next
   /// queue on that client counts them against its [titleReadsAtOnce] until
   /// they come back.
-  final Map<DshClient, int> _titleCallsOut = Map.identity();
+  final Map<XrkClient, int> _titleCallsOut = Map.identity();
 
   /// Rows whose title read failed (the Host or a proxy erring just then), by
   /// session id. Only a read that came back is kept as the row's
@@ -277,7 +278,7 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
     return _buildRead = _load(r, conn.client, seq, identity);
   }
 
-  Future<List<SessionSummary>> _load(Ref r, DshClient client, int seq, ReadListIdentity? identity) async {
+  Future<List<SessionSummary>> _load(Ref r, XrkClient client, int seq, ReadListIdentity? identity) async {
     final List<SessionSummary> sessions;
     _listsOut++;
     try {
@@ -392,7 +393,7 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
   /// [titleReadsPerList] (in place of what an earlier list queued); each row
   /// read once until it changes ([_titleFailures]: one that failed again
   /// later). What lands re-emits [state].
-  void _readTitles(Ref r, DshClient client) {
+  void _readTitles(Ref r, XrkClient client) {
     if (identical(_titlesUnsupported, client)) return;
     var reads = _titleReads;
     if (reads == null || !identical(reads.client, client)) {
@@ -433,7 +434,7 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
     try {
       final projections = await client.projections(row.sessionId);
       read = (updatedAt: row.updatedAt, title: projections?.title, blank: projections?.blank);
-    } on DshRemoteException catch (error) {
+    } on XrkRemoteException catch (error) {
       if (error.code == 'METHOD_NOT_ALLOWED' || error.code.endsWith('method-not-found')) {
         unsupported = true;
       } else {
@@ -612,7 +613,7 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
 
     checkCurrent();
     // Remote hosts: the working directory configured for that host, else the
-    // workspace used last (as the official client does), else the remote DSH's
+    // workspace used last (as the official client does), else the remote XRK's
     // own default.
     var workspaceId = await workspaceForNewSession(ref);
     checkCurrent();
@@ -625,7 +626,8 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
     final created = await createSessionInWorkspace(
       conn.client,
       workspaceId,
-      cwd: conn.isLocal ? localWorkspaceDir : conn.workingDirectory,
+      // Local: null cwd → Host picks 向阳空间 (never seed /root as a project).
+      cwd: conn.isLocal ? null : conn.workingDirectory,
       checkCurrent: checkCurrent,
     );
     checkCurrent();
@@ -859,7 +861,7 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
 final sessionsProvider = AsyncNotifierProvider<SessionsController, List<SessionSummary>>(SessionsController.new);
 
 /// A remote host with no working directory of its own: without a workspace, a
-/// new conversation would land wherever its `dsh web` happened to start.
+/// new conversation would land wherever its `xrkh serve` happened to start.
 bool _hostPicksNewChatDirectory(HostConnection? conn) => conn != null && !conn.isLocal && conn.workingDirectory == null;
 
 Workspace? _recentForNewChat(HostConnection? conn, WorkspacesState registry, List<SessionSummary>? sessions) {
@@ -889,7 +891,7 @@ final newChatInHostDefaultProvider = Provider<bool>((ref) {
 class _TitleReads {
   _TitleReads(this.client, this.ref, this.now);
 
-  final DshClient client;
+  final XrkClient client;
   final DateTime Function() now;
 
   /// The build reads land in: a rebuild on the same connection takes them over.

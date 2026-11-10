@@ -5,10 +5,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 /// The app's directory (tests run with `app/` as the working directory).
@@ -81,10 +81,10 @@ List<Override> sourceOverrides(Map<HostRef, UiConfigSource> sources, {HostRef ac
   uiConfigSourceBuilderProvider.overrideWithValue((ref, host) => sources[host]),
 ];
 
-/// A throwaway rootfs with `/root/.dsh` (unless [withHome] is false).
+/// A throwaway rootfs with `/root/.xrk` (unless [withHome] is false).
 Directory tempRootfs({bool withHome = true}) {
   final root = Directory.systemTemp.createTempSync('ui-config-rootfs-');
-  if (withHome) Directory('${root.path}/root/.dsh').createSync(recursive: true);
+  if (withHome) Directory('${root.path}/root/.xrk').createSync(recursive: true);
   return root;
 }
 

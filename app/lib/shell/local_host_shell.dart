@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
@@ -11,22 +12,31 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 import '../l10n/l10n.dart';
+import '../links/launcher_entries.dart';
 import '../links/share_intake.dart';
 import '../runtime/local_footprint.dart';
 import '../runtime/runtime_bridge.dart';
 import '../runtime/runtime_state.dart';
 import '../state/app_info.dart';
 import '../state/attachments.dart';
+import '../state/chat_reveal.dart';
 import '../state/compose_inbox.dart';
 import '../state/engine_control.dart';
 import '../state/host_settings_opener.dart';
+import '../state/hosts_state.dart';
 import '../state/phone_state.dart';
+import '../state/sessions_state.dart';
+import '../ui/notify/chat_alert_host.dart';
 import '../ui/phone/phone_control_screen.dart';
+import '../ui/phone/phone_stop_watcher.dart';
 import '../ui/settings/settings_screen.dart';
 import '../ui/shell/brand_mark.dart';
 import '../ui/web/local_web_screen.dart';
+import '../pets/overlay_channel.dart';
 import '../ui/web/web_file_chooser.dart';
 import '../ui/web/web_keyboard.dart';
+import '../ui/web/web_target.dart';
+import 'shell_host_download.dart';
 import 'shell_toast.dart';
 
 /// Flutter→JS compose bridge base64 ceiling (WebView string OOM below Face's
@@ -58,25 +68,38 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   var _pageReady = false;
   String? _openBridgeJs;
   StreamSubscription<IncomingShare>? _shares;
+  StreamSubscription<LauncherEntry>? _launcherEntries;
   ComposeRequest? _pendingCompose;
   final _files = WebFileChooser();
   EdgeInsets _padding = EdgeInsets.zero;
-  /// Settled / predicted keyboard height from [WebKeyboard].
+  /// Layout keyboard height from [WebKeyboard] (snap once per open/close).
   double _keyboard = 0;
   double _keyboardRaw = 0;
   final _webKeyboard = WebKeyboard();
   Timer? _keyboardRest;
   String? _appliedInsetKey;
+  /// Coalesce WebView JS inset stamps: IME slides fire many MediaQuery ticks;
+  /// awaiting every `runJavaScript` on the bridge is what made dismiss stutter.
+  Future<void>? _insetFlight;
+  var _insetQueued = false;
   var _ackBusy = false;
 
   @override
   void initState() {
     super.initState();
+    // Product surface is LocalHostShell only — kill leftover XRK floating-pet
+    // prefs so an old 「App 外显示」 cannot resurrect the desktop pet.
+    unawaited(ref.read(petOverlayProvider.notifier).turnOff());
     unawaited(WebKeyboard.restore());
-    unawaited(rootBundle.loadString('assets/web/dsh_web_open.js').then((js) {
+    unawaited(rootBundle.loadString('assets/web/xrk_web_open.js').then((js) {
       _openBridgeJs = js;
     }));
     _shares = ref.read(shareIntakeProvider).shares.listen((share) => unawaited(_onShare(share)));
+    // Task-done reopen / notification "open chat" arrive as launcher entries.
+    // HomeShell used to host SystemEntryHost; LocalHostShell must own this.
+    _launcherEntries = ref.read(launcherBridgeProvider).entries.listen((entry) {
+      unawaited(_onLauncherEntry(entry));
+    });
     // Phone → native PhoneControlScreen. Other sections → native Settings hub.
     // Host Web settings stay reachable from the ball menu.
     ref.read(hostSettingsOpenerProvider.notifier).bind(({String sectionId = 'general'}) {
@@ -95,6 +118,7 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   void dispose() {
     _keyboardRest?.cancel();
     unawaited(_shares?.cancel());
+    unawaited(_launcherEntries?.cancel());
     _files.dispose();
     super.dispose();
   }
@@ -118,32 +142,68 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     );
   }
 
-  /// Same settle path as [WebViewPage]: one CSS inject per slide, not per frame.
+  /// Keyboard → page: same algorithm as [WebViewPage] / XRK WebPageInsets.
+  ///
+  /// Do **not** drive `--xrk-keyboard-inset` from live [viewInsets]. That path
+  /// pads the transcript by the IME band while sticky also lifts — scroll-to-
+  /// bottom then shows a large empty gap above the keys, and mid-slide stamps
+  /// stutter. Instead pin `#root { bottom: keyboard }` once per open/close
+  /// ([WebKeyboard] snap) and leave the CSS inset at 0 so ConversationRoot
+  /// does not invent blank padding.
   void _followKeyboard() {
     final raw = MediaQuery.viewInsetsOf(context).bottom;
-    if (raw == _keyboardRaw) {
-      if (_pageReady) unawaited(_applyInsets());
-      return;
-    }
+    if (raw == _keyboardRaw) return;
     _keyboardRaw = raw;
     final width = MediaQuery.sizeOf(context).width;
-    final changed = _webKeyboard.report(raw, width);
-    _keyboard = _webKeyboard.height;
+    final chromeChanged = _webKeyboard.report(raw, width);
+    final next = _webKeyboard.height;
+    final ballBefore = _keyboard >= 48;
+    _keyboard = next;
+    final ballAfter = _keyboard >= 48;
     _keyboardRest?.cancel();
     _keyboardRest = Timer(WebKeyboard.rest, () {
       if (!mounted) return;
       if (_webKeyboard.settle(_keyboardRaw, width)) {
-        setState(() => _keyboard = _webKeyboard.height);
-      } else {
-        _keyboard = _webKeyboard.height;
+        final settled = _webKeyboard.height;
+        final showBallChanged = (_keyboard >= 48) != (settled >= 48);
+        _keyboard = settled;
+        // Only rebuild Flutter chrome when the ball must show/hide.
+        if (showBallChanged) setState(() {});
+        if (_pageReady) unawaited(_applyInsets());
       }
-      if (_pageReady) unawaited(_applyInsets(force: true));
     });
-    if (changed) {
-      setState(() {});
-      if (_pageReady) unawaited(_applyInsets(force: true));
-    } else if (_pageReady) {
-      unawaited(_applyInsets());
+    if (chromeChanged) {
+      // Height snap (open/close) — stamp JS. Rebuild only if ball visibility flips.
+      if (ballBefore != ballAfter) setState(() {});
+      if (_pageReady) unawaited(_applyInsets());
+    }
+  }
+
+  /// Phone-task reopen / notification → switch the guest conversation.
+  Future<void> _openWebSession(String sessionId) async {
+    final controller = _controller;
+    if (controller == null || !_pageReady || sessionId.isEmpty) return;
+    try {
+      await controller.runJavaScript(DshWebTarget(sessionId: sessionId).openScript);
+    } catch (_) {}
+  }
+
+  Future<void> _onLauncherEntry(LauncherEntry entry) async {
+    switch (entry) {
+      case OpenChatEntry(:final host, :final sessionId):
+        if (!mounted) return;
+        final hosts = ref.read(hostsProvider);
+        if (host.kind == HostKind.ssh && hosts.loaded && hosts.sshById(host.id) == null) {
+          return;
+        }
+        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+        ref.read(activeHostProvider.notifier).select(host);
+        ref.read(currentSessionProvider.notifier).select(sessionId);
+        await _openWebSession(sessionId);
+      case NewChatEntry(:final text, :final voice):
+        await _composeIntoWeb(ComposeRequest(text: text.trim(), voice: voice));
+      case ScreenshotEntry():
+        break;
     }
   }
 
@@ -184,6 +244,15 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       );
     });
 
+    // 「完成后返回」→ chatReveal; notification / alert tap → currentSession.
+    ref.listen(chatRevealProvider, (_, reveal) {
+      final id = reveal?.sessionId;
+      if (id != null) unawaited(_openWebSession(id));
+    });
+    ref.listen(currentSessionProvider, (prev, next) {
+      if (next != null && next != prev) unawaited(_openWebSession(next));
+    });
+
     if (!_bootStarted) {
       _bootStarted = true;
       WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_ensureBoot()));
@@ -197,15 +266,14 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       _appliedInsetKey = null;
     }
 
+    final Widget body;
     if (status.isRunning && status.baseUrl != null) {
       final url = localWebUri(status.baseUrl!, status.token ?? '').toString();
       _ensureWebView(url);
       final interruption = ref.watch(phoneProvider.select((s) => s.status.taskInterruption));
-      // Full-bleed WebView (same as browser Host). Soft keyboard is owned by
-      // Flutter → CSS `--xrk-keyboard-inset` in [_applyInsets]; do not shrink
-      // the platform view (100vh would not reflow) and do not also lift #root.
-      // Ball hides while typing so it does not sit on the IME.
-      return Scaffold(
+      // Full-bleed WebView. Soft keyboard: pin #root bottom to WebKeyboard
+      // snap (DSH); CSS inset stays 0. Ball hides while typing.
+      body = Scaffold(
         backgroundColor: const Color(0xFF0B0B0C),
         resizeToAvoidBottomInset: false,
         body: Stack(
@@ -236,22 +304,28 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
           ],
         ),
       );
+    } else {
+      body = _BootScaffold(
+        status: status,
+        progress: runtime.progress,
+        loaded: runtime.loaded,
+        stopped: _userStopped && status.phase == RuntimePhase.installed,
+        error: _bootError ?? status.error,
+        onRetry: () {
+          setState(() {
+            _bootError = null;
+            _userStopped = false;
+            _bootStarted = false;
+          });
+          unawaited(_ensureBoot(force: true));
+        },
+      );
     }
 
-    return _BootScaffold(
-      status: status,
-      progress: runtime.progress,
-      loaded: runtime.loaded,
-      stopped: _userStopped && status.phase == RuntimePhase.installed,
-      error: _bootError ?? status.error,
-      onRetry: () {
-        setState(() {
-          _bootError = null;
-          _userStopped = false;
-          _bootStarted = false;
-        });
-        unawaited(_ensureBoot(force: true));
-      },
+    // Keep phone turn-end / stop / confirm watchers + chat alerts alive under
+    // the product shell (they used to live only under retired HomeShell).
+    return PhoneStopWatcher(
+      child: ChatAlertHost(child: body),
     );
   }
 
@@ -317,6 +391,15 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       ..setBackgroundColor(const Color(0xFF0B0B0C))
       ..setNavigationDelegate(
         NavigationDelegate(
+          // DownloadListener is forwarded as a main-frame navigation; without
+          // this callback webview_flutter drops session.export ZIP saves.
+          onNavigationRequest: (request) {
+            if (isHostSessionExportUrl(request.url)) {
+              unawaited(_onHostDownload(url: request.url));
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
           onPageStarted: (_) => _files.invalidate(),
           onPageFinished: (_) => unawaited(_onPageFinished()),
         ),
@@ -449,10 +532,57 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       if (!ok) _toast('引擎重启未完成，请到引擎页手动重启');
       return;
     }
+    if (op == 'download') {
+      final url = payload?['url']?.toString() ?? '';
+      if (url.isEmpty) return;
+      await _onHostDownload(url: url, filename: payload?['filename']?.toString());
+      return;
+    }
+    if (op == 'downloadBytes') {
+      final b64 = payload?['base64']?.toString() ?? '';
+      if (b64.isEmpty) return;
+      Uint8List bytes;
+      try {
+        bytes = base64Decode(b64);
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+            SnackBar(content: Text('${context.l10n.stateExportFailed}: 附件字节解码失败')),
+          );
+        }
+        return;
+      }
+      if (!mounted) return;
+      await handleHostShellDownloadBytes(
+        context,
+        bytes: bytes,
+        filename: payload?['filename']?.toString() ?? 'download.bin',
+        mime: payload?['mime']?.toString(),
+      );
+      return;
+    }
+    if (op == 'downloadError') {
+      final message = payload?['message']?.toString().trim();
+      if (!mounted || message == null || message.isEmpty) return;
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(content: Text('${context.l10n.stateExportFailed}: $message')),
+      );
+    }
+  }
+
+  Future<void> _onHostDownload({required String url, String? filename}) async {
+    if (!mounted) return;
+    await handleHostShellDownload(
+      context,
+      url: url,
+      filename: filename,
+      // Relative `/api/session.export…` from the WebView needs the loaded Host origin.
+      pageUrl: _loadedUrl,
+    );
   }
 
   Future<void> _onPageFinished() async {
-    final js = _openBridgeJs ?? await rootBundle.loadString('assets/web/dsh_web_open.js');
+    final js = _openBridgeJs ?? await rootBundle.loadString('assets/web/xrk_web_open.js');
     _openBridgeJs = js;
     final controller = _controller;
     if (controller == null) return;
@@ -470,7 +600,11 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     return false;
   };
 })();''');
-    _pageReady = true;
+    // Session log / `<a download>` → XrkShell (Android WebView otherwise no-ops).
+    await controller.runJavaScript(hostDownloadBridgeJs);
+    // Must rebuild — otherwise the settings ball stays out of the tree until
+    // the next MediaQuery change (opening/closing the soft keyboard).
+    if (mounted) setState(() => _pageReady = true);
     await _applyInsets(force: true);
     final pending = _pendingCompose;
     if (pending != null) {
@@ -480,28 +614,68 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   }
 
   Future<void> _applyInsets({bool force = false}) async {
+    if (_insetFlight != null) {
+      _insetQueued = true;
+      return _insetFlight!;
+    }
+    final run = () async {
+      do {
+        _insetQueued = false;
+        await _stampInsetsOnce(force: force);
+        // Only the first pass may force (page-ready / bridge rebind).
+        force = false;
+      } while (_insetQueued);
+    }();
+    _insetFlight = run;
+    try {
+      await run;
+    } finally {
+      if (identical(_insetFlight, run)) _insetFlight = null;
+    }
+  }
+
+  Future<void> _stampInsetsOnce({bool force = false}) async {
     final controller = _controller;
     if (controller == null || !_pageReady) return;
     final top = _padding.top;
     final right = _padding.right;
-    final bottom = _padding.bottom;
     final left = _padding.left;
+    // Same floor as WebChromeMetrics.gestureFloor — some ROMs omit inset.
+    final gesture = math.max(_padding.bottom, 12.0);
+    // Snap height only ([WebKeyboard]) — never mid-slide raw.
     final kb = _keyboard;
-    final key = '$top|$right|$bottom|$left|$kb';
+    final open = kb >= 48;
+    // While the IME covers the gesture bar, zero safe-bottom so InputBar /
+    // AppFrame do not stack a second band above the keys.
+    final safeBottom = open ? 0.0 : gesture;
+    final key = '$top|$right|$safeBottom|$left|$kb|root-pin';
     if (!force && key == _appliedInsetKey) return;
     _appliedInsetKey = key;
-    // Activity adjustNothing + Scaffold resizeToAvoidBottomInset:false
-    // + CSS --xrk-keyboard-inset from [WebKeyboard] (once per slide).
-    // data-xrk-shell-keyboard: web visualViewport binder must not overwrite.
+    // XRK path: WebView full-bleed; pin #root bottom to the keyboard top so
+    // the SPA shortens once. Keep --xrk-keyboard-inset at 0 and never set
+    // data-xrk-keyboard — ConversationRoot's padding-bottom:inset is what
+    // produced the black void between the last bubble and the keys.
     final topPx = top.toStringAsFixed(1);
     final rightPx = right.toStringAsFixed(1);
-    final bottomPx = bottom.toStringAsFixed(1);
     final leftPx = left.toStringAsFixed(1);
+    final safeBottomPx = safeBottom.toStringAsFixed(1);
     final kbPx = kb.toStringAsFixed(1);
+    // top:0 (NOT safeTop) — AppFrame already consumes --ds-safe-top.
+    final rootLockCss =
+        '#root{position:fixed!important;top:0!important;right:0!important;'
+        'bottom:${kbPx}px!important;left:0!important;height:auto!important;'
+        'min-height:0!important;margin:0!important}'
+        'html,body{overflow:hidden!important;overscroll-behavior:none!important}';
+    // InputBar pads with env(safe-area-inset-bottom) while the IME is up
+    // (guest used to keep a 4px band even with data-xrk-keyboard). Zero it
+    // so the stats row sits flush on the keys without waiting for a new guest.
+    final keyboardFlushCss = open
+        ? 'html[data-xrk-shell-keyboard] #root *:has(>[data-composer-stats])'
+            '{padding-bottom:0!important}'
+        : '';
     final script = """
 (function(){
   var r=document.documentElement; if(!r) return;
-  r.setAttribute("data-xrk-shell-keyboard","");
   var meta=document.querySelector('meta[name="viewport"]');
   if(meta){
     var c=meta.getAttribute("content")||"";
@@ -515,29 +689,32 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   }
   r.style.setProperty("--ds-safe-top","${topPx}px");
   r.style.setProperty("--ds-safe-right","${rightPx}px");
-  r.style.setProperty("--ds-safe-bottom","${bottomPx}px");
+  r.style.setProperty("--ds-safe-bottom","${safeBottomPx}px");
   r.style.setProperty("--ds-safe-left","${leftPx}px");
   r.style.setProperty("--ds-safe-h","calc(var(--ds-safe-left) + var(--ds-safe-right))");
   r.style.setProperty("--ds-safe-v","calc(var(--ds-safe-top) + var(--ds-safe-bottom))");
-  var kbN=${kbPx};
-  r.style.setProperty("--xrk-keyboard-inset",kbN+"px");
-  if (kbN >= 48) { r.setAttribute("data-xrk-keyboard",""); }
-  else { r.removeAttribute("data-xrk-keyboard"); }
-  try {
-    window.dispatchEvent(new CustomEvent("xrk-keyboard-inset",{detail:{inset:kbN}}));
-    var flow=document.querySelector("[data-chat-flow]");
-    if(flow){
-      var el=flow;
-      while(el && el!==document.documentElement){
-        var oy=window.getComputedStyle(el).overflowY;
-        if((oy==="auto"||oy==="scroll"||oy==="overlay") && el.scrollHeight>el.clientHeight+1){
-          el.scrollTop=el.scrollHeight;
-          break;
-        }
-        el=el.parentElement;
-      }
+  // Always 0: layout shortened via #root bottom, not sticky CSS inset.
+  // data-xrk-keyboard marks "IME open" for InputBar / hero CSS only.
+  r.style.setProperty("--xrk-keyboard-inset","0px");
+  function sheet(id, css) {
+    var s = document.getElementById(id);
+    if (!s) {
+      if (!css) return;
+      s = document.createElement("style"); s.id = id; document.head.appendChild(s);
     }
-  } catch(err){}
+    if (!css) { s.remove(); return; }
+    if (s.textContent !== css) s.textContent = css;
+  }
+  var root = document.getElementById("root");
+  sheet("xrk-shell-root", root ? ${jsonEncode(rootLockCss)} : "");
+  sheet("xrk-shell-keyboard", root ? ${jsonEncode(keyboardFlushCss)} : "");
+  // Claim ownership so the guest VV binder never rewrites the CSS inset.
+  r.setAttribute("data-xrk-shell-keyboard","");
+  if (${open}) r.setAttribute("data-xrk-keyboard","");
+  else r.removeAttribute("data-xrk-keyboard");
+  // Kill residual document scroll from WebView focus-pan.
+  if (window.scrollY || window.scrollX) window.scrollTo(0, 0);
+  if (root) root.scrollTop = 0;
 })();
 """;
     try {
@@ -631,19 +808,19 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
                 tile(
                   icon: Icons.accessibility_new,
                   title: l10n.phoneControlTitle,
-                  subtitle: '开关 · 无障碍 · Root · 自检 · 后台',
+                  subtitle: '开关 · 无障碍 · Root · 自检',
                   value: 'phone-settings',
                 ),
                 tile(
                   icon: Icons.settings_outlined,
                   title: l10n.commonSettings,
-                  subtitle: '模型 · 权限 · 引擎 · 保活 · 诊断',
+                  subtitle: '引擎 · 保活 · 外观 · 关于 · 更新',
                   value: 'app-settings',
                 ),
                 tile(
                   icon: Icons.tune_outlined,
                   title: '对话设置',
-                  subtitle: 'Host 面板 · 模型路由',
+                  subtitle: '模型 · 权限 · 插件 · Host 面板',
                   value: 'host-settings',
                 ),
                 const SizedBox(height: 8),

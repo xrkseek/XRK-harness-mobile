@@ -10,7 +10,7 @@ import '../theme/theme.dart';
 /// EmptyView(
 ///   icon: AppIcons.time,
 ///   title: '还没有自动化任务',
-///   message: '定时让 DSH 帮你跑一遍',
+///   message: '定时让 XRK 帮你跑一遍',
 ///   actionLabel: '新建',
 ///   onAction: create,
 /// )
@@ -50,7 +50,7 @@ class EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final badge = compact ? 48.0 : 64.0;
     Widget? graphic = art;
     if (graphic == null && icon != null) {

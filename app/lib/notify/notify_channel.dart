@@ -1,18 +1,18 @@
-// Dart side of the `dsh/notify` method channel and the taps / actions event
+// Dart side of the `xrk/notify` method channel and the taps / actions event
 // channels (native: android/.../notify/NotifyPlugin.kt). Every call tolerates
 // the native side being absent (widget tests, desktop): it does nothing, and
 // [NotifyChannel.status] says so without flagging anything as blocked.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../state/hosts_state.dart';
 import 'live_activity.dart';
 
-/// Whether the system lets DSH's chat notifications through.
+/// Whether the system lets XRK's chat notifications through.
 class NotifySystemStatus {
   const NotifySystemStatus({this.native = true, this.enabled = true, this.done = true, this.attention = true});
 
@@ -217,13 +217,13 @@ class LiveSystemStatus {
   /// Android 16 promotion exists here (QPR1+), or HyperOS takes the focus template.
   final bool supported;
 
-  /// And it is allowed for DSH Go: the live activity will be posted.
+  /// And it is allowed for XRK Harness: the live activity will be posted.
   final bool allowed;
 
   /// The system page with the per-app switch opens.
   final bool settings;
 
-  /// HyperOS shows DSH Go's focus notifications.
+  /// HyperOS shows XRK Harness's focus notifications.
   final bool xiaomiFocus;
 
   @override
@@ -244,12 +244,12 @@ String notifyGroup(HostRef host, String sessionId) => '${host.kind.name}:${host.
 
 class NotifyChannel {
   NotifyChannel({MethodChannel? methods, EventChannel? taps})
-    : _methods = methods ?? const MethodChannel('dsh/notify'),
-      _taps = taps ?? const EventChannel('dsh/notify/taps');
+    : _methods = methods ?? const MethodChannel('xrk/notify'),
+      _taps = taps ?? const EventChannel('xrk/notify/taps');
 
   final MethodChannel _methods;
   final EventChannel _taps;
-  final EventChannel _actions = const EventChannel('dsh/notify/actions');
+  final EventChannel _actions = const EventChannel('xrk/notify/actions');
 
   Future<NotifySystemStatus> status() async {
     try {
@@ -315,7 +315,7 @@ class NotifyChannel {
     }
   }
 
-  /// Opens DSH Go's 「实时活动」 switch where the system has one, else its notification settings.
+  /// Opens XRK Harness's 「实时活动」 switch where the system has one, else its notification settings.
   Future<bool> openLiveSettings() async {
     try {
       return await _methods.invokeMethod<bool>('openLiveSettings') ?? false;

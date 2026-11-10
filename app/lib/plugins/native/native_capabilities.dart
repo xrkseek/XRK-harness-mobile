@@ -15,7 +15,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,7 +59,7 @@ class NativeCapabilityEffect {
     if (type is! String ||
         op is! String ||
         instance is! String ||
-        !dshGoValidId(instance) ||
+        !xrkGoValidId(instance) ||
         lease is! String ||
         lease.isEmpty ||
         lease.length > 256) {
@@ -77,7 +77,7 @@ class NativeCapabilityEffect {
     if (type == 'audio' && op == 'play') {
       fields.addAll(const {'src', 'key'});
       final src = value['src'];
-      if (src is! String || !src.startsWith('media:') || !dshGoValidId(src.substring(6))) return null;
+      if (src is! String || !src.startsWith('media:') || !xrkGoValidId(src.substring(6))) return null;
       resource = src.substring(6);
       if (value.containsKey('key')) {
         final k = value['key'];
@@ -87,7 +87,7 @@ class NativeCapabilityEffect {
     } else if (type == 'overlay') {
       fields.add('id');
       final id = value['id'];
-      if (id is! String || !dshGoValidId(id)) return null;
+      if (id is! String || !xrkGoValidId(id)) return null;
       resource = id;
     }
     if (value.keys.any((k) => !fields.contains(k))) return null;
@@ -100,7 +100,7 @@ typedef NativeMediaDownload = Future<(File, String)> Function(String pkg, Native
 
 /// [NativeMediaDownload] over the Host's bridge ([DshGoApi.readDshGoMedia]).
 Future<(File, String)> downloadNativeMedia(
-  DshClient client,
+  XrkClient client,
   String pkg,
   NativeCapabilityEffect effect,
   String owner,

@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A client whose session stream and approval answers are scripted.
-class ScriptedClient extends DshClient {
+class ScriptedClient extends XrkClient {
   ScriptedClient() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
 
   final events = StreamController<DshEvent>.broadcast();
@@ -126,7 +126,7 @@ void main() {
       'purpose': 'schedule-authorization',
       'questions': [
         {
-          'id': 'dsh-go-schedule-authorization-one',
+          'id': 'xrk-mobile-schedule-authorization-one',
           'question': 'Session: s\nCreate\nAutonomous execution risk\n{"prompt":"full prompt","at":"tomorrow"}',
           'options': [
             {'label': '授权 / Authorize'},

@@ -1,4 +1,4 @@
-import 'package:dsh_app/diagnostics/system_ime_evidence.dart';
+import 'package:xrk_app/diagnostics/system_ime_evidence.dart';
 
 final systemImeAt = DateTime.utc(2026, 11, 8, 3);
 

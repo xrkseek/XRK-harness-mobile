@@ -6,7 +6,7 @@ import { checkView } from '../lib/view-check.js'
 import { SchemaSet } from '../lib/json-schema.js'
 
 const schema = JSON.parse(readFileSync(new URL('../schema/view.schema.json', import.meta.url), 'utf8'))
-const spec = schema['x-dsh-go'].v2Styles
+const spec = schema['x-xrk-mobile'].v2Styles
 const set = new SchemaSet()
 const text = (style = {}, spans) => ({ v: 2, type: 'text', text: 'fallback', style, ...(spans === undefined ? {} : { spans }) })
 function inspect(view, budget = 'panel') {

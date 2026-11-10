@@ -32,7 +32,7 @@ export function checkView(view: unknown, options?: { budget?: Budget; data?: unk
 
 export const BUDGETS: Readonly<Record<Budget, { name: Budget; bytes: number; nodes: number; depth: number; children: number; text: number }>>
 
-/** The bridge's reading of a package.json `dshGo`, in zh-CN and en-US, plus app-side icon checks. Null without dshGo. */
+/** The bridge's reading of a package.json `xrkGo`, in zh-CN and en-US, plus app-side icon checks. Null without xrkGo. */
 export function checkManifest(pkgJson: Record<string, unknown>, options?: {
   dir?: string
   lang?: 'zh' | 'en'
@@ -60,7 +60,7 @@ export interface PluginReport {
 
 /** Package basics, manifest, static views; `load: true` also runs the host half in a test host. */
 export function checkPlugin(dirOrPackageJson: string, options?: { load?: boolean; lang?: 'zh' | 'en'; app?: string }): Promise<PluginReport>
-/** A view file's text (or a tool result meta `{ "dsh-go/view": … }`, which gets the tool-card budget). */
+/** A view file's text (or a tool result meta `{ "xrk-mobile/view": … }`, which gets the tool-card budget). */
 export function checkViewText(text: string, options?: { budget?: Budget; lang?: 'zh' | 'en'; target?: string }): { kind: 'view'; target: string; unreadable?: string; views?: Array<ViewCheck & { where: string }> }
 /** 0 fine, 1 some items do not apply, 2 nothing native applies / a view falls back / load failed, 3 unreadable. */
 export function exitCode(report: unknown): 0 | 1 | 2 | 3

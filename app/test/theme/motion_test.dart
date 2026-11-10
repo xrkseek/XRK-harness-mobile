@@ -2,7 +2,7 @@
 //
 //   flutter test test/theme/motion_test.dart
 
-import 'package:dsh_app/ui/theme/motion.dart';
+import 'package:xrk_app/ui/theme/motion.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter_test/flutter_test.dart';
 

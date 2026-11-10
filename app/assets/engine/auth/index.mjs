@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// dsh-app auth bridge: DSH plugin that exposes subscription sign-in (ChatGPT,
+// dsh-app auth bridge: XRK plugin that exposes subscription sign-in (ChatGPT,
 // Claude) to the app as the `appAuth` Remote service:
 //
 //   appAuth/list                  → {providers: [{id, signedIn, account?}]}
@@ -14,7 +14,7 @@
 // engine start and mounts it with an extra `--patch` overlay that inserts this
 // file by absolute path; the logic lives in bridge.mjs.
 //
-// Wiring notes (DSH 0.2.1-rc.2):
+// Wiring notes (XRK 0.2.1-rc.2):
 // - The Gateway serves a service without a generated Typert descriptor through
 //   its source-mode fallback: it finds the `typertRemote` binding of a
 //   TypertRemoteService, reads the methods marked with `Remote`, and takes the
@@ -23,19 +23,19 @@
 // - Node has no decorator syntax, so `Remote` is applied the way compiled
 //   decorators apply it: once per method, with its initializer run in the
 //   constructor.
-// - This file lives outside DSH's install and profiles, so bare imports would
+// - This file lives outside XRK's install and profiles, so bare imports would
 //   not resolve; the host's own copy of the protocol package is loaded from the
-//   running DSH install instead (same file, same module instance).
+//   running XRK install instead (same file, same module instance).
 
 import { createRequire } from 'node:module'
 import { pathToFileURL } from 'node:url'
 
 import { AuthBridge } from './bridge.mjs'
 
-/** Where the dsh-app rootfs installs DSH (the `dsh` shim runs this file). */
-const GUEST_DSH_BIN = '/opt/dsh/node_modules/@deepseek-ai/dsh/lib/bin.js'
+/** Where the dsh-app rootfs installs XRK (the `xrkh` shim runs this file). */
+const GUEST_DSH_BIN = '/opt/dsh/node_modules/@xrkseek/harness-cli/lib/bin.js'
 
-/** Imports a package from the running DSH install. */
+/** Imports a package from the running XRK install. */
 async function hostImport(specifier) {
   const anchors = [process.argv[1], GUEST_DSH_BIN].filter((anchor) => typeof anchor === 'string' && anchor.length > 0)
   const failures = []
@@ -51,10 +51,10 @@ async function hostImport(specifier) {
   } catch (error) {
     failures.push(`bare: ${error?.code ?? error?.message ?? error}`)
   }
-  throw new Error(`dsh-app auth: cannot load ${specifier} from the DSH install (${failures.join('; ')})`)
+  throw new Error(`dsh-app auth: cannot load ${specifier} from the XRK install (${failures.join('; ')})`)
 }
 
-const { TypertRemoteService, Remote, RemoteError } = await hostImport('@deepseek-ai/dsh-typert-protocol')
+const { TypertRemoteService, Remote, RemoteError } = await hostImport('@xrkseek/harness-cli-typert-protocol')
 
 /** The Remote methods, by implementation name (= wire method name). */
 const REMOTE_METHODS = ['list', 'begin', 'poll', 'answer', 'cancel', 'signOut']

@@ -102,7 +102,7 @@ class ListPageRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final showChevron = chevron ?? (onTap != null && trailing == null);
     final two = subtitle != null && subtitle!.isNotEmpty;
     final glyph =

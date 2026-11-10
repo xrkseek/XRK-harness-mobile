@@ -1,7 +1,7 @@
 // Words and numbers of the media card, viewer and details: the metadata line,
 // costs, clip lengths, failures. One place, so they all say it the same way.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../../../l10n/l10n.dart';
 import 'generate_header.dart';

@@ -6,7 +6,7 @@
 
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -75,7 +75,7 @@ class BotChatHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final top = MediaQuery.paddingOf(context).top;
     final faceInset = (key44 - faceSize) / 2;
     return Stack(
@@ -455,7 +455,7 @@ class BotTimeLine extends StatelessWidget {
     child: Text(
       shortTime(time),
       style: AppType.tabular(
-        Theme.of(context).textTheme.labelSmall!.copyWith(color: DshColors.of(context).textTertiary),
+        Theme.of(context).textTheme.labelSmall!.copyWith(color: XrkColors.of(context).textTertiary),
       ),
     ),
   );
@@ -471,7 +471,7 @@ class BotEventLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final color = danger ? dsh.danger : dsh.textTertiary;
     final style = Theme.of(context).textTheme.bodySmall?.copyWith(color: color, height: 1.45);
     return Center(
@@ -561,7 +561,7 @@ class GroupMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final name = bot?.name ?? item.name ?? 'Bot';
     final color = bot?.ink ?? item.color ?? dsBotDefaultColor(item.botId ?? name);
     final avatar = bot == null ? BotMonogram(name: name, color: color, size: face) : BotAvatar(bot: bot!, size: face);
@@ -630,7 +630,7 @@ class BotTypingLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return Row(
       children: [
         BotAvatar(bot: bot, size: GroupMessage.face, working: true),
@@ -720,7 +720,7 @@ class _BotQuestionCardState extends State<BotQuestionCard> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final q = widget.question;
     final ready = _picked.isNotEmpty || _custom.text.trim().isNotEmpty;
     return ChatCard(
@@ -1177,7 +1177,7 @@ class BotModelCard extends StatelessWidget {
             Expanded(
               child: Text(
                 context.l10n.botsModelGreeting,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
               ),
             ),
             FilledButton(onPressed: onPick, child: Text(context.l10n.botsChooseModel)),
@@ -1204,7 +1204,7 @@ class CardCloseKey extends StatelessWidget {
       radius: 18,
       child: SizedBox.square(
         dimension: 20,
-        child: Icon(AppIcons.close, size: 18, color: DshColors.of(context).textTertiary),
+        child: Icon(AppIcons.close, size: 18, color: XrkColors.of(context).textTertiary),
       ),
     ),
   );

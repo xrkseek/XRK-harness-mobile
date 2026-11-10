@@ -1,14 +1,14 @@
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/common/status_dot.dart';
-import 'package:dsh_app/ui/engine/engine_screen.dart';
-import 'package:dsh_app/ui/engine/engine_status.dart';
-import 'package:dsh_app/ui/engine/log_view.dart';
-import 'package:dsh_app/ui/safe_mode/engine_failure_card.dart';
-import 'package:dsh_app/ui/safe_mode/safe_mode_banner.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/common/status_dot.dart';
+import 'package:xrk_app/ui/engine/engine_screen.dart';
+import 'package:xrk_app/ui/engine/engine_status.dart';
+import 'package:xrk_app/ui/engine/log_view.dart';
+import 'package:xrk_app/ui/safe_mode/engine_failure_card.dart';
+import 'package:xrk_app/ui/safe_mode/safe_mode_banner.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -204,7 +204,7 @@ void main() {
   });
 
   test('an ordinary classified exit keeps its structured failure despite an error string', () {
-    final status = _status(phase: RuntimePhase.error, error: 'DSH exited unexpectedly (code 1)', failure: _latest());
+    final status = _status(phase: RuntimePhase.error, error: 'XRK exited unexpectedly (code 1)', failure: _latest());
     expect(EngineFailureCard.visibleFor(status), true);
     expect(engineDetail(status), contains('old-plugin'));
     expect(EngineStatusView.of(_state(status)).label, appL10n.phoneEngineStartupFailed);
@@ -212,7 +212,7 @@ void main() {
 
   test('a fresh launchFailed on the normal exit path retains its execution diagnosis', () {
     final latest = _latest(kind: FailureKind.launchFailed);
-    final status = _status(phase: RuntimePhase.error, error: 'DSH exited unexpectedly (code 126)', failure: latest);
+    final status = _status(phase: RuntimePhase.error, error: 'XRK exited unexpectedly (code 126)', failure: latest);
     expect(EngineFailureCard.visibleFor(status), true);
     expect(EngineStatusView.of(_state(status)).label, appL10n.phoneFailureLaunch);
     expect(engineDetail(status), contains(_execError));

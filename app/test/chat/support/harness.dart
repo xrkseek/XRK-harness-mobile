@@ -2,21 +2,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/balance_state.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/commands_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/features_state.dart' show agentPresetsProvider, permissionStateProvider;
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/state/usage_state.dart';
-import 'package:dsh_app/ui/common/side_insets.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/balance_state.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/commands_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/features_state.dart' show agentPresetsProvider, permissionStateProvider;
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/state/usage_state.dart';
+import 'package:xrk_app/ui/common/side_insets.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -65,7 +65,7 @@ Widget testApp(Widget home, {Brightness brightness = Brightness.light, List<Over
 
 /// A client that is never asked to talk to anything: every provider that
 /// would use it is overridden.
-final fakeConnection = HostConnection(client: DshClient(DshConnection(Uri.parse('http://127.0.0.1:9'))), isLocal: true);
+final fakeConnection = HostConnection(client: XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9'))), isLocal: true);
 
 final testCatalog = ModelCatalog(
   defaultSelection: const ModelSelection(
@@ -235,7 +235,7 @@ class FakeChatController extends ChatController {
   /// Reply seq -> fork cut, for [branchPointAfter].
   final branchPoints = <int, int>{};
 
-  /// Reply seq -> DSH message id, for [replyMessageId].
+  /// Reply seq -> XRK message id, for [replyMessageId].
   final replyIds = <int, String>{};
   final branched = <int>[];
   final edited = <int>[];
@@ -330,39 +330,39 @@ class FakeUsage extends SessionUsageController {
   SessionUsage build() => usage;
 }
 
-/// `commands/list` as DSH 0.2.x returns it (descriptor JSON).
+/// `commands/list` as XRK 0.2.x returns it (descriptor JSON).
 final testHostCommands = parseCommandList([
   {
-    'definitionId': '@deepseek-ai/dsh-command-goal',
+    'definitionId': '@xrkseek/harness-cli-command-goal',
     'name': 'goal',
     'description': 'Set or view the goal for a long-running task',
     'input': {'hint': '[<objective>|clear|edit <objective>|pause|resume]', 'attachments': true},
   },
   {
-    'definitionId': '@deepseek-ai/dsh-plan-mode',
+    'definitionId': '@xrkseek/harness-cli-plan-mode',
     'name': 'plan',
     'description': 'Enter or leave plan mode',
     'input': {'hint': '[off|message]', 'attachments': true},
   },
   {
-    'definitionId': '@deepseek-ai/dsh-command-feedback',
+    'definitionId': '@xrkseek/harness-cli-command-feedback',
     'name': 'feedback',
     'description': 'Record feedback about this session',
     'input': {'hint': '<text>'},
   },
   {
-    'definitionId': '@deepseek-ai/dsh-command-compact',
+    'definitionId': '@xrkseek/harness-cli-command-compact',
     'name': 'compact',
     'description': 'Compact older conversation history',
   },
   {
-    'definitionId': '@deepseek-ai/dsh-permission-presets',
+    'definitionId': '@xrkseek/harness-cli-permission-presets',
     'name': 'permission',
     'description': 'Switch the permission preset (sandbox mode + approval policy)',
     'input': {'hint': '<preset>'},
   },
   {
-    'definitionId': '@deepseek-ai/dsh-session-log-export',
+    'definitionId': '@xrkseek/harness-cli-session-log-export',
     'name': 'export',
     'description': 'Download this Session log as a ZIP archive',
   },

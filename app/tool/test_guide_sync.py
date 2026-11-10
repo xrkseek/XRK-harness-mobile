@@ -9,8 +9,8 @@ import guide_sync
 REPO = Path(__file__).resolve().parents[2]
 
 SKILL = """---
-# dsh-go:managed — the dsh-go app keeps this skill up to date
-name: dsh-go-guide
+# xrk-mobile:managed — the xrk-mobile app keeps this skill up to date
+name: xrk-guide
 description: The guide.
 whenToUse: How to use the app.
 ---
@@ -57,7 +57,7 @@ class GuideSyncTest(unittest.TestCase):
         self.write('app/lib/links/page_links.dart', PAGE_LINKS)
         self.write('app/lib/ui/settings/index/spots.dart', SPOTS)
         self.write('docs/guide/SKILL.md', SKILL)
-        self.write('docs/guide/README.md', '# Guide\n\n> dsh-go 0.9.2\n\n- [引擎](zh/01-engine.md)\n- [Engine](en/01-engine.md)\n')
+        self.write('docs/guide/README.md', '# Guide\n\n> xrk-mobile 0.9.2\n\n- [引擎](zh/01-engine.md)\n- [Engine](en/01-engine.md)\n')
         for locale, text in PAGE.items():
             self.write(f'docs/guide/{locale}/01-engine.md', text)
             self.write(f'docs/guide/{locale}/02-settings.md', '# Settings\n')
@@ -78,9 +78,9 @@ class GuideSyncTest(unittest.TestCase):
         self.assertEqual(self.errors(), [])
         self.assertEqual(guide_sync.run(self.repo, write=True), [])
         self.assertEqual(guide_sync.run(self.repo, write=False), [])
-        assets = self.repo / 'app/assets/skills/dsh-go-guide'
+        assets = self.repo / 'app/assets/skills/xrk-guide'
         manifest = json.loads((assets / 'manifest.json').read_text())
-        self.assertEqual(manifest['name'], 'dsh-go-guide')
+        self.assertEqual(manifest['name'], 'xrk-guide')
         self.assertEqual(manifest['files']['zh-01-engine.md'], 'zh/01-engine.md')
         self.assertEqual(set(manifest['files']), {p.name for p in assets.iterdir()} - {'manifest.json'})
         for flat, target in manifest['files'].items():
@@ -88,7 +88,7 @@ class GuideSyncTest(unittest.TestCase):
 
     def test_generated_assets_cannot_drift(self):
         guide_sync.run(self.repo, write=True)
-        assets = self.repo / 'app/assets/skills/dsh-go-guide'
+        assets = self.repo / 'app/assets/skills/xrk-guide'
         (assets / 'zh-01-engine.md').write_text('edited by hand')
         self.assertTrue(any('out of date' in e for e in guide_sync.run(self.repo, write=False)))
         guide_sync.run(self.repo, write=True)
@@ -140,15 +140,15 @@ class GuideSyncTest(unittest.TestCase):
 
     def test_version_must_match_pubspec(self):
         self.write('app/pubspec.yaml', 'version: 0.9.3+1\n')
-        self.assertFails('`> dsh-go 0.9.3`')
+        self.assertFails('`> xrk-mobile 0.9.3`')
 
     def test_both_languages_hold_the_same_pages(self):
         (self.guide / 'en/02-settings.md').unlink()
         self.assertFails('zh/en pages differ')
 
     def test_skill_front_matter(self):
-        self.write('docs/guide/SKILL.md', SKILL.replace('# dsh-go:managed — the dsh-go app keeps this skill up to date\n', ''))
-        self.assertFails('# dsh-go:managed')
+        self.write('docs/guide/SKILL.md', SKILL.replace('# xrk-mobile:managed — the xrk-mobile app keeps this skill up to date\n', ''))
+        self.assertFails('# xrk-mobile:managed')
         self.write('docs/guide/SKILL.md', SKILL.replace('whenToUse', 'when'))
         self.assertFails('needs whenToUse')
         self.write('docs/guide/SKILL.md', SKILL.replace('description: The guide.', 'description: The guide: where things are.'))

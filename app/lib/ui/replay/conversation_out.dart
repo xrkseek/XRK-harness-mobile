@@ -24,7 +24,7 @@ export '../share_hosted/manage_links_button.dart' show ManageLinksButton;
 
 /// The file forms of a shared conversation.
 enum ConversationFormat {
-  /// `.dshgo`: opens in dsh-go (replay, 「接着聊」) and on the landing page.
+  /// `.dshgo`: opens in xrk-mobile (replay, 「接着聊」) and on the landing page.
   file,
 
   /// `.html`: opens in any browser, offline.

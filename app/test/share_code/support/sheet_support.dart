@@ -2,22 +2,22 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/share_code/profile_export.dart';
-import 'package:dsh_app/share_code/share_code_state.dart';
-import 'package:dsh_app/share_code/share_import.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/share_code/share_net.dart';
-import 'package:dsh_app/state/artifacts.dart' show FilesChannel;
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/share_code/share_out.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/share_code/profile_export.dart';
+import 'package:xrk_app/share_code/share_code_state.dart';
+import 'package:xrk_app/share_code/share_import.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/share_code/share_net.dart';
+import 'package:xrk_app/state/artifacts.dart' show FilesChannel;
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/share_code/share_out.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
-import 'package:dsh_app/state/plugins_state.dart' show MarketEntry;
+import 'package:xrk_app/state/plugins_state.dart' show MarketEntry;
 
 import 'fake_engine.dart';
 
@@ -69,7 +69,7 @@ FakeEngine exportEngine() {
     ..addBundle('dsh-writer', version: '2.0.0', source: 'github:acme/dsh-writer#v2.0.0', title: '长文写作')
     ..addBundle('my-tools', version: '0.0.1', source: '/root/plugins/my-tools', title: '我的工具')
     ..addBundle(
-      '@deepseek-ai/dsh-experimental-session-titles-bundle',
+      '@xrkseek/harness-cli-experimental-session-titles-bundle',
       official: true,
       optional: true,
       enabled: true,
@@ -84,10 +84,10 @@ GuestFs sampleGuest({bool existingOutline = false}) {
   final fs = tempGuest();
   writeGuest(
     fs,
-    '/root/.dsh/skills/outline/SKILL.md',
+    '/root/.xrk/skills/outline/SKILL.md',
     existingOutline ? '旧的提纲技能' : '---\nname: outline\ndescription: 先列提纲再动笔\n---\n先列提纲。',
   );
-  writeGuest(fs, '/root/.dsh/skills/weekly.md', '---\nname: weekly\ndescription: 生成周报\n---\n按项目汇总。');
+  writeGuest(fs, '/root/.xrk/skills/weekly.md', '---\nname: weekly\ndescription: 生成周报\n---\n按项目汇总。');
   writeGuest(fs, '/root/.agents/AGENTS.md', '# 我的习惯\n回答用中文。\n先给结论。\n');
   return fs;
 }
@@ -126,10 +126,10 @@ class RecordingShareOut extends ShareOut {
   }
 }
 
-ImportTarget localTarget(DshClient client) =>
+ImportTarget localTarget(XrkClient client) =>
     ImportTarget(HostConnection(client: client, label: '本机', isLocal: true), isActive: false);
 
-ImportTarget remoteTarget(DshClient client) => ImportTarget(
+ImportTarget remoteTarget(XrkClient client) => ImportTarget(
   HostConnection(client: client, label: '书房的 Mac · SSH', isLocal: false, kind: HostKind.ssh, hostId: 'mac'),
   isActive: true,
 );

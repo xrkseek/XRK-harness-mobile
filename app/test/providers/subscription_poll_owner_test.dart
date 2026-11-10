@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/account_state.dart' show accountBrowserProvider;
-import 'package:dsh_app/state/subscriptions_state.dart';
-import 'package:dsh_app/ui/providers/subscription_sheet.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/account_state.dart' show accountBrowserProvider;
+import 'package:xrk_app/state/subscriptions_state.dart';
+import 'package:xrk_app/ui/providers/subscription_sheet.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -25,7 +25,7 @@ void main() {
   for (final scenario in ['old success', 'old error', 'close in flight']) {
     testWidgets('one poll chain after answer: $scenario', (tester) async {
       final wire = FakePluginCarrier();
-      final client = DshClient.withCarrier(wire);
+      final client = XrkClient.withCarrier(wire);
       final held = <int, Completer<Object?>>{};
       Completer<Object?>? answer;
       var phase = 'prompt';
@@ -94,7 +94,7 @@ void main() {
           expect(find.byType(SubscriptionLoginSheet), findsNothing);
         }
         if (scenario == 'old error') {
-          held[2]!.completeError(const DshTransportException('response lost'));
+          held[2]!.completeError(const XrkTransportException('response lost'));
         } else {
           held[2]!.complete({'phase': 'starting'});
         }

@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/ssh/ssh_host_config.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/ssh/ssh_host_config.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_ssh.dart';
@@ -48,7 +48,7 @@ void main() {
     expect(late.destroyed, isTrue);
   });
 
-  test('a silent probe consumes the existing retry budget without restarting a live DSH', () async {
+  test('a silent probe consumes the existing retry budget without restarting a live XRK', () async {
     final remote = FakeRemote()..pid = 500;
     final transports = <SilentProbeTransport>[];
     final link = SshHostLink(

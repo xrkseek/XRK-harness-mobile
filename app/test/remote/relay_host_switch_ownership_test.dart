@@ -5,18 +5,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/remote/relay/dsh_remote_backend.dart';
-import 'package:dsh_app/remote/secret_store.dart' as app_secrets;
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_client/dsh_client.dart';
-import 'package:dsh_remote/dsh_remote.dart' as remote;
+import 'package:xrk_app/remote/relay/xrk_remote_backend.dart';
+import 'package:xrk_app/remote/secret_store.dart' as app_secrets;
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_client/xrk_client.dart';
+import 'package:xrk_remote/xrk_remote.dart' as remote;
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../packages/dsh_remote/test/support/fake_remote.dart';
+import '../../../packages/xrk_remote/test/support/fake_remote.dart';
 
 const _guard = Duration(seconds: 10);
 
@@ -139,7 +139,7 @@ class _Fixture {
   final FakeRemoteHost a;
   final FakeRemoteHost b;
   final _FirstControlGate gate;
-  final DshRemoteRelayBackend backend;
+  final XrkRemoteRelayBackend backend;
   final ProviderContainer container;
 
   HostRef get hostA => HostRef.relay(a.deviceId, name: 'A');
@@ -177,7 +177,7 @@ class _Fixture {
       socketConnector: gate.connect,
     );
     final secrets = app_secrets.MemorySecretStore();
-    final backend = DshRemoteRelayBackend(secrets: secrets, account: account, direct: false);
+    final backend = XrkRemoteRelayBackend(secrets: secrets, account: account, direct: false);
     // The override below does not run the production provider's disposer.
     addTearDown(() => backend.close().timeout(_guard));
     await backend.loginWithPassword(FakeRemoteServer.account, FakeRemoteServer.password);

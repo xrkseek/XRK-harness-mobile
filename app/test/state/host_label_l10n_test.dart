@@ -1,15 +1,15 @@
 // The host label under the chat title follows the app language, also on a
 // connection made before the language changed.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,9 +32,9 @@ class _Settings extends SettingsController {
   AppSettings build() => const AppSettings(loaded: true);
 }
 
-DshClient _client() => DshClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
+XrkClient _client() => XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
 
-class _LocalClient extends DshClient {
+class _LocalClient extends XrkClient {
   _LocalClient() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   final _mux = ReadyMux();
   @override

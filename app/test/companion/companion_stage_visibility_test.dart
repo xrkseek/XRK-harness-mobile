@@ -4,9 +4,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/companion/companion_pack.dart';
-import 'package:dsh_app/ui/companion/companion_stage.dart';
-import 'package:dsh_app/ui/plugins/islands/island_platform.dart';
+import 'package:xrk_app/companion/companion_pack.dart';
+import 'package:xrk_app/ui/companion/companion_stage.dart';
+import 'package:xrk_app/ui/plugins/islands/island_platform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:webview_flutter/webview_flutter.dart';

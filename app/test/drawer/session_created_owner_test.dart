@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/session_created_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/session_created_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,7 +37,7 @@ class _Read {
 class _Carrier extends DshCarrier {
   final reads = <_Read>[];
   bool closed = false;
-  late final client = DshClient.withCarrier(this);
+  late final client = XrkClient.withCarrier(this);
 
   @override
   String get kind => 'controlled-created-time';
@@ -79,15 +79,15 @@ _Carrier _carrier() {
 class _Harness {
   _Harness(this.container, this.clients);
   final ProviderContainer container;
-  final List<DshClient> clients;
+  final List<XrkClient> clients;
 
   SessionCreatedController get controller => container.read(sessionCreatedProvider.notifier);
   Map<String, DateTime> get state => container.read(sessionCreatedProvider);
 
-  static AsyncValue<HostConnection?> connection(DshClient client) =>
+  static AsyncValue<HostConnection?> connection(XrkClient client) =>
       AsyncData(HostConnection(client: client, isLocal: false, kind: HostKind.ssh, hostId: _host.id));
 
-  static Future<_Harness> start(DshClient client) async {
+  static Future<_Harness> start(XrkClient client) async {
     final container = ProviderContainer(overrides: [activeConnectionProvider.overrideWithValue(connection(client))]);
     container.read(activeHostProvider.notifier).select(_host);
     container.listen(sessionCreatedProvider, (_, _) {});
@@ -109,7 +109,7 @@ class _Harness {
     }
   }
 
-  Future<void> replace(DshClient client) async {
+  Future<void> replace(XrkClient client) async {
     final before = controller;
     final previous = clients.last;
     clients.add(client);
@@ -150,7 +150,7 @@ class _HttpPage {
   final answer = Completer<RpcResult>();
   final handlers = <Future<void>>[];
   late final carrier = _ObservedHttp(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
-  late final client = DshClient.withCarrier(carrier);
+  late final client = XrkClient.withCarrier(carrier);
 
   static Future<_HttpPage> start({DateTime? automatic}) async {
     final wire = _HttpPage(await HttpServer.bind(InternetAddress.loopbackIPv4, 0), automatic);
@@ -205,7 +205,7 @@ void main() {
 
       first.reads.single.answer.complete(
         late == 'remote-error'
-            ? const RpcError(DshRemoteException('session/not-found', 'old reply'))
+            ? const RpcError(XrkRemoteException('session/not-found', 'old reply'))
             : RpcOk(_page(null)),
       );
       await h.flush();
@@ -227,7 +227,7 @@ void main() {
     await first.entered.future;
     expect(first.carrier.replies, hasLength(1));
     await h.replace(next.client);
-    first.answer.complete(const RpcError(DshRemoteException('session/not-found', 'old HTTP reply')));
+    first.answer.complete(const RpcError(XrkRemoteException('session/not-found', 'old HTTP reply')));
     await first.carrier.replies.single.future;
     await h.flush();
 
@@ -264,7 +264,7 @@ void main() {
     final next = _carrier();
     final h = await _Harness.start(first.client);
     h.controller.ensure(['missing']);
-    first.reads.single.answer.complete(const RpcError(DshRemoteException('session/not-found', 'current reply')));
+    first.reads.single.answer.complete(const RpcError(XrkRemoteException('session/not-found', 'current reply')));
     await h.flush();
     h.controller.ensure(['missing']);
     expect(first.reads, hasLength(1));

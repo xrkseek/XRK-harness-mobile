@@ -5,11 +5,11 @@
 
 // ignore_for_file: depend_on_referenced_packages
 
-import 'package:dsh_app/ui/chat/render/mermaid_preview.dart';
-import 'package:dsh_app/ui/plugins/islands/island_platform.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_app/ui/web/web_view_page.dart';
+import 'package:xrk_app/ui/chat/render/mermaid_preview.dart';
+import 'package:xrk_app/ui/plugins/islands/island_platform.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_app/ui/web/web_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';

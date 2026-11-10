@@ -32,7 +32,7 @@ class PhoneNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final (bg, fg, glyph) = switch (tone) {
       NoteTone.info => (colors.infoContainer, colors.onInfoContainer, AppIcons.info),
       NoteTone.warn => (colors.warningContainer, colors.onWarningContainer, AppIcons.warning),
@@ -90,7 +90,7 @@ class DoneMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final theme = Theme.of(context);
     return Text(label ?? l10n.phoneEnabled, style: theme.textTheme.labelMedium?.copyWith(color: colors.success));
   }
@@ -173,7 +173,7 @@ class _StepMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     if (done) {
       return Icon(AppIcons.success, size: 22, color: colors.success);
     }
@@ -292,7 +292,7 @@ class CheckRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final (icon, color, word) = unknown
         ? (AppIcons.question, colors.textTertiary, l10n.phoneCheckUnknown)
         : done
@@ -325,7 +325,7 @@ class PageFootnote extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
       child: Text(
         text,
-        style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary, height: 1.5),
+        style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary, height: 1.5),
       ),
     );
   }

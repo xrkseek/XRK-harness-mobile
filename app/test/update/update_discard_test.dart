@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/update/update_http.dart';
+import 'package:xrk_app/update/update_http.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _Deadline implements Timer {

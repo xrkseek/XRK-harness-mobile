@@ -1,9 +1,9 @@
 {
-  "name": "@dsh-go/plugin-kit",
+  "name": "@xrkseek/plugin-kit",
   "version": "0.1.0",
   "private": true,
-  "description": "Author kit for dsh-go native plugins: view and manifest types, component builders, tool cards, caps helpers and the `check` command. Zero runtime dependencies.",
-  "author": "DSH-TUI (ccch1mneyyy)",
+  "description": "Author kit for xrk-mobile native plugins: view and manifest types, component builders, tool cards, caps helpers and the `check` command. Zero runtime dependencies.",
+  "author": "DSH-TUI (xrkseek)",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
@@ -25,7 +25,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "dsh-go-plugin-check": "bin/check.mjs"
+    "xrk-plugin-check": "bin/check.mjs"
   },
   "files": [
     "lib",

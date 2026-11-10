@@ -1,6 +1,6 @@
 # View v2: text, colours and containers
 
-Set `v: 2` on the view root to enable styles. Omitting `v`, or setting `v: 1`, keeps the original rendering path. `dshGo.v` remains the NA protocol major version `1`; it is not the view version.
+Set `v: 2` on the view root to enable styles. Omitting `v`, or setting `v: 1`, keeps the original rendering path. `xrkGo.v` remains the NA protocol major version `1`; it is not the view version.
 
 ```js
 {
@@ -124,4 +124,4 @@ Gradients, author-controlled opacity and animation parameters remain closed. Fix
 
 Old apps ignore unfamiliar `v`, `accent`, `style` and `spans` properties and draw existing `text` / `value` fields. Keeping those fallbacks allows the same style view to work there. New components additionally require degradation using `caps.components`. Tool cards persist in history, so retain all fields required by v1.
 
-The complete style dashboard is [`dsh-go-example-styles`](../../../examples/plugins/dsh-go-example-styles/README.en.md). Component and action documentation covers the additional interactive controls and their state budgets.
+The complete style dashboard is [`xrk-example-styles`](../../../examples/plugins/xrk-example-styles/README.en.md). Component and action documentation covers the additional interactive controls and their state budgets.

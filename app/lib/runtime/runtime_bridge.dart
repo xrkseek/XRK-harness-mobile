@@ -146,7 +146,7 @@ class RuntimeStatus {
     this.abi,
     this.bundledVersion,
     this.installedVersion,
-    this.dshVersion,
+    this.engineVersionAlias,
     this.nodeVersion,
     this.baseUrl,
     this.token,
@@ -180,7 +180,7 @@ class RuntimeStatus {
   final String? abi;
   final String? bundledVersion;
   final String? installedVersion;
-  final String? dshVersion;
+  final String? engineVersionAlias;
   final String? nodeVersion;
   final String? baseUrl;
   final String? token;
@@ -270,7 +270,7 @@ class RuntimeStatus {
     abi: map['abi'] as String?,
     bundledVersion: map['bundledVersion'] as String?,
     installedVersion: map['installedVersion'] as String?,
-    dshVersion: map['dshVersion'] as String?,
+    engineVersionAlias: map['engineVersion'] as String?,
     nodeVersion: map['nodeVersion'] as String?,
     baseUrl: map['baseUrl'] as String?,
     token: map['token'] as String?,
@@ -376,7 +376,7 @@ class SafeHazard {
     detail: map['detail'] as String? ?? '',
   );
 
-  /// Guest path, e.g. `/root/.dsh/.env`.
+  /// Guest path, e.g. `/root/.xrk/.env`.
   final String path;
 
   /// `homePatch`, `homeEnv` or `cwdEnv`.
@@ -523,11 +523,11 @@ class ManagedSkillInstallResponse {
   final String? reason;
 }
 
-/// Dart side of the `dsh/runtime` platform channels implemented in Kotlin.
+/// Dart side of the `xrk/runtime` platform channels implemented in Kotlin.
 class RuntimeBridge {
   RuntimeBridge({MethodChannel? methods, EventChannel? events})
-    : _methods = methods ?? const MethodChannel('dsh/runtime'),
-      _events = events ?? const EventChannel('dsh/runtime/events');
+    : _methods = methods ?? const MethodChannel('xrk/runtime'),
+      _events = events ?? const EventChannel('xrk/runtime/events');
 
   final MethodChannel _methods;
   final EventChannel _events;

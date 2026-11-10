@@ -6,8 +6,8 @@ import { pathToFileURL } from 'node:url';
 import { performance } from 'node:perf_hooks';
 const [prefix, label, scenario, phase] = process.argv.slice(2);
 const require = createRequire(resolve(prefix, 'package.json'));
-const { Session } = await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-session')));
-const { createDeveloperMessage } = await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-llm')));
+const { Session } = await import(pathToFileURL(require.resolve('@xrkseek/harness-cli-session')));
+const { createDeveloperMessage } = await import(pathToFileURL(require.resolve('@xrkseek/harness-cli-llm')));
 const n = scenario === 'tiny' ? 1 : 128;
 const definitions = Array.from({ length: n }, (_, i) => ({ name: `tool_${i}`, description: `Tool ${i}`,
   parameters: { type: 'object', properties: { value: { type: 'string' } } } }));

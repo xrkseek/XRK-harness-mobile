@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate constants and Unicode-15 NFC/casefold tables; no network needed.
 
-The rules file is copied verbatim from dsh-go-market/schema/pet-pack.rules.json.
+The rules file is copied verbatim from xrk-mobile-market/schema/pet-pack.rules.json.
 Use CPython 3.12 (unicodedata 15.0.0), the same Unicode database as market CI.
 Unicode source/license: https://www.unicode.org/Public/15.0.0/ucd/ and
 unicode-15.0-LICENSE.txt. Regenerate, then `dart format` the two output files.

@@ -1,7 +1,21 @@
-// Where hosted conversation links live (docs/design/share-links.md). Same level
-// as `shareLandingUrl` in share_code/share_link.dart: change the host here, in
-// services/share-worker/wrangler.jsonc, and redeploy.
+// Hosted conversation links (share host). Product builds leave this empty:
+// install / update go through GitHub Releases (+ XRK's own site/worker).
+// Wire a host with `--dart-define=XRK_SHARE_ORIGIN=https://…`, or in tests
+// assign [shareHostOriginOverride].
 
-/// The share host (services/share-worker). A link is
-/// `$shareHostOrigin/c/<id>#k=<key>`; the key never reaches the server.
-const shareHostOrigin = 'https://go.dshtui.com';
+const _shareHostOriginDefine = String.fromEnvironment('XRK_SHARE_ORIGIN');
+
+/// Test-only override; empty in production.
+String shareHostOriginOverride = '';
+
+/// Share-host origin (`https://…`). Empty = hosted links / market pages off.
+String get shareHostOrigin {
+  final override = shareHostOriginOverride.trim();
+  if (override.isNotEmpty) return override.replaceFirst(RegExp(r'/+$'), '');
+  final defined = _shareHostOriginDefine.trim();
+  if (defined.isEmpty) return '';
+  return defined.replaceFirst(RegExp(r'/+$'), '');
+}
+
+/// Origins that count as hosted links. Empty when [shareHostOrigin] is unset.
+List<String> get hostedOrigins => shareHostOrigin.isEmpty ? const <String>[] : <String>[shareHostOrigin];

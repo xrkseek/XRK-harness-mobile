@@ -7,8 +7,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/ui/theme/dsh_glyphs.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/theme/xrk_glyphs.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -60,20 +60,20 @@ void main() {
 
   test('every role maps to a glyph the font carries', () {
     final roles = RegExp(
-      r'^  static const (\w+) = DshGlyphs\.(\w+);',
+      r'^  static const (\w+) = XrkGlyphs\.(\w+);',
       multiLine: true,
     ).allMatches(File('lib/ui/theme/app_icons.dart').readAsStringSync()).map((m) => (m[1]!, m[2]!)).toList();
     expect(roles, isNotEmpty);
-    final carried = _cmap(File('assets/fonts/DshIcons.ttf').readAsBytesSync());
+    final carried = _cmap(File('assets/fonts/XrkIcons.ttf').readAsBytesSync());
     for (final (role, glyph) in roles) {
-      final data = DshGlyphs.all[glyph];
-      expect(data, isNotNull, reason: 'AppIcons.$role: DshGlyphs.$glyph missing; run tool/make_icon_font.py');
-      expect(data!.fontFamily, 'DshIcons');
+      final data = XrkGlyphs.all[glyph];
+      expect(data, isNotNull, reason: 'AppIcons.$role: XrkGlyphs.$glyph missing; run tool/make_icon_font.py');
+      expect(data!.fontFamily, 'XrkIcons');
       expect(data.fontPackage, isNull);
-      expect(carried, contains(data.codePoint), reason: 'DshIcons.ttf lacks $glyph; run tool/make_icon_font.py');
+      expect(carried, contains(data.codePoint), reason: 'XrkIcons.ttf lacks $glyph; run tool/make_icon_font.py');
     }
     // Nothing the tokens dropped lingers in the table.
-    expect(DshGlyphs.all.keys.toSet(), roles.map((r) => r.$2).toSet());
+    expect(XrkGlyphs.all.keys.toSet(), roles.map((r) => r.$2).toSet());
   });
 
   for (final brightness in Brightness.values) {
@@ -81,7 +81,7 @@ void main() {
     testWidgets('glyph sheet ($mode)', (tester) async {
       const columns = 12;
       const cell = Size(64, 60);
-      final glyphs = DshGlyphs.all.entries.toList();
+      final glyphs = XrkGlyphs.all.entries.toList();
       final rows = (glyphs.length / columns).ceil();
       tester.view.devicePixelRatio = 2;
       tester.view.physicalSize = Size(columns * cell.width * 2, (rows * cell.height + 16) * 2);
@@ -92,7 +92,7 @@ void main() {
           theme: brightness == Brightness.dark ? buildDarkTheme() : buildLightTheme(),
           home: Builder(
             builder: (context) {
-              final colors = DshColors.of(context);
+              final colors = XrkColors.of(context);
               return Material(
                 color: Theme.of(context).colorScheme.surface,
                 child: Padding(

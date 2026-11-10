@@ -3,7 +3,7 @@
 // (when the engine has the sign-in bridge), then the custom providers of the
 // active engine (llm-pi-ai routes) and 「添加渠道」.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -182,7 +182,7 @@ class _DeepSeekCard extends ConsumerWidget {
 }
 
 /// 「订阅」: ChatGPT and Claude, signed in through the engine's bridge. Left
-/// out entirely when the engine has no bridge (older DSH, a remote host
+/// out entirely when the engine has no bridge (older XRK, a remote host
 /// without it) or is not connected.
 class _SubscriptionAccounts extends ConsumerWidget {
   const _SubscriptionAccounts();
@@ -340,7 +340,7 @@ class _ProviderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final health = provider.health;
     final view = ProviderHealthView.of(health);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Semantics(
       label: '${provider.name}，${view.label}',
       child: ListPageRow(

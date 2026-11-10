@@ -1,6 +1,6 @@
 // The user's guard against an endlessly relaying group. Null means the server
 // default, never unlimited; the API must preserve that explicit null.
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -123,7 +123,7 @@ class _RoomRelayLimitSheetState extends ConsumerState<RoomRelayLimitSheet> {
                       const SizedBox(height: 12),
                       Text(
                         current ? _error! : l10n.botsRelayLimitConnectionChanged,
-                        style: TextStyle(color: DshColors.of(context).danger),
+                        style: TextStyle(color: XrkColors.of(context).danger),
                       ),
                     ],
                     const SizedBox(height: 16),

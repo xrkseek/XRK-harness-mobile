@@ -97,7 +97,7 @@ class _TextKey extends StatelessWidget {
               child: Text(
                 label,
                 style: theme.textTheme.labelLarge?.copyWith(
-                  color: onTap == null ? DshColors.of(context).textTertiary : theme.colorScheme.onSurface,
+                  color: onTap == null ? XrkColors.of(context).textTertiary : theme.colorScheme.onSurface,
                 ),
               ),
             ),

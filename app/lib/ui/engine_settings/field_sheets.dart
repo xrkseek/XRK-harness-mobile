@@ -106,7 +106,7 @@ class SheetHelper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final text = error ?? helper;
     return SmoothSize(
       duration: AppMotion.of(context, AppMotion.quick),
@@ -393,7 +393,7 @@ class _NumberFieldSheetState extends State<NumberFieldSheet> with _AcknowledgedS
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final unitLabel = _unitLabel;
     final stored = _stored;
     final valueStyle = AppType.tabular(theme.textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.w600));
@@ -954,7 +954,7 @@ class _SecretFieldSheetState extends State<SecretFieldSheet> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = theme.colorScheme;
     final canSave = widget.writable && !_busy && _value.isNotEmpty;
     final save = FilledButton(
@@ -1103,7 +1103,7 @@ class _ListFieldSheetState extends ConsumerState<ListFieldSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final items = widget.read(ref);
     final enumValues = _item.enumValues;
     final missing = [
@@ -1199,7 +1199,7 @@ class RemoveKey extends StatelessWidget {
       tooltip: tooltip,
       padding: EdgeInsets.zero,
       visualDensity: VisualDensity.compact,
-      color: DshColors.of(context).textTertiary,
+      color: XrkColors.of(context).textTertiary,
       icon: const Icon(AppIcons.close, size: 20),
       onPressed: onPressed,
     ),
@@ -1324,7 +1324,7 @@ class _DictFieldSheetState extends ConsumerState<DictFieldSheet> {
             const SizedBox(width: 4),
             IconButton(
               tooltip: l10n.commonAdd,
-              icon: Icon(AppIcons.addEntry, color: DshColors.of(context).textTertiary),
+              icon: Icon(AppIcons.addEntry, color: XrkColors.of(context).textTertiary),
               onPressed: () => unawaited(_add(entries)),
             ),
           ],
@@ -1499,7 +1499,7 @@ class _ObjectItemPageState extends State<_ObjectItemPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final fields = widget.item.effective.fields ?? const {};
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return FieldSheetFrame(
       title: widget.title,
       actions: SheetActions(

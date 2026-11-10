@@ -1,4 +1,4 @@
-// What DSH Go sends and pulls over DSH Remote, flow by flow: the real home
+// What XRK Go sends and pulls over XRK Remote, flow by flow: the real home
 // shell and chat screen on a relay Host, with a metered fake tunnel under
 // the client (fake_host.dart) and fake time. Each test prints its traffic
 // (`TRAFFIC <flow>`) and pins what must not come back:
@@ -12,13 +12,13 @@
 //   (chat_state.dart) and takes them up again on return.
 import 'dart:async';
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -142,7 +142,7 @@ void main() {
       await app.wait(const Duration(seconds: 2));
     }
     for (var i = 1; i < 4; i++) {
-      // DSH re-announces a conversation whenever its agent comes or goes.
+      // XRK re-announces a conversation whenever its agent comes or goes.
       app.host.emit('api-session/added', [app.host.sessions['S$i']!.summary()]);
       await app.wait(const Duration(seconds: 2));
     }

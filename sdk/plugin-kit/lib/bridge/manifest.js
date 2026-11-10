@@ -1,4 +1,4 @@
-// package.json "dshGo" manifest (docs/design/native-plugins-protocol.md §1): a locale-free parse
+// package.json "xrkGo" manifest (docs/design/native-plugins-protocol.md §1): a locale-free parse
 // cached per package.json, then a per-request render (locale, versions, live registrations).
 import { readFileSync, realpathSync, statSync } from "node:fs";
 import { isAbsolute, relative, resolve, sep } from "node:path";
@@ -29,7 +29,7 @@ const ACTION_SURFACES = Object.keys(LABEL_LIMIT);
 const baseItems = () => ({ "composer.actions": [], "message.actions": [], "composer.strip": [], panels: [] });
 
 const issue = (path, code, severity, message) => ({ path, code, severity, message });
-const ptr = (...parts) => `/dshGo${parts.map((p) => `/${String(p).replaceAll("~", "~0").replaceAll("/", "~1")}`).join("")}`;
+const ptr = (...parts) => `/xrkGo${parts.map((p) => `/${String(p).replaceAll("~", "~0").replaceAll("/", "~1")}`).join("")}`;
 
 /** Resolves a manifest-relative path inside the package directory, or undefined. */
 export function insidePackage(pkgDir, rel) {
@@ -47,7 +47,7 @@ export function insidePackage(pkgDir, rel) {
   return full;
 }
 
-/** Locale-free parse of `pkgJson.dshGo`. Never throws. */
+/** Locale-free parse of `pkgJson.xrkGo`. Never throws. */
 export function parseManifest(pkgJson, pkgDir) {
   const issues = [];
   const out = {
@@ -66,14 +66,14 @@ export function parseManifest(pkgJson, pkgDir) {
     rawIndex: new Map(),
     issues,
   };
-  const m = pkgJson.dshGo;
+  const m = pkgJson.xrkGo;
   const json = toJson(m);
   if (!isPlainObject(m) || json === undefined) {
-    issues.push(issue("/dshGo", "invalid-manifest", "error", "dshGo must be an object"));
+    issues.push(issue("/xrkGo", "invalid-manifest", "error", "xrkGo must be an object"));
     return out;
   }
   if (json.bytes > LIMITS.manifestBytes) {
-    issues.push(issue("/dshGo", "invalid-manifest", "error", `dshGo exceeds ${LIMITS.manifestBytes} bytes`));
+    issues.push(issue("/xrkGo", "invalid-manifest", "error", `xrkGo exceeds ${LIMITS.manifestBytes} bytes`));
     return out;
   }
   for (const k of Object.keys(m)) if (!TOP_KEYS.has(k)) issues.push(issue(ptr(k), "unknown-field", "warn", `unknown key ${k}`));
@@ -362,16 +362,16 @@ export function panelTitle(item, locale) {
 
 
 /**
- * Pure entry for the SDK check and test hosts (no DSH): what the bridge would publish for one
+ * Pure entry for the SDK check and test hosts (no XRK): what the bridge would publish for one
  * package.json. Static view files are read and checked like GET /views does.
  * opts: { locale = "zh", app = "999.0.0", versions = [1], surfaces = all of them,
  *         handlers = "assume" (every contribution counts as registered) | iterable of on() ids,
  *         panels / strips / dataPanels = iterables of panel() / strip() / panel-with-data ids }.
  * Returns { state, plugin, issues } (plugin = the contributions row; issues as in §3.3), or
- * { state: "absent", plugin: null, issues: [] } when package.json has no dshGo.
+ * { state: "absent", plugin: null, issues: [] } when package.json has no xrkGo.
  */
 export function checkManifest(pkgJson, pkgDir, opts = {}) {
-  if (!isPlainObject(pkgJson) || pkgJson.dshGo === undefined) return { state: "absent", plugin: null, issues: [] };
+  if (!isPlainObject(pkgJson) || pkgJson.xrkGo === undefined) return { state: "absent", plugin: null, issues: [] };
   const parsed = parseManifest(pkgJson, pkgDir);
   const caps = { versions: opts.versions ?? [PROTOCOL], app: opts.app ?? "999.0.0", locale: opts.locale ?? "zh", surfaces: opts.surfaces ?? [...SURFACES, ...PLACEMENTS] };
   const assume = opts.handlers === undefined || opts.handlers === "assume";

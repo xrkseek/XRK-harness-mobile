@@ -1,4 +1,4 @@
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +16,7 @@ import 'stream_motion.dart';
 
 export 'plus_panel.dart' show AttachSource;
 
-/// The ＋ panel's tiles alone: without [files] (DSH Remote stages no files)
+/// The ＋ panel's tiles alone: without [files] (XRK Remote stages no files)
 /// the two photo ones. The chat page opens the whole panel ([showPlusPanel]).
 Future<AttachSource?> showAttachMenu(BuildContext context, {bool files = true}) async {
   final choice = await showPlusPanel(context, files: files);
@@ -349,7 +349,7 @@ class _ImagePlaceholder extends StatelessWidget {
       width: w,
       height: h,
       decoration: ShapeDecoration(color: scheme.onSurface.withValues(alpha: 0.06), shape: AppShape.card),
-      child: failed ? Icon(AppIcons.imageBroken, size: 22, color: DshColors.of(context).textTertiary) : null,
+      child: failed ? Icon(AppIcons.imageBroken, size: 22, color: XrkColors.of(context).textTertiary) : null,
     );
   }
 }
@@ -368,8 +368,8 @@ class FileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final surfaces = DshSurfaces.of(context);
-    final dsh = DshColors.of(context);
+    final surfaces = XrkSurfaces.of(context);
+    final dsh = XrkColors.of(context);
     final ext = _extension(name);
     final (icon, tint) = _iconFor(ext);
     final badge = dsh.identity[tint % dsh.identity.length];
@@ -549,7 +549,7 @@ class _ImageViewerState extends State<_ImageViewer> {
     final name = widget.images[index].name;
     // Its own (see-through) Scaffold keeps save notices above the dark veil.
     return Theme(
-      data: buildDarkTheme(accent: DshSurfaces.of(context).accent, glassBlur: DshSurfaces.of(context).blurEnabled),
+      data: buildDarkTheme(accent: XrkSurfaces.of(context).accent, glassBlur: XrkSurfaces.of(context).blurEnabled),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: AnnotatedRegion<SystemUiOverlayStyle>(

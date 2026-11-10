@@ -72,7 +72,7 @@ class _FileRow extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final directory = file.directory;
     void copy() => copyPath(context, file.path);
 
@@ -142,7 +142,7 @@ class DiffCounts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final mono = AppType.tabular(AppType.monoLabel(weight: FontWeight.w500));
     return Text.rich(
       TextSpan(

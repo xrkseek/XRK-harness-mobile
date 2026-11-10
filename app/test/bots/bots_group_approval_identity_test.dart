@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/bots/room_chat_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/bots/room_chat_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -47,7 +47,7 @@ void main() {
     testWidgets('group approval $mode', (t) async {
       usePhoneView(t);
       final fixture =
-          jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_group_approval.json').readAsStringSync()) as Map;
+          jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_group_approval.json').readAsStringSync()) as Map;
       final approval = Map<String, Object?>.from(fixture['approval'] as Map);
       Map<String, Object?> team() => {
         ...sampleTeam(),
@@ -140,7 +140,7 @@ void main() {
           pending.complete(true);
         } else {
           final error = fixture['stale']['error'];
-          pending.completeError(DshRemoteException(error['code'], error['message']));
+          pending.completeError(XrkRemoteException(error['code'], error['message']));
         }
         if (request != null) await request;
       } else {
@@ -197,7 +197,7 @@ void main() {
     testWidgets('group approval after a host restart, compatible=$compatible', (t) async {
       usePhoneView(t);
       final fixture =
-          jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_group_approval.json').readAsStringSync()) as Map;
+          jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_group_approval.json').readAsStringSync()) as Map;
       final approval = Map<String, Object?>.from(fixture['approval'] as Map);
       Map<String, Object?> team() => {
         ...sampleTeam(),
@@ -239,7 +239,7 @@ void main() {
       expect(c.read(dsBotProvider).hello?.boot, 'boot-2');
       final stateBefore = fb.endpoints.where((v) => v == 'state').length;
       final error = fixture['stale']['error'];
-      pending.completeError(DshRemoteException(error['code'], error['message']));
+      pending.completeError(XrkRemoteException(error['code'], error['message']));
       await request;
       await frames(t);
       expect(find.byType(SnackBar), findsNothing, reason: 'the old host\'s late error stays with it');

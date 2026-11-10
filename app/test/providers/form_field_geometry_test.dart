@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/providers_state.dart';
-import 'package:dsh_app/ui/features/preset_editor/preset_editor_page.dart';
-import 'package:dsh_app/ui/providers/provider_form_page.dart';
-import 'package:dsh_app/ui/providers/provider_widgets.dart';
-import 'package:dsh_app/ui/remote/ssh_host_form.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/providers_state.dart';
+import 'package:xrk_app/ui/features/preset_editor/preset_editor_page.dart';
+import 'package:xrk_app/ui/providers/provider_form_page.dart';
+import 'package:xrk_app/ui/providers/provider_widgets.dart';
+import 'package:xrk_app/ui/remote/ssh_host_form.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -90,7 +90,7 @@ void main() {
       'agentPreset': 'standard',
       'content': File('test/features/fixtures/preset_standard.yaml').readAsStringSync(),
     };
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
     await pump(tester, const PresetEditorPage(), [
       activeConnectionProvider.overrideWithValue(AsyncData(fakeHost(client))),

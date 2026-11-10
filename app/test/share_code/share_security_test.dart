@@ -1,14 +1,14 @@
-import 'package:dsh_app/share_code/profile_export.dart';
-import 'package:dsh_app/share_code/share_import.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/profile_export.dart';
+import 'package:xrk_app/share_code/share_import.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_engine.dart';
 
 ImportTarget _target(FakeEngine engine) =>
-    ImportTarget(HostConnection(client: DshClient.withCarrier(engine), label: '本机', isLocal: true), isActive: false);
+    ImportTarget(HostConnection(client: XrkClient.withCarrier(engine), label: '本机', isLocal: true), isActive: false);
 
 void main() {
   test('forbidden namespaces are dropped when decoding', () {
@@ -170,9 +170,9 @@ void main() {
   test('files containing credentials cannot be selected or forced into an export', () async {
     final fs = tempGuest();
     addTearDown(() => fs.root.parent.deleteSync(recursive: true));
-    writeGuest(fs, '/root/.dsh/skills/deploy/SKILL.md', 'Use ghp_${'a' * 36}');
+    writeGuest(fs, '/root/.xrk/skills/deploy/SKILL.md', 'Use ghp_${'a' * 36}');
     writeGuest(fs, '/root/.agents/AGENTS.md', '-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----');
-    final source = await loadProfileExport(DshClient.withCarrier(FakeEngine()), hostLabel: '本机', isLocal: true, fs: fs);
+    final source = await loadProfileExport(XrkClient.withCarrier(FakeEngine()), hostLabel: '本机', isLocal: true, fs: fs);
     for (final row in source.items) {
       expect(row.unavailable, '含有密钥，无法分享');
     }
@@ -185,8 +185,8 @@ void main() {
   test('a token environment variable in a skill remains shareable', () async {
     final fs = tempGuest();
     addTearDown(() => fs.root.parent.deleteSync(recursive: true));
-    writeGuest(fs, '/root/.dsh/skills/deploy/SKILL.md', r'Authorization: Bearer $TOKEN');
-    final source = await loadProfileExport(DshClient.withCarrier(FakeEngine()), hostLabel: '本机', isLocal: true, fs: fs);
+    writeGuest(fs, '/root/.xrk/skills/deploy/SKILL.md', r'Authorization: Bearer $TOKEN');
+    final source = await loadProfileExport(XrkClient.withCarrier(FakeEngine()), hostLabel: '本机', isLocal: true, fs: fs);
     expect(source.defaultSelection, {'skill:deploy'});
     expect(source.build(source.defaultSelection).skills.single.name, 'deploy');
   });

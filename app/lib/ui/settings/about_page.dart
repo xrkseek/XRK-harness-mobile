@@ -32,7 +32,7 @@ class AboutPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final version = installedVersionLabel(ref);
     return AppPage.list(
       title: l10n.hubAbout,
@@ -66,22 +66,12 @@ class AboutPage extends ConsumerWidget {
         SettingsSection(
           title: l10n.hubAboutAuthor,
           children: [
-            const SettingsTile(title: AppInfo.author),
-            _authorLink(
-              context,
-              ref,
-              'about-author-bilibili',
-              l10n.hubAboutBilibili,
-              AppInfo.authorBilibiliName,
-              AppInfo.authorBilibiliUrl,
-            ),
-            _authorLink(context, ref, 'about-author-x', l10n.hubAboutX, AppInfo.authorXHandle, AppInfo.authorXUrl),
             _authorLink(
               context,
               ref,
               'about-author-github',
               l10n.hubAboutGithub,
-              '@${AppInfo.author}',
+              AppInfo.authorGithubHandle,
               AppInfo.authorGithubUrl,
             ),
           ],
@@ -117,7 +107,7 @@ class AboutPage extends ConsumerWidget {
           key: ValueKey(key),
           title: title,
           subtitle: handle,
-          trailing: Icon(AppIcons.openExternal, size: 18, color: DshColors.of(context).textTertiary),
+          trailing: Icon(AppIcons.openExternal, size: 18, color: XrkColors.of(context).textTertiary),
           onTap: () => unawaited(_openAuthorLink(context, ref, Uri.parse(url))),
         ),
       );

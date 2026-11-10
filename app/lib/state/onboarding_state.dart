@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// - [welcomeSeen]: the user tapped "开始" once. If the process dies mid-unpack, the
 ///   next launch resumes at the setup screen instead of showing the welcome again.
 /// - [keySkipped]: the user chose "稍后设置" on the API key step. We don't nag on
-///   every launch after that (they may have configured the key inside DSH's own
+///   every launch after that (they may have configured the key inside XRK's own
 ///   Web UI); settings shows the key as missing instead.
 /// - [localDeclined]: the app runs without the on-device runtime: first run
 ///   went to a remote host instead (「远程主机」), or it was uninstalled in
@@ -51,7 +51,7 @@ enum SetupStep {
   /// 选择外观.
   appearance,
 
-  /// 想让 DSH Go 帮你做哪些事, and the permissions that takes.
+  /// 想让 XRK Go 帮你做哪些事, and the permissions that takes.
   access,
 
   /// 连接 DeepSeek.

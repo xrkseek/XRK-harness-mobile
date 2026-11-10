@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { createTestHost } from '../lib/testing.js'
 
-const pkg = (dshGo) => ({ name: 'demo', version: '1.0.0', dshGo })
+const pkg = (xrkGo) => ({ name: 'demo', version: '1.0.0', xrkGo })
 
 const manifest = {
   v: 1,
@@ -32,11 +32,11 @@ test('newer places: tools, chat actions and turn notes run as the bridge does', 
     }),
     dir: '/nonexistent',
   })
-  host.ctx.inject(['dshGo'], (ctx) => {
-    ctx.dshGo.panel('main', { view: { type: 'text', text: 'x' } })
-    ctx.dshGo.on('count', (scope) => ({ toast: scope.draft }))
-    ctx.dshGo.on('export', (scope) => ({ toast: scope.sessionId }))
-    ctx.dshGo.turnNote('cost', (scope, emit) => {
+  host.ctx.inject(['xrkGo'], (ctx) => {
+    ctx.xrkGo.panel('main', { view: { type: 'text', text: 'x' } })
+    ctx.xrkGo.on('count', (scope) => ({ toast: scope.draft }))
+    ctx.xrkGo.on('export', (scope) => ({ toast: scope.sessionId }))
+    ctx.xrkGo.turnNote('cost', (scope, emit) => {
       emit({ 1: { text: '一二三四五六七八九十一二三四五六七', tone: 'good' }, 2: { text: ' ' }, 3: 'junk' })
       return () => {}
     })
@@ -69,13 +69,13 @@ test('ready flags and runtime issues follow registrations', () => {
   const host = createTestHost({ pkg: pkg(manifest), dir: '/nonexistent' })
   let row = host.contributions()
   assert.deepEqual(row.issues.map((i) => [i.path, i.code]), [
-    ['/dshGo/contributes/composer.actions/1', 'no-handler'],
-    ['/dshGo/contributes/panels/0', 'no-handler'],
+    ['/xrkGo/contributes/composer.actions/1', 'no-handler'],
+    ['/xrkGo/contributes/panels/0', 'no-handler'],
   ])
-  host.ctx.inject(['dshGo'], (ctx) => {
-    ctx.dshGo.on('dyn', () => ({ toast: 'ok' }))
-    ctx.dshGo.panel('main', { view: { type: 'text', text: 'x' } })
-    ctx.dshGo.on('nope', () => {})
+  host.ctx.inject(['xrkGo'], (ctx) => {
+    ctx.xrkGo.on('dyn', () => ({ toast: 'ok' }))
+    ctx.xrkGo.panel('main', { view: { type: 'text', text: 'x' } })
+    ctx.xrkGo.on('nope', () => {})
   })
   row = host.contributions()
   assert.deepEqual(row.issues.map((i) => [i.path, i.code]), [['/runtime/nope', 'undeclared']])
@@ -84,8 +84,8 @@ test('ready flags and runtime issues follow registrations', () => {
 
 test('invoke: shorthand expands, bad effects are dropped with an issue, errors carry status', async () => {
   const host = createTestHost({ pkg: pkg(manifest), dir: '/nonexistent' })
-  host.ctx.inject(['dshGo'], (ctx) => {
-    ctx.dshGo.on('dyn', (scope) => ({ insert: scope.clipboard, link: 'http://insecure.example' }))
+  host.ctx.inject(['xrkGo'], (ctx) => {
+    ctx.xrkGo.on('dyn', (scope) => ({ insert: scope.clipboard, link: 'http://insecure.example' }))
   })
   const r = await host.invoke('dyn', { context: { clipboard: 'abc', draft: 'dropped' } })
   assert.deepEqual(r.effects, [{ type: 'insert', text: 'abc' }])
@@ -96,14 +96,14 @@ test('invoke: shorthand expands, bad effects are dropped with an issue, errors c
 
 test('a throwing handler is a 500 plugin-error and a violation', async () => {
   const host = createTestHost({ pkg: pkg(manifest), dir: '/nonexistent' })
-  host.ctx.inject(['dshGo'], (ctx) => ctx.dshGo.on('dyn', () => { throw new Error('boom') }))
+  host.ctx.inject(['xrkGo'], (ctx) => ctx.xrkGo.on('dyn', () => { throw new Error('boom') }))
   await assert.rejects(host.invoke('dyn'), { status: 500, code: 'plugin-error' })
   assert.equal(host.violations.length, 1)
 })
 
 test('subscribe: strip values are cleaned like the bridge does', () => {
   const host = createTestHost({ pkg: pkg(manifest), dir: '/nonexistent' })
-  host.ctx.inject(['dshGo'], (ctx) => ctx.dshGo.strip('line', (_s, emit) => {
+  host.ctx.inject(['xrkGo'], (ctx) => ctx.xrkGo.strip('line', (_s, emit) => {
     emit({ text: '一二三四五六七八九十一二三四五六七八九十一二三四五六', tone: 'loud', icon: 'BAD' })
   }))
   const feed = host.subscribe('line')
@@ -112,7 +112,7 @@ test('subscribe: strip values are cleaned like the bridge does', () => {
 
 test('view: static object or function, with stats', async () => {
   const host = createTestHost({ pkg: pkg(manifest), dir: '/nonexistent' })
-  host.ctx.inject(['dshGo'], (ctx) => ctx.dshGo.panel('main', { view: (scope, caps) => ({ type: 'text', text: `${scope.sessionId} ${caps.locale}` }) }))
+  host.ctx.inject(['xrkGo'], (ctx) => ctx.xrkGo.panel('main', { view: (scope, caps) => ({ type: 'text', text: `${scope.sessionId} ${caps.locale}` }) }))
   const r = await host.view('main', { sessionId: 's' })
   assert.deepEqual(r.view, { type: 'text', text: 's zh-CN' })
   assert.deepEqual(r.stats, { bytes: 32, nodes: 1, depth: 1 })
@@ -120,7 +120,7 @@ test('view: static object or function, with stats', async () => {
 
 test('deferred results: pending at once, done later, only the deferred whitelist', async () => {
   const host = createTestHost({ pkg: pkg(manifest), dir: '/nonexistent' })
-  host.ctx.inject(['dshGo'], (ctx) => ctx.dshGo.on('dyn', (scope) => ({
+  host.ctx.inject(['xrkGo'], (ctx) => ctx.xrkGo.on('dyn', (scope) => ({
     pending: { label: '处理中', timeoutMs: 999_999 },
     result: async () => [{ insert: scope.clipboard }, { type: 'command', name: 'compact' }],
   })))
@@ -136,7 +136,7 @@ test('deferred results: pending at once, done later, only the deferred whitelist
 test('deferred results: timeout aborts the work; at most 2 pending', async () => {
   const host = createTestHost({ pkg: pkg(manifest), dir: '/nonexistent' })
   let aborted = 0
-  host.ctx.inject(['dshGo'], (ctx) => ctx.dshGo.on('dyn', () => ({
+  host.ctx.inject(['xrkGo'], (ctx) => ctx.xrkGo.on('dyn', () => ({
     pending: { timeoutMs: 1000 },
     result: (signal) => new Promise((resolve) => signal.addEventListener('abort', () => { aborted++; resolve({ toast: 'late' }) })),
   })))
@@ -150,13 +150,13 @@ test('deferred results: timeout aborts the work; at most 2 pending', async () =>
 
 test('strip and panel data functions get caps with the locale', () => {
   const host = createTestHost({ pkg: pkg(manifest), dir: '/nonexistent', caps: { locale: 'en-US' } })
-  host.ctx.inject(['dshGo'], (ctx) => ctx.dshGo.strip('line', (_s, emit, caps) => emit({ text: caps.locale })))
+  host.ctx.inject(['xrkGo'], (ctx) => ctx.xrkGo.strip('line', (_s, emit, caps) => emit({ text: caps.locale })))
   assert.deepEqual(host.subscribe('line').data, { text: 'en-US' })
 })
 
 test('turn notes come out as the bridge cleans them', () => {
   const host = createTestHost({ pkg: pkg({ v: 1, contributes: { 'turn.note': [{ id: 'cost' }] } }), dir: '/nonexistent' })
-  host.ctx.inject(['dshGo'], (ctx) => ctx.dshGo.turnNote('cost', (_s, emit) => {
+  host.ctx.inject(['xrkGo'], (ctx) => ctx.xrkGo.turnNote('cost', (_s, emit) => {
     emit({ 1: { text: '  一\u2028二\u0085  三 ' } })
     return () => {}
   }))
@@ -165,9 +165,9 @@ test('turn notes come out as the bridge cleans them', () => {
 
 test('subscribe goes by what the manifest says an id is', () => {
   const host = createTestHost({ pkg: pkg({ v: 1, contributes: { panels: [{ id: 'main', title: '面板' }] } }), dir: '/nonexistent' })
-  host.ctx.inject(['dshGo'], (ctx) => {
-    ctx.dshGo.panel('main', { view: { type: 'text', text: 'x' }, data: (_s, emit) => { emit({ from: 'panel' }); return () => {} } })
-    ctx.dshGo.turnNote('main', (_s, emit) => { emit({ 1: { text: 'note' } }); return () => {} })
+  host.ctx.inject(['xrkGo'], (ctx) => {
+    ctx.xrkGo.panel('main', { view: { type: 'text', text: 'x' }, data: (_s, emit) => { emit({ from: 'panel' }); return () => {} } })
+    ctx.xrkGo.turnNote('main', (_s, emit) => { emit({ 1: { text: 'note' } }); return () => {} })
   })
   assert.deepEqual(host.subscribe('main').data, { from: 'panel' })
 })
@@ -176,13 +176,13 @@ test('an async data function: its late cleanup still runs, its failure is record
   const host = createTestHost({ pkg: pkg({ v: 1, contributes: { 'turn.note': [{ id: 'slow' }], 'composer.strip': [{ id: 'bad' }] } }), dir: '/nonexistent' })
   let cleaned = 0
   let emitLate
-  host.ctx.inject(['dshGo'], (ctx) => {
-    ctx.dshGo.turnNote('slow', async (_s, emit) => {
+  host.ctx.inject(['xrkGo'], (ctx) => {
+    ctx.xrkGo.turnNote('slow', async (_s, emit) => {
       await null
       emitLate = emit
       return () => { cleaned++ }
     })
-    ctx.dshGo.strip('bad', async () => { throw new Error('boom') })
+    ctx.xrkGo.strip('bad', async () => { throw new Error('boom') })
   })
   const slow = host.subscribe('slow', { sessionId: 's' })
   slow.stop()
@@ -204,10 +204,10 @@ test('removing a registration ends its feeds, as the bridge does', () => {
     return () => { cleaned.push(id) }
   }
   const dispose = {}
-  host.ctx.inject(['dshGo'], (ctx) => {
-    dispose.note = ctx.dshGo.turnNote('note', data('note'))
-    dispose.line = ctx.dshGo.strip('line', data('line'))
-    dispose.main = ctx.dshGo.panel('main', { view: { type: 'text', text: 'x' }, data: data('main') })
+  host.ctx.inject(['xrkGo'], (ctx) => {
+    dispose.note = ctx.xrkGo.turnNote('note', data('note'))
+    dispose.line = ctx.xrkGo.strip('line', data('line'))
+    dispose.main = ctx.xrkGo.panel('main', { view: { type: 'text', text: 'x' }, data: data('main') })
   })
   const feeds = { note: host.subscribe('note'), line: host.subscribe('line'), main: host.subscribe('main') }
   for (const id of ['note', 'line', 'main']) {
@@ -225,10 +225,10 @@ test('replacing a registration ends the old feed; the old disposer leaves the ne
   const cleaned = []
   const data = (name) => () => () => { cleaned.push(name) }
   let first
-  host.ctx.inject(['dshGo'], (ctx) => {
-    first = ctx.dshGo.turnNote('note', data('first'))
+  host.ctx.inject(['xrkGo'], (ctx) => {
+    first = ctx.xrkGo.turnNote('note', data('first'))
     host.subscribe('note')
-    ctx.dshGo.turnNote('note', data('second'))
+    ctx.xrkGo.turnNote('note', data('second'))
     assert.deepEqual(cleaned, ['first'])
     const second = host.subscribe('note')
     first()
@@ -242,7 +242,7 @@ test('replacing a registration ends the old feed; the old disposer leaves the ne
 test('a cleanup that fails is recorded, however it fails', async () => {
   const subscribe = (data) => {
     const host = createTestHost({ pkg: pkg({ v: 1, contributes: { 'turn.note': [{ id: 'note' }] } }), dir: '/nonexistent' })
-    host.ctx.inject(['dshGo'], (ctx) => ctx.dshGo.turnNote('note', data))
+    host.ctx.inject(['xrkGo'], (ctx) => ctx.xrkGo.turnNote('note', data))
     return host.subscribe('note')
   }
   const tick = () => new Promise((done) => setImmediate(done))

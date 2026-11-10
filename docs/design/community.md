@@ -5,7 +5,7 @@
 ## 结论
 
 - **v1 不托管任何用户内容**：只有「晒成果」（生成图片，用户自己发到微信 / QQ / 朋友圈）和一个由项目维护者维护内容的「社区」页。没有账号、没有服务器、没有评论，因此不触发实名、审核、ICP 备案这一整套义务。
-- 闭环「发现 → 一键装进本机 / 远程 DSH → 分享成果」在 v1 里已经能走通：社区页的精选插件走现有插件安装流程，回复和产物能一键生成带二维码的分享图。
+- 闭环「发现 → 一键装进本机 / 远程 XRK → 分享成果」在 v1 里已经能走通：社区页的精选插件走现有插件安装流程，回复和产物能一键生成带二维码的分享图。
 - v2（评分 + 短评）开始托管用户内容，合规成本从零跳到「持续有人值守」。建议先借现成平台（dshfind 合作或 GitHub Discussions）验证有没有人用，再决定是否自建。
 
 ## v1：已经做了什么
@@ -22,22 +22,22 @@
 
 代码在 `app/lib/ui/share/`：
 
-- **卡片**（`share_card.dart`）：固定 390 逻辑像素宽，用 App 自己的主题和 `MarkdownBody` 渲染正文（代码高亮、公式、表格都和聊天里一致）；代码块由卡片自己画成不滚动、自动换行、没有按钮的代码井。底部是品牌组合（鱼尾与气泡图形 + 「dsh-go」字标，`BrandLockup`）+ 二维码，二维码默认指向 `https://github.com/ccch1mneyyy/dsh-go`（`ShareContent.link`，可改）。
+- **卡片**（`share_card.dart`）：固定 390 逻辑像素宽，用 App 自己的主题和 `MarkdownBody` 渲染正文（代码高亮、公式、表格都和聊天里一致）；代码块由卡片自己画成不滚动、自动换行、没有按钮的代码井。底部是品牌组合（鱼尾与气泡图形 + 「xrk-mobile」字标，`BrandLockup`）+ 二维码，二维码默认指向 `https://github.com/xrkseek/XRK-harness-mobile`（`ShareContent.link`，可改）。
 - **三种模板**：浅色（App 的雾蓝页面）、深色、卡片（DeepSeek 蓝底上浮一张白卡）。第一次打开跟随 App 明暗，之后记住上次选的。
 - **开关**：「提问」「模型与用时」可以单独关掉。
 - **长回答**：按块估算高度（中文约 1 em、英文约 0.55 em、代码按换行后的行数），超出约 1500 逻辑像素就在段落 / 列表项 / 代码行的边界截断，最后一行放「…」；单个超长段落在句号处截断。估算失误时还有一道硬上限（再高 30% 处淡出裁掉）。
 - **导出**：从预览里那块 `RepaintBoundary` 按卡片原尺寸渲染，高度 ≤ 2000 时 3×（1170 px 宽），更长时 2×，PNG 写进缓存目录 `share/`（只留最近 5 张）。「分享」走系统分享面板（插件卡会顺带一段文字）；「保存图片」走现有的 `saveToDownloads`，落在 `下载/DSH/`，MediaStore 按图片索引，相册里能看到。
 - **敏感信息**：标题、提问、回答、产物说明和摘录先过 `secret_mask.dart`（与聊天里遮挡同一套规则，用 `•` 而不是 `*`，免得被 Markdown 当成强调）；回复里的图片换成替代文字，可视化回复换成一句话摘要。**遮挡只认已知格式的密钥**，路径、用户名、邮箱不遮——预览就是最后一道确认。
 - **二维码**：手写的编码器（`qr_code.dart`，byte 模式，版本 1–40，四档纠错，自动选掩码），不引新包；用 libqrencode 4.1.1 对拍 15 组样例（含中文、v40），模块矩阵逐位一致。
-- **二维码中心图标**：卡片和社区群码的中心放 App 图标（`QrCodeView.logo`）。带图标的码用 H 级纠错，版本 4–6，每版一块整模块的留白底板（`QrCode.logoPlates`：图标约占码宽 22%，外围留一圈模块），避开定位、时序、校正图形，盖住的模块不超过 H 级可纠错量的三分之一，每个纠错块至少留三分之一余量（`test/share/qr_logo_test.dart` 按标准独立核对）。模块小于 1.45 逻辑像素时不放：卡片二维码 72，版本 4–6 都放得下（≤ 58 字节，项目链接 37 字节）。放不下图标的链接不带图标；卡片上的码超过版本 6（72 上模块小于 1.5，`ShareCard.qrMinModule`，2× 导出减半后 zxing-cpp 读不出版本 7）就整个不画，页脚只留品牌行「手机上的 DSH」，上下留白相等。插件卡的着陆页链接带着整个插件（400 字节上下，删到只剩安装信息也有 150 字节以上），分享服务也没有按名字找插件的短地址，所以插件卡不放二维码；随图分享的文字里有安装命令和插件主页，插件分享页的「复制链接」「二维码」（248 的大码）照旧给出完整链接。分享码二维码页不放：着陆页链接在 H 级至少要版本 8，而版本 7–13 的正中就是校正图形。
+- **二维码中心图标**：卡片和社区群码的中心放 App 图标（`QrCodeView.logo`）。带图标的码用 H 级纠错，版本 4–6，每版一块整模块的留白底板（`QrCode.logoPlates`：图标约占码宽 22%，外围留一圈模块），避开定位、时序、校正图形，盖住的模块不超过 H 级可纠错量的三分之一，每个纠错块至少留三分之一余量（`test/share/qr_logo_test.dart` 按标准独立核对）。模块小于 1.45 逻辑像素时不放：卡片二维码 72，版本 4–6 都放得下（≤ 58 字节，项目链接 37 字节）。放不下图标的链接不带图标；卡片上的码超过版本 6（72 上模块小于 1.5，`ShareCard.qrMinModule`，2× 导出减半后 zxing-cpp 读不出版本 7）就整个不画，页脚只留品牌行「手机上的 XRK」，上下留白相等。插件卡的着陆页链接带着整个插件（400 字节上下，删到只剩安装信息也有 150 字节以上），分享服务也没有按名字找插件的短地址，所以插件卡不放二维码；随图分享的文字里有安装命令和插件主页，插件分享页的「复制链接」「二维码」（248 的大码）照旧给出完整链接。分享码二维码页不放：着陆页链接在 H 级至少要版本 8，而版本 7–13 的正中就是校正图形。
 
 ### 2. 社区页（枢纽页骨架）
 
 代码：`app/lib/ui/community/`、`app/lib/state/community_state.dart`。从上到下：
 
-1. **论坛**概览卡（`CommunityPage(onOpenForum: …)`，论坛客户端接好后由集成步骤传入；不传时这里是项目卡：品牌图形、「dsh-go」、一句 tagline，点开 GitHub）。
+1. **论坛**概览卡（`CommunityPage(onOpenForum: …)`，论坛客户端接好后由集成步骤传入；不传时这里是项目卡：品牌图形、「xrk-mobile」、一句 tagline，点开 GitHub）。
 2. **精选插件**：维护者在 JSON 里写包名和一句推荐语；在 dshfind 目录里查到的才显示，「获取」打开插件市场原有的详情弹层（带信任提示，装到当前主机），状态（获取 / 更新 / 已安装 / 安装中）和插件市场一致。目录打不开时显示一行「插件目录没打开 · 点一下重试」。
-3. **玩法**：两列磁贴，点一下回到聊天、开一个新对话，把提示词放进输入框**但不发送**（复用「让 DSH 帮我修」的 `repairDraftProvider`）。
+3. **玩法**：两列磁贴，点一下回到聊天、开一个新对话，把提示词放进输入框**但不发送**（复用「让 XRK 帮我修」的 `repairDraftProvider`）。
 4. **交流群**：QQ / 微信 / Telegram / 论坛等行，点开弹层：大二维码、群号（「复制群号」）、「打开」。
 5. **更新动态**：最新在前，最多 8 条，有链接的可点。
 
@@ -48,8 +48,8 @@
   → 先用：缓存（上次下载成功的） 或 内置 assets/community/community.json，取 revision 大的
   → 距上次联网 ≥ 6 小时：依次问
        自建源（--dart-define=DSH_COMMUNITY_FEED=https://…，配了才有）
-       raw.githubusercontent.com/ccch1mneyyy/dsh-go/main/community.json
-       cdn.jsdelivr.net/gh/ccch1mneyyy/dsh-go@main/community.json
+       raw.githubusercontent.com/xrkseek/xrk-mobile/main/community.json
+       cdn.jsdelivr.net/gh/xrkseek/xrk-mobile@main/community.json
        fastly.jsdelivr.net/gh/…（同上）
      上次成功的源排第一；第一个给出合法 JSON 的为准
   → revision 更大才替换并写缓存（CDN 上的旧副本不会把新内容盖回去）
@@ -82,7 +82,7 @@
 | `groups[].kind` | `qq` `wechat` `telegram` `discord` `forum` `github`，决定图标 |
 | `groups[].qr` | 二维码内容，缺省用 `url`；`url` `qr` `copy` 全空的项不显示 |
 
-**发布**：改仓库根目录的 `community.json` 并推到 `main`。jsDelivr 对分支文件有缓存，要立刻生效就访问一次 `https://purge.jsdelivr.net/gh/ccch1mneyyy/dsh-go@main/community.json`。发版时把同一份拷进 `app/assets/community/community.json`，新装用户离线也有最新内容。
+**发布**：改仓库根目录的 `community.json` 并推到 `main`。jsDelivr 对分支文件有缓存，要立刻生效就访问一次 `https://purge.jsdelivr.net/gh/xrkseek/xrk-mobile@main/community.json`。发版时把同一份拷进 `app/assets/community/community.json`，新装用户离线也有最新内容。
 
 ### 发版前要填的值
 
@@ -144,7 +144,7 @@
 3. **精选插件的标准**：谁选、多久换一次、是否给合作方位置。
 4. **v2 后端**：先找 dshfind 谈 A，还是直接用 B 验证；谈合作时要约定的：接口、品牌露出、内容审核归属、停服降级。
 5. **论坛的主体与部署地**：个人还是公司主体、境内还是境外——决定备案和实名怎么做，最好在上线前问清楚。
-6. **分享图的二维码指向**：现在是 GitHub 项目页。国内用户扫 GitHub 不一定打得开，有了国内落地页（或自建下载页）后改 `dshGoProjectUrl` 即可。
+6. **分享图的二维码指向**：现在是 GitHub 项目页。国内用户扫 GitHub 不一定打得开，有了国内落地页（或自建下载页）后改 `xrkGoProjectUrl` 即可。
 
 ## 已知限制（v1）
 

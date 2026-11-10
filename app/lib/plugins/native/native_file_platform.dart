@@ -24,7 +24,7 @@ abstract interface class NativeFilePlatform {
 }
 
 class MethodNativeFilePlatform implements NativeFilePlatform {
-  static const channel = MethodChannel('dsh/native-files');
+  static const channel = MethodChannel('xrk/native-files');
 
   @override
   Future<bool> supported() async {

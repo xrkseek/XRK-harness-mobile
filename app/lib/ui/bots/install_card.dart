@@ -13,13 +13,13 @@ import '../plugins/plugin_actions.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import '../common/brief_notice.dart';
-import '../web/dsh_web_launcher.dart';
+import '../web/xrk_web_launcher.dart';
 import '../web/web_target.dart';
 
-/// The command that adds DS Bot to a `dsh web` profile on a computer.
+/// The command that adds DS Bot to a `xrkh serve` profile on a computer.
 const dsBotInstallCommand = 'dsh plugin --profile web add ds-bot';
 
-/// Uses the existing authenticated DSH Web launcher. Tests replace only this edge.
+/// Uses the existing authenticated XRK Web launcher. Tests replace only this edge.
 final dsBotWebOpenerProvider = Provider<void Function(BuildContext context, WidgetRef ref)>(
   (ref) =>
       (context, ref) => openDshWeb(context, ref, target: const DshWebTarget(sidebar: true)),
@@ -93,7 +93,7 @@ class _CommandWell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return GlassSurface(
       tier: GlassTier.card,
       borderRadius: AppShape.radiusMd,

@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:dsh_app/links/launcher_entries.dart';
-import 'package:dsh_app/notify/chat_alerts.dart';
-import 'package:dsh_app/pets/pet_overlay_actions.dart';
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/links/launcher_entries.dart';
+import 'package:xrk_app/notify/chat_alerts.dart';
+import 'package:xrk_app/pets/pet_overlay_actions.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,7 +25,7 @@ class _Mux extends DshMux {
   Stream<DshConnectionState> get states => const Stream.empty();
 }
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   late final testMux = _Mux(carrier);
   @override
@@ -56,7 +56,7 @@ class _Client extends DshClient {
     String? timeZone,
   }) async {
     prompts.add((sessionId, text, requestId));
-    if (fail) throw const DshRemoteException('network', 'offline');
+    if (fail) throw const XrkRemoteException('network', 'offline');
     return requestId ?? 'r';
   }
 }

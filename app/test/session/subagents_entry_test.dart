@@ -1,6 +1,6 @@
-import 'package:dsh_app/state/agents_state.dart';
-import 'package:dsh_app/state/session_detail_state.dart';
-import 'package:dsh_app/ui/session/session_detail_page.dart';
+import 'package:xrk_app/state/agents_state.dart';
+import 'package:xrk_app/state/session_detail_state.dart';
+import 'package:xrk_app/ui/session/session_detail_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../chat/support/harness.dart';

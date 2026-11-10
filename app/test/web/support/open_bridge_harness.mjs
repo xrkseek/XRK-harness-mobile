@@ -1,4 +1,4 @@
-// Runs assets/web/dsh_web_open.js in a minimal page (node, no DOM library)
+// Runs assets/web/xrk_web_open.js in a minimal page (node, no DOM library)
 // and prints what it did as JSON. Used by test/web/web_open_bridge_test.dart.
 //
 //   node open_bridge_harness.mjs <bridge.js> <scenario JSON>
@@ -54,7 +54,7 @@ const document = {
   addEventListener: () => {},
 };
 const window = {
-  DshAppOpen: { postMessage: (m) => out.reports.push(JSON.parse(m)) },
+  XrkAppOpen: { postMessage: (m) => out.reports.push(JSON.parse(m)) },
 };
 // A virtual clock: every look at it is 100 ms later, so the bridge's polls
 // (up to 15 s) run out in a few ticks.

@@ -28,7 +28,7 @@ import '../settings/settings_widgets.dart' show SettingsMetrics;
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import '../web/dsh_web_launcher.dart';
+import '../web/xrk_web_launcher.dart';
 import '../web/web_target.dart';
 import 'field_row.dart';
 import 'field_sheets.dart';
@@ -210,7 +210,7 @@ class SchemaFieldView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final source = SchemaFormScope.of(context);
     final controller = source.editor(ref, settings);
     final field = spec.ref;
@@ -541,7 +541,7 @@ class SecretFieldTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final field = spec.ref;
     final credentialRef = settings.credentialRefOf(field);
     final configured = settings.secretConfigured(field);

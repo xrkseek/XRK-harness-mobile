@@ -13,7 +13,7 @@ library;
 import 'dart:async';
 import 'dart:ui' show Brightness;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -88,7 +88,7 @@ enum AccountPhase {
   signingIn,
   signedIn,
 
-  /// The engine has no account service (older DSH).
+  /// The engine has no account service (older XRK).
   unsupported,
 }
 
@@ -311,7 +311,7 @@ class AccountController extends Notifier<AccountState> {
     return current == null || _viewGeneration == _apiGeneration && identical(_viewMuxGeneration, current);
   }
 
-  bool readListIdentityFor(DshClient client) =>
+  bool readListIdentityFor(XrkClient client) =>
       readListIdentityKnown && _api is DshAccountApi && identical((_api! as DshAccountApi).client, client);
 
   bool _scopeCurrent(AccountApi api, int generation) =>
@@ -765,7 +765,7 @@ class AccountController extends Notifier<AccountState> {
     var uri = Uri.tryParse(url);
     if (uri == null) return;
     if (_theme case final theme?) {
-      // As DSH's own client does: Platform renders its login page in the app's palette.
+      // As XRK's own client does: Platform renders its login page in the app's palette.
       uri = uri.replace(
         queryParameters: {...uri.queryParameters, 'theme': theme == Brightness.dark ? 'dark' : 'light'},
       );
@@ -782,7 +782,7 @@ class AccountController extends Notifier<AccountState> {
 
   Future<void> _afterSignIn(AccountApi api, int generation) async {
     try {
-      // As DSH's own client does: the first account model becomes the default
+      // As XRK's own client does: the first account model becomes the default
       // when no API key is configured (the Host checks that itself).
       await api.initializeDefaultModel();
     } catch (_) {
@@ -855,11 +855,11 @@ class AccountController extends Notifier<AccountState> {
 
   SignInFailure _classify(Object error) => switch (error) {
     // Host provider errors surface as `account: <SignInErrorCode>`.
-    DshRemoteException(:final message) when message.startsWith('account: ') => SignInFailure.fromCode(
+    XrkRemoteException(:final message) when message.startsWith('account: ') => SignInFailure.fromCode(
       SignInErrorCode.fromWire(message.substring('account: '.length).trim()),
     ),
     DshHttpException(statusCode: 404) => const SignInFailure(SignInFailureKind.unsupported),
-    DshRemoteException() => const SignInFailure(SignInFailureKind.rejected),
+    XrkRemoteException() => const SignInFailure(SignInFailureKind.rejected),
     _ => const SignInFailure(SignInFailureKind.engine),
   };
 

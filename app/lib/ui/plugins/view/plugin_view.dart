@@ -6,25 +6,25 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../../plugins/native/native_icons.dart' show nativeIcon;
-import '../../chat/dsh_ui/dsh_ui_blocks.dart';
-import '../../chat/dsh_ui/dsh_ui_model.dart';
-import '../../chat/dsh_ui/dsh_ui_plugin.dart';
-import '../../chat/dsh_ui/dsh_ui_plugin_styles.dart';
-import '../../chat/dsh_ui/dsh_ui_plugin_controls.dart';
-import '../../chat/dsh_ui/dsh_ui_plugin_controls_state.dart';
-import '../../chat/dsh_ui/dsh_ui_style.dart';
-import '../../chat/dsh_ui/dsh_ui_widgets.dart' show DshUiNodeView;
+import '../../chat/xrk_ui/xrk_ui_blocks.dart';
+import '../../chat/xrk_ui/xrk_ui_model.dart';
+import '../../chat/xrk_ui/xrk_ui_plugin.dart';
+import '../../chat/xrk_ui/xrk_ui_plugin_styles.dart';
+import '../../chat/xrk_ui/xrk_ui_plugin_controls.dart';
+import '../../chat/xrk_ui/xrk_ui_plugin_controls_state.dart';
+import '../../chat/xrk_ui/xrk_ui_style.dart';
+import '../../chat/xrk_ui/xrk_ui_widgets.dart' show XrkUiNodeView;
 import '../../chat/media/media_viewer.dart' show openGalleryPictures;
 import '../../chat/widgets/stream_row.dart';
 import '../../common/expand_reveal.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 
-export '../../chat/dsh_ui/dsh_ui_bind.dart' show pluginBindingText, resolvePluginBinding, resolvePluginBindings;
-export '../../chat/dsh_ui/dsh_ui_blocks.dart' show PluginImages;
-export '../../chat/dsh_ui/dsh_ui_model.dart'
-    show DshUiInvalid, DshUiIssue, DshUiParse, DshUiParsed, DshUiView, dshUiPluginComponents;
-export '../../chat/dsh_ui/dsh_ui_plugin.dart';
+export '../../chat/xrk_ui/xrk_ui_bind.dart' show pluginBindingText, resolvePluginBinding, resolvePluginBindings;
+export '../../chat/xrk_ui/xrk_ui_blocks.dart' show PluginImages;
+export '../../chat/xrk_ui/xrk_ui_model.dart'
+    show XrkUiInvalid, XrkUiIssue, XrkUiParse, XrkUiParsed, XrkUiView, xrkUiPluginComponents;
+export '../../chat/xrk_ui/xrk_ui_plugin.dart';
 
 /// A plugin view: v1 retains its original rendering; v2 includes the fixed
 /// host attribution boundary. [PluginFrame] supplies the outer plugin name.
@@ -96,12 +96,12 @@ class _PluginViewState extends State<PluginView> {
     Theme.of(context);
     _drafts.setHandler(widget.budget == PluginViewBudget.panel ? widget.onAction : null);
     final parsed = parsePluginView(widget.view, data: _drafts.data, budget: widget.budget);
-    if (parsed is DshUiInvalid) {
+    if (parsed is XrkUiInvalid) {
       _drafts.syncInputs(const []);
       return const PluginViewError();
     }
-    final view = (parsed as DshUiParsed).view;
-    _drafts.syncInputs(view.nodes.whereType<DshUiInput>());
+    final view = (parsed as XrkUiParsed).view;
+    _drafts.syncInputs(view.nodes.whereType<XrkUiInput>());
     final body = PluginViewBody(
       view: view,
       budget: widget.budget,
@@ -126,7 +126,7 @@ class PluginViewBody extends StatelessWidget {
     this.animate = false,
   });
 
-  final DshUiView view;
+  final XrkUiView view;
   final PluginViewBudget budget;
   final PluginActionHandler? onAction;
   final PluginImageResolver? imageResolver;
@@ -138,7 +138,7 @@ class PluginViewBody extends StatelessWidget {
     final theme = Theme.of(context);
     final Widget content;
     if (budget == PluginViewBudget.strip) {
-      content = DshUiStripLine(view: view);
+      content = XrkUiStripLine(view: view);
     } else {
       content = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -154,18 +154,18 @@ class PluginViewBody extends StatelessWidget {
             ),
             const SizedBox(height: 12),
           ],
-          DshUiNodeView(node: view.root),
+          XrkUiNodeView(node: view.root),
         ],
       );
     }
-    return DshUiPluginScope(
+    return XrkUiPluginScope(
       onAction: onAction,
       imageResolver: imageResolver ?? PluginImages.maybeOf(context)?.resolver,
       animate: animate,
-      child: DshUiPictureViewer(
+      child: XrkUiPictureViewer(
         open: openGalleryPictures,
         child: view.version == 2
-            ? DshUiPluginStyles(view: view, compact: budget == PluginViewBudget.strip, child: content)
+            ? XrkUiPluginStyles(view: view, compact: budget == PluginViewBudget.strip, child: content)
             : content,
       ),
     );
@@ -180,7 +180,7 @@ class PluginViewError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return SizedBox(
       height: height,
       child: Row(
@@ -229,7 +229,7 @@ class PluginFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final header = ConstrainedBox(
       constraints: const BoxConstraints(minHeight: headerHeight),
       child: Row(
@@ -254,7 +254,7 @@ class PluginFrame extends StatelessWidget {
       children: [
         header,
         const SizedBox(height: 12),
-        DshUiSourceName(name: pluginName, child: child),
+        XrkUiSourceName(name: pluginName, child: child),
       ],
     );
     return Semantics(
@@ -265,7 +265,7 @@ class PluginFrame extends StatelessWidget {
           ? GlassSurface(
               tier: GlassTier.card,
               borderRadius: AppShape.radiusLg,
-              padding: const EdgeInsets.all(DshUiMetrics.cardPadding),
+              padding: const EdgeInsets.all(XrkUiMetrics.cardPadding),
               child: content,
             )
           : content,
@@ -283,7 +283,7 @@ class PluginMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final glyph = nativeIcon(icon);
     const size = PluginFrame.markSize;
     if (glyph != null) {
@@ -297,7 +297,7 @@ class PluginMark extends StatelessWidget {
       child: SizedBox.square(
         dimension: size,
         child: DecoratedBox(
-          decoration: ShapeDecoration(color: context.dshUiWell, shape: Squircle.border(6)),
+          decoration: ShapeDecoration(color: context.xrkUiWell, shape: Squircle.border(6)),
           child: Center(
             child: Text(
               initial,
@@ -322,15 +322,15 @@ class PluginMark extends StatelessWidget {
 class PluginToolCard extends StatelessWidget {
   const PluginToolCard({super.key, required this.parse, required this.fallback, this.details = true});
 
-  final DshUiParse parse;
+  final XrkUiParse parse;
   final Widget fallback;
   final bool details;
 
   @override
   Widget build(BuildContext context) {
     return switch (parse) {
-      DshUiParsed(:final view) when !details => _ToolCardSurface(view: view),
-      DshUiParsed(:final view) => Column(
+      XrkUiParsed(:final view) when !details => _ToolCardSurface(view: view),
+      XrkUiParsed(:final view) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -339,7 +339,7 @@ class PluginToolCard extends StatelessWidget {
           _ToolCardDetails(child: fallback),
         ],
       ),
-      DshUiInvalid() => Column(
+      XrkUiInvalid() => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [const PluginViewError(), const SizedBox(height: 4), fallback],
@@ -351,13 +351,13 @@ class PluginToolCard extends StatelessWidget {
 class _ToolCardSurface extends StatelessWidget {
   const _ToolCardSurface({required this.view});
 
-  final DshUiView view;
+  final XrkUiView view;
 
   @override
   Widget build(BuildContext context) => GlassSurface(
     tier: GlassTier.card,
     borderRadius: AppShape.radiusLg,
-    padding: const EdgeInsets.all(DshUiMetrics.cardPadding),
+    padding: const EdgeInsets.all(XrkUiMetrics.cardPadding),
     child: PluginViewBody(view: view, budget: PluginViewBudget.toolCard),
   );
 }

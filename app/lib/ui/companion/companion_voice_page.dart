@@ -290,7 +290,7 @@ class _CompanionVoicePageState extends ConsumerState<CompanionVoicePage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final s = _seen = ref.watch(companionVoiceSettingsProvider);
     if (s == null) return AppPage.list(title: l10n.companionMenuVoice, children: const []);
     _fill(s);

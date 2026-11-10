@@ -88,7 +88,7 @@ class _Confirm extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final footprint = ref.watch(localFootprintProvider).value;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final unpacked = footprint?.unpackedMb;
     return OnboardingScaffold(
       leading: leading,

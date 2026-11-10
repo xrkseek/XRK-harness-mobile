@@ -1,10 +1,10 @@
-import 'package:dsh_app/pets/pet_overlay_actions.dart';
-import 'package:dsh_app/pets/pet_overlay_bridge.dart';
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/pets/pet_prefs.dart';
-import 'package:dsh_app/ui/pets/pet_stage.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/state/live_activity_state.dart';
+import 'package:xrk_app/pets/pet_overlay_actions.dart';
+import 'package:xrk_app/pets/pet_overlay_bridge.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/pets/pet_prefs.dart';
+import 'package:xrk_app/ui/pets/pet_stage.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/state/live_activity_state.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

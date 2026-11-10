@@ -112,7 +112,7 @@ class SessionPluginsTab extends ConsumerWidget {
 }
 
 /// One plugin tab filling the page under its name; when its island can't
-/// come up, the way to DSH Web alone (it names the tab itself).
+/// come up, the way to XRK Web alone (it names the tab itself).
 class _SingleTab extends ConsumerStatefulWidget {
   const _SingleTab({required this.seat, required this.item, required this.name});
 

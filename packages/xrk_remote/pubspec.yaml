@@ -1,0 +1,24 @@
+name: xrk_remote
+description: >-
+  Pure-Dart client for XRK remote Host relay: account login,
+  device identity, Host list with key pinning, Noise IK secure channel over
+  the WebSocket Relay, and an xrk_client carrier so a remote Host API
+  is reachable through the same XrkClient API as the local engine.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+executables:
+  remote_probe: remote_probe
+
+dependencies:
+  xrk_client:
+    path: ../xrk_client
+  cryptography: ^2.9.0
+  crypto: ^3.0.6
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.26.0

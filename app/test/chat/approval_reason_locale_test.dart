@@ -1,10 +1,10 @@
 // The approval card and its notification show the same reason for one request,
 // in the interface language.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/notify/chat_alerts.dart';
-import 'package:dsh_app/ui/chat/widgets/approval_card.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/notify/chat_alerts.dart';
+import 'package:xrk_app/ui/chat/widgets/approval_card.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

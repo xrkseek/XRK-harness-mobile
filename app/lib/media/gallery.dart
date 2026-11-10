@@ -14,23 +14,21 @@ import 'package:http/http.dart' as http;
 import '../l10n/l10n.dart';
 import '../state/attachments.dart' show inlineImageType;
 
-/// The native side (`dsh/media`).
+/// The native side (`xrk/media`).
 class MediaChannel {
-  const MediaChannel([this.channel = const MethodChannel('dsh/media')]);
+  const MediaChannel([this.channel = const MethodChannel('xrk/media')]);
 
   final MethodChannel channel;
 
-  /// Saves [bytes] (PNG, JPEG, GIF or WebP, of type [mime]) into the
-  /// gallery's DSH Go album as [name]; returns where it landed
-  /// (`Pictures/DSH Go/chart.png`).
+  /// Saves [bytes] (PNG/JPEG/GIF/WebP, type [mime]) into the app album as [name].
   Future<String> saveImage(Uint8List bytes, {required String name, required String mime}) async =>
       await channel.invokeMethod<String>('saveImage', {'bytes': bytes, 'name': name, 'mime': mime}) ??
-      'Pictures/DSH Go/$name';
+      'Pictures/XRK Harness/$name';
 
   /// Streams an already materialized local video into the gallery.
   Future<String> saveVideoFile(String path, {required String name}) async =>
       await channel.invokeMethod<String>('saveVideoFile', {'path': path, 'name': name}) ??
-      'Movies/DSH Go/$name';
+      'Movies/XRK Harness/$name';
 
   /// The app's page in system settings (storage was refused for good).
   Future<bool> openSettings() async => await channel.invokeMethod<bool>('openSettings') ?? false;
@@ -60,7 +58,7 @@ String galleryExtension(String mime) => switch (mime) {
 
 /// The name a picture gets in the gallery: [name] (a file name or path as
 /// the conversation shows it) with the extension of [mime], or
-/// `DSH_20261024_153012.png` when there is none worth keeping.
+/// `XRK_20261024_153012.png` when there is none worth keeping.
 String galleryFileName(String? name, String mime, {DateTime? now}) {
   var base = (name ?? '').trim();
   final slash = base.lastIndexOf(RegExp(r'[/\\]'));
@@ -76,7 +74,7 @@ String galleryFileName(String? name, String mime, {DateTime? now}) {
     final t = now ?? DateTime.now();
     String two(int n) => n.toString().padLeft(2, '0');
     base =
-        'DSH_${t.year}${two(t.month)}${two(t.day)}_'
+        'XRK_${t.year}${two(t.month)}${two(t.day)}_'
         '${two(t.hour)}${two(t.minute)}${two(t.second)}';
   }
   if (base.length > 80) {

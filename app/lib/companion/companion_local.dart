@@ -4,7 +4,7 @@ library;
 
 import 'dart:io';
 
-import 'package:dsh_client/companion.dart';
+import 'package:xrk_client/companion.dart';
 
 /// Owns `<root>/light-state.json`, beside light-chat.json and pack/.
 /// Keep one owning isolate; instances sharing root use the core store queue.

@@ -4,15 +4,15 @@
 // there is no TurnTrace for it and it can neither fold nor carry a footnote.
 // The chat asks for the official web window (at least 50 messages and
 // two turns, capped at 500), so the cut lands on a turn start. The fake Host
-// below pages exactly as DSH does (dsh-api-session-controller `paginate`).
+// below pages exactly as XRK does (dsh-api-session-controller `paginate`).
 
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/chat/chat_rows.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/chat/chat_rows.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -133,7 +133,7 @@ class _Mux extends DshMux {
 }
 
 /// Answers `watch` with the Host's window for the options it was given.
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client() : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
   late final _mux = _Mux(carrier);
   final requested = <WatchOptions>[];

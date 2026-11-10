@@ -1,23 +1,23 @@
 // Run information derived from turn traces: formatting, the live activity,
 // footnote placement, trajectory rows and numbered diff hunks, over the
 // synthetic timed session (support/run_info_fixture.dart) and the captured
-// DSH frames.
+// XRK frames.
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/chat_rows.dart';
-import 'package:dsh_app/ui/chat/run_info.dart';
-import 'package:dsh_app/ui/chat/turn_summary.dart';
-import 'package:dsh_app/ui/chat/widgets/turn_footnote.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/chat_rows.dart';
+import 'package:xrk_app/ui/chat/run_info.dart';
+import 'package:xrk_app/ui/chat/turn_summary.dart';
+import 'package:xrk_app/ui/chat/widgets/turn_footnote.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/run_info_fixture.dart';
 import 'support/sample_chat.dart';
 
-const _clientFixtures = '../packages/dsh_client/test/fixtures';
+const _clientFixtures = '../packages/xrk_client/test/fixtures';
 
 ChatTranscript _load(String path) {
   final transcript = ChatTranscript();

@@ -7,7 +7,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -229,8 +229,8 @@ class NativeSurfaceController extends Notifier<NativeSurfaceState> {
       if ((view.live || key.live) && stream != null && _sub == null) _follow(stream, data: view.data);
     } on DshException catch (e) {
       if (!ref.mounted || read != _reads) return;
-      final code = e is DshRemoteException && e.code.startsWith('dsh-go/') && !e.code.startsWith('dsh-go/http-')
-          ? e.code.substring('dsh-go/'.length)
+      final code = e is XrkRemoteException && e.code.startsWith('xrk-mobile/') && !e.code.startsWith('xrk-mobile/http-')
+          ? e.code.substring('xrk-mobile/'.length)
           : null;
       if (code != null) _issue(code);
       _set(state.copyWith(loading: false, offline: code == null, failure: code));

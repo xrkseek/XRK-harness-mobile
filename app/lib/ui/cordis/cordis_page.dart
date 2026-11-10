@@ -1,11 +1,11 @@
 // Native mirror of the official Cordis panel (`dsh-client-ui-cordis`, the
-// badge at the bottom of DSH Web's sidebar): the Host's dynamic plugins,
+// badge at the bottom of XRK Web's sidebar): the Host's dynamic plugins,
 // grouped like the official panel (this conversation first). A row opens its
-// sheet; the plugin's own panel opens in DSH Web.
+// sheet; the plugin's own panel opens in XRK Web.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -102,7 +102,7 @@ class CordisPluginRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final status = plugin.status;
     return ListPageRow(
       leading: StatusDot(tone: cordisTone(status)),

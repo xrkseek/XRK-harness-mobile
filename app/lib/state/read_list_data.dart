@@ -2,7 +2,7 @@ import 'package:crypto/crypto.dart';
 
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import 'plugins_state.dart' show BundleGroup, bundleGroup;
 import 'providers_state.dart' show ProvidersSnapshot, ProviderHealth;

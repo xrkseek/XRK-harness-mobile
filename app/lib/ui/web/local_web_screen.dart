@@ -27,7 +27,7 @@ Uri localWebUri(String baseUrl, String token) {
   return uri.replace(path: '/', queryParameters: {'token': token});
 }
 
-/// The official DSH Web UI served by the local engine: the fallback for anything
+/// The official XRK Web UI served by the local engine: the fallback for anything
 /// the native UI doesn't do yet (plugins, advanced settings…).
 class LocalWebScreen extends ConsumerWidget {
   const LocalWebScreen({super.key, this.target, this.handle, this.link, this.onSession});

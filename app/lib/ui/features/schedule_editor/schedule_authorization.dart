@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 /// One editor save owns only schedule questions from its destination session.
 /// Closing this scope rejects pending requests; it can never authorize them.
 class ScheduleAuthorization {
   ScheduleAuthorization(this.client, {this._sessionId, this.onChanged});
 
-  final DshClient client;
+  final XrkClient client;
   void Function()? onChanged;
   String? _sessionId;
   final Map<String, UserQuestionRequest> _requests = {};
@@ -52,7 +52,7 @@ class ScheduleAuthorization {
       request.sessionId == _sessionId &&
       request.raw['purpose'] == 'schedule-authorization' &&
       request.questions.isNotEmpty &&
-      request.questions.first.id.startsWith('dsh-go-schedule-authorization-');
+      request.questions.first.id.startsWith('xrk-mobile-schedule-authorization-');
 
   void _replay() {
     for (final event in client.mux.pendingRequests) {

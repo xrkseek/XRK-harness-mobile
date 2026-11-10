@@ -3,11 +3,11 @@
 // 「在网页版编辑此项」 in full under its title with the open-external glyph
 // on the chevrons' column.
 
-import 'package:dsh_app/ui/common/overview_card.dart' show OverviewChevron;
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/field_row.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/common/overview_card.dart' show OverviewChevron;
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/field_row.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -40,7 +40,7 @@ Future<void> pumpCatalogFields(WidgetTester tester, Map<String, Object?> values,
   await tester.pumpWidget(
     goldenApp(
       brightness: Brightness.light,
-      overrides: engineOverrides(DshClient.withCarrier(host)),
+      overrides: engineOverrides(XrkClient.withCarrier(host)),
       home: const EngineSettingsPage(ns: 'catalog', title: '插件配置'),
     ),
   );

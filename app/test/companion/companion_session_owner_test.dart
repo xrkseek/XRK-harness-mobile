@@ -1,15 +1,15 @@
-// Real CompanionSessions, real SessionsController creation and real DshClient
+// Real CompanionSessions, real SessionsController creation and real XrkClient
 // RPC decoding. Only carrier replies and background list loading are staged.
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/companion/companion_state.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/companion/companion_state.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -112,12 +112,12 @@ class _Room {
   final host = _ActiveHost();
   final selection = _Selection();
   final connections = <HostRef, HostConnection>{};
-  final clients = <DshClient>[];
+  final clients = <XrkClient>[];
   late final ProviderContainer container;
   CompanionSessions get sessions => container.read(companionSessionsProvider.notifier);
 
   void add(HostRef host, _RpcHost rpc) {
-    final client = DshClient.withCarrier(rpc);
+    final client = XrkClient.withCarrier(rpc);
     clients.add(client);
     connections[host] = HostConnection(
       client: client,
@@ -172,7 +172,7 @@ void main() {
     await _flush();
     expect(room.a.argsOf('session/projections'), hasLength(1));
     room.host.change(_Room.bHost);
-    projection.complete(RpcError(DshRemoteException('session/not-found', 'gone')));
+    projection.complete(RpcError(XrkRemoteException('session/not-found', 'gone')));
     final result = await pending;
     expect(
       {
@@ -234,7 +234,7 @@ void main() {
     room.host.change(_Room.bHost);
     await _flush();
     room.host.change(HostRef.local);
-    projection.complete(RpcError(DshRemoteException('session/not-found', 'gone')));
+    projection.complete(RpcError(XrkRemoteException('session/not-found', 'gone')));
     expect(await pending, isA<DshClosedException>());
     expect(room.a.argsOf('session/create'), isEmpty);
   });
@@ -251,7 +251,7 @@ void main() {
     room.add(HostRef.local, replacement);
     room.container.invalidate(activeConnectionProvider);
     await _flush();
-    projection.complete(RpcError(DshRemoteException('session/not-found', 'gone')));
+    projection.complete(RpcError(XrkRemoteException('session/not-found', 'gone')));
     expect(await pending, isA<DshClosedException>());
     expect(replacement.argsOf('session/create'), isEmpty);
   });
@@ -280,7 +280,7 @@ void main() {
     await _flush();
     expect((room.a.argsOf('session/create').single['request']! as Map)['workspaceId'], 'workspace-a');
     room.host.change(_Room.bHost);
-    creation.complete(RpcError(DshRemoteException(WorkspaceErrors.notFound, 'gone')));
+    creation.complete(RpcError(XrkRemoteException(WorkspaceErrors.notFound, 'gone')));
     expect(await pending, isA<DshClosedException>());
     expect(room.a.argsOf('session/create'), hasLength(1));
   });

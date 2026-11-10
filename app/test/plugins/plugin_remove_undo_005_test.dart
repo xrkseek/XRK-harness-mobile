@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_app/ui/plugins/market_tab.dart';
-import 'package:dsh_app/ui/plugins/plugin_widgets.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_app/ui/plugins/market_tab.dart';
+import 'package:xrk_app/ui/plugins/plugin_widgets.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,8 +36,8 @@ void main() {
     testWidgets('market uninstall notice and owner: $outcome', (tester) async {
       final carrier = FakePluginCarrier();
       final other = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
-      final otherClient = DshClient.withCarrier(other);
+      final client = XrkClient.withCarrier(carrier);
+      final otherClient = XrkClient.withCarrier(other);
       addTearDown(client.close);
       addTearDown(otherClient.close);
       final host = fakeHost(client);
@@ -116,7 +116,7 @@ void main() {
       }
       await tester.pumpAndSettle();
       if (outcome == 'throws') {
-        reply.completeError(const DshRemoteException('unknown', 'test failure'));
+        reply.completeError(const XrkRemoteException('unknown', 'test failure'));
       } else {
         reply.complete({
           'target': 'dsh-approval-gate',

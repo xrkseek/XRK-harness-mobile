@@ -8,7 +8,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -68,6 +68,7 @@ List<DirectoryShortcut> directoryShortcuts({required bool local, required bool p
         localWorkspaceDir,
         subtitle: displayPath(localWorkspaceDir, local: true),
       ),
+      // /root is home, not a project workspace — keep it as ~ only.
       DirectoryShortcut(AppIcons.home, appL10n.remoteDirectoryHome, localHome, subtitle: '~'),
       if (phoneStorage) ...[
         DirectoryShortcut(AppIcons.phoneStorage, appL10n.remoteDirectoryPhoneStorage, phoneStorageRoot),
@@ -201,7 +202,7 @@ Future<String?> askFolderPath(BuildContext context) async {
   final path = await showTextPrompt(
     context,
     title: l10n.remoteDirectoryEnterPath,
-    hint: '/root/workspace',
+    hint: '/sdcard/Documents/my-project',
     confirm: l10n.remoteDirectoryGo,
     mono: true,
     keyboardType: TextInputType.url,
@@ -268,7 +269,7 @@ class _DirectoryBrowserPageState extends ConsumerState<DirectoryBrowserPage> {
   /// Folders walked through, for 「返回」 one level at a time.
   final List<String> _history = [];
 
-  DshClient? get _client => ref.read(activeConnectionProvider).value?.client;
+  XrkClient? get _client => ref.read(activeConnectionProvider).value?.client;
 
   @override
   void initState() {
@@ -281,7 +282,7 @@ class _DirectoryBrowserPageState extends ConsumerState<DirectoryBrowserPage> {
   /// Lists [path]; keeps the current level on screen until it arrives.
   Future<void> _open(String? path, {bool record = true}) async {
     final client = _client;
-    if (client == null) return setState(() => _error = const DshTransportException('not connected'));
+    if (client == null) return setState(() => _error = const XrkTransportException('not connected'));
     if (_busy) return;
     setState(() => _busy = true);
     try {
@@ -340,7 +341,7 @@ class _DirectoryBrowserPageState extends ConsumerState<DirectoryBrowserPage> {
     final Widget body;
     if (level == null && _error != null) {
       final unavailable =
-          _error is DshRemoteException && (_error as DshRemoteException).code == WorkspaceErrors.pickerUnavailable;
+          _error is XrkRemoteException && (_error as XrkRemoteException).code == WorkspaceErrors.pickerUnavailable;
       body = FeatureMessage(
         icon: AppIcons.noFolder,
         title: workspaceErrorText(_error!),
@@ -435,7 +436,7 @@ class _LevelList extends StatelessWidget {
       for (final e in level.entries)
         if (showHidden || !e.hidden) e,
     ];
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

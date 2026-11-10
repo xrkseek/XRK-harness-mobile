@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/mention_state.dart';
-import 'package:dsh_app/ui/chat/mention/mention_controller.dart';
-import 'package:dsh_app/ui/chat/mention/mention_text_controller.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/mention_state.dart';
+import 'package:xrk_app/ui/chat/mention/mention_controller.dart';
+import 'package:xrk_app/ui/chat/mention/mention_text_controller.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -106,7 +106,7 @@ class _Host {
 
 class _Rig {
   _Rig(this.host) {
-    client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:${host.server.port}')));
+    client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:${host.server.port}')));
     source = ClientMentionSource(client);
     picker = MentionPickerController(
       input: input,
@@ -130,7 +130,7 @@ class _Rig {
   final _Host host;
   final input = MentionTextController();
   final recents = MentionRecents(persist: false);
-  late final DshClient client;
+  late final XrkClient client;
   late final ClientMentionSource source;
   late final MentionPickerController picker;
   String session = 'a';

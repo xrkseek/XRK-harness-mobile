@@ -51,7 +51,7 @@ class _NotificationSettingsTileState extends ConsumerState<NotificationSettingsT
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final prefs = ref.watch(notifyPrefsProvider);
     final system = ref.watch(notifySystemStatusProvider).value ?? const NotifySystemStatus();
     final Widget value;
@@ -119,7 +119,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
       action: TextButton.icon(
         style: TextButton.styleFrom(
-          foregroundColor: DshColors.of(context).onWarningContainer,
+          foregroundColor: XrkColors.of(context).onWarningContainer,
           visualDensity: VisualDensity.compact,
           padding: const EdgeInsets.symmetric(horizontal: 0),
         ),
@@ -140,7 +140,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
     margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
     action: TextButton.icon(
       style: TextButton.styleFrom(
-        foregroundColor: DshColors.of(context).onWarningContainer,
+        foregroundColor: XrkColors.of(context).onWarningContainer,
         visualDensity: VisualDensity.compact,
         padding: const EdgeInsets.symmetric(horizontal: 0),
       ),

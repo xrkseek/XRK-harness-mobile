@@ -1,13 +1,13 @@
 // Runs assets/web/dsh_web_phone.js against a model of the official frame (node,
 // no DOM library) and prints what the app's menu button does to it, as JSON.
 // Used by test/web/web_phone_layout_test.dart. The selectors are the script's
-// own; the model answers those (checked against DSH 0.2.1-rc.4 and 0.2.2-rc.1
+// own; the model answers those (checked against XRK 0.2.1-rc.4 and 0.2.2-rc.1
 // in a browser).
 //
 //   node phone_layout_harness.mjs <script.js> <scenario JSON>
 //
 // Scenario:
-//   officialDrawer  the frame has data-sidebar-drawer (DSH 0.2.2 on, below 768px)
+//   officialDrawer  the frame has data-sidebar-drawer (XRK 0.2.2 on, below 768px)
 //   steps           ['toggle' | 'close', …]  calls on window.__dshApp
 import fs from 'node:fs';
 import vm from 'node:vm';

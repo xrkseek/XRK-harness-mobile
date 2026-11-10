@@ -1,6 +1,6 @@
-import 'package:dsh_app/share_code/profile_export.dart';
-import 'package:dsh_app/ui/engine_settings/schema_fields.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/profile_export.dart';
+import 'package:xrk_app/ui/engine_settings/schema_fields.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_engine.dart';
@@ -24,7 +24,7 @@ void main() {
           'enabled': {'type': 'boolean'},
         },
       };
-      final client = DshClient.withCarrier(engine);
+      final client = XrkClient.withCarrier(engine);
       try {
         final source = await loadProfileExport(client, hostLabel: '测试Host', isLocal: false);
         expect(engine.argsOf('settings/describe'), hasLength(1));
@@ -48,7 +48,7 @@ void main() {
         'web-search-deepseek',
         user: {'endpoint': valid, 'callback': 'https://example.com/hook?token=private', 'count': 2},
       );
-    final client = DshClient.withCarrier(engine);
+    final client = XrkClient.withCarrier(engine);
     try {
       final source = await loadProfileExport(client, hostLabel: '测试Host', isLocal: false);
       expect(source.settings, {

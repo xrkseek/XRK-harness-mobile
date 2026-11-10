@@ -5,7 +5,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dsh_app/share_code/conversation_share.dart';
+import 'package:xrk_app/share_code/conversation_share.dart';
 
 final richStart = DateTime.utc(2026, 10, 24, 14, 2);
 
@@ -25,7 +25,7 @@ ConversationShare richConversation() {
     title: '修复登录重复提交',
     start: richStart,
     model: 'deepseek-v4-pro',
-    app: 'dsh-go 1.0.0',
+    app: 'xrk-mobile 1.0.0',
     created: DateTime.utc(2026, 10, 25, 3),
     entries: [
       const TurnEntry(t: 0, d: 96000, end: 'completed', steps: 5, tokens: 48210),

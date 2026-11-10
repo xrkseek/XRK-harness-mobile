@@ -4,10 +4,10 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_dialect_card.dart';
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_dialect_genui.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_dialect_card.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_dialect_genui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -98,58 +98,58 @@ void main() {
 
   group('mapping', () {
     test('a status report becomes a read-only plugin view, marked genui', () {
-      final parsed = parseDshUiUncached(report);
-      expect(parsed, isA<DshUiParsed>());
-      final view = (parsed as DshUiParsed).view;
+      final parsed = parseXrkUiUncached(report);
+      expect(parsed, isA<XrkUiParsed>());
+      final view = (parsed as XrkUiParsed).view;
       expect(view.dialect, 'genui');
       expect(view.version, 2);
       expect(view.title, '本周构建');
       expect(view.interactive, isFalse, reason: 'nothing in a genui block answers the model from the app');
 
-      final metrics = view.nodes.whereType<DshUiMetric>().toList();
+      final metrics = view.nodes.whereType<XrkUiMetric>().toList();
       expect([for (final m in metrics) m.label], ['通过', '失败', '耗时']);
-      expect([for (final m in metrics) m.tone], [DshUiTone.good, DshUiTone.bad, null]);
+      expect([for (final m in metrics) m.tone], [XrkUiTone.good, XrkUiTone.bad, null]);
       expect(metrics.first.caption, '+4');
 
-      final table = view.nodes.whereType<DshUiTable>().single;
+      final table = view.nodes.whereType<XrkUiTable>().single;
       expect([for (final c in table.columns) c.label], ['任务', '状态', '耗时']);
 
-      final steps = view.nodes.whereType<DshUiSteps>().single;
+      final steps = view.nodes.whereType<XrkUiSteps>().single;
       expect(
         [for (final s in steps.items) s.status],
-        [DshUiStepStatus.done, DshUiStepStatus.current, DshUiStepStatus.todo],
+        [XrkUiStepStatus.done, XrkUiStepStatus.current, XrkUiStepStatus.todo],
       );
       expect(steps.items[1].detail, '第 2 个分片失败');
 
       // A callout is a tinted panel: the title in the tone's colour, then the words.
-      final texts = [for (final n in view.nodes.whereType<DshUiText>()) n.text];
+      final texts = [for (final n in view.nodes.whereType<XrkUiText>()) n.text];
       expect(
         texts,
         containsAllInOrder(['注意', '`test` 的 日志 里有 超时']),
         reason: 'links keep their words, highlights their text',
       );
-      final panel = view.nodes.whereType<DshUiLayout>().firstWhere(
-        (l) => l.children.whereType<DshUiText>().any((t) => t.text == '注意'),
+      final panel = view.nodes.whereType<XrkUiLayout>().firstWhere(
+        (l) => l.children.whereType<XrkUiText>().any((t) => t.text == '注意'),
       );
-      expect(view.styles[panel.path]?.card, DshUiCardStyle.tinted);
+      expect(view.styles[panel.path]?.card, XrkUiCardStyle.tinted);
     });
 
     test('parts without a native counterpart read 「… · 在网页版查看」; a run of them folds into one', () {
-      final view = (parseDshUiUncached(report) as DshUiParsed).view;
+      final view = (parseXrkUiUncached(report) as XrkUiParsed).view;
       final tags = [
         for (final n in view.nodes)
-          if (n is DshUiControlDisplay && n.kind == 'tag') n.text,
+          if (n is XrkUiControlDisplay && n.kind == 'tag') n.text,
       ];
       expect(tags, [
         appL10n.viewUiDialectWebOnly(appL10n.viewUiDialectKindChart),
         appL10n.viewUiDialectWebOnly(appL10n.viewUiDialectKindInteractive),
       ]);
-      expect(view.nodes.whereType<DshUiPlaceholder>(), isEmpty, reason: 'no grey 「这部分无法显示」 rows');
+      expect(view.nodes.whereType<XrkUiPlaceholder>(), isEmpty, reason: 'no grey 「这部分无法显示」 rows');
       expect([for (final i in view.issues) i.path], containsAll(['spec.items[4]', 'spec.items[5]', 'spec.items[6]']));
     });
 
     test('genui chart data become categories and aligned series', () {
-      final view = (parseDshUiUncached(
+      final view = (parseXrkUiUncached(
         j({
           'items': [
             {
@@ -174,16 +174,16 @@ void main() {
             },
           ],
         }),
-      ) as DshUiParsed).view;
-      final chart = view.nodes.whereType<DshUiChart>().single;
-      expect(chart.kind, DshUiChartKind.hbar);
+      ) as XrkUiParsed).view;
+      final chart = view.nodes.whereType<XrkUiChart>().single;
+      expect(chart.kind, XrkUiChartKind.hbar);
       expect(chart.categories, ['Q1', 'Q2']);
       expect([for (final s in chart.series) s.name], ['今年', '去年']);
       expect(chart.series[1].values, [null, 20]);
     });
 
     test('keyvalue, list aliases, timeline, tabs and code map to their native components', () {
-      final view = (parseDshUiUncached(
+      final view = (parseXrkUiUncached(
         j({
           'items': [
             {
@@ -223,17 +223,17 @@ void main() {
             },
           ],
         }),
-      ) as DshUiParsed).view;
-      final kv = view.nodes.whereType<DshUiKeyValue>().single;
+      ) as XrkUiParsed).view;
+      final kv = view.nodes.whereType<XrkUiKeyValue>().single;
       expect(kv.items.single.label, '版本');
-      final list = view.nodes.whereType<DshUiList>().single;
+      final list = view.nodes.whereType<XrkUiList>().single;
       expect([for (final i in list.items) (i.title, i.subtitle)], [('纯文字', null), ('标题', '说明')]);
-      final containers = view.nodes.whereType<DshUiControlContainer>().toList();
+      final containers = view.nodes.whereType<XrkUiControlContainer>().toList();
       expect([for (final c in containers) c.kind], ['timeline', 'tabs']);
       expect(containers.first.sections.single.label, '10-30 · 发布');
       final code = [
         for (final n in view.nodes)
-          if (n is DshUiControlDisplay && n.kind == 'codeBlock') (n.language, n.text),
+          if (n is XrkUiControlDisplay && n.kind == 'codeBlock') (n.language, n.text),
       ];
       expect(code.first, ('ts', 'const a = 1'));
       expect(code.last.$1, 'json');
@@ -242,7 +242,7 @@ void main() {
     test('only inline images show; a host or web address reads 「图片 · 在网页版查看」', () {
       const pixel =
           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
-      final view = (parseDshUiUncached(
+      final view = (parseXrkUiUncached(
         j({
           'items': [
             {'type': 'image', 'src': pixel, 'alt': '点'},
@@ -250,11 +250,11 @@ void main() {
             {'type': 'image', 'src': 'https://example.com/a.png'},
           ],
         }),
-      ) as DshUiParsed).view;
-      expect(view.nodes.whereType<DshUiImage>(), hasLength(1));
+      ) as XrkUiParsed).view;
+      expect(view.nodes.whereType<XrkUiImage>(), hasLength(1));
       final tags = [
         for (final n in view.nodes)
-          if (n is DshUiControlDisplay && n.kind == 'tag') n.text,
+          if (n is XrkUiControlDisplay && n.kind == 'tag') n.text,
       ];
       expect(tags, [appL10n.viewUiDialectWebOnly(appL10n.viewUiDialectKindImage)]);
     });
@@ -262,7 +262,7 @@ void main() {
     test('stat spark → metric trend (last 30), progress ring → ring, image-group → gallery', () {
       const pixel =
           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
-      final view = (parseDshUiUncached(
+      final view = (parseXrkUiUncached(
         j({
           'items': [
             {
@@ -288,19 +288,19 @@ void main() {
             },
           ],
         }),
-      ) as DshUiParsed).view;
-      final metrics = view.nodes.whereType<DshUiMetric>().toList();
+      ) as XrkUiParsed).view;
+      final metrics = view.nodes.whereType<XrkUiMetric>().toList();
       expect(metrics.first.trend, [for (var i = 10; i < 40; i++) i.toDouble()]);
       expect(metrics.last.trend, isNull, reason: 'a spark that is not all numbers is left out, not noted');
-      expect(view.nodes.whereType<DshUiProgress>().single.ring, isTrue);
-      final gallery = view.nodes.whereType<DshUiGallery>().single;
+      expect(view.nodes.whereType<XrkUiProgress>().single.ring, isTrue);
+      final gallery = view.nodes.whereType<XrkUiGallery>().single;
       expect(gallery.items.map((i) => i.image.alt), ['一', '二'], reason: 'only inline pictures');
       expect(gallery.items.first.caption, '第一张');
       expect(gallery.items.every((i) => i.action == null), isTrue);
     });
 
     test('a block with nothing to show stays a quiet fallback, marked genui (no resend)', () {
-      final parsed = parseDshUiUncached(
+      final parsed = parseXrkUiUncached(
         j({
           'items': [
             {'type': 'arrow', 'dir': 'down'},
@@ -308,8 +308,8 @@ void main() {
           ],
         }),
       );
-      expect(parsed, isA<DshUiInvalid>());
-      expect((parsed as DshUiInvalid).dialect, 'genui');
+      expect(parsed, isA<XrkUiInvalid>());
+      expect((parsed as XrkUiInvalid).dialect, 'genui');
     });
 
     test('a genui block may use the panel budget; the app format keeps its 16 KiB limit', () {
@@ -329,8 +329,8 @@ void main() {
           },
         ],
       });
-      expect(utf8.encode(big).length, greaterThan(DshUiLimits.hardBytes));
-      expect(parseDshUiUncached(big), isA<DshUiParsed>());
+      expect(utf8.encode(big).length, greaterThan(XrkUiLimits.hardBytes));
+      expect(parseXrkUiUncached(big), isA<XrkUiParsed>());
 
       final own = j({
         'type': 'stack',
@@ -338,9 +338,9 @@ void main() {
           for (var i = 0; i < 120; i++) {'type': 'text', 'text': '这一段写得很长很长很长很长很长很长很长很长很长。' * 2 + '$i'},
         ],
       });
-      expect(utf8.encode(own).length, greaterThan(DshUiLimits.hardBytes));
-      expect(parseDshUiUncached(own), isA<DshUiInvalid>());
-      expect((parseDshUiUncached(own) as DshUiInvalid).dialect, isNull);
+      expect(utf8.encode(own).length, greaterThan(XrkUiLimits.hardBytes));
+      expect(parseXrkUiUncached(own), isA<XrkUiInvalid>());
+      expect((parseXrkUiUncached(own) as XrkUiInvalid).dialect, isNull);
     });
 
     test('the mapped tree never carries an action', () {
@@ -396,20 +396,20 @@ void main() {
         testApp(
           Scaffold(
             body: SingleChildScrollView(
-              child: DshUiScope(
+              child: XrkUiScope(
                 sessionId: 's1',
                 messageId: 'a1',
-                state: DshUiState.live,
+                state: XrkUiState.live,
                 onReply: (_) async => true,
                 onAskResend: (_) async => true,
-                child: DshUiBlock(source: report),
+                child: XrkUiBlock(source: report),
               ),
             ),
           ),
         ),
       );
       await tester.pump(const Duration(milliseconds: 400));
-      expect(find.byType(DshUiDialectCard), findsOneWidget);
+      expect(find.byType(XrkUiDialectCard), findsOneWidget);
       expect(find.text('拉代码'), findsOneWidget);
       expect(find.text(appL10n.viewUiResend), findsNothing);
       expect(find.text(appL10n.viewUiInvalid), findsNothing);
@@ -425,13 +425,13 @@ void main() {
       await tester.pumpWidget(
         testApp(
           Scaffold(
-            body: DshUiScope(
+            body: XrkUiScope(
               sessionId: 's1',
               messageId: 'a1',
-              state: DshUiState.live,
+              state: XrkUiState.live,
               onReply: (_) async => true,
               onAskResend: (_) async => true,
-              child: DshUiBlock(
+              child: XrkUiBlock(
                 source: j({
                   'items': [
                     {'type': 'arrow'},

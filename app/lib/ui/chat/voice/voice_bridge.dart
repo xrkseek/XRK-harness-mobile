@@ -108,8 +108,8 @@ abstract class VoiceBridge {
 }
 
 class MethodChannelVoiceBridge implements VoiceBridge {
-  static const _methods = MethodChannel('dsh/voice');
-  static const _events = EventChannel('dsh/voice/events');
+  static const _methods = MethodChannel('xrk/voice');
+  static const _events = EventChannel('xrk/voice/events');
 
   Stream<VoiceEvent>? _stream;
   static int _nextSession = 0;

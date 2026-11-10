@@ -39,7 +39,7 @@ from build_number import MAX_VERSION_CODE, decode
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FLAVORS = ("arm64", "x64")
 FLAVOR_ABI = {"arm64": "arm64-v8a", "x64": "x86_64"}
-REPO = "ccch1mneyyy/dsh-go"
+REPO = "xrkseek/XRK-harness-mobile"
 VERSION_RE = re.compile(r"^(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)(?:\+(\d+))?$")
 BADGING_RE = re.compile(r"^package: .*?\bversionCode='(\d*)' versionName='([^']*)'", re.MULTILINE)
 CACHE = pathlib.Path.home() / ".cache" / "dshgo-release" / "apk"
@@ -149,7 +149,7 @@ def listed(sums: pathlib.Path, name: str) -> str | None:
 def published_apk(tag: str, cache: pathlib.Path) -> pathlib.Path:
     """[tag]'s arm64 APK from its GitHub release, kept in [cache], as the
     release's SHA256SUMS says it is."""
-    name = f"dsh-go-{tag.removeprefix('v')}-arm64.apk"
+    name = f"xrk-harness-{tag.removeprefix('v')}-arm64.apk"
     apk, sums = cache / tag / name, cache / tag / "SHA256SUMS"
     if not (apk.is_file() and listed(sums, name) == sha256(apk)):
         gh("release", "download", tag, "--pattern", name, "--pattern", "SHA256SUMS", "--dir", str(cache / tag), "--clobber")
@@ -162,7 +162,7 @@ def patch_from(old: pathlib.Path, old_version: str, new: pathlib.Path, name: str
     """The patch from [old] (version X.Y.Z+N) to the arm64 APK [new] of
     version [name], written to [out]; None, and nothing written, unless it's
     under PATCH_LIMIT of [new]."""
-    patch = out / f"dsh-go-{name}-from-{old_version.partition('+')[0]}-arm64.dshdelta"
+    patch = out / f"xrk-harness-{name}-from-{old_version.partition('+')[0]}-arm64.dshdelta"
     apk_delta.make(old, new, patch)
     size = patch.stat().st_size
     share = size / new.stat().st_size
@@ -233,7 +233,7 @@ def main() -> None:
     assets = {}
     sums = []
     for flavor, path in sources.items():
-        asset = f"dsh-go-{name}-{flavor}.apk"
+        asset = f"xrk-harness-{name}-{flavor}.apk"
         target = args.out / asset
         shutil.copyfile(path, target)
         digest = sha256(target)
@@ -264,7 +264,7 @@ def main() -> None:
         "schema": 1,
         "version": f"{name}+{build}",
         "tag": tag,
-        "title": f"DSH Go {name}",
+        "title": f"XRK Harness {name}",
         "publishedAt": datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "notes": args.notes.read_text(encoding="utf-8").strip() if args.notes else "",
         "page": f"https://github.com/{REPO}/releases/tag/{tag}",
@@ -278,13 +278,13 @@ def main() -> None:
         built = f"{decode(build):%Y-%m-%d %H:%M} UTC+8"
     except ValueError:
         built = "custom build number"
-    print(f"DSH Go {name}+{build} ({built})")
+    print(f"XRK Harness {name}+{build} ({built})")
     print(f"{args.out}:")
     for line in sums:
         print("  " + line)
     print("  update.json")
     notes = f" --notes-file {args.notes}" if args.notes else ""
-    print(f"\ngh release create {tag} {args.out}/* --repo {REPO} --title 'DSH Go {name}'{notes}")
+    print(f"\ngh release create {tag} {args.out}/* --repo {REPO} --title 'XRK Harness {name}'{notes}")
 
 
 if __name__ == "__main__":

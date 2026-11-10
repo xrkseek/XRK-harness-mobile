@@ -1,10 +1,10 @@
-import 'package:dsh_app/ui/features/schedule_editor/time_zones.dart';
+import 'package:xrk_app/ui/features/schedule_editor/time_zones.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  const channel = MethodChannel('dsh/app');
+  const channel = MethodChannel('xrk/app');
   final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   final calls = <MethodCall>[];
 

@@ -4,7 +4,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,8 +37,8 @@ String artifactErrorText(Object error) {
   final code = switch (error) {
     ArtifactError(:final code) => code,
     PlatformException(:final code) => code,
-    DshRemoteException(:final code) => code,
-    DshTransportException() || DshCarrierLostException() || DshClosedException() => 'offline',
+    XrkRemoteException(:final code) => code,
+    XrkTransportException() || DshCarrierLostException() || DshClosedException() => 'offline',
     _ => '',
   };
   return switch (code) {

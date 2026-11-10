@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/compose_inbox.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/engine/log_view.dart';
-import 'package:dsh_app/ui/plugins/plugin_load_status.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/compose_inbox.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/engine/log_view.dart';
+import 'package:xrk_app/ui/plugins/plugin_load_status.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -93,7 +93,7 @@ void main() {
   for (final fallback in [false, true]) {
     testWidgets('installed details read actual inventory status (old host: $fallback)', (tester) async {
       final carrier = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       addTearDown(client.close);
       carrier.handlers['pluginManager/listBundles'] = (_) => [bundleJson('example')];
       final entries = [
@@ -127,7 +127,7 @@ void main() {
 
   testWidgets('问 AI sits before refresh and asks about plugins', (tester) async {
     final carrier = FakePluginCarrier();
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
     carrier.handlers['pluginManager/listBundles'] = (_) => <Object?>[];
     carrier.handlers['pluginInventory/list'] = (_) => {'entries': <Object?>[]};
@@ -150,7 +150,7 @@ void main() {
     await tester.tap(find.byTooltip('问 AI'));
     await tester.pumpAndSettle();
     final c = ProviderScope.containerOf(tester.element(find.byType(MaterialApp)));
-    expect(c.read(composeInboxProvider).single.text, '/dsh-go-guide 插件能做什么？装第三方插件要注意什么？');
+    expect(c.read(composeInboxProvider).single.text, '/xrk-guide 插件能做什么？装第三方插件要注意什么？');
   });
 
   testWidgets('partial load exposes the exact failing row and no invented runtime cause', (tester) async {

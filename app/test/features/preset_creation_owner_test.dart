@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/schedule_editor_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/features/preset_editor/preset_editor_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/schedule_editor_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/features/preset_editor/preset_editor_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -123,8 +123,8 @@ void main() {
         final replacementCarrier = FakePluginCarrier();
         _catalog(oldCarrier);
         _catalog(replacementCarrier);
-        final oldClient = DshClient.withCarrier(oldCarrier);
-        final replacementClient = DshClient.withCarrier(replacementCarrier);
+        final oldClient = XrkClient.withCarrier(oldCarrier);
+        final replacementClient = XrkClient.withCarrier(replacementCarrier);
         addTearDown(oldClient.close);
         addTearDown(replacementClient.close);
         final sessions = _Sessions(waitAt);

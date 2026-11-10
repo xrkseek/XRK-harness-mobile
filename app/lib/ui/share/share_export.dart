@@ -60,11 +60,11 @@ class ShareExporter {
     await SharePlus.instance.share(params);
   }
 
-  /// `dsh-go-20261024-153012.png`.
+  /// `xrk-mobile-20261024-153012.png`.
   String fileName() {
     final t = _clock();
     String two(int n) => n.toString().padLeft(2, '0');
-    return 'dsh-go-${t.year}${two(t.month)}${two(t.day)}-${two(t.hour)}${two(t.minute)}${two(t.second)}.png';
+    return 'xrk-mobile-${t.year}${two(t.month)}${two(t.day)}-${two(t.hour)}${two(t.minute)}${two(t.second)}.png';
   }
 
   /// Writes [png] into the cache's `share/` (keeping only the last few).

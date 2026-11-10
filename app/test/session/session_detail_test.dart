@@ -3,15 +3,15 @@
 // session (test/chat/support/run_info_fixture.dart). Regenerate with
 // `flutter test --update-goldens test/session/session_detail_test.dart`.
 
-import 'package:dsh_app/state/session_detail_state.dart';
-import 'package:dsh_app/state/usage_state.dart';
-import 'package:dsh_app/state/workspace_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/diff_page.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart';
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart';
-import 'package:dsh_app/ui/session/session_detail_page.dart';
-import 'package:dsh_app/ui/session/workspace_files.dart';
+import 'package:xrk_app/state/session_detail_state.dart';
+import 'package:xrk_app/state/usage_state.dart';
+import 'package:xrk_app/state/workspace_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/diff_page.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart';
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart';
+import 'package:xrk_app/ui/session/session_detail_page.dart';
+import 'package:xrk_app/ui/session/workspace_files.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';

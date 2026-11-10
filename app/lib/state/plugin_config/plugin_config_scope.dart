@@ -8,12 +8,12 @@
 //     ([PluginConfigScope.owns]; per bundle `official`, `optional`,
 //     `installed`, `source`, `enabled`, `error`, and the `rows` its patch
 //     inserts: `rowId` = the entry id, `moduleName`);
-//   * the Host's list (`GET /dsh-go/v1/plugin-config`), where it says so:
+//   * the Host's list (`GET /xrk-mobile/v1/plugin-config`), where it says so:
 //     the entry's `package` is the one the row loads, and from bridge R7
 //     (runtime r14) its `owner` is `optional` or `installed`, its `kind`
 //     `plugin` and its `bundle` the one carrying the row.
 //
-// Everything else — DSH's own core and runtime rows, the rows the App mounts
+// Everything else — XRK's own core and runtime rows, the rows the App mounts
 // for itself (the bridge, sign-in, phone control), anything unrecognised —
 // is neither listed nor read nor written.
 //
@@ -48,7 +48,7 @@
 // fields (an older bridge) is scoped exactly as before. Measured on real r13
 // and r14 Hosts (app/test/plugin_config/fixtures/).
 
-import 'package:dsh_client/dsh_client.dart' show PluginBundle;
+import 'package:xrk_client/xrk_client.dart' show PluginBundle;
 import 'package:flutter/foundation.dart';
 
 import '../../l10n/l10n.dart';

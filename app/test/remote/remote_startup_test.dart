@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -137,7 +137,7 @@ void main() {
     expect(server.connects, isEmpty);
   });
 
-  test('signing out of DSH Remote while the preference is off drops the saved relay host', () async {
+  test('signing out of XRK Remote while the preference is off drops the saved relay host', () async {
     seed(const HostRef.relay('mac'), autoConnect: false);
     final c = container();
     await loaded(c);

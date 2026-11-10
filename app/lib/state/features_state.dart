@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'connection_state.dart';
 
 /// The active host's client, or null while not connected.
-DshClient? _client(Ref ref) => ref.watch(activeConnectionProvider).value?.client;
+XrkClient? _client(Ref ref) => ref.watch(activeConnectionProvider).value?.client;
 
 /// Re-runs [ref]'s provider when the Host emits one of [events].
-void _refreshOn(Ref ref, DshClient client, Set<String> events) {
+void _refreshOn(Ref ref, XrkClient client, Set<String> events) {
   final sub = client.hostEvents.listen((event) {
     if (event is HostReadyEvent || (event is UnknownHostEvent && events.contains(event.event))) {
       ref.invalidateSelf();
@@ -142,7 +142,7 @@ final permissionStateProvider = FutureProvider.autoDispose.family<PermissionStat
     // Previous app versions offered the session-only Auto preset as a default.
     // Keep the explicit reset available when that makes the catalog fail.
     if (stored == 'auto' &&
-        error is DshRemoteException &&
+        error is XrkRemoteException &&
         error.message.contains('permission: unknown default preset')) {
       return (
         options: <({String value, String name, String? description})>[],

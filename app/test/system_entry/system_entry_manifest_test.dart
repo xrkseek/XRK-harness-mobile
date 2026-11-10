@@ -43,7 +43,7 @@ void main() {
     expect(links, contains('<data android:scheme="dshgo" />'));
     expect(links, contains('application/vnd.dshgo+json'));
     expect(links, contains('android.intent.action.VIEW'));
-    // Two entries named DSH in the share sheet otherwise.
+    // Two entries named XRK in the share sheet otherwise.
     expect(links, isNot(contains('android.intent.action.SEND')));
   });
 
@@ -96,7 +96,7 @@ void main() {
   });
 
   test('MainActivity registers both plugins', () {
-    final source = File('android/app/src/main/kotlin/io/github/ccch1mneyyy/dsh_app/MainActivity.kt').readAsStringSync();
+    final source = File('android/app/src/main/kotlin/io/github/xrkseek/dsh_app/MainActivity.kt').readAsStringSync();
     expect(source, contains('engine.plugins.add(SharePlugin())'));
     expect(source, contains('engine.plugins.add(ShortcutsPlugin())'));
     expect(source, contains('LauncherIconPlugin()'));

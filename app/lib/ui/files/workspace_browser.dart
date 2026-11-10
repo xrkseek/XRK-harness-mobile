@@ -7,7 +7,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,8 +48,8 @@ String fileTimeLabel(DateTime at, DateTime now) {
 /// A short sentence for a folder or search that could not be read.
 String workspaceErrorText(Object error) {
   final code = switch (error) {
-    DshRemoteException(:final code) => code,
-    DshTransportException() || DshCarrierLostException() => 'offline',
+    XrkRemoteException(:final code) => code,
+    XrkTransportException() || DshCarrierLostException() => 'offline',
     _ => '',
   };
   return switch (code) {
@@ -301,7 +301,7 @@ class WorkspaceSearchField extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final dark = theme.brightness == Brightness.dark;
     const capsule = OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(999)),
@@ -408,7 +408,7 @@ class WorkspaceCardSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final style = surfaces.glass(GlassTier.card);
     final highContrast = MediaQuery.maybeHighContrastOf(context) ?? false;
     final reduce = !surfaces.blurEnabled || highContrast;
@@ -556,7 +556,7 @@ class _FolderSliver extends ConsumerWidget {
     final dir = ref.watch(workspaceDirProvider(key));
     if (!dir.loaded) {
       if (dir.error case final error?) {
-        final gone = error is DshRemoteException && error.code == 'workspace-file/not-found' && rel.isNotEmpty;
+        final gone = error is XrkRemoteException && error.code == 'workspace-file/not-found' && rel.isNotEmpty;
         return SliverToBoxAdapter(
           child: EmptyView(
             icon: AppIcons.noFolder,
@@ -621,7 +621,7 @@ class _FolderSliver extends ConsumerWidget {
                 if (files > 0) l10n.botsFileCount(files),
                 if (dir.truncated) l10n.botsTruncatedItems(entries.length),
               ].join(l10n.botsListSeparator),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
             ),
           ),
         ),
@@ -709,7 +709,7 @@ class WorkspaceEntryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final directory = entry.isDirectory;
     final dim = entry.name.startsWith('.') || entry.type == DshWorkspaceEntryType.other;
     final subtitle = directory
@@ -789,7 +789,7 @@ class _SearchSliver extends ConsumerWidget {
         ),
       );
     }
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return SliverMainAxisGroup(
       slivers: [
         const SliverToBoxAdapter(child: SizedBox(height: 12)),
@@ -858,7 +858,7 @@ Future<bool?> showWorkspaceFolderMenu(
     context,
     builder: (sheet) {
       final theme = Theme.of(sheet);
-      final dsh = DshColors.of(sheet);
+      final dsh = XrkColors.of(sheet);
       return SafeArea(
         top: false,
         child: Column(

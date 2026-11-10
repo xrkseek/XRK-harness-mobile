@@ -5,15 +5,15 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/ui/chat/chat_screen.dart';
-import 'package:dsh_app/ui/chat/empty_state.dart' show chatClock;
-import 'package:dsh_app/ui/chat/widgets/live_clock.dart';
-import 'package:dsh_app/ui/chat/widgets/tool_row.dart';
-import 'package:dsh_app/ui/chat/widgets/turn_process.dart';
-import 'package:dsh_app/ui/chat/widgets/whale_tail.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/ui/chat/chat_screen.dart';
+import 'package:xrk_app/ui/chat/empty_state.dart' show chatClock;
+import 'package:xrk_app/ui/chat/widgets/live_clock.dart';
+import 'package:xrk_app/ui/chat/widgets/tool_row.dart';
+import 'package:xrk_app/ui/chat/widgets/turn_process.dart';
+import 'package:xrk_app/ui/chat/widgets/whale_tail.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -72,7 +72,7 @@ ChatState _state() => ChatState(
       'weather_forecast',
       {'city': '东京', 'days': 2},
       result: 'Sat: clear 21/15, Sun: light rain 18/13',
-      meta: {'dsh-go/view': _forecast},
+      meta: {'xrk-mobile/view': _forecast},
     ),
     assistant(9, '**周六**更适合出门，去镰仓正好；周日有雨，可以留给箱根的温泉。'),
   ],

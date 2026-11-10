@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:dsh_app/diagnostics/app_error_log.dart';
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_channel.dart';
-import 'package:dsh_app/diagnostics/diagnostics_markdown.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/state/settings_state.dart';
+import 'package:xrk_app/diagnostics/app_error_log.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_channel.dart';
+import 'package:xrk_app/diagnostics/diagnostics_markdown.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/state/settings_state.dart';
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,7 +24,7 @@ void main() {
       abi: 'arm64-v8a',
       bundledVersion: 'r11-dsh0.2.1-rc.4-node24.22.1-ubuntu24.04.5',
       installedVersion: 'r11-dsh0.2.1-rc.4-node24.22.1-ubuntu24.04.5',
-      dshVersion: '0.2.1-rc.4',
+      engineVersionAlias: '0.2.1-rc.4',
       nodeVersion: '24.22.1',
       baseUrl: 'http://127.0.0.1:4512',
       token: 'launch-token-secret-value',
@@ -45,7 +45,7 @@ void main() {
             'memoryMb': 12288,
             'freeStorageMb': 4096,
           },
-      manifest: {'runtimeVersion': 'r11', 'dshVersion': '0.2.1-rc.4', 'nodeVersion': '24.22.1'},
+      manifest: {'runtimeVersion': 'r11', 'engineVersion': '0.2.1-rc.4', 'nodeVersion': '24.22.1'},
     ),
     connection: connection,
     performance: performance,

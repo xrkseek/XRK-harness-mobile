@@ -7,7 +7,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/l10n.dart';
@@ -106,7 +106,7 @@ class ScheduleCreateFailure implements Exception {
 /// a new task of that conversation (preferring one titled [title]). Fails
 /// when the turn ends or errors without one, or after [timeout].
 Future<ScheduleTask> requestSchedule(
-  DshClient client, {
+  XrkClient client, {
   required String sessionId,
   required String title,
   required String request,
@@ -176,5 +176,5 @@ Future<ScheduleTask> requestSchedule(
 
 /// 「立即运行」: uses the Host target-aware run API on 0.2.2; legacy Hosts
 /// retain the queued conversation prompt behavior.
-Future<void> runScheduleNow(DshClient client, ScheduleTask task, {String? timeZone}) =>
+Future<void> runScheduleNow(XrkClient client, ScheduleTask task, {String? timeZone}) =>
     client.runScheduledTask(task, timeZone: timeZone);

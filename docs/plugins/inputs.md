@@ -1,6 +1,6 @@
 # 输入、表单与本地状态（视图 v2）
 
-根节点写 `v: 2`，即可使用本页的 24 个组件。清单 `dshGo.v` 仍为 `1`；视图格式与插件桥协议分别演进。完整示例是 [`dsh-go-example-workbench`](../../examples/plugins/dsh-go-example-workbench/)，样式规则见[设计规则](design-rules.md)。
+根节点写 `v: 2`，即可使用本页的 24 个组件。清单 `xrkGo.v` 仍为 `1`；视图格式与插件桥协议分别演进。完整示例是 [`xrk-example-workbench`](../../examples/plugins/xrk-example-workbench/)，样式规则见[设计规则](design-rules.md)。
 
 ## 最小表单
 

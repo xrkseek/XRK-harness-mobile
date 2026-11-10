@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dsh_app/state/artifact_files.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/attachments.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/ui/chat/artifact_preview.dart';
-import 'package:dsh_app/ui/chat/render/markdown_image.dart';
-import 'package:dsh_app/ui/chat/tool_view.dart';
-import 'package:dsh_app/ui/chat/widgets/tool_images.dart';
-import 'package:dsh_app/ui/chat/widgets/tool_row.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifact_files.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/attachments.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/ui/chat/artifact_preview.dart';
+import 'package:xrk_app/ui/chat/render/markdown_image.dart';
+import 'package:xrk_app/ui/chat/tool_view.dart';
+import 'package:xrk_app/ui/chat/widgets/tool_images.dart';
+import 'package:xrk_app/ui/chat/widgets/tool_row.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -195,7 +195,7 @@ void main() {
     final cache = Directory.systemTemp.createTempSync('tool-images-');
     addTearDown(() => cache.deleteSync(recursive: true));
     final files = ArtifactFiles(
-      connection: HostConnection(client: DshClient.withCarrier(carrier), isLocal: false, hostId: 'remote'),
+      connection: HostConnection(client: XrkClient.withCarrier(carrier), isLocal: false, hostId: 'remote'),
       channel: const FilesChannel(),
       cacheRoot: () async => cache,
     );

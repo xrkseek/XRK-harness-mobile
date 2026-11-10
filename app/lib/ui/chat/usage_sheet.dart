@@ -3,7 +3,7 @@
 
 import 'dart:math' as math;
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -57,7 +57,7 @@ String formatPercent(double fraction) {
 
 /// 上下文占用的颜色:<60% 主色、60–85% warning、>85% danger。
 Color contextTone(BuildContext context, double fraction) {
-  final dsh = DshColors.of(context);
+  final dsh = XrkColors.of(context);
   if (fraction > 0.85) return dsh.danger;
   if (fraction >= 0.6) return dsh.warning;
   return Theme.of(context).colorScheme.primary;
@@ -103,7 +103,7 @@ class ContextRing extends StatelessWidget {
                 Text(
                   formatPercent(fraction),
                   style: AppType.monoLabel(
-                    color: fraction >= 0.6 ? tone : DshColors.of(context).textTertiary,
+                    color: fraction >= 0.6 ? tone : XrkColors.of(context).textTertiary,
                     weight: FontWeight.w500,
                   ),
                 ),
@@ -282,7 +282,7 @@ class _ContextSection extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final window = usage.contextWindow;
     final tokens = usage.contextTokens;
     final fraction = usage.contextFraction;
@@ -390,7 +390,7 @@ class _TokenSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final hit = usage.cacheHitRate;
     final pricing = this.pricing;
     final notes = [
@@ -450,7 +450,7 @@ class _Stat extends StatelessWidget {
           style: theme.textTheme.titleLarge!.copyWith(fontSize: 20, height: 1.3, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 2),
-        Text(label, style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary)),
+        Text(label, style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary)),
       ],
     );
   }

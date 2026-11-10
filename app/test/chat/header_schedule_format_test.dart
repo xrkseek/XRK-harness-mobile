@@ -2,8 +2,8 @@
 // distances in the official rounding, when each next reads differently, the
 // next runs a rule gives, and the rule line with a foreign zone.
 
-import 'package:dsh_app/ui/chat/header_schedule_format.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/chat/header_schedule_format.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A Saturday afternoon, on this machine's clock.

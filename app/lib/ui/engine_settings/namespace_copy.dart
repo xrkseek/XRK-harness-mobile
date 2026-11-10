@@ -1,4 +1,4 @@
-// Portions derived from DeepSeek Harness (https://github.com/deepseek-ai/deepseek-harness), MIT, Copyright (c) 2026 DeepSeek. See THIRD_PARTY_NOTICES.md.
+// Portions derived from XRK-Harness (https://github.com/deepseek-ai/deepseek-harness), MIT, Copyright (c) 2026 DeepSeek. See THIRD_PARTY_NOTICES.md.
 // Chinese copy for the engine's own settings namespaces, adapted from the
 // official settings pages (`dsh-client-ui-settings-*`, `dsh-client-ui-chat`,
 // `dsh-client-ui-conversation`, the experimental thinking-translation page,

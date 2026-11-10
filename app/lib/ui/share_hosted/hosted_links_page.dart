@@ -71,8 +71,8 @@ class HostedLinksPage extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(context.l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(context.l10n.commonDelete),
@@ -160,7 +160,7 @@ class HostedLinkRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final expired = link.isExpired(now);
     Widget button(String key, IconData icon, String tooltip, VoidCallback? onPressed) => IconButton(
       key: ValueKey('hosted-$key-${link.id}'),

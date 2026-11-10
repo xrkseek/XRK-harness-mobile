@@ -40,7 +40,7 @@ Native 全控制器最多一个 active、一个 latest pending。取消 active �
 
 | 项目 | 上界/规则 |
 |---|---|
-| bundle 名 | dsh-go-ui / dsh-go-plugin / dsh-go-guide |
+| bundle 名 | xrk-ui / xrk-plugin / xrk-guide |
 | 文件数 | 64 |
 | 单文件 UTF-8 | 512 KiB |
 | 总 UTF-8 | 1 MiB；超限整单拒绝 |

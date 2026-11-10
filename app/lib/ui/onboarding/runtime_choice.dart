@@ -1,4 +1,4 @@
-// The first-run question 「DSH 在哪里运行？」 — on this phone (install the runtime) or
+// The first-run question 「XRK 在哪里运行？」 — on this phone (install the runtime) or
 // on a remote host — with what each costs.
 
 import 'package:flutter/material.dart';
@@ -12,13 +12,13 @@ import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'onboarding_scaffold.dart';
 
-/// Where DSH runs.
+/// Where XRK runs.
 enum RuntimeOption { local, remote }
 
 /// Two option cards and one 「继续」:
 ///
 /// ```
-///   ▣  DSH 在哪里运行？
+///   ▣  XRK 在哪里运行？
 ///      之后可以在设置里更改
 ///
 ///   ╭──────────────────────────────────╮
@@ -27,7 +27,7 @@ enum RuntimeOption { local, remote }
 ///   ╰──────────────────────────────────╯
 ///   ╭──────────────────────────────────╮
 ///   │ [▭]  远程主机  推荐           ○  │   「推荐」 only on a phone short of
-///   │      连接电脑或服务器上的 DSH    │    memory or storage
+///   │      连接电脑或服务器上的 XRK    │    memory or storage
 ///   ╰──────────────────────────────────╯
 ///
 ///   (            继续            )
@@ -59,7 +59,7 @@ class _RuntimeChoiceViewState extends ConsumerState<RuntimeChoiceView> {
     final light = ref.watch(performanceDefaultsProvider).recommendRemote;
     final suggested = light || footprint?.suggestRemote == true ? RuntimeOption.remote : RuntimeOption.local;
     final selected = _picked ?? suggested;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
 
     final String localDetail;
     var localWarn = false;
@@ -149,7 +149,7 @@ class RuntimeOptionCard extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final dark = theme.brightness == Brightness.dark;
     final duration = AppMotion.of(context, AppMotion.quick);
     final fill = dark ? Colors.white.withValues(alpha: 0.05) : scheme.onSurface.withValues(alpha: 0.04);

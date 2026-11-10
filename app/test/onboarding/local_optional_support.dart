@@ -2,9 +2,9 @@
 // records what it was asked to do, onboarding prefs with a chosen start, and
 // fixed device figures.
 
-import 'package:dsh_app/runtime/local_footprint.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
+import 'package:xrk_app/runtime/local_footprint.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../shell/golden_harness.dart';
@@ -20,7 +20,7 @@ const stoppedStatus = RuntimeStatus(
   bundledVersion: bundled,
   installedVersion: bundled,
   abi: 'arm64-v8a',
-  dshVersion: '0.2.1-rc.2',
+  engineVersionAlias: '0.2.1-rc.2',
   nodeVersion: '24.22.1',
 );
 

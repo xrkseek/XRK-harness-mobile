@@ -1,12 +1,12 @@
 // One dynamic plugin (a row of the official Cordis panel): what it is, its
-// state, and what can be done from the phone — open its panel in DSH Web,
+// state, and what can be done from the phone — open its panel in XRK Web,
 // stop it, remove it. Running a version with an interface, and answering a
-// run request, happen in DSH Web: the official runner executes that code in
+// run request, happen in XRK Web: the official runner executes that code in
 // the page.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,14 +23,14 @@ import '../plugins/seats/cordis_island_seat.dart';
 import '../safe_mode/recovery_actions.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import '../web/dsh_web_launcher.dart';
+import '../web/xrk_web_launcher.dart';
 import '../web/web_target.dart';
 import '../common/brief_notice.dart';
 
 Future<void> showCordisPluginSheet(BuildContext context, CordisPlugin plugin) =>
     showAppSheet<void>(context, isScrollControlled: true, builder: (_) => CordisPluginSheet(initial: plugin));
 
-/// Opens DSH Web on a target; tests swap it for a recorder. (The same shape
+/// Opens XRK Web on a target; tests swap it for a recorder. (The same shape
 /// as 全部功能's opener, kept here so this sheet doesn't pull in the catalog.)
 final cordisWebOpenerProvider = Provider<void Function(BuildContext context, WidgetRef ref, DshWebTarget target)>(
   (ref) =>
@@ -70,7 +70,7 @@ class _CordisPluginSheetState extends ConsumerState<CordisPluginSheet> {
       ref.read(cordisInventoryProvider).value?.where((p) => p.pluginId == widget.initial.pluginId).firstOrNull ??
       widget.initial;
 
-  DshClient? get _client => ref.read(activeConnectionProvider).value?.client;
+  XrkClient? get _client => ref.read(activeConnectionProvider).value?.client;
 
   Future<void> _stop() async {
     final client = _client;
@@ -112,8 +112,8 @@ class _CordisPluginSheetState extends ConsumerState<CordisPluginSheet> {
             TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(l10n.commonCancel)),
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: DshColors.of(dialog).danger,
-                foregroundColor: DshColors.of(dialog).onDanger,
+                backgroundColor: XrkColors.of(dialog).danger,
+                foregroundColor: XrkColors.of(dialog).onDanger,
               ),
               onPressed: () => Navigator.pop(dialog, true),
               child: Text(l10n.catalogCordisRemove),
@@ -152,7 +152,7 @@ class _CordisPluginSheetState extends ConsumerState<CordisPluginSheet> {
     ref.watch(cordisInventoryProvider);
     final plugin = _plugin;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final status = plugin.status;
     final failure = plugin.failure;
     final session = ref.watch(sessionsProvider).value?.where((s) => s.sessionId == plugin.agentId).firstOrNull;
@@ -250,7 +250,7 @@ class _FailureLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

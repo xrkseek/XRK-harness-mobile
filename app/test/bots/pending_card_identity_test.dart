@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/bots/bot_chat_page.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/bots/bot_chat_page.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,7 +33,7 @@ void main() {
   setUpAll(loadTestFonts);
   setUp(() => SharedPreferences.setMockInitialValues({}));
   final fixture =
-      jsonDecode(File('../packages/dsh_client/test/fixtures/dsbot_pending_cards.json').readAsStringSync()) as Map;
+      jsonDecode(File('../packages/xrk_client/test/fixtures/dsbot_pending_cards.json').readAsStringSync()) as Map;
   FakeDsBotTransport fake(String kind) =>
       FakeDsBotTransport(team: (fixture['${kind}State']['value'] as Map).cast<String, Object?>())..helloOnFeed = false;
   Future<ProviderContainer> open(
@@ -81,9 +81,9 @@ void main() {
     await frames(t);
   }
 
-  DshRemoteException failure(String kind) {
+  XrkRemoteException failure(String kind) {
     final error = fixture[kind == 'question' ? 'failedAnswer' : 'failedView']['error'] as Map;
-    return DshRemoteException(error['code'] as String, error['message'] as String);
+    return XrkRemoteException(error['code'] as String, error['message'] as String);
   }
 
   testWidgets('updating a background view does not reset the visible question choice', (t) async {

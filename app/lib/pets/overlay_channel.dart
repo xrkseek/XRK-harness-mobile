@@ -1,4 +1,4 @@
-// The Dart side of the out-of-app pet (MethodChannel `dsh/pet_overlay`;
+// The Dart side of the out-of-app pet (MethodChannel `xrk/pet_overlay`;
 // native: android/.../pet/PetOverlayPlugin.kt). Dart pushes every new
 // [PetState] (and says when a brought pet's files changed); the overlay's own
 // switches, 「一直显示」, 「今天不再显示」 and the permission live natively and
@@ -126,9 +126,9 @@ class PetOverlayStatus {
       '${snoozed ? ', snoozed' : ''}${showing ? ', showing' : ''}${refused ? ', refused' : ''})';
 }
 
-/// MethodChannel `dsh/pet_overlay`.
+/// MethodChannel `xrk/pet_overlay`.
 class PetOverlayChannel {
-  PetOverlayChannel([this.channel = const MethodChannel('dsh/pet_overlay')]);
+  PetOverlayChannel([this.channel = const MethodChannel('xrk/pet_overlay')]);
 
   final MethodChannel channel;
   final _statusEvents = StreamController<PetOverlayStatus>.broadcast();

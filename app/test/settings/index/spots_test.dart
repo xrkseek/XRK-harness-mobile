@@ -2,10 +2,10 @@
 // reachable from the hub, every searchable entry with synonyms in both
 // languages, link ids that don't collide.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/links/page_links.dart';
-import 'package:dsh_app/ui/features/feature_catalog.dart';
-import 'package:dsh_app/ui/settings/index/settings_pages.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/links/page_links.dart';
+import 'package:xrk_app/ui/features/feature_catalog.dart';
+import 'package:xrk_app/ui/settings/index/settings_pages.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -71,21 +71,27 @@ void main() {
     expect(ids.toSet().intersection(catalogPageLinks), isEmpty);
     for (final id in ids) {
       expect(id, matches(RegExp(r'^[a-z0-9-]+$')), reason: id);
-      expect(pageLinkId(Uri.parse('dshgo://open/$id')), id);
+      expect(pageLinkId(Uri.parse('xrkharness://open/$id')), id);
     }
   });
 
-  test('全部功能\'s 设置 cards are settings pages, by the same names', () {
+  test('全部功能\'s 设置 cards are shell settings pages, by the same names', () {
     final section = featureSections.singleWhere((s) => s.id == settingsFeatureSection);
     expect(featureSections.last, section, reason: 'the last group');
-    expect([for (final i in section.items) i.id], ['models', 'permission', 'phone', 'remote']);
+    expect([for (final i in section.items) i.id], ['phone', 'appearance', 'notifications', 'engine']);
     for (final item in section.items) {
       final page = SettingsIndex.pageForLink(item.id);
       expect(page, isNotNull, reason: item.id);
+      expect(SettingsIndex.isShellPage(page!.id), isTrue, reason: item.id);
       for (final l10n in [zh, en]) {
-        expect(item.titleIn(l10n), page!.title(l10n), reason: item.id);
+        expect(item.titleIn(l10n), page.title(l10n), reason: item.id);
       }
-      expect(item.native!(null).runtimeType, settingsPage(page!.id).runtimeType, reason: item.id);
+      // Phone keeps a Host-web-aware gateway; other cards match settingsPage.
+      if (item.id == 'phone') {
+        expect(item.native, isNotNull);
+        continue;
+      }
+      expect(item.native!(null).runtimeType, settingsPage(page.id).runtimeType, reason: item.id);
     }
   });
 
@@ -99,5 +105,28 @@ void main() {
     expect(SettingsIndex.path(SettingsIndex.entry(SettingsPageId.permission), zh), ['设置', 'AI', '权限']);
     expect(SettingsIndex.path(Spots.phoneFiles, en), ['Settings', 'AI', 'Permissions']);
     expect(SettingsIndex.path(Spots.chatTextSize, zh), ['设置', zh.hubSettingsAppearance]);
+  });
+
+  test('phone search index keeps shell hub pages and drops Host / orphan rows', () {
+    final ids = {for (final s in SettingsIndex.spots) s.id};
+    expect(ids.contains('page:phone'), isTrue);
+    expect(ids.contains('page:appearance'), isTrue);
+    expect(ids.contains('page:interface'), isTrue);
+    expect(ids.contains('page:background'), isTrue);
+    expect(ids.contains('language'), isTrue);
+    expect(SettingsIndex.isShellPage(SettingsPageId.interface), isTrue);
+    // Host-owned pages must stay shell:false and out of search.
+    expect(SettingsIndex.isShellPage(SettingsPageId.models), isFalse);
+    expect(SettingsIndex.isShellPage(SettingsPageId.plugins), isFalse);
+    expect(SettingsIndex.isShellPage(SettingsPageId.account), isFalse);
+    expect(ids.contains('page:models'), isFalse);
+    expect(ids.contains('page:plugins'), isFalse);
+    expect(ids.contains('page:account'), isFalse);
+    // Orphans kept on Spots for compile, never indexed.
+    expect(ids.contains('community'), isFalse);
+    expect(ids.contains('fold-turns'), isFalse);
+    expect(ids.contains('chat-text-size'), isFalse);
+    expect(SettingsIndex.rows.map((s) => s.id), isNot(contains('community')));
+    expect(SettingsIndex.rows.map((s) => s.id), isNot(contains('fold-turns')));
   });
 }

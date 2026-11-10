@@ -1,9 +1,9 @@
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -103,7 +103,7 @@ void main() {
         Slots.settingsSection: [
           const SlotOccupant(
             slot: Slots.settingsSection,
-            package: '@deepseek-ai/dsh-client-ui-settings-general',
+            package: '@xrkseek/harness-cli-client-ui-settings-general',
             cell: 'general',
             official: true,
           ),
@@ -226,7 +226,7 @@ void main() {
       ],
     });
 
-    ProviderContainer container({required DshClient? client, List<PluginBundle>? installed, BridgeInventory? bridge}) {
+    ProviderContainer container({required XrkClient? client, List<PluginBundle>? installed, BridgeInventory? bridge}) {
       final c = ProviderContainer(
         overrides: [
           activeConnectionProvider.overrideWithValue(
@@ -253,13 +253,13 @@ void main() {
 
     test('null while not connected or before the bundle list', () async {
       expect(await read(container(client: null, installed: bundles)), isNull);
-      final client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
+      final client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
       addTearDown(client.close);
       expect(await read(container(client: client, installed: null)), isNull);
     });
 
     test('combines the bundle list, boot graph and bridge of the active host', () async {
-      final client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
+      final client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
       addTearDown(client.close);
       var inventory = (await read(container(client: client, installed: bundles)))!;
       expect(inventory.tier, ClientInventoryTier.boot);

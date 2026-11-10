@@ -1,18 +1,18 @@
 // 「问 AI」: a question about the app, put in a new conversation's composer
 // (not sent) so the agent answers it from the bundled user guide
-// (docs/guide, the dsh-go-guide skill). The UI side — closing the pages and
+// (docs/guide, the xrk-guide skill). The UI side — closing the pages and
 // handing the request to the chat — is ui/common/ask_ai.dart; the design is
 // docs/design/risk-notices-and-ask-ai.md §4.
 //
 // How the guide reaches the agent depends on the host:
 //
-//   this phone's engine   `/dsh-go-guide <question>`: the skill is installed
+//   this phone's engine   `/xrk-guide <question>`: the skill is installed
 //                         at every engine start (ui_config/ui_skill.dart), and
 //                         a `/name` word makes the Host load it
 //   a remote host that    the question, plus the matching guide page from the
 //   takes files (SSH)     app's assets as a Markdown attachment
 //   one that doesn't      the question alone, and a line above the composer
-//   (DSH Remote)          saying the answer may be off
+//   (XRK Remote)          saying the answer may be off
 
 import 'dart:convert';
 import 'dart:typed_data';
@@ -37,7 +37,7 @@ enum AskAiTopic {
   /// 确认方式 › 始终免确认.
   phoneAlways,
 
-  /// 应用名单: letting DSH into a banking app, or skipping its step checks.
+  /// 应用名单: letting XRK into a banking app, or skipping its step checks.
   appRules,
 
   /// 自动执行命令 and the 完全权限 preset.
@@ -79,7 +79,7 @@ enum AskAiTopic {
 
 /// How the guide gets to the host's agent.
 enum GuideRoute {
-  /// The host has the skill: a `/dsh-go-guide` word loads it.
+  /// The host has the skill: a `/xrk-guide` word loads it.
   skill,
 
   /// No skill, but files go through: the page rides along as an attachment.
@@ -107,7 +107,7 @@ final guidePageReaderProvider = Provider<GuidePageReader>((ref) => rootBundle.lo
 String guidePageAsset(String page, {required bool english}) =>
     'assets/skills/$guideSkillName/${english ? 'en' : 'zh'}-$page.md';
 
-/// The attachment's name: `dsh-go-guide-phone-control.md`.
+/// The attachment's name: `xrk-guide-phone-control.md`.
 String guideAttachmentName(String page) => '$guideSkillName-${page.replaceFirst(RegExp(r'^\d+-'), '')}.md';
 
 /// The guide page a question of the person's own (typed into settings

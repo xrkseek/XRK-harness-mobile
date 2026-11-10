@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/schema_fields.dart';
-import 'package:dsh_app/ui/engine_settings/sequence_field.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/schema_fields.dart';
+import 'package:xrk_app/ui/engine_settings/sequence_field.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -36,7 +36,7 @@ FakeSettingsHost sequenceHost() => FakeSettingsHost(
 );
 
 Future<void> open(WidgetTester tester, FakeSettingsHost host) =>
-    pumpPage(tester, const EngineSettingsPage(ns: 'sequence'), overrides: engineOverrides(DshClient.withCarrier(host)));
+    pumpPage(tester, const EngineSettingsPage(ns: 'sequence'), overrides: engineOverrides(XrkClient.withCarrier(host)));
 
 void main() {
   test('real tuple, boolean array and any schemas have native controls', () {
@@ -147,7 +147,7 @@ void main() {
       tester.platformDispatcher.textScaleFactorTestValue = 2;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       await pumpPage(tester, const EngineSettingsPage(ns: 'sequence'),
-        overrides: engineOverrides(DshClient.withCarrier(sequenceHost())), brightness: brightness);
+        overrides: engineOverrides(XrkClient.withCarrier(sequenceHost())), brightness: brightness);
       tester.view.physicalSize = const Size(640, 1800);
       await tester.pump();
       await tester.tap(find.text('Tuple'));
@@ -159,7 +159,7 @@ void main() {
 
   testWidgets('a rejected JSON save preserves draft and supports retry', (tester) async {
     final host = sequenceHost();
-    host.beforeMutate = (_) => throw const DshRemoteException('settings/rejected', 'invalid config');
+    host.beforeMutate = (_) => throw const XrkRemoteException('settings/rejected', 'invalid config');
     await open(tester, host);
     await tester.tap(find.text('Data'));
     await settle(tester);

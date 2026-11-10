@@ -4,14 +4,14 @@
 
 import 'dart:convert';
 
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/relay/dsh_remote_backend.dart';
-import 'package:dsh_app/remote/relay/relay_backend.dart';
-import 'package:dsh_app/remote/secret_store.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/relay/xrk_remote_backend.dart';
+import 'package:xrk_app/remote/relay/relay_backend.dart';
+import 'package:xrk_app/remote/secret_store.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -90,12 +90,12 @@ void main() {
 
   group('SshHostConfig', () {
     test('json round-trip, defaults and validation', () {
-      final full = sampleSsh.copyWith(workingDirectory: () => '~/code', launchCommand: '~/.nvm/bin/dsh web');
+      final full = sampleSsh.copyWith(workingDirectory: () => '~/code', launchCommand: '~/.nvm/bin/xrkh serve');
       expect(SshHostConfig.fromJson(jsonDecode(jsonEncode(full.toJson()))), full);
       final min = SshHostConfig.fromJson({'id': 'ssh-x', 'host': 'h', 'user': 'u', 'port': 99999})!;
       expect(min.port, 22);
       expect(min.name, 'h');
-      expect(min.launchCommand, 'dsh web');
+      expect(min.launchCommand, 'xrkh serve');
       expect(min.auth, SshAuthMethod.password);
       expect(SshHostConfig.fromJson({'host': 'h'}), isNull);
       expect(SshHostConfig.newId(), matches(RegExp(r'^ssh-[0-9a-f]{16}$')));
@@ -406,10 +406,10 @@ void main() {
       expect(state.signedIn, isFalse);
     });
 
-    test('default backend is dsh_remote: available, signed out with an empty store', () async {
+    test('default backend is xrk_remote: available, signed out with an empty store', () async {
       final c = ProviderContainer(overrides: [secretStoreProvider.overrideWithValue(secrets)]);
       addTearDown(c.dispose);
-      expect(c.read(relayBackendProvider), isA<DshRemoteRelayBackend>());
+      expect(c.read(relayBackendProvider), isA<XrkRemoteRelayBackend>());
       final state = await c.read(relayAccountProvider.future);
       expect(state.available, isTrue);
       expect(state.server, 'dsh.r2049.cn');

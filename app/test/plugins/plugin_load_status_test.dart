@@ -1,6 +1,6 @@
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/state/plugin_load_status.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/state/plugin_load_status.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _row = PluginBundleRow(rowId: 'worker', moduleName: 'shared-worker', entryId: 'include:worker');

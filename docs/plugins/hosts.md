@@ -1,12 +1,12 @@
 # 主机覆盖、安装与降级
 
-dsh-go 连的主机有三种：手机本机引擎、SSH 主机、中转主机。工具卡走对话记录，哪里都有；其余插槽走 dsh-go 桥接（`dsh-go-bridge`），只有装了桥接的主机才有。
+xrk-mobile 连的主机有三种：手机本机引擎、SSH 主机、中转主机。工具卡走对话记录，哪里都有；其余插槽走 xrk-mobile 桥接（`xrk-bridge`），只有装了桥接的主机才有。
 
 | | 工具卡 | 胶囊 · 菜单 · 状态条 · 面板 | 网页版插件（网页岛） |
 |---|---|---|---|
 | 本机引擎 | ✅ | ✅ 桥接随 App 的运行时安装 | ✅ |
 | SSH 主机 | ✅ | 第二期（桥接还不能装到 SSH 主机） | ✅ |
-| 中转主机 | ✅（随对话记录走） | ❌ 中转不放行 `/dsh-go/*` | ❌ |
+| 中转主机 | ✅（随对话记录走） | ❌ 中转不放行 `/xrk-mobile/*` | ❌ |
 
 ## 装一个本地插件
 
@@ -19,24 +19,24 @@ dsh plugin --profile web add /绝对路径/my-plugin
 | 主机 | 在哪执行 | profile |
 |---|---|---|
 | 手机本机引擎 | App 的「终端」（本机环境里的 shell） | `web`（App 启动引擎用的就是它） |
-| 远程主机 | 主机自己的终端 | 那台主机 `dsh` 实际用的 profile，通常是 `web` |
+| 远程主机 | 主机自己的终端 | 那台主机 `xrkh` 实际用的 profile，通常是 `web` |
 
-- 装上即生效，不用重启（DSH 0.2.1-rc.2 实测：`dsh web` 运行中执行 `add`，几秒内 App 就拿到新清单）。
+- 装上即生效，不用重启（XRK 0.2.1-rc.2 实测：`xrkh serve` 运行中执行 `add`，几秒内 App 就拿到新清单）。
 - 装的是**指向这个目录的链接**：目录要留着，删了插件就起不来。
-- 改了 `package.json` 的 `dshGo`：桥接按文件修改时间自动重读，App 下次拉清单就是新的。
-- 改了 `lib/` 里的代码：要重启引擎（本机引擎在 App 的「引擎」页；开发机重启 `dsh web`）。卸了再装不会重新加载已经载入的代码。
+- 改了 `package.json` 的 `xrkGo`：桥接按文件修改时间自动重读，App 下次拉清单就是新的。
+- 改了 `lib/` 里的代码：要重启引擎（本机引擎在 App 的「引擎」页；开发机重启 `xrkh serve`）。卸了再装不会重新加载已经载入的代码。
 - 卸载：`dsh plugin --profile web remove 包名`。
-- `engines.dsh` 写清支持的 DSH 版本（例如 `>=0.2.1-rc.2 <0.3.0-0`），版本不对时 DSH 会拒装并说明原因。
+- `engines.dsh` 写清支持的 XRK 版本（例如 `>=0.2.1-rc.2 <0.3.0-0`），版本不对时 XRK 会拒装并说明原因。
 
 ### 把文件夹放进本机环境
 
-本机引擎跑在 App 自带的 Linux 环境里（`/root` 是家目录）。建议放在 `/root/.dsh/dsh-go/plugins/<插件名>/`：「重置引擎」时这个目录默认保留；没选保留插件配置（profile）时，重置后再 `add` 一次即可。三种办法：
+本机引擎跑在 App 自带的 Linux 环境里（`/root` 是家目录）。建议放在 `/root/.xrk/xrk-mobile/plugins/<插件名>/`：「重置引擎」时这个目录默认保留；没选保留插件配置（profile）时，重置后再 `add` 一次即可。三种办法：
 
 | 办法 | 怎么做 |
 |---|---|
-| 让 agent 写 | 直接说想要什么（「输入框上面加个按钮，把剪贴板译成英文」）。App 自带的 `dsh-go-plugin` 技能会让它照规矩写、自查、安装 |
-| 终端里拉 | `git clone` 或 `curl` 到 `/root/.dsh/dsh-go/plugins/` |
-| 手机存储 | 文件夹拷到手机的「下载」里；在「设置」里打开「访问手机文件」后，本机环境里是 `/sdcard/Download/`，再 `cp -r` 到 `/root/.dsh/dsh-go/plugins/`。开发时用 `adb push 文件夹 /sdcard/Download/` |
+| 让 agent 写 | 直接说想要什么（「输入框上面加个按钮，把剪贴板译成英文」）。App 自带的 `xrk-plugin` 技能会让它照规矩写、自查、安装 |
+| 终端里拉 | `git clone` 或 `curl` 到 `/root/.xrk/xrk-mobile/plugins/` |
+| 手机存储 | 文件夹拷到手机的「下载」里；在「设置」里打开「访问手机文件」后，本机环境里是 `/sdcard/Download/`，再 `cp -r` 到 `/root/.xrk/xrk-mobile/plugins/`。开发时用 `adb push 文件夹 /sdcard/Download/` |
 
 ## 降级
 
@@ -49,8 +49,8 @@ dsh plugin --profile web add /绝对路径/my-plugin
 | 插件运行中连续 5 次违规 | 本次运行降级成网页版；重启引擎或重新启用插件后恢复 |
 | 宿主半侧没有注册处理 | 那一项置灰（`ready: false`） |
 | 视图组件 App 不认识 | 那个组件画成灰色占位，其余照画 |
-| 网页版 DSH | 工具卡显示官方通用卡；其余插槽在网页版不出现 |
+| 网页版 XRK | 工具卡显示官方通用卡；其余插槽在网页版不出现 |
 
 ## 同一个插件，两边都能用
 
-`dshGo` 清单和 `ctx.dshGo` 只对 App 生效，DSH 网页版看不到它们，所以一个插件可以同时带网页半侧（`dsh.client`）和 `dshGo` 清单：网页版用网页界面，App 用原生界面，互不影响。
+`xrkGo` 清单和 `ctx.xrkGo` 只对 App 生效，XRK 网页版看不到它们，所以一个插件可以同时带网页半侧（`dsh.client`）和 `xrkGo` 清单：网页版用网页界面，App 用原生界面，互不影响。

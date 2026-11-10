@@ -1,14 +1,14 @@
-// dsh-app boot cache for `dsh web`, preloaded by the /usr/local/bin/dsh shim (`--import`).
+// dsh-app boot cache for `xrkh serve`, preloaded by the /usr/local/bin/dsh shim (`--import`).
 //
-// Under proot every path lookup traps into the tracer. While DSH boots, its plugin loader
+// Under proot every path lookup traps into the tracer. While XRK boots, its plugin loader
 // canonicalizes and probes the same read-only package tree thousands of times (realpath walks
 // every component, `existsSync` probes each node_modules level, the same package.json is read
 // again and again). Until the server prints its URL line, those calls for paths below ROOTS are
 // answered from a per-component cache: one lstat per path component, misses remembered. Other
 // paths, other call shapes, and everything after boot go straight to node:fs.
 //
-// ROOTS only holds trees nothing writes to while DSH runs (the runtime replaces them only while
-// DSH is stopped; the app's own files under /opt/dsh-app are written before the launch, and are
+// ROOTS only holds trees nothing writes to while XRK runs (the runtime replaces them only while
+// XRK is stopped; the app's own files under /opt/dsh-app are written before the launch, and are
 // not cached anyway). Symbolic links are followed only into ROOTS; ambiguous path
 // spellings and links outside those trees fall back to node:fs.
 import fs from 'node:fs';
@@ -16,7 +16,7 @@ import { syncBuiltinESMExports } from 'node:module';
 import { resolve } from 'node:path';
 import { isMainThread } from 'node:worker_threads';
 
-export const ROOTS = ['/opt/dsh/', '/opt/node/', '/opt/dsh-go/'];
+export const ROOTS = ['/opt/dsh/', '/opt/node/', '/opt/xrk-mobile/'];
 
 /** Answer for "not cacheable here": the caller uses node:fs. */
 export const PASS = Symbol('pass');
@@ -191,12 +191,12 @@ export function install({ roots = ROOTS, fsImpl = fs, stdout = process.stdout, m
   return uninstall;
 }
 
-// Preloaded by the shim for `dsh web` only; inert anywhere else (workers, other commands).
+// Preloaded by the shim for `xrkh serve` only; inert anywhere else (workers, other commands).
 if (isMainThread && process.argv[2] === 'web' && process.env.DSH_GO_BOOT_CACHE !== '0') {
   try {
     const root = globalThis[Symbol.for('dsh.go.direct')]?.root;
     install({ roots: root ? ROOTS.map((path) => root + path) : ROOTS });
   } catch {
-    // Never in the way of the launch: without the cache DSH just boots slower.
+    // Never in the way of the launch: without the cache XRK just boots slower.
   }
 }

@@ -5,35 +5,35 @@
 // with a moment's state are named below). Add a row without registering it,
 // or drop one and leave it in the index, and this fails.
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/account_state.dart';
-import 'package:dsh_app/state/balance_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/engine/engine_screen.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_hub.dart';
-import 'package:dsh_app/ui/engine_settings/runtime_settings_pages.dart';
-import 'package:dsh_app/ui/engine_settings/subagent_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/web_search_page.dart';
-import 'package:dsh_app/ui/features/permission_page.dart';
-import 'package:dsh_app/ui/pets/pet_settings_page.dart';
-import 'package:dsh_app/ui/phone/phone_control_screen.dart';
-import 'package:dsh_app/ui/providers/providers_page.dart';
-import 'package:dsh_app/ui/remote/remote_screen.dart';
-import 'package:dsh_app/ui/settings/appearance/appearance_page.dart';
-import 'package:dsh_app/ui/settings/about_page.dart';
-import 'package:dsh_app/ui/settings/background_guide_page.dart';
-import 'package:dsh_app/ui/settings/notification_settings.dart';
-import 'package:dsh_app/ui/settings/interface_page.dart';
-import 'package:dsh_app/ui/settings/performance_page.dart';
-import 'package:dsh_app/ui/settings/personalization_page.dart';
-import 'package:dsh_app/ui/settings/privacy_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/state/app_info.dart';
-import 'package:dsh_app/ui/settings/index/spots.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/account_state.dart';
+import 'package:xrk_app/state/balance_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/engine/engine_screen.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_hub.dart';
+import 'package:xrk_app/ui/engine_settings/runtime_settings_pages.dart';
+import 'package:xrk_app/ui/engine_settings/subagent_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/web_search_page.dart';
+import 'package:xrk_app/ui/features/permission_page.dart';
+import 'package:xrk_app/ui/pets/pet_settings_page.dart';
+import 'package:xrk_app/ui/phone/phone_control_screen.dart';
+import 'package:xrk_app/ui/providers/providers_page.dart';
+import 'package:xrk_app/ui/remote/remote_screen.dart';
+import 'package:xrk_app/ui/settings/appearance/appearance_page.dart';
+import 'package:xrk_app/ui/settings/about_page.dart';
+import 'package:xrk_app/ui/settings/background_guide_page.dart';
+import 'package:xrk_app/ui/settings/notification_settings.dart';
+import 'package:xrk_app/ui/settings/interface_page.dart';
+import 'package:xrk_app/ui/settings/performance_page.dart';
+import 'package:xrk_app/ui/settings/personalization_page.dart';
+import 'package:xrk_app/ui/settings/privacy_page.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/state/app_info.dart';
+import 'package:xrk_app/ui/settings/index/spots.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -51,7 +51,7 @@ import '../../shell/golden_harness.dart';
 /// list's spot covers it) or a row that only shows for a moment.
 final Map<SettingsPageId, List<String Function(L10n)>> _unlisted = {
   // The author's profiles are links, not settings to look up.
-  SettingsPageId.about: [(_) => AppInfo.author, (l) => l.hubAboutBilibili, (l) => l.hubAboutX, (l) => l.hubAboutGithub],
+  SettingsPageId.about: [(_) => AppInfo.authorGithubHandle, (l) => l.hubAboutGithub],
   SettingsPageId.performance: [
     (l) => l.performanceAuto,
     (l) => l.performanceFull,
@@ -212,7 +212,7 @@ void main() {
     );
   });
 
-  testWidgets('关于 DSH Go', (tester) async {
+  testWidgets('关于 XRK Go', (tester) async {
     await _check(tester, SettingsPageId.about, () => _app(tester, const AboutPage(), _running()));
   });
 
@@ -264,7 +264,7 @@ void main() {
 
   testWidgets('权限', (tester) async {
     final carrier = FakePluginCarrier();
-    final client = DshClient.withCarrier(carrier);
+    final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
     carrier.handlers['settings/describe'] = (_) => {
       'writable': true,
@@ -317,7 +317,7 @@ void main() {
       tester,
       SettingsPageId.remote,
       () => _app(tester, const RemoteScreen(), _running()),
-      // Once there is a host to come back to; 直连优先 once signed in to DSH Remote.
+      // Once there is a host to come back to; 直连优先 once signed in to XRK Remote.
       absent: {'remote-auto-connect', 'remote-direct'},
     );
   });
@@ -325,7 +325,7 @@ void main() {
   group('引擎参数', () {
     Future<void> pumpEngine(WidgetTester tester, Widget page) async {
       final host = engine.FakeSettingsHost();
-      await engine.pumpPage(tester, page, overrides: engine.engineOverrides(DshClient.withCarrier(host)), height: 3200);
+      await engine.pumpPage(tester, page, overrides: engine.engineOverrides(XrkClient.withCarrier(host)), height: 3200);
     }
 
     testWidgets('引擎参数', (tester) async {

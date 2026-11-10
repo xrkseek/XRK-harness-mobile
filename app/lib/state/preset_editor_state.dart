@@ -4,7 +4,7 @@
 // exact bundle files to write and install. Deleting a custom preset removes
 // the profile bundle that declares it (`pluginManager/removeBundle`).
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'connection_state.dart';
@@ -21,7 +21,7 @@ final presetBundleProvider = FutureProvider.autoDispose.family<PluginBundle?, St
 });
 
 /// Whether this connection may remove bundles (relay hosts can't).
-bool canRemoveBundles(DshClient client) => client.supportsEndpoint('pluginManager/removeBundle');
+bool canRemoveBundles(XrkClient client) => client.supportsEndpoint('pluginManager/removeBundle');
 
 /// Creator mode is available: the `cordis` preset is listed and healthy.
 bool creatorAvailable(List<AgentPresetInfo>? presets) =>

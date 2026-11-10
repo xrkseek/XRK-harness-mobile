@@ -313,7 +313,7 @@ class _ShareImportSheetState extends ConsumerState<ShareImportSheet> {
 
   Widget _row(ImportChange c) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final status = _steps[c.id];
     final on = c.follows == null ? _selected.contains(c.id) : _selected.contains(c.follows);
     String? subtitle;
@@ -384,7 +384,7 @@ class _ShareImportSheetState extends ConsumerState<ShareImportSheet> {
 
   Widget _footer(List<ImportTarget> targets) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final scheme = theme.colorScheme;
     Widget primary(String label, VoidCallback? onPressed, {bool busy = false}) => FilledButton(
       key: const ValueKey('share-import-primary'),
@@ -530,7 +530,7 @@ class _Waiting extends StatelessWidget {
         child: CircularProgressIndicator(
           strokeWidth: 2,
           strokeCap: StrokeCap.round,
-          color: DshColors.of(context).textTertiary,
+          color: XrkColors.of(context).textTertiary,
         ),
       ),
     ),
@@ -548,7 +548,7 @@ class _Note extends StatelessWidget {
     child: Text(
       text,
       textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: DshColors.of(context).textTertiary),
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: XrkColors.of(context).textTertiary),
     ),
   );
 }

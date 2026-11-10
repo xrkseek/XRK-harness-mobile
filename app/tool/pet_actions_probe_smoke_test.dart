@@ -2,8 +2,8 @@
 // app/tool/pet_actions_probe.py separately requires actual Android overlay UI.
 import 'dart:io';
 
-import 'package:dsh_app/dev/pet_actions_probe_main.dart';
-import 'package:dsh_app/pets/pet_overlay_actions.dart';
+import 'package:xrk_app/dev/pet_actions_probe_main.dart';
+import 'package:xrk_app/pets/pet_overlay_actions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

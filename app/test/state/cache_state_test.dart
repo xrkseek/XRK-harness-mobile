@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/agents_state.dart';
-import 'package:dsh_app/state/commands_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/session_detail_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/usage_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/agents_state.dart';
+import 'package:xrk_app/state/commands_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/session_detail_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/usage_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,7 +31,7 @@ class _Connection extends Notifier<HostConnection?> {
 
 final _connection = NotifierProvider<_Connection, HostConnection?>(_Connection.new);
 
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client(this.fake) : super.withCarrier(fake);
   final FakePluginCarrier fake;
   final hosts = StreamController<HostEvent>.broadcast();
@@ -181,7 +181,7 @@ void main() {
     final fail = Completer<List<SessionSummary>>();
     a.lists.add(fail);
     final failing = notifier.refresh();
-    fail.completeError(const DshTransportException('offline'));
+    fail.completeError(const XrkTransportException('offline'));
     await failing;
     expect(container.read(sessionsProvider).requireValue.single.sessionId, 'new');
   });

@@ -18,7 +18,7 @@ import '../update/update_http.dart';
 /// newer `revision` from the network replaces both. Sources are tried in
 /// order with the one that worked last time first, like the update feed.
 ///
-/// Build-time override: `--dart-define=DSH_COMMUNITY_FEED=https://…/community.json`
+/// Build-time override: `--dart-define=XRK_COMMUNITY_FEED=https://…/community.json`
 /// tries a self-hosted copy first.
 
 const communityAsset = 'assets/community/community.json';
@@ -30,7 +30,7 @@ const communityRefreshInterval = Duration(hours: 6);
 /// The largest feed accepted.
 const communityMaxBytes = 256 * 1024;
 
-const _feedDefine = String.fromEnvironment('DSH_COMMUNITY_FEED');
+const _feedDefine = String.fromEnvironment('XRK_COMMUNITY_FEED');
 
 /// Where `community.json` is fetched from, in order: a self-hosted copy (when
 /// built with one), GitHub raw, then jsDelivr's two CDNs (they serve the

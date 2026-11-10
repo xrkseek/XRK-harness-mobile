@@ -2,11 +2,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/field_sheets.dart';
-import 'package:dsh_app/ui/engine_settings/schema_fields.dart';
-import 'package:dsh_app/ui/engine_settings/schema_form.dart' show SchemaFieldTile;
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/field_sheets.dart';
+import 'package:xrk_app/ui/engine_settings/schema_fields.dart';
+import 'package:xrk_app/ui/engine_settings/schema_form.dart' show SchemaFieldTile;
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -99,7 +99,7 @@ Future<void> pumpCatalogScene(
   await tester.pumpWidget(
     goldenApp(
       brightness: brightness,
-      overrides: engineOverrides(DshClient.withCarrier(host)),
+      overrides: engineOverrides(XrkClient.withCarrier(host)),
       home: EngineSettingsPage(ns: 'catalog', title: scene.plugin ? scene.name : '插件配置'),
     ),
   );

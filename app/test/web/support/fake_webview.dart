@@ -8,7 +8,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/ui/plugins/islands/island_platform.dart';
+import 'package:xrk_app/ui/plugins/islands/island_platform.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 

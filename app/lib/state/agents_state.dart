@@ -1,6 +1,6 @@
 // Subagents and agent teams of the active host, the native counterpart of
-// DSH Web's `dsh-client-ui-subagent` lineage and the experimental Agent Teams
-// panel. See packages/dsh_client/lib/src/agents_api.dart for the wire side.
+// XRK Web's `dsh-client-ui-subagent` lineage and the experimental Agent Teams
+// panel. See packages/xrk_client/lib/src/agents_api.dart for the wire side.
 //
 // The lineage is built from the session list the app already keeps
 // (`session/list` lists subagent children with their parent and carries the
@@ -11,7 +11,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/l10n.dart';
@@ -279,7 +279,7 @@ final headerAgentsProvider = Provider.autoDispose.family<HeaderAgents, String>((
 // Agent team
 
 /// The Agent Teams bundle (Team service, tools and the official panel).
-const agentTeamBundle = '@deepseek-ai/dsh-experimental-agent-team-profile';
+const agentTeamBundle = '@xrkseek/harness-cli-experimental-agent-team-profile';
 
 /// The bundle row on the active host; null while unknown or not offered.
 final agentTeamBundleProvider = Provider<AsyncValue<PluginBundle?>>((ref) {
@@ -322,7 +322,7 @@ class TeamController extends Notifier<AsyncValue<TeamSnapshot?>> {
     return hint == null ? const AsyncLoading() : AsyncData(hint);
   }
 
-  Future<void> _seed(DshClient client, {required bool retainOnError}) async {
+  Future<void> _seed(XrkClient client, {required bool retainOnError}) async {
     // Notifier.ref changes when dependencies rebuild; this read belongs to this build.
     final r = ref;
     final ticket = ++_seedTicket;
@@ -343,7 +343,7 @@ class TeamController extends Notifier<AsyncValue<TeamSnapshot?>> {
     }
   }
 
-  void _onControl(SessionControlUpdate update, DshClient client) {
+  void _onControl(SessionControlUpdate update, XrkClient client) {
     if (!ref.mounted) return;
     switch (update) {
       case SessionControlBaseline(:final projections):
@@ -417,7 +417,7 @@ List<TeamMemberView> teamMembers(TeamSnapshot team, Map<String, SessionSummary> 
 ];
 
 /// One-shot read of a member's recent log (a follow snapshot, then closed).
-Future<List<SessionLogEvent>> _recentEvents(DshClient client, String sessionId) async {
+Future<List<SessionLogEvent>> _recentEvents(XrkClient client, String sessionId) async {
   final done = Completer<List<SessionLogEvent>>();
   final sub = client
       .watch(

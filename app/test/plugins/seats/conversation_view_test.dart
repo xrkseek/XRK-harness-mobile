@@ -8,14 +8,14 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/plugins/seams/seams.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/plugins/islands/islands.dart';
-import 'package:dsh_app/ui/plugins/seats/plugin_seat_page.dart';
-import 'package:dsh_app/ui/plugins/seats/session_plugins_tab.dart';
-import 'package:dsh_app/ui/session/session_detail_page.dart';
-import 'package:dsh_app/ui/web/web_target.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/seams/seams.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/plugins/islands/islands.dart';
+import 'package:xrk_app/ui/plugins/seats/plugin_seat_page.dart';
+import 'package:xrk_app/ui/plugins/seats/session_plugins_tab.dart';
+import 'package:xrk_app/ui/session/session_detail_page.dart';
+import 'package:xrk_app/ui/web/web_target.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -30,8 +30,8 @@ SlotOccupant _view(String cell, {String package = probe, String? label, bool off
 /// The probe's 「记忆」 view beside the official Chat and Trajectory.
 final _views = <String, List<SlotOccupant>>{
   Slots.conversationView: [
-    _view('chat', package: '@deepseek-ai/dsh-client-ui-conversation', label: 'Chat', official: true),
-    _view('trajectory', package: '@deepseek-ai/dsh-client-ui-trajectory', label: 'Trajectory', official: true),
+    _view('chat', package: '@xrkseek/harness-cli-client-ui-conversation', label: 'Chat', official: true),
+    _view('trajectory', package: '@xrkseek/harness-cli-client-ui-trajectory', label: 'Trajectory', official: true),
     _view('memory', label: '记忆'),
   ],
 };
@@ -59,7 +59,7 @@ void main() {
   setUp(openedWeb.clear);
 
   group('plan', () {
-    test('a view is a page island in its conversation; the official views stay DSH Web\'s', () {
+    test('a view is a page island in its conversation; the official views stay XRK Web\'s', () {
       final plan = _plan(seatOverrides(inventory: seatInventory(occupancy: _views)));
       final item = plan.visible.single;
       expect(item.occupant.cell, 'memory');
@@ -69,7 +69,7 @@ void main() {
       expect(spec.slot, Slots.conversationView);
       expect(spec.cell, 'memory');
       expect(spec.sessionId, 's1');
-      expect(spec.maskOfficial, isFalse, reason: 'DSH Web shows one view at a time: nothing to hide');
+      expect(spec.maskOfficial, isFalse, reason: 'XRK Web shows one view at a time: nothing to hide');
     });
 
     test('no route guard on this phone\'s engine: 在网页版打开', () {

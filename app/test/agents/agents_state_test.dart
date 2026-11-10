@@ -1,9 +1,9 @@
 // The lineage, header facts and team roster derived from the host session
-// list (support.dart mirrors DSH 0.2.1-rc.2's `session/list`).
+// list (support.dart mirrors XRK 0.2.1-rc.2's `session/list`).
 
-import 'package:dsh_app/state/agents_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/agents_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

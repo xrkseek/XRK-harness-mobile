@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'dart:io' show ZLibDecoder;
 import 'dart:typed_data';
 
-import 'package:dsh_app/diagnostics/zip_writer.dart' show crc32;
+import 'package:xrk_app/diagnostics/zip_writer.dart' show crc32;
 import 'package:flutter_test/flutter_test.dart';
 
 /// One entry as a reader sees it.

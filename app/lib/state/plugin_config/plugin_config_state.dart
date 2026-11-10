@@ -13,12 +13,12 @@
 // its fields still hold what the person saw.
 //
 // Only plugins (PluginConfigScope: rows of a bundle the person chose, from
-// `pluginManager/listBundles`): the Host lists DSH's core too, and none of
+// `pluginManager/listBundles`): the Host lists XRK's core too, and none of
 // it is listed, read or written here, by the state or by the Host interface.
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -68,8 +68,8 @@ final pluginConfigScopeProvider = Provider<PluginConfigScope>((ref) {
   return PluginConfigScope.of(bundles);
 });
 
-/// The Host interface the page runs on: the dsh-go bridge's complete plugin
-/// configuration where the Host has it, else the live fields DSH serves
+/// The Host interface the page runs on: the xrk-mobile bridge's complete plugin
+/// configuration where the Host has it, else the live fields XRK serves
 /// through the engine settings (the relay never reaches the bridge).
 final pluginConfigApiProvider = Provider<PluginConfigApi?>((ref) {
   final changes = StreamController<void>.broadcast();
@@ -86,7 +86,7 @@ final pluginConfigApiProvider = Provider<PluginConfigApi?>((ref) {
   return bridge;
 });
 
-/// [PluginConfigApi] over DSH 0.2.1's `settings/describe` and
+/// [PluginConfigApi] over XRK 0.2.1's `settings/describe` and
 /// `settings/mutate`, through [engineSettingsProvider] (one read shared with
 /// the engine pages, its ordered optimistic writes and conflict retry): only
 /// `.volatile()` fields, every one of them live.
@@ -166,7 +166,7 @@ class EngineSettingsPluginConfigApi implements PluginConfigApi {
     };
   }
 
-  DshClient get _client {
+  XrkClient get _client {
     final client = _ref.read(activeConnectionProvider).value?.client;
     if (client == null) {
       throw PluginConfigFailure(PluginConfigFailureKind.unreachable, appL10n.commonEngineUnreachable);
@@ -251,7 +251,7 @@ class PluginConfigState {
   /// the ones read so far. Only a plugin's is handed out ([operator []]).
   final Map<String, PluginConfigForm> forms;
 
-  /// Every entry the Host lists, in its order: DSH's core included (its
+  /// Every entry the Host lists, in its order: XRK's core included (its
   /// curated pages and the reasons an entry can't be set read it).
   final Map<String, PluginConfigEntry> entries;
 

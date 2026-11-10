@@ -1,25 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/share_code/profile_export.dart';
-import 'package:dsh_app/share_code/restore_point.dart';
-import 'package:dsh_app/share_code/share_codec.dart';
-import 'package:dsh_app/share_code/share_code_state.dart';
-import 'package:dsh_app/share_code/share_import.dart';
-import 'package:dsh_app/share_code/share_link.dart';
-import 'package:dsh_app/share_code/share_models.dart';
-import 'package:dsh_app/share_code/share_net.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/share_code/profile_export.dart';
+import 'package:xrk_app/share_code/restore_point.dart';
+import 'package:xrk_app/share_code/share_codec.dart';
+import 'package:xrk_app/share_code/share_code_state.dart';
+import 'package:xrk_app/share_code/share_import.dart';
+import 'package:xrk_app/share_code/share_link.dart';
+import 'package:xrk_app/share_code/share_models.dart';
+import 'package:xrk_app/share_code/share_net.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_engine.dart';
 
 const _integrity = 'sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==';
 
-HostConnection _host(DshClient client, {bool local = true, String label = '本机'}) => HostConnection(
+HostConnection _host(XrkClient client, {bool local = true, String label = '本机'}) => HostConnection(
   client: client,
   label: label,
   isLocal: local,
@@ -50,20 +50,20 @@ FakeEngine _sourceEngine() {
     ..addBundle('dsh-writer', version: '2.0.0', source: 'github:acme/dsh-writer#v2.0.0')
     ..addBundle('my-local', version: '0.0.1', source: '/root/plugins/my-local')
     ..addBundle(
-      '@deepseek-ai/dsh-experimental-session-titles-bundle',
+      '@xrkseek/harness-cli-experimental-session-titles-bundle',
       official: true,
       optional: true,
       enabled: true,
       installed: false,
     )
     ..addBundle(
-      '@deepseek-ai/dsh-experimental-terminal-bundle',
+      '@xrkseek/harness-cli-experimental-terminal-bundle',
       official: true,
       optional: true,
       enabled: false,
       installed: false,
     )
-    ..addBundle('@deepseek-ai/dsh-base', installed: false);
+    ..addBundle('@xrkseek/harness-cli-base', installed: false);
   e.presets.add({'id': 'writer', 'name': '写作'});
   return e;
 }
@@ -73,17 +73,17 @@ void main() {
     late GuestFs fs;
     setUp(() {
       fs = tempGuest();
-      writeGuest(fs, '/root/.dsh/skills/outline/SKILL.md', '---\nname: outline\ndescription: 列提纲\n---\n先列提纲。');
-      writeGuest(fs, '/root/.dsh/skills/outline/scripts/count.sh', 'wc -l "\$1"');
-      writeGuest(fs, '/root/.dsh/skills/quick.md', '---\nname: quick\ndescription: "快速回答"\n---\n简短。');
-      writeGuest(fs, '/root/.dsh/skills/.system/hidden/SKILL.md', 'x');
-      writeGuest(fs, '/root/.dsh/AGENTS.md', '<!-- dsh-app:managed -->\n托管内容');
+      writeGuest(fs, '/root/.xrk/skills/outline/SKILL.md', '---\nname: outline\ndescription: 列提纲\n---\n先列提纲。');
+      writeGuest(fs, '/root/.xrk/skills/outline/scripts/count.sh', 'wc -l "\$1"');
+      writeGuest(fs, '/root/.xrk/skills/quick.md', '---\nname: quick\ndescription: "快速回答"\n---\n简短。');
+      writeGuest(fs, '/root/.xrk/skills/.system/hidden/SKILL.md', 'x');
+      writeGuest(fs, '/root/.xrk/AGENTS.md', '<!-- dsh-app:managed -->\n托管内容');
       writeGuest(fs, '/root/.agents/AGENTS.md', '# 我的习惯\n回答用中文。\n');
     });
     tearDown(() => fs.root.parent.deleteSync(recursive: true));
 
     test('lists what can travel, with sizes, and builds the share from the ticks', () async {
-      final client = DshClient.withCarrier(_sourceEngine());
+      final client = XrkClient.withCarrier(_sourceEngine());
       final source = await loadProfileExport(client, hostLabel: '本机', isLocal: true, fs: fs);
 
       expect(source.section(ExportSection.settings).map((i) => i.id), [
@@ -96,7 +96,7 @@ void main() {
         'plugin:dsh-notes',
         'plugin:dsh-writer',
         'plugin:my-local',
-        'plugin:@deepseek-ai/dsh-experimental-session-titles-bundle',
+        'plugin:@xrkseek/harness-cli-experimental-session-titles-bundle',
       ]);
       expect(plugins['plugin:dsh-notes']!.subtitle, 'npm · 1.4.2 · 含预设「写作」');
       expect(plugins['plugin:dsh-writer']!.subtitle, 'GitHub · acme/dsh-writer');
@@ -126,7 +126,7 @@ void main() {
     });
 
     test('a remote engine offers no files', () async {
-      final client = DshClient.withCarrier(_sourceEngine());
+      final client = XrkClient.withCarrier(_sourceEngine());
       final source = await loadProfileExport(client, hostLabel: 'Mac · SSH', isLocal: false, fs: fs);
       expect(source.section(ExportSection.skills), isEmpty);
       expect(source.section(ExportSection.agentsMd), isEmpty);
@@ -150,7 +150,7 @@ void main() {
   group('import', () {
     late GuestFs fs;
     late FakeEngine engine;
-    late DshClient client;
+    late XrkClient client;
     late FakeShareNet net;
 
     ProfileShare profile({String integrity = _integrity}) => ProfileShare(
@@ -170,7 +170,7 @@ void main() {
         ),
         const SharedPlugin(name: 'dsh-writer', source: PluginSourceKind.github, spec: 'github:acme/dsh-writer#v2.0.0'),
         const SharedPlugin(
-          name: '@deepseek-ai/dsh-experimental-session-titles-bundle',
+          name: '@xrkseek/harness-cli-experimental-session-titles-bundle',
           source: PluginSourceKind.official,
           title: '对话标题',
         ),
@@ -188,38 +188,38 @@ void main() {
 
     setUp(() {
       fs = tempGuest();
-      writeGuest(fs, '/root/.dsh/skills/outline/SKILL.md', '旧的提纲技能');
+      writeGuest(fs, '/root/.xrk/skills/outline/SKILL.md', '旧的提纲技能');
       writeGuest(
         fs,
-        '/root/.dsh/profiles/web/package.json',
+        '/root/.xrk/profiles/web/package.json',
         jsonEncode({
           'dependencies': {'dsh-notes': '1.2.0'},
           'dsh': {
             'profile': {
-              'bundles': ['@deepseek-ai/dsh-web-app', 'dsh-notes'],
+              'bundles': ['@xrkseek/harness-cli-web-app', 'dsh-notes'],
             },
           },
         }),
       );
       writeGuest(
         fs,
-        '/root/.dsh/profiles/web/node_modules/dsh-notes/package.json',
+        '/root/.xrk/profiles/web/node_modules/dsh-notes/package.json',
         '{"name":"dsh-notes","version":"1.2.0"}',
       );
-      writeGuest(fs, '/root/.dsh/profiles/web/cordis.patch.yml', 'subagent:\n  maxDepth: 2\n');
+      writeGuest(fs, '/root/.xrk/profiles/web/cordis.patch.yml', 'subagent:\n  maxDepth: 2\n');
       engine = FakeEngine()
         ..addSettings('subagent', base: {'maxDepth': 1})
         ..addSettings('ui-theme', base: {'preference': 'system'})
         ..addBundle('dsh-notes', version: '1.2.0', source: 'dsh-notes@1.2.0')
         ..addBundle(
-          '@deepseek-ai/dsh-experimental-session-titles-bundle',
+          '@xrkseek/harness-cli-experimental-session-titles-bundle',
           official: true,
           optional: true,
           enabled: false,
           installed: false,
         );
       engine.presets.add({'id': 'standard'});
-      client = DshClient.withCarrier(engine);
+      client = XrkClient.withCarrier(engine);
       net = FakeShareNet()
         ..npm['dsh-notes@1.4.2'] = const NpmFacts(integrity: _integrity, publisher: 'acme', unpackedSize: 9615);
     });
@@ -236,7 +236,7 @@ void main() {
       expect(notes.facts?.publisher, 'acme');
       expect(byId['plugin:dsh-writer']!.kind, ChangeKind.install);
       expect(byId['plugin:dsh-writer']!.integrity, IntegrityStatus.unverifiable);
-      expect(byId['plugin:@deepseek-ai/dsh-experimental-session-titles-bundle']!.kind, ChangeKind.enable);
+      expect(byId['plugin:@xrkseek/harness-cli-experimental-session-titles-bundle']!.kind, ChangeKind.enable);
 
       expect(byId['preset:writer']!.follows, 'plugin:dsh-notes');
       expect(byId.containsKey('preset:standard'), isFalse, reason: 'already there');
@@ -267,7 +267,7 @@ void main() {
       expect(mismatch.changes.firstWhere((c) => c.id == 'plugin:dsh-notes').blocked, '与分享时的版本不一致');
       expect(mismatch.changes.firstWhere((c) => c.id == 'plugin:dsh-notes').integrity, IntegrityStatus.mismatch);
 
-      final relay = DshClient.withCarrier(FakeEngine(allowInstall: false)..addSettings('subagent'));
+      final relay = XrkClient.withCarrier(FakeEngine(allowInstall: false)..addSettings('subagent'));
       final plan = await planImport(
         profile(),
         ImportTarget(_host(relay, local: false, label: 'Mac · 远程'), isActive: true),
@@ -309,7 +309,7 @@ void main() {
       expect(steps, [
         'plugin:dsh-notes',
         'plugin:dsh-writer',
-        'plugin:@deepseek-ai/dsh-experimental-session-titles-bundle',
+        'plugin:@xrkseek/harness-cli-experimental-session-titles-bundle',
         'preset:writer',
         'settings:subagent',
         'skill:outline',
@@ -328,13 +328,13 @@ void main() {
 
       expect(fs.readSkill('outline'), {'SKILL.md': '新的提纲技能'});
       expect(
-        fs.file('/root/.dsh/backups/share-import-20261024-153012/skills/outline/SKILL.md').readAsStringSync(),
+        fs.file('/root/.xrk/backups/share-import-20261024-153012/skills/outline/SKILL.md').readAsStringSync(),
         '旧的提纲技能',
       );
       expect(fs.file(GuestFs.importedAgentsMd).readAsStringSync(), '回答用中文。');
 
       final lkg = jsonDecode(RestorePoint(fs).lkgFile.readAsStringSync()) as Map<String, Object?>;
-      expect(lkg['bundles'], ['@deepseek-ai/dsh-web-app', 'dsh-notes']);
+      expect(lkg['bundles'], ['@xrkseek/harness-cli-web-app', 'dsh-notes']);
       expect(lkg['deps'], ['dsh-notes']);
       expect(lkg['versions'], {'dsh-notes': '1.2.0'});
       expect(lkg['patch'], 'subagent:\n  maxDepth: 2\n');

@@ -2,13 +2,13 @@
 // for the engine), and the layer over the app comes and goes without the page under it losing
 // its state.
 
-import 'package:dsh_app/app.dart';
-import 'package:dsh_app/launch/launch_state.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/launch/launch_overlay.dart';
-import 'package:dsh_app/ui/shell/root_gate.dart';
+import 'package:xrk_app/app.dart';
+import 'package:xrk_app/launch/launch_state.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/launch/launch_overlay.dart';
+import 'package:xrk_app/ui/shell/root_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -90,7 +90,7 @@ void main() {
           settingsProvider.overrideWith(() => FakeSettings(const AppSettings(loaded: true))),
           localRuntimeProvider.overrideWith(() => runtime),
         ],
-        child: const DshApp(home: _Counter()),
+        child: const XrkApp(home: _Counter()),
       ),
     );
     await tester.pump();
@@ -118,7 +118,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [settingsProvider.overrideWith(() => FakeSettings(const AppSettings(loaded: true)))],
-        child: const DshApp(home: _Counter()),
+        child: const XrkApp(home: _Counter()),
       ),
     );
     await tester.pump();

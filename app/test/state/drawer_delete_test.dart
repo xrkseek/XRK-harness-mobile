@@ -2,17 +2,17 @@
 // Never connects to or deletes a user's sessions.
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/session_deletion_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_app/ui/shell/drawer/selection_bars.dart';
-import 'package:dsh_app/ui/shell/drawer/session_deletion.dart';
-import 'package:dsh_app/ui/shell/drawer/session_tile.dart';
-import 'package:dsh_app/ui/shell/home_shell.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/session_deletion_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_app/ui/shell/drawer/selection_bars.dart';
+import 'package:xrk_app/ui/shell/drawer/session_deletion.dart';
+import 'package:xrk_app/ui/shell/drawer/session_tile.dart';
+import 'package:xrk_app/ui/shell/home_shell.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,8 +24,8 @@ import '../workspace/support.dart';
 import 'read_list_refresh_test.dart' show SwitchConnection, switchConnectionProvider;
 
 class _DeletionBackend implements SessionDeletionBackend {
-  final hosts = <DshClient, DrawerHost>{};
-  final calls = <({DshClient client, String id})>[];
+  final hosts = <XrkClient, DrawerHost>{};
+  final calls = <({XrkClient client, String id})>[];
   final failures = <String, String>{};
   bool available = true;
   Object? supportError;
@@ -33,20 +33,20 @@ class _DeletionBackend implements SessionDeletionBackend {
   Completer<void>? firstDeleteReply;
 
   @override
-  Future<bool> supported(DshClient client) async {
+  Future<bool> supported(XrkClient client) async {
     if (supportError case final error?) throw error;
     if (supportReply != null) return supportReply!.future;
     return available;
   }
 
   @override
-  Future<void> delete(DshClient client, String sessionId) async {
+  Future<void> delete(XrkClient client, String sessionId) async {
     calls.add((client: client, id: sessionId));
     if (calls.length == 1 && firstDeleteReply != null) await firstDeleteReply!.future;
     final code = failures[sessionId];
     if (code == 'connection-lost') throw const DshClosedException('controlled fake transport loss');
     if (code == 'protocol-error') throw const DshProtocolException('controlled fake protocol error');
-    if (code != null) throw DshRemoteException(code, 'controlled fake rejection');
+    if (code != null) throw XrkRemoteException(code, 'controlled fake rejection');
     final host = hosts[client]!;
     // Only a test fixture list is modified, not a file or real backend.
     host.sessions.removeWhere((row) => row['sessionId'] == sessionId);

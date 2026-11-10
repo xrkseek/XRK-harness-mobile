@@ -1,15 +1,15 @@
 // Which conversation is the companion's on each host (full mode). It is an
-// ordinary session on that host, opened with the `dsh-go-companion-full` Agent
+// ordinary session on that host, opened with the `xrk-mobile-companion-full` Agent
 // preset: her persona with the host's standard tools, and the phone's when phone
 // control is on. This file remembers its id, keeps it out of the chat drawer and
 // out of chat alerts. Hosts whose engine lacks the preset (an older runtime, a
-// remote DSH without an updated bridge) still get a conversation: the persona
+// remote XRK without an updated bridge) still get a conversation: the persona
 // then travels in the first message, on the engine's default preset.
 
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -19,8 +19,8 @@ import '../state/connection_state.dart';
 import '../state/hosts_state.dart';
 import '../state/sessions_state.dart';
 
-/// Full mode's preset, declared in runtime/bridge/dsh-go-bridge/cordis.patch.yml.
-const companionPresetId = 'dsh-go-companion-full';
+/// Full mode's preset, declared in runtime/bridge/xrk-bridge/cordis.patch.yml.
+const companionPresetId = 'xrk-mobile-companion-full';
 
 const _sessionsKey = 'companion_sessions';
 const _lastSeenKey = 'companion_last_seen';
@@ -129,7 +129,7 @@ class CompanionSessions extends Notifier<Map<String, CompanionBinding>> {
     return binding;
   }
 
-  Future<bool> _selectPreset(DshClient client, String id, bool Function() current) async {
+  Future<bool> _selectPreset(XrkClient client, String id, bool Function() current) async {
     try {
       final presets = await client.listAgentPresets();
       if (!current()) return false;
@@ -143,11 +143,11 @@ class CompanionSessions extends Notifier<Map<String, CompanionBinding>> {
 
   /// Only when the host says so: a list that's short or a network that's down
   /// must not cost her the conversation.
-  Future<bool> _gone(DshClient client, String sessionId) async {
+  Future<bool> _gone(XrkClient client, String sessionId) async {
     try {
       await client.projections(sessionId);
       return false;
-    } on DshRemoteException catch (error) {
+    } on XrkRemoteException catch (error) {
       return error.code == 'session/not-found';
     }
   }
@@ -176,7 +176,7 @@ enum CompanionMode {
   /// The phone calls the model itself: chat only, no engine, no host.
   light,
 
-  /// A conversation on the active host's DSH engine.
+  /// A conversation on the active host's XRK engine.
   full,
 }
 
@@ -393,7 +393,7 @@ Future<void> companionMarkSeen(DateTime now) async {
 }
 
 /// The persona for hosts without the preset. Keep in step with the preset's in
-/// runtime/bridge/dsh-go-bridge/cordis.patch.yml.
+/// runtime/bridge/xrk-bridge/cordis.patch.yml.
 const companionInlinePersona = '''
 （从现在起请扮演下面的角色，直接开始，不要复述这段设定。）
 $companionPersonaCore''';

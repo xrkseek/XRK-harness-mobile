@@ -3,15 +3,15 @@
 // chip in front of a chevron — ends on the same edge, 16dp in from the card.
 // Glyphs are measured by their ink (Material path extents), not their boxes.
 
-import 'package:dsh_app/state/engine_settings_state.dart';
-import 'package:dsh_app/ui/agents/agent_widgets.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/overview_card.dart';
-import 'package:dsh_app/ui/common/row_marks.dart';
-import 'package:dsh_app/ui/common/status_chip.dart';
-import 'package:dsh_app/ui/plugins/plugin_inventory_page.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/state/engine_settings_state.dart';
+import 'package:xrk_app/ui/agents/agent_widgets.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/overview_card.dart';
+import 'package:xrk_app/ui/common/row_marks.dart';
+import 'package:xrk_app/ui/common/status_chip.dart';
+import 'package:xrk_app/ui/plugins/plugin_inventory_page.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

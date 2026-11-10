@@ -1,9 +1,9 @@
 // Frozen playback tests. Fake time exercises Timer cancellation, not the
 // Stopwatch-derived exact remaining milliseconds (which need a real clock).
-import 'package:dsh_app/pets/pet_pack.dart';
-import 'package:dsh_app/pets/pet_sheets.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/ui/pets/pet_sprite.dart';
+import 'package:xrk_app/pets/pet_pack.dart';
+import 'package:xrk_app/pets/pet_sheets.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/ui/pets/pet_sprite.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 

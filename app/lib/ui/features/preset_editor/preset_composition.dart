@@ -2,7 +2,7 @@
 // the `agentPresets/read` YAML (entry-list dialect, `!!js` included) with
 // the official Chinese names of their packages, the persona (system prompt),
 // and the bundle that declares a new or changed preset — the only way a
-// preset is written (`@deepseek-ai/dsh-agent-preset` README: a bundle patch
+// preset is written (`@xrkseek/harness-cli-agent-preset` README: a bundle patch
 // installed with plugin_manager; creator mode writes it in a conversation).
 
 import 'dart:convert';
@@ -14,35 +14,35 @@ import '../../../l10n/l10n.dart';
 /// Official names (`locale/zh.json` meta of each package) of the modules a
 /// preset row can name; groups are named by their row id below.
 Map<String, String> get _moduleNames => {
-  '@deepseek-ai/dsh-agent-instructions': appL10n.featuresModuleInstructions,
-  '@deepseek-ai/dsh-time-context': appL10n.featuresModuleTime,
-  '@deepseek-ai/dsh-tool-bash': appL10n.featuresModuleBash,
-  '@deepseek-ai/dsh-tool-bash-persistent': appL10n.featuresModulePersistentBash,
-  '@deepseek-ai/dsh-tool-pwsh': appL10n.featuresModulePowerShell,
-  '@deepseek-ai/dsh-tool-fs': appL10n.featuresModuleFiles,
-  '@deepseek-ai/dsh-tool-fs-search': appL10n.featuresModuleFileSearch,
-  '@deepseek-ai/dsh-tool-jobs': appL10n.featuresModuleJobs,
-  '@deepseek-ai/dsh-tool-schedule': appL10n.featuresModuleSchedule,
-  '@deepseek-ai/dsh-skill-filesystem': appL10n.featuresModuleLocalSkills,
-  '@deepseek-ai/dsh-tool-skill': appL10n.featuresModuleSkillTool,
-  '@deepseek-ai/dsh-command-goal': appL10n.featuresModuleGoalCommand,
-  '@deepseek-ai/dsh-tool-goal': appL10n.featuresModuleGoalTool,
-  '@deepseek-ai/dsh-plan-mode': appL10n.featuresModulePlan,
-  '@deepseek-ai/dsh-compaction-basic': appL10n.featuresModuleCompaction,
-  '@deepseek-ai/dsh-command-compact': appL10n.featuresModuleCompactCommand,
-  '@deepseek-ai/dsh-tool-ask-user': appL10n.featuresModuleAskUser,
-  '@deepseek-ai/dsh-tool-todo': appL10n.featuresModuleTodo,
-  '@deepseek-ai/dsh-tool-web': appL10n.featuresModuleWeb,
-  '@deepseek-ai/dsh-tool-present': appL10n.featuresModulePresent,
-  '@deepseek-ai/dsh-tool-cordis': appL10n.featuresModuleCordis,
-  '@deepseek-ai/dsh-tool-subagent': appL10n.featuresModuleSubagent,
-  '@deepseek-ai/dsh-tool-subagent-control': appL10n.featuresModuleSubagentControl,
-  '@deepseek-ai/dsh-tool-workflow': appL10n.featuresModuleWorkflow,
-  '@deepseek-ai/dsh-plugin-manager/tools': appL10n.featuresModulePluginManager,
-  '@deepseek-ai/dsh-plugin-market/tools': appL10n.featuresModulePluginMarket,
-  '@deepseek-ai/dsh-agent-tool-presentation': appL10n.featuresModuleToolCalls,
-  '@deepseek-ai/dsh-terminal': appL10n.featuresModuleTerminal,
-  '@deepseek-ai/dsh-persona': appL10n.featuresModulePersona,
+  '@xrkseek/harness-cli-agent-instructions': appL10n.featuresModuleInstructions,
+  '@xrkseek/harness-cli-time-context': appL10n.featuresModuleTime,
+  '@xrkseek/harness-cli-tool-bash': appL10n.featuresModuleBash,
+  '@xrkseek/harness-cli-tool-bash-persistent': appL10n.featuresModulePersistentBash,
+  '@xrkseek/harness-cli-tool-pwsh': appL10n.featuresModulePowerShell,
+  '@xrkseek/harness-cli-tool-fs': appL10n.featuresModuleFiles,
+  '@xrkseek/harness-cli-tool-fs-search': appL10n.featuresModuleFileSearch,
+  '@xrkseek/harness-cli-tool-jobs': appL10n.featuresModuleJobs,
+  '@xrkseek/harness-cli-tool-schedule': appL10n.featuresModuleSchedule,
+  '@xrkseek/harness-cli-skill-filesystem': appL10n.featuresModuleLocalSkills,
+  '@xrkseek/harness-cli-tool-skill': appL10n.featuresModuleSkillTool,
+  '@xrkseek/harness-cli-command-goal': appL10n.featuresModuleGoalCommand,
+  '@xrkseek/harness-cli-tool-goal': appL10n.featuresModuleGoalTool,
+  '@xrkseek/harness-cli-plan-mode': appL10n.featuresModulePlan,
+  '@xrkseek/harness-cli-compaction-basic': appL10n.featuresModuleCompaction,
+  '@xrkseek/harness-cli-command-compact': appL10n.featuresModuleCompactCommand,
+  '@xrkseek/harness-cli-tool-ask-user': appL10n.featuresModuleAskUser,
+  '@xrkseek/harness-cli-tool-todo': appL10n.featuresModuleTodo,
+  '@xrkseek/harness-cli-tool-web': appL10n.featuresModuleWeb,
+  '@xrkseek/harness-cli-tool-present': appL10n.featuresModulePresent,
+  '@xrkseek/harness-cli-tool-cordis': appL10n.featuresModuleCordis,
+  '@xrkseek/harness-cli-tool-subagent': appL10n.featuresModuleSubagent,
+  '@xrkseek/harness-cli-tool-subagent-control': appL10n.featuresModuleSubagentControl,
+  '@xrkseek/harness-cli-tool-workflow': appL10n.featuresModuleWorkflow,
+  '@xrkseek/harness-cli-plugin-manager/tools': appL10n.featuresModulePluginManager,
+  '@xrkseek/harness-cli-plugin-market/tools': appL10n.featuresModulePluginMarket,
+  '@xrkseek/harness-cli-agent-tool-presentation': appL10n.featuresModuleToolCalls,
+  '@xrkseek/harness-cli-terminal': appL10n.featuresModuleTerminal,
+  '@xrkseek/harness-cli-persona': appL10n.featuresModulePersona,
 };
 
 /// Names of the shipped presets' `cordis:group` rows.
@@ -54,7 +54,7 @@ Map<String, String> get _groupNames => {
 };
 
 /// The persona module: its `prefix` is the system prompt the editor edits.
-const personaModule = '@deepseek-ai/dsh-persona';
+const personaModule = '@xrkseek/harness-cli-persona';
 
 /// Where a row is listed in the editor.
 enum PresetRowKind { tool, skill, context }
@@ -73,7 +73,7 @@ class PresetRow {
   /// Row id (`tool-bash`, `planning`).
   final String id;
 
-  /// Module the row names (`@deepseek-ai/dsh-tool-bash`, `cordis:group`).
+  /// Module the row names (`@xrkseek/harness-cli-tool-bash`, `cordis:group`).
   final String module;
 
   /// The row's YAML exactly as the Host rendered it (`!!js` kept).
@@ -321,7 +321,7 @@ class PresetBundle {
   String get patch => [
     '- insert:',
     '    - id: preset-$id',
-    "      name: '@deepseek-ai/dsh-agent-preset'",
+    "      name: '@xrkseek/harness-cli-agent-preset'",
     '      config:',
     '        id: $id',
     '        name: ${jsonEncode(name)}',

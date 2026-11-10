@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/plugins/native/native_capabilities.dart';
-import 'package:dsh_app/plugins/native/native_effects.dart';
-import 'package:dsh_app/plugins/native/native_file_platform.dart';
-import 'package:dsh_app/plugins/native/native_files.dart';
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/plugins/native/native_platform.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/ui/plugins/native/native_taps.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/plugins/native/native_capabilities.dart';
+import 'package:xrk_app/plugins/native/native_effects.dart';
+import 'package:xrk_app/plugins/native/native_file_platform.dart';
+import 'package:xrk_app/plugins/native/native_files.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/native/native_platform.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/ui/plugins/native/native_taps.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -127,7 +127,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('files-only discovery probes its actual adapter without starting media', () async {
-    final client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
+    final client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
     final platform = _Platform();
     var mediaProbes = 0;
     final container = ProviderContainer(
@@ -161,7 +161,7 @@ void main() {
 
   test('disposed capability discovery cannot publish a late file probe', () async {
     final pending = Completer<bool>();
-    final client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
+    final client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:9')));
     final container = ProviderContainer(
       overrides: [
         nativeBridgeProvider.overrideWithValue(ClientNativeBridge(client)),

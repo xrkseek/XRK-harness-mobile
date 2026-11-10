@@ -388,7 +388,7 @@ class _PhoneDndPageState extends ConsumerState<PhoneDndPage> {
         },
         accent,
       ),
-      PhoneKeepPhase.failed => (l10n.phoneKeepFailed, DshColors.of(context).warning),
+      PhoneKeepPhase.failed => (l10n.phoneKeepFailed, XrkColors.of(context).warning),
       _ => (null, null),
     };
   }
@@ -425,7 +425,7 @@ class _PhoneDndPageState extends ConsumerState<PhoneDndPage> {
   /// failure: su only runs once it is picked.
   (String, Color) _state(PhonePrivilegedMode mode, PhoneBackgroundStatus bg) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final accent = Theme.of(context).colorScheme.primary;
     final quiet = colors.textTertiary;
     final waiting = (l10n.phoneDndStateWaiting, accent);
@@ -673,7 +673,7 @@ class _Fine extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
     child: Text(
       text,
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary, height: 1.5),
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary, height: 1.5),
     ),
   );
 }

@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart' show PluginBundle;
+import 'package:xrk_client/xrk_client.dart' show PluginBundle;
 
 import '../../l10n/l10n.dart';
 
-/// A page of the official DSH Web client the app can land on.
+/// A page of the official XRK Web client the app can land on.
 ///
-/// DSH Web has no URLs for its pages (no router, no hash, no query): the
-/// injected bridge (`assets/web/dsh_web_open.js`) gets there by restoring the
+/// XRK Web has no URLs for its pages (no router, no hash, no query): the
+/// injected bridge (`assets/web/xrk_web_open.js`) gets there by restoring the
 /// stored session selection and clicking the official controls. A target is
 /// one destination; [sessionId] goes first when set.
 class DshWebTarget {
@@ -117,7 +117,7 @@ class DshWebTarget {
   String toString() => 'DshWebTarget(${jsonEncode(toJson())})';
 }
 
-/// Global panels of the DSH Web sidebar (`ctx.layout.selectPanel` keys),
+/// Global panels of the XRK Web sidebar (`ctx.layout.selectPanel` keys),
 /// and [cordis]: the Cordis plugin panel behind the sidebar's bottom badge
 /// (`dsh-client-ui-cordis`; it only renders while the Host has a plugin).
 enum DshWebPanel {
@@ -129,7 +129,7 @@ enum DshWebPanel {
   final String key;
 }
 
-/// Sections of the DSH Web settings dialog (`settings.section` ids).
+/// Sections of the XRK Web settings dialog (`settings.section` ids).
 enum DshWebSettings {
   general('general'),
   models('models'),
@@ -143,7 +143,7 @@ enum DshWebSettings {
   final String key;
 }
 
-/// Start-page entries of the DSH Web right sidebar (tab kinds).
+/// Start-page entries of the XRK Web right sidebar (tab kinds).
 enum DshWebRightbar {
   files('files'),
   terminal('terminal');
@@ -152,7 +152,7 @@ enum DshWebRightbar {
   final String key;
 }
 
-/// What the bridge reported back (`DshAppOpen` channel): [step] names the
+/// What the bridge reported back (`XrkAppOpen` channel): [step] names the
 /// part that didn't land when [ok] is false.
 class DshWebOpenResult {
   const DshWebOpenResult({required this.ok, this.step});

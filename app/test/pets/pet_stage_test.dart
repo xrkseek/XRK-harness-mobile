@@ -7,19 +7,19 @@
 
 import 'dart:math' as math;
 
-import 'package:dsh_app/pets/pet_mood.dart';
-import 'package:dsh_app/pets/pet_pack.dart';
-import 'package:dsh_app/pets/pet_prefs.dart';
-import 'package:dsh_app/pets/pet_sheets.dart';
-import 'package:dsh_app/pets/pet_signals.dart';
-import 'package:dsh_app/pets/pet_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_app/ui/chat/composer.dart';
-import 'package:dsh_app/ui/pets/pet_bubble.dart';
-import 'package:dsh_app/ui/pets/pet_perch.dart';
-import 'package:dsh_app/ui/pets/pet_sprite.dart';
-import 'package:dsh_app/ui/pets/pet_stage.dart';
+import 'package:xrk_app/pets/pet_mood.dart';
+import 'package:xrk_app/pets/pet_pack.dart';
+import 'package:xrk_app/pets/pet_prefs.dart';
+import 'package:xrk_app/pets/pet_sheets.dart';
+import 'package:xrk_app/pets/pet_signals.dart';
+import 'package:xrk_app/pets/pet_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_app/ui/chat/composer.dart';
+import 'package:xrk_app/ui/pets/pet_bubble.dart';
+import 'package:xrk_app/ui/pets/pet_perch.dart';
+import 'package:xrk_app/ui/pets/pet_sprite.dart';
+import 'package:xrk_app/ui/pets/pet_stage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

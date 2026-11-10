@@ -55,7 +55,7 @@ class ChatCard extends StatelessWidget {
 
   /// 语气色(标题图标、外圈细线)。
   static Color toneColor(BuildContext context, ChatCardTone tone) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return switch (tone) {
       ChatCardTone.neutral => Theme.of(context).colorScheme.onSurfaceVariant,
       ChatCardTone.attention => dsh.warning,
@@ -66,7 +66,7 @@ class ChatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final surfaces = DshSurfaces.of(context);
+    final surfaces = XrkSurfaces.of(context);
     final accent = toneColor(context, tone);
     final style = tone == ChatCardTone.neutral
         ? null
@@ -140,7 +140,7 @@ class ChatCardFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     return Semantics(
       button: true,
       expanded: expanded,

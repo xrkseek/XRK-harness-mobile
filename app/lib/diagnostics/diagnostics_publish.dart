@@ -1,5 +1,5 @@
 // Publishes the diagnostics snapshot where the on-device engine's agent can
-// read it: `$DSH_HOME/dsh-app/diagnostics.md`. The app's daemon writes it (the
+// read it: `$XRK_HOME/dsh-app/diagnostics.md`. The app's daemon writes it (the
 // Dart side does not know the rootfs), after the engine comes up, when its
 // observed connection settles, and whenever the person asks from 设置 → 诊断.
 
@@ -26,7 +26,7 @@ class PublishedDiagnostics {
 class DiagnosticsPublisher {
   DiagnosticsPublisher({required this.collect, this.collectManual});
 
-  static const channel = MethodChannel('dsh/runtime');
+  static const channel = MethodChannel('xrk/runtime');
 
   final Future<DiagnosticsSnapshot> Function(DateTime at) collect;
   final Future<DiagnosticsSnapshot> Function(DateTime at)? collectManual;

@@ -1,4 +1,4 @@
-// Byte and message counter at the DshCarrier boundary of a DSH Remote
+// Byte and message counter at the DshCarrier boundary of a XRK Remote
 // client. Sizes are the JSON a `RemoteTunnelCarrier` hands to the secure
 // channel (before Noise + Relay framing, which add roughly a third plus a
 // fixed envelope per frame), counted the way the tunnel maps them:
@@ -10,7 +10,7 @@
 //   cancel       harness.remote.stream.close {streamId}                          2 messages
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 int jsonBytes(Object? value) => utf8.encode(jsonEncode(value)).length;
 

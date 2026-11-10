@@ -1,6 +1,6 @@
 // What the host can generate with (media-generation §4.3, §4.6.5;
 // CR-722ae3f must-fix 1): the catalogue from the plugin's settings/describe
-// metadata — services.meta.extra["dsh-go/media/catalog"], under whatever
+// metadata — services.meta.extra["xrk-mobile/media/catalog"], under whatever
 // namespace — crossed with the services really configured and keys really
 // there. Missing, broken or unknown catalogues give no generation mode; there
 // is no built-in model table to fall back on.
@@ -12,9 +12,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/state/engine_settings_state.dart' show credentialRefsOf;
-import 'package:dsh_app/state/media_generation.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/engine_settings_state.dart' show credentialRefsOf;
+import 'package:xrk_app/state/media_generation.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Map<String, Object?> _m0() =>
@@ -31,7 +31,7 @@ Map<String, Object?> _catalog(Map<String, Object?> describe) {
   final refs = (_ns(describe)['schema']! as Map)['refs']! as Map;
   for (final node in refs.values) {
     final extra = ((node as Map)['meta'] as Map?)?['extra'] as Map?;
-    if (extra?['dsh-go/media/catalog'] case final Map<String, Object?> catalog) return catalog;
+    if (extra?['xrk-mobile/media/catalog'] case final Map<String, Object?> catalog) return catalog;
   }
   throw StateError('no catalogue in the fixture');
 }
@@ -40,8 +40,8 @@ void _setCatalog(Map<String, Object?> describe, Object? catalog) {
   final refs = (_ns(describe)['schema']! as Map)['refs']! as Map;
   for (final node in refs.values) {
     final meta = (node as Map)['meta'] as Map?;
-    if (meta?['extra'] case final Map extra when extra.containsKey('dsh-go/media/catalog')) {
-      extra['dsh-go/media/catalog'] = catalog;
+    if (meta?['extra'] case final Map extra when extra.containsKey('xrk-mobile/media/catalog')) {
+      extra['xrk-mobile/media/catalog'] = catalog;
       return;
     }
   }
@@ -78,7 +78,7 @@ void main() {
       expect(catalog.kinds, [GenerateKind.image]);
       expect(
         [for (final e in catalog.of(GenerateKind.image)) '${e.namespace}/${e.service.id}/${e.model.id}'],
-        ['dsh-media/office/gpt-image-2', 'dsh-media/office/gpt-image-2.5-flare'],
+        ['xrk-media/office/gpt-image-2', 'xrk-media/office/gpt-image-2.5-flare'],
       );
       final gpt = catalog.of(GenerateKind.image).first;
       expect(gpt.model.label, 'GPT Image 2');
@@ -239,13 +239,13 @@ void main() {
     test('the same service and model under two namespaces: the header can\'t tell them apart, so neither', () {
       final describe = _m0();
       final twin = jsonDecode(jsonEncode(_ns(describe))) as Map<String, Object?>;
-      twin['ns'] = 'dsh-media-2';
+      twin['ns'] = 'xrk-media-2';
       (twin['value']! as Map)['services'] = [_service('office', models: 'gpt-image-2,gpt-image-2.5-sunburst')];
       (describe['namespaces']! as List).add(twin);
       final catalog = _read(describe);
       expect(
         [for (final e in catalog.of(GenerateKind.image)) '${e.namespace}/${e.service.id}/${e.model.id}'],
-        ['dsh-media/office/gpt-image-2.5-flare', 'dsh-media-2/office/gpt-image-2.5-sunburst'],
+        ['xrk-media/office/gpt-image-2.5-flare', 'xrk-media-2/office/gpt-image-2.5-sunburst'],
       );
     });
 
@@ -298,7 +298,7 @@ void main() {
       final params = const GenerateParams().fitTo(twoServices);
       expect(
         params.model,
-        const MediaModelRef(namespace: 'dsh-media', service: 'office', id: 'gpt-image-2', label: 'GPT Image 2'),
+        const MediaModelRef(namespace: 'xrk-media', service: 'office', id: 'gpt-image-2', label: 'GPT Image 2'),
       );
       expect((params.aspect, params.count, params.quality), ('1:1', 1, null));
       expect(params.tryMessage('猫').text, '〔生成图像 · 1:1 · 1 张 · GPT Image 2〈office/gpt-image-2〉〕\n猫');
@@ -367,7 +367,7 @@ void main() {
       expect(back, params);
       expect(
         back.model,
-        const MediaModelRef(namespace: 'dsh-media', service: 'office', id: 'gpt-image-2', label: 'GPT Image 2'),
+        const MediaModelRef(namespace: 'xrk-media', service: 'office', id: 'gpt-image-2', label: 'GPT Image 2'),
       );
     });
 
@@ -390,7 +390,7 @@ void main() {
 
   group('provider presets and per-kind defaults', () {
     SettingsNamespaceView viewOf(Map<String, Object?> describe) =>
-        SettingsDescription.fromJson(describe).namespaces['dsh-media']!;
+        SettingsDescription.fromJson(describe).namespaces['xrk-media']!;
 
     test('an older catalogue without presets uses the app\'s fallback list', () {
       final presets = mediaPresetsOf(viewOf(_m0()));

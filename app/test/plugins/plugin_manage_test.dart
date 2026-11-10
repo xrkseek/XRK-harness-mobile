@@ -1,8 +1,8 @@
-import 'package:dsh_app/ui/plugins/plugin_detail_sheet.dart';
-import 'package:dsh_app/ui/plugins/market_tab.dart';
-import 'package:dsh_app/ui/plugins/plugin_widgets.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/plugins/plugin_detail_sheet.dart';
+import 'package:xrk_app/ui/plugins/market_tab.dart';
+import 'package:xrk_app/ui/plugins/plugin_widgets.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -13,7 +13,7 @@ void main() {
   for (final update in [false, true]) {
     testWidgets('market installed plugin opens management and returns; update=$update', (tester) async {
       final carrier = FakePluginCarrier();
-      final client = DshClient.withCarrier(carrier);
+      final client = XrkClient.withCarrier(carrier);
       addTearDown(client.close);
       carrier.handlers['pluginManager/listBundles'] = (_) => [
         bundleJson('dsh-approval-gate', version: update ? '0.3.0' : '0.4.0'),

@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/ui/plugins/installed_tab.dart';
-import 'package:dsh_app/ui/plugins/market_tab.dart';
-import 'package:dsh_app/ui/plugins/plugin_widgets.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/ui/plugins/installed_tab.dart';
+import 'package:xrk_app/ui/plugins/market_tab.dart';
+import 'package:xrk_app/ui/plugins/plugin_widgets.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,11 +18,11 @@ import 'support/fake_plugin_host.dart';
 
 void main() {
   late FakePluginCarrier carrier;
-  late DshClient client;
+  late XrkClient client;
 
   setUp(() {
     carrier = FakePluginCarrier();
-    client = DshClient.withCarrier(carrier);
+    client = XrkClient.withCarrier(carrier);
     carrier.handlers['pluginManager/listBundles'] = (_) => sampleBundles;
   });
 
@@ -72,7 +72,7 @@ void main() {
         find.descendant(of: find.widgetWithText(BundleTile, 'dsh-approval-gate'), matching: find.byType(Switch)),
       );
       await tester.pumpAndSettle();
-      expect(find.text(remote ? '已停用，重启电脑上的 DSH 后生效' : '已停用，重启引擎后生效'), findsOneWidget);
+      expect(find.text(remote ? '已停用，重启电脑上的 XRK 后生效' : '已停用，重启引擎后生效'), findsOneWidget);
       expect(find.byType(SnackBarAction), remote ? findsNothing : findsOneWidget);
       if (!remote) expect(find.text('立即重启'), findsOneWidget);
     });
@@ -100,8 +100,8 @@ void main() {
       expect(find.text('0.3.0 · 危险命令二次确认'), findsOneWidget);
       expect(find.text('会话搜索'), findsOneWidget);
       expect(find.text('官方'), findsOneWidget);
-      expect(find.text('@deepseek-ai/dsh-base'), findsNothing);
-      expect(find.text('不是 DSH 插件，无法加载'), findsOneWidget);
+      expect(find.text('@xrkseek/harness-cli-base'), findsNothing);
+      expect(find.text('不是 XRK 插件，无法加载'), findsOneWidget);
     });
 
     testWidgets('switch calls setBundleEnabled', (tester) async {
@@ -157,7 +157,7 @@ void main() {
 
     testWidgets('list failure shows a retry', (tester) async {
       carrier.handlers['pluginManager/listBundles'] = (_) =>
-          throw const DshRemoteException('gateway/method-not-found', 'nope');
+          throw const XrkRemoteException('gateway/method-not-found', 'nope');
       await pumpScreen(tester);
       expect(find.text('没能读取插件列表'), findsOneWidget);
       expect(find.text('当前引擎不支持插件管理'), findsOneWidget);
@@ -204,8 +204,8 @@ void main() {
       carrier.handlers['pluginManager/installBundle'] = (_) => finish.future;
       await pumpScreen(tester, tab: PluginsTab.market);
       await openSheet(tester, 'novel-writer');
-      expect(find.textContaining('插件以 DSH 的权限运行'), findsOneWidget);
-      expect(find.textContaining('由第三方提供，DSH 官方未审核。'), findsOneWidget);
+      expect(find.textContaining('插件以 XRK 的权限运行'), findsOneWidget);
+      expect(find.textContaining('由第三方提供，XRK 官方未审核。'), findsOneWidget);
       expect(carrier.argsOf('pluginManager/installBundle'), isEmpty, reason: 'opening the sheet installs nothing');
 
       await tapSheetAction(tester, '安装到本机');
@@ -357,7 +357,7 @@ void main() {
         // code until it restarts: the restart offer appears, nothing restarts.
         expect(find.text('已安装「Approval Gate」'), findsNothing);
         if (remote) {
-          expect(find.text('已安装「Approval Gate」，重启电脑上的 DSH 后生效'), findsOneWidget);
+          expect(find.text('已安装「Approval Gate」，重启电脑上的 XRK 后生效'), findsOneWidget);
           expect(find.text('需要重启引擎'), findsNothing);
         } else {
           expect(find.text('需要重启引擎'), findsOneWidget);
@@ -371,7 +371,7 @@ void main() {
 
     testWidgets('relay hosts get the command to copy', (tester) async {
       final relayCarrier = FakePluginCarrier(allowInstall: false);
-      final relayClient = DshClient.withCarrier(relayCarrier);
+      final relayClient = XrkClient.withCarrier(relayCarrier);
       addTearDown(relayClient.close);
       relayCarrier.handlers['pluginManager/listBundles'] = (_) => sampleBundles;
       await pumpScreen(

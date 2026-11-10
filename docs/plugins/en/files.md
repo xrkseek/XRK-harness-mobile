@@ -4,17 +4,17 @@ The NA v1.3 `files` capability opens a system chooser after a tap. Selected cont
 
 ## Declaration and fallback
 
-Declare `"capabilities": ["files"]`. Add `"requires": ["files"]` to manifest buttons. Inside a panel, show selection buttons only when `caps.features?.includes('files')`; otherwise show ordinary explanatory text. Older apps and bridges, platforms without a native adapter, and DSH Remote relay connections do not negotiate this capability. Ordinary panels remain available.
+Declare `"capabilities": ["files"]`. Add `"requires": ["files"]` to manifest buttons. Inside a panel, show selection buttons only when `caps.features?.includes('files')`; otherwise show ordinary explanatory text. Older apps and bridges, platforms without a native adapter, and XRK Remote relay connections do not negotiate this capability. Ordinary panels remain available.
 
-File selection does not require view v2. The manifest's `dshGo.v`, HTTP path and WebSocket `v` remain `1`, never `1.3`.
+File selection does not require view v2. The manifest's `xrkGo.v`, HTTP path and WebSocket `v` remain `1`, never `1.3`.
 
 ## Start and receive
 
 ```js
 import { createHash } from 'node:crypto'
-import { effects } from '@dsh-go/plugin-kit'
+import { effects } from '@xrkseek/plugin-kit'
 
-ctx.dshGo.panel('files', {
+ctx.xrkGo.panel('files', {
   view: (scope, caps) => caps.features?.includes('files')
     ? { type: 'actions', items: [{ label: 'Choose files', action: 'choose' }] }
     : { type: 'text', text: 'File selection is unavailable on this connection' },
@@ -23,7 +23,7 @@ ctx.dshGo.panel('files', {
     selected: async (scope, event) => {
       if (event.value.status !== 'selected') return
       const files = event.value.files.map(file => {
-        const bytes = ctx.dshGo.readPickedFile(file.handle)
+        const bytes = ctx.xrkGo.readPickedFile(file.handle)
         return { name: file.name, sha256: createHash('sha256').update(bytes).digest('hex') }
       })
       return { patch: { files } }
@@ -34,7 +34,7 @@ ctx.dshGo.panel('files', {
 
 For images, use `effects.pickImage('selected', { maxFiles: 2 })`. Without the SDK, return `{ type: 'pickFile', action: 'selected', maxFiles: 2 }`. `maxFiles` defaults to `1` and accepts integers `1–4`. `action` follows ordinary action-id rules.
 
-The callback runs in the same panel's `actions[action]`. If absent, it falls back to `ctx.dshGo.on(originalContributionId, handler)` with `event.action` distinguishing it. It retains the original `scope`, `surface`, `id` and `locale`, and adds `event.signal`, aborted when this request is revoked. `event.value` is:
+The callback runs in the same panel's `actions[action]`. If absent, it falls back to `ctx.xrkGo.on(originalContributionId, handler)` with `event.action` distinguishing it. It retains the original `scope`, `surface`, `id` and `locale`, and adds `event.signal`, aborted when this request is revoked. `event.value` is:
 
 ```js
 { status: 'selected', files: [
@@ -49,7 +49,7 @@ Names are display labels, stripped of directory components/control characters an
 
 ## Handle lifetime
 
-`ctx.dshGo.readPickedFile(handle)` returns an independent `Uint8Array` copy (a Node `Buffer`). It is usable only by its owning plugin **inside this awaited selection callback**, including across `await`. It throws after callback completion, an exception, the existing 3-second handler timeout, plugin unload, registration replacement, disconnection, or request expiry. Other plugins cannot read this handle through the service.
+`ctx.xrkGo.readPickedFile(handle)` returns an independent `Uint8Array` copy (a Node `Buffer`). It is usable only by its owning plugin **inside this awaited selection callback**, including across `await`. It throws after callback completion, an exception, the existing 3-second handler timeout, plugin unload, registration replacement, disconnection, or request expiry. Other plugins cannot read this handle through the service.
 
 Both the initiating action and its file callback belong to the registrations present when that invoke starts calling the action. Before calling the action, the bridge captures the actual panel action or fallback handler registration and the callback candidates. Replacing either registration while the action awaits rejects its old file effect without allocating a selection slot. Registering a new callback after the action starts cannot attach it to that old invocation. Issued requests continue to track both registrations; disposing either revokes uploads and reads.
 
@@ -60,7 +60,7 @@ import { randomUUID } from 'node:crypto'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
-const bytes = ctx.dshGo.readPickedFile(file.handle)
+const bytes = ctx.xrkGo.readPickedFile(file.handle)
 // pluginDataDir is configured and created by the plugin, independent of file.name.
 const importedPath = join(pluginDataDir, randomUUID())
 await writeFile(importedPath, bytes, { flag: 'wx', mode: 0o600, signal: event.signal })
@@ -103,9 +103,9 @@ These are resource policies, not measured performance claims. Known lengths and 
 - Files use `ACTION_OPEN_DOCUMENT`, `CATEGORY_OPENABLE` and `*/*`; this app's minimum Android version is 26.
 - Images use `MediaStore.ACTION_PICK_IMAGES` from Android 33. Multiple selection uses the lesser of the requested count and `getPickImagesMaxLimit()`. Older systems or a missing Photo Picker Activity fall back to `ACTION_OPEN_DOCUMENT` with `image/*`.
 - Only temporary read access is requested: no directory, write or additional storage permission, and no `takePersistableUriPermission`. Reads use `ContentResolver.openAssetFileDescriptor(uri, "r", ...)` with `CancellationSignal`, bypassing the dependency path that first copies the entire file to cache.
-- Local and direct SSH hosts reuse existing host authentication, HTTP carriers and SSH tunnels. Uploads use our own `/dsh-go/v1/files/` bridge route without changing the DSH engine protocol. Existing `fileUploads/upload` returns conversation attachment receipts, not a plugin-readable path.
-- DSH Remote relay does not currently forward `/dsh-go/*`; `files` stays unavailable. It cannot open a chooser and falsely report delivery. Authenticated bridge-route forwarding is an upstream prerequisite.
+- Local and direct SSH hosts reuse existing host authentication, HTTP carriers and SSH tunnels. Uploads use our own `/xrk-mobile/v1/files/` bridge route without changing the XRK engine protocol. Existing `fileUploads/upload` returns conversation attachment receipts, not a plugin-readable path.
+- XRK Remote relay does not currently forward `/xrk-mobile/*`; `files` stays unavailable. It cannot open a chooser and falsely report delivery. Authenticated bridge-route forwarding is an upstream prerequisite.
 
 Android references: [Storage Access Framework](https://developer.android.com/training/data-storage/shared/documents-files), [MediaStore Photo Picker](https://developer.android.com/reference/android/provider/MediaStore#ACTION_PICK_IMAGES), and [ContentResolver](https://developer.android.com/reference/android/content/ContentResolver#openAssetFileDescriptor(android.net.Uri,java.lang.String,android.os.CancellationSignal)). This change has API-jar compilation and cross-layer automated tests; system UI, vendor providers, process recreation and a real SSH device path still require device verification.
 
-Runnable example: [`dsh-go-example-files`](../../../examples/plugins/dsh-go-example-files/) computes SHA-256 from actual selected bytes. It never automatically attaches files to a conversation or calls a model.
+Runnable example: [`xrk-example-files`](../../../examples/plugins/xrk-example-files/) computes SHA-256 from actual selected bytes. It never automatically attaches files to a conversation or calls a model.

@@ -2,7 +2,7 @@
 
 [中文](../voice.md)
 
-Four capabilities for a read-aloud kind of plugin: play a clip, stop the moment the person speaks, a caption updated ten times a second, and that caption floating over the app. All optional: without a declaration nothing happens, and older plugins and apps are unaffected. Full example: [`dsh-go-example-readaloud`](../../../examples/plugins/dsh-go-example-readaloud/). Spec: [protocol §11](../../design/native-plugins-protocol.md#11-可选能力v12).
+Four capabilities for a read-aloud kind of plugin: play a clip, stop the moment the person speaks, a caption updated ten times a second, and that caption floating over the app. All optional: without a declaration nothing happens, and older plugins and apps are unaffected. Full example: [`xrk-example-readaloud`](../../../examples/plugins/xrk-example-readaloud/). Spec: [protocol §11](../../design/native-plugins-protocol.md#11-可选能力v12).
 
 | Capability | You get | You do | The app does |
 |---|---|---|---|
@@ -27,7 +27,7 @@ The phone never opens an address you give it. `127.0.0.1:8765` on the Host is yo
 ## Manifest
 
 ```jsonc
-"dshGo": {
+"xrkGo": {
   "v": 1,
   "title": { "zh": "朗读", "en": "Read aloud" },
   "wants": ["message"],
@@ -52,18 +52,18 @@ The phone never opens an address you give it. `127.0.0.1:8765` on the Host is yo
 ## Host half
 
 ```js
-ctx.inject(['dshGo'], (ctx) => {
-  ctx.dshGo.on('read', (scope) => [
+ctx.inject(['xrkGo'], (ctx) => {
+  ctx.xrkGo.on('read', (scope) => [
     { type: 'audio', op: 'play', instance: 'reading', src: 'media:speech', key: remember(scope.message) },
     { type: 'voice', op: 'start', instance: 'reading' },
     { type: 'overlay', op: 'show', instance: 'reading', id: 'subtitle' },
   ])
-  ctx.dshGo.media('speech', async (scope, { key, signal }) => ({
+  ctx.xrkGo.media('speech', async (scope, { key, signal }) => ({
     body: await tts(textOf(key), { signal }),   // a Buffer, ≤ 16 MiB
     contentType: 'audio/mpeg',
   }))
-  ctx.dshGo.micro('caption', { data: (scope, emit) => follow(scope, emit) })   // returns its cancel
-  ctx.dshGo.onCapability((scope, { event, reason }) => { if (event === 'voice.speechStart') stopFollowing(scope) })
+  ctx.xrkGo.micro('caption', { data: (scope, emit) => follow(scope, emit) })   // returns its cancel
+  ctx.xrkGo.onCapability((scope, { event, reason }) => { if (event === 'voice.speechStart') stopFollowing(scope) })
 })
 ```
 
@@ -109,7 +109,7 @@ Reading out loud through the speaker, the microphone hears the reading. The app 
 ## Testing
 
 ```js
-import { createTestHost } from '@dsh-go/plugin-kit/testing'
+import { createTestHost } from '@xrkseek/plugin-kit/testing'
 const h = createTestHost({ dir, caps: { features: ['audio', 'voice', 'micro', 'overlay'] } })
 apply(h.ctx)
 const { effects } = await h.invoke('read', { context: { message: 'Hello.' }, scope: { sessionId: 's1' } })

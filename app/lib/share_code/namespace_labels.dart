@@ -1,4 +1,4 @@
-// Product names for DSH settings namespaces (the Loader entry ids
+// Product names for XRK settings namespaces (the Loader entry ids
 // `settings/describe` reports), for the share checklist and the import diff.
 // Unknown namespaces show their id.
 

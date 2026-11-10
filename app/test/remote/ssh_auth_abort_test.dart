@@ -3,11 +3,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
-import 'package:dsh_app/remote/link_status.dart';
-import 'package:dsh_app/remote/ssh/ssh_host_config.dart';
-import 'package:dsh_app/remote/ssh/ssh_link.dart';
-import 'package:dsh_app/remote/ssh/ssh_transport.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/remote/link_status.dart';
+import 'package:xrk_app/remote/ssh/ssh_host_config.dart';
+import 'package:xrk_app/remote/ssh/ssh_link.dart';
+import 'package:xrk_app/remote/ssh/ssh_transport.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,7 +54,7 @@ class _MemorySocket extends SSHSocket {
   void destroy() => unawaited(close());
 }
 
-// Client identity is relevant here; no DSH HTTP traffic is part of this test.
+// Client identity is relevant here; no XRK HTTP traffic is part of this test.
 class _OfflineCarrier extends DshCarrier {
   @override
   String get kind => 'ssh-auth-test';
@@ -67,7 +67,7 @@ class _OfflineCarrier extends DshCarrier {
 
   @override
   Future<DshMuxLink> openLink(MuxOptions options) async =>
-      throw const DshTransportException('no DSH traffic in this test');
+      throw const XrkTransportException('no XRK traffic in this test');
 
   @override
   Future<void> close() async {}
@@ -148,10 +148,10 @@ void main() {
     });
   }
 
-  test('an interrupted reauthentication recreates SSH and reuses the DSH session', () async {
+  test('an interrupted reauthentication recreates SSH and reuses the XRK session', () async {
     final server = FakeSshServer();
     var clientConnections = 0;
-    final client = DshClient.withCarrier(_OfflineCarrier());
+    final client = XrkClient.withCarrier(_OfflineCarrier());
     final usedSecrets = <SshSecrets>[];
     var attempts = 0;
     final link = SshHostLink(

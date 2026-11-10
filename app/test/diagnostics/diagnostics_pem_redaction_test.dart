@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/diagnostics/diagnostics_bundle.dart';
-import 'package:dsh_app/diagnostics/diagnostics_export.dart';
-import 'package:dsh_app/diagnostics/redact.dart';
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/settings_state.dart';
+import 'package:xrk_app/diagnostics/diagnostics_bundle.dart';
+import 'package:xrk_app/diagnostics/diagnostics_export.dart';
+import 'package:xrk_app/diagnostics/redact.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/settings_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/zip_reader.dart';
@@ -66,8 +66,7 @@ void main() {
           engineLog: ['engine-before', ...block, if (complete) 'engine-after'],
           failureLog: ['failure-before', ...block, if (complete) 'failure-after'],
         ),
-        files: const FilesChannel(),
-        cacheRoot: () async => root,
+                cacheRoot: () async => root,
         clock: () => at,
       );
 

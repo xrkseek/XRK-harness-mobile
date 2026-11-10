@@ -3,7 +3,7 @@
 //
 //          ╭──────╮    ╭──────╮
 //          │  ◖●  │    │ ▒▒▒▒ │      two phones the screen's shape, centred as a pair 12
-//          │DSH Go│    │ ▒▒▒▒ │      apart, each a third of the card's inner width; the one
+//          │XRK Go│    │ ▒▒▒▒ │      apart, each a third of the card's inner width; the one
 //          ╰──────╯    ╰──────╯      in use ringed in the accent
 //            默认         自定义
 //   适配方式                    ( 填满 | 居中 )     ┐
@@ -430,7 +430,7 @@ class _CustomMini extends ConsumerWidget {
                 child: Text(
                   context.l10n.launchBroken,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: DshColors.of(context).textTertiary),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: XrkColors.of(context).textTertiary),
                 ),
               ),
             ),

@@ -6,7 +6,7 @@ import {mkdtemp,rm,writeFile,readFile} from 'node:fs/promises';
 export async function fixture(prefix) {
   const require=createRequire(join(resolve(prefix),'package.json'));
   const {Context}=await import(pathToFileURL(require.resolve('@deepseek-ai/cordis')));
-  const {LocalFileSystem}=await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-fs-local')));
+  const {LocalFileSystem}=await import(pathToFileURL(require.resolve('@xrkseek/harness-cli-fs-local')));
   const root=await mkdtemp(join(tmpdir(),'dsh-edit-count-'));
   const ctx=new Context();
   await ctx.plugin(LocalFileSystem,{cwd:root});

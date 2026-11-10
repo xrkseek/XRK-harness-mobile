@@ -117,7 +117,7 @@ class DiffView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final colors = Theme.of(context).colorScheme;
     final parsed = lines ?? parseUnifiedDiff(diffText!);
     final style = AppType.mono(size: 12, height: 1.5);

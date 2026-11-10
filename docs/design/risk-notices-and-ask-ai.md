@@ -1,10 +1,10 @@
 # 风险提醒与「问 AI」
 
-> 2026-10-27 · 范围：危险 / 敏感操作前的统一提醒；不懂的地方一键「问 AI」（走内置的 dsh-go-guide 技能）。
+> 2026-10-27 · 范围：危险 / 敏感操作前的统一提醒；不懂的地方一键「问 AI」（走内置的 xrk-guide 技能）。
 
 **结论**：风险提醒只在改变 AI 行为边界或授予系统权限的那一刻出现，分三档：高风险每次确认、中风险首次确认（「不再提示」默认勾上）、低风险就地说明。高、中两档用同一个底部弹层 `confirmRisk`（S9 的 `SheetDismissal.button`：标题 + ×，一句后果，一个写着具体动作的主键，可选的「不确定？问 AI」）。删除类沿用已经统一的居中确认框，只修颜色。
 
-「问 AI」不直接发送，而是新开一个对话，把问题预填进输入框。本机引擎上问题前面加 `/dsh-go-guide`，保证加载使用说明。远程主机上没有这个技能，所以 App 把对应的说明页作为附件带上；主机不收文件时，在输入框上方提示一句。入口只放在五类地方：风险提醒、开启手机操控前的披露、手机操控 / 插件 / 远程主机三个页面的顶栏，以及设置里的「使用帮助」。
+「问 AI」不直接发送，而是新开一个对话，把问题预填进输入框。本机引擎上问题前面加 `/xrk-guide`，保证加载使用说明。远程主机上没有这个技能，所以 App 把对应的说明页作为附件带上；主机不收文件时，在输入框上方提示一句。入口只放在五类地方：风险提醒、开启手机操控前的披露、手机操控 / 插件 / 远程主机三个页面的顶栏，以及设置里的「使用帮助」。
 
 ## 1. 现状清单
 
@@ -58,11 +58,11 @@
 | 应用名单放宽 | 高 | 银行支付类 App 可能冻结账号，后果在 App 外 |
 | 自动执行命令 / 完全权限 | 高 | 命令和改文件不再问 |
 | 访问手机文件 | 高 | 相册、文档可被读写 |
-| 允许构建脚本 | 高 | 以 DSH 权限执行第三方脚本；保留原对话框，带软件包列表 |
+| 允许构建脚本 | 高 | 以 XRK 权限执行第三方脚本；保留原对话框，带软件包列表 |
 | 自动审查 | 中 | 仍有模型把关，只是可能误判 |
 | 本对话都允许 | 中 | 只限这个对话，重启 App 就恢复；但常用，所以只提醒一次 |
 | 宠物显示在其他应用上层 | 中 | 只是跳系统设置授权，说明一次就够 |
-| 选用 root 通道（不打扰模式 › Root、自动恢复无障碍 › 申请 root 授权，`phone.root`） | 中 | 接下来是 root 管理器自己的授权弹窗；不放开 DSH 的任何规则，说明一次就够 |
+| 选用 root 通道（不打扰模式 › Root、自动恢复无障碍 › 申请 root 授权，`phone.root`） | 中 | 接下来是 root 管理器自己的授权弹窗；不放开 XRK 的任何规则，说明一次就够 |
 | 首次开启手机操控 | 中（保留现有披露） | 合规要求的显著披露，比一句话完整，内容不动，只加「问 AI」 |
 | 本任务免确认 | 不拦 | 每个任务开始时仍会问一次；保持现有行为 |
 | 无障碍「去开启」 | 不拦 | 披露已讲过；再拦一次就成了二次打断 |
@@ -119,9 +119,9 @@
 
 | 当前主机 | 输入框里的内容 | 说明 |
 |---|---|---|
-| 本机引擎（自动装好了 dsh-go-guide） | `/dsh-go-guide 手机操控是怎么工作的？有什么风险？` | `/名字` 就是 App 里「技能 › 在对话里用」的写法，主机看到它会加载技能，回答照说明来。 |
-| 远程主机，能收文件（SSH） | 「关于 dsh-go App：{问题}\n请按附件里的使用说明回答。」＋ 附件 `dsh-go-guide-<主题>.md`（App 自带的那一页说明，按界面语言选中文或英文） | 远程主机没有这个技能，App 把对应的说明页附上，模型照样有依据。 |
-| 远程主机，不能收文件（DSH Remote） | 「关于 dsh-go App：{问题}」 | 输入框上方提示一次：「这台主机没有 dsh-go 使用说明，回答可能不准确」。 |
+| 本机引擎（自动装好了 xrk-guide） | `/xrk-guide 手机操控是怎么工作的？有什么风险？` | `/名字` 就是 App 里「技能 › 在对话里用」的写法，主机看到它会加载技能，回答照说明来。 |
+| 远程主机，能收文件（SSH） | 「关于 xrk-mobile App：{问题}\n请按附件里的使用说明回答。」＋ 附件 `xrk-guide-<主题>.md`（App 自带的那一页说明，按界面语言选中文或英文） | 远程主机没有这个技能，App 把对应的说明页附上，模型照样有依据。 |
+| 远程主机，不能收文件（XRK Remote） | 「关于 xrk-mobile App：{问题}」 | 输入框上方提示一次：「这台主机没有 xrk-mobile 使用说明，回答可能不准确」。 |
 | 网页模式 | 入口不显示 | 网页模式下首页是网页版，原生输入框不在。 |
 
 ### 4.3 入口与问题
@@ -130,7 +130,7 @@
 
 | 入口 | 形式 | 问题（中） | 问题（英） | 远程附带的说明页 |
 |---|---|---|---|---|
-| 设置 › 关于 › **使用帮助** | 设置行，✦ 图标，副标题「不懂的地方，问 AI」 | dsh-go 能做什么？我该从哪里开始？ | What can dsh-go do, and where should I start? | 10-settings |
+| 设置 › 关于 › **使用帮助** | 设置行，✦ 图标，副标题「不懂的地方，问 AI」 | xrk-mobile 能做什么？我该从哪里开始？ | What can xrk-mobile do, and where should I start? | 10-settings |
 | 手机操控页顶栏 | ✦ 玻璃圆键（44，和返回键镜像） | 手机操控是怎么工作的？有什么风险？ | How does phone control work, and what are the risks? | 04-phone-control |
 | 开启手机操控前的披露 | 「不确定？问 AI」 | 同上 | 同上 | 04-phone-control |
 | 插件页顶栏 | ✦，放在刷新键左边 | 插件能做什么？装第三方插件要注意什么？ | What can plugins do, and what should I watch for with third-party ones? | 08-plugins |
@@ -155,24 +155,24 @@
 | 提醒 | 标题 | 正文 | 主键 |
 |---|---|---|---|
 | 始终免确认（高） | 始终免确认？ / Always skip confirmation? | 打开 App、点按、发送、删除都直接做，不再问你。 / Opening apps, tapping, sending and deleting will happen without asking you. | 始终免确认 / Skip confirmation |
-| 应用名单：不碰 → 照常（高） | 让 DSH 操作「{app}」？ | 银行、支付类 App 会检测自动操作，可能限制登录甚至冻结账号；DSH 仍不会输密码、不会付款。 / Banking and payment apps detect automation and may restrict sign-in or freeze your account. DSH still won’t enter passwords or pay. | 我知道风险，仍然修改 / Change anyway（使用说明里引用了，不改） |
+| 应用名单：不碰 → 照常（高） | 让 XRK 操作「{app}」？ | 银行、支付类 App 会检测自动操作，可能限制登录甚至冻结账号；XRK 仍不会输密码、不会付款。 / Banking and payment apps detect automation and may restrict sign-in or freeze your account. XRK still won’t enter passwords or pay. | 我知道风险，仍然修改 / Change anyway（使用说明里引用了，不改） |
 | 应用名单：逐步确认 → 照常（高） | 「{app}」不再逐步确认？ | 微信这类 App 有风控，曾有手机助手操作后账号被强制下线；发消息等仍会先问你。 / Apps like WeChat watch for automation and have signed accounts out; sending messages still asks you first. | 同上 |
 | 自动执行命令 / 完全权限（高） | 开启完全权限？ / Turn on Full access? | AI 执行命令、改动文件前不再问你。 / AI won’t ask before running commands or changing files. | 开启完全权限 / Turn on Full access |
 | 访问手机文件（高） | 让 AI 访问手机文件？ / Let AI access phone files? | AI 能读取和修改相册、下载、文档等手机文件，引擎会重启一次。 / AI can read and change your photos, downloads and documents. The engine restarts once. | 允许读写 / Allow access |
 | 自动审查（中） | 开启自动审查？ / Turn on Auto review? | 每次操作由模型判断放不放行，可能误判。 / The model decides whether to allow each action. It may get it wrong. | 开启自动审查 / Turn on Auto review |
 | 本对话都允许（中） | 本对话都允许？ / Allow everything in this chat? | 这个对话之后的命令和改动都直接放行，可在输入框上方随时关闭。 / Commands and changes in this chat run without asking. Turn it off above the message box anytime. | 全部允许 / Allow all |
-| 宠物显示在 App 外（中） | 显示在其他应用上层？ / Show over other apps? | 要在系统设置里为 dsh-go 打开「显示在其他应用上层」，宠物才能出现在别的 App 上。 / Turn on “Display over other apps” for dsh-go in system settings so your pet can appear outside the app. | 去设置 / Open settings |
+| 宠物显示在 App 外（中） | 显示在其他应用上层？ / Show over other apps? | 要在系统设置里为 xrk-mobile 打开「显示在其他应用上层」，宠物才能出现在别的 App 上。 / Turn on “Display over other apps” for xrk-mobile in system settings so your pet can appear outside the app. | 去设置 / Open settings |
 
-通用：「不再提示 / Don’t show again」「不确定？问 AI / Not sure? Ask AI」「问 AI / Ask AI」「使用帮助 / Help」「不懂的地方，问 AI / Ask AI about anything here」。远程提示：「这台主机没有 dsh-go 使用说明，回答可能不准确 / This host doesn’t have the dsh-go guide, so answers may be off」。
+通用：「不再提示 / Don’t show again」「不确定？问 AI / Not sure? Ask AI」「问 AI / Ask AI」「使用帮助 / Help」「不懂的地方，问 AI / Ask AI about anything here」。远程提示：「这台主机没有 xrk-mobile 使用说明，回答可能不准确 / This host doesn’t have the xrk-mobile guide, so answers may be off」。
 
 ## 6. 不在本次范围，给出建议
 
 - **公开分享链接（另一个代理）**：建议归中档。第一次生成公开链接时用 `confirmRisk` 说一句「拿到链接的人都能看到这段对话，包括其中的文件内容」，主键写「生成链接」，默认只提醒一次。删除链接已经有确认和撤销，保持不变。
 - **引导页（另一个代理）**：引导的最后一步可以加一行「不懂的地方，随时问 AI」，点了打开 §4.3 的总问题。这是唯一一处能主动告诉新用户「可以问 AI」的地方。
-- **聊天空状态**：可以把四个建议之一（例如「rebase 还是 merge」）换成「dsh-go 怎么用」，提示词带 `/dsh-go-guide`。这是曝光最高的入口，但会改动首屏和一批 golden，需要 owner 拍板。
+- **聊天空状态**：可以把四个建议之一（例如「rebase 还是 merge」）换成「xrk-mobile 怎么用」，提示词带 `/xrk-guide`。这是曝光最高的入口，但会改动首屏和一批 golden，需要 owner 拍板。
 - **没有确认的删除**：Bot 记忆删除、移除群成员、引擎设置里密钥的「移除」，建议给撤销提示，而不是确认框，保持轻量。
 - **「重置提醒」**：中档提醒一旦选了不再提示，现在没有恢复的入口。用的人少，先不做；需要时可以在「关于」里加「重置所有提醒」。
-- **使用说明**：如果要放开引擎设置和性能页的「问 AI」，先在 `docs/guide/` 补上对应章节，再运行 `python3 app/tool/guide_sync.py` 生成 `app/assets/skills/dsh-go-guide/`。
+- **使用说明**：如果要放开引擎设置和性能页的「问 AI」，先在 `docs/guide/` 补上对应章节，再运行 `python3 app/tool/guide_sync.py` 生成 `app/assets/skills/xrk-guide/`。
 
 ## 7. 测试
 

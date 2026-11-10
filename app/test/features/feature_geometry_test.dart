@@ -2,13 +2,13 @@
 // a tile's corners, and the list-page row (left and right insets, the glyph
 // column, group titles on the page's 24 column).
 
-import 'package:dsh_app/ui/common/feature_tile.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/overview_card.dart';
-import 'package:dsh_app/ui/common/tile_grid.dart';
-import 'package:dsh_app/ui/providers/providers_page.dart' show LoginCapsule;
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
+import 'package:xrk_app/ui/common/feature_tile.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/overview_card.dart';
+import 'package:xrk_app/ui/common/tile_grid.dart';
+import 'package:xrk_app/ui/providers/providers_page.dart' show LoginCapsule;
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

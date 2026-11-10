@@ -67,7 +67,7 @@ class SettingsIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final bg = danger ? colors.dangerContainer : colors.identity[tint % colors.identity.length];
     final fg = danger ? colors.onDangerContainer : colors.onIdentity[tint % colors.onIdentity.length];
     return DecoratedBox(
@@ -90,7 +90,7 @@ class SettingsLineIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return SizedBox.square(
       dimension: SettingsMetrics.icon,
       child: Icon(
@@ -154,7 +154,7 @@ class SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final showChevron = chevron ?? (onTap != null && trailing == null);
     final endsInGlyph = showChevron || trailing != null;
     final icon = this.icon;
@@ -373,7 +373,7 @@ class SettingsSection extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(8, footerGap, 8, 0),
               child: DefaultTextStyle.merge(
-                style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary, height: 1.55),
+                style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary, height: 1.55),
                 child: footer,
               ),
             ),

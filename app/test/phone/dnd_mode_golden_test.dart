@@ -8,8 +8,8 @@
 //
 //   flutter test --update-goldens test/phone/dnd_mode_golden_test.dart
 
-import 'package:dsh_app/ui/phone/a11y_restore_sheet.dart';
-import 'package:dsh_app/ui/phone/dnd_mode_page.dart';
+import 'package:xrk_app/ui/phone/a11y_restore_sheet.dart';
+import 'package:xrk_app/ui/phone/dnd_mode_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -112,7 +112,7 @@ Map<String, Object?> withKeeper(Map<String, Object?> status) => {
   'a11yKeeper': {
     'granted': false,
     'path': 'setup',
-    'command': 'adb shell pm grant io.github.ccch1mneyyy.dsh_app android.permission.WRITE_SECURE_SETTINGS',
+    'command': 'adb shell pm grant com.xrkseek.harness android.permission.WRITE_SECURE_SETTINGS',
   },
 };
 
@@ -128,7 +128,7 @@ void main() {
   dndGolden('dnd_sui_in_use', suiInUse, narrow: true);
   dndGolden('dnd_sui_in_use', suiInUse, narrow: true, english: true);
 
-  // Sui runs, DSH Go isn't let in yet: suggested, unfolded by a tap.
+  // Sui runs, XRK Go isn't let in yet: suggested, unfolded by a tap.
   dndGolden('dnd_sui_grant', suiToGrant, before: tapText('Sui'));
   dndGolden('dnd_sui_grant', suiToGrant, narrow: true, before: tapText('Sui'));
 

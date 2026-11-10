@@ -1,4 +1,4 @@
-// 引用追问. DSH has no quote in a prompt (the official composer sends text,
+// 引用追问. XRK has no quote in a prompt (the official composer sends text,
 // attachments and `@` references only), so a quote travels as a Markdown
 // blockquote in front of the message — what the model reads as "about this
 // passage". The bubble shows it as a quote again ([splitQuote]).

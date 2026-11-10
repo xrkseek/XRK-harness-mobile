@@ -2,9 +2,9 @@
 // its own second line of limits, non-native plugins empty, issue codes in
 // the app's words.
 
-import 'package:dsh_app/plugins/native/native_icons.dart';
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
+import 'package:xrk_app/plugins/native/native_icons.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support.dart';
@@ -18,7 +18,7 @@ void main() {
       ]),
     );
     expect(c.rev, 'r1');
-    final quick = c.plugin('dsh-go-example-quick')!;
+    final quick = c.plugin('xrk-example-quick')!;
     expect(quick.native, isTrue);
     expect(quick.title, '快捷指令');
     expect(quick.wants, {'clipboard'}, reason: 'unknown wants are dropped');
@@ -27,7 +27,7 @@ void main() {
     expect(quick.composerActions.last.effects.single, {'type': 'insert', 'text': '你好'});
     expect(quick.messageActions.first.icon, AppIcons.readText, reason: '`speaker` is one of the extra names');
     expect(quick.declared, {NativeSurface.composerActions, NativeSurface.messageActions});
-    final usage = c.plugin('dsh-go-example-usage')!;
+    final usage = c.plugin('xrk-example-usage')!;
     expect(usage.strips.single.panel, 'usage');
     expect(usage.strips.single.live, isTrue);
     expect(usage.panels.single.placement, {'session.tab', 'features'});
@@ -84,7 +84,7 @@ void main() {
             {'id': 'x', 'label': 'X'},
           ],
           issues: [
-            {'path': '/dshGo/minApp', 'code': 'needs-app', 'severity': 'error'},
+            {'path': '/xrkGo/minApp', 'code': 'needs-app', 'severity': 'error'},
           ],
         ),
       ]),
@@ -93,7 +93,7 @@ void main() {
     expect(p.native, isFalse);
     expect(p.isEmpty, isTrue);
     expect(p.declared, isEmpty);
-    expect(p.issues.single.pointer, '/dshGo/minApp');
+    expect(p.issues.single.pointer, '/xrkGo/minApp');
     expect(p.issues.single.message, '需要更新 App');
     expect(p.issues.single.error, isTrue);
   });

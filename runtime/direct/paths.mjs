@@ -9,7 +9,7 @@ const within = (value, root) => value === root || value.startsWith(`${root}/`);
  * bound at this identical absolute path after direct has been prepared, so
  * saved physical paths remain usable on rollback without changing defaults
  * for installations that have never prepared a direct launch.
- * Legacy guest paths are accepted at DSH's typed filesystem/cwd boundaries;
+ * Legacy guest paths are accepted at XRK's typed filesystem/cwd boundaries;
  * arbitrary shell output and Markdown are deliberately never rewritten.
  */
 export function createPaths(rootfs, mounts = []) {

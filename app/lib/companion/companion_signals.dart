@@ -4,7 +4,7 @@ library;
 
 import 'dart:collection';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 final class CompanionSignalConsent {
   const CompanionSignalConsent({
@@ -21,7 +21,7 @@ final class CompanionSignalConsent {
 final class CompanionSignalSource {
   CompanionSignalSource.dsh({
     required this.hostKey,
-    required DshClient client,
+    required XrkClient client,
     required Object this.connection,
     required this.isAttached,
     this.runCapability,
@@ -40,7 +40,7 @@ final class CompanionSignalSource {
       generation = null,
       runCapability = null;
   final String hostKey;
-  final DshClient? client;
+  final XrkClient? client;
   final Object? connection, localOwner;
   final MuxGeneration? generation;
   final CompanionSignalCapabilities? runCapability;
@@ -139,12 +139,12 @@ final class CompanionFullShareTarget extends CompanionShareTarget {
     required this.currentBinding,
   }) : generation = client.mux.generation,
        super._(recipientContext, targetEpoch, currentTargetEpoch);
-  final DshClient client;
+  final XrkClient client;
   final Object connection;
   final MuxGeneration? generation;
   final CompanionRecallCapabilities capabilities;
   final CompanionRecallBinding binding;
-  final DshClient? Function() currentClient;
+  final XrkClient? Function() currentClient;
   final Object? Function() currentConnection;
   final CompanionRecallBinding? Function() currentBinding;
 }
@@ -511,11 +511,11 @@ final class CompanionSignalGate {
   CompanionSignalPreview? previewMetadata(CompanionSignalSlot slot, {String language = 'zh'}) =>
       _slotCurrent(slot) ? CompanionSignalPreview._(this, slot, _template(slot.signal, language), false) : null;
 
-  /// A user-selected DSH result only. The loader receives the exact client,
+  /// A user-selected XRK result only. The loader receives the exact client,
   /// session and seq; it must not substitute the latest result or scan all chats.
   Future<CompanionSignalPreview?> loadLocalDetail(
     CompanionSignalSlot slot,
-    Future<String?> Function(DshClient client, String sessionId, int seq) loader,
+    Future<String?> Function(XrkClient client, String sessionId, int seq) loader,
   ) async {
     if (!_slotCurrent(slot) || !const {'task.terminal', 'run.result'}.contains(slot.signal.kind)) return null;
     final client = slot._ingress.source.client, session = slot.signal.sessionId, seq = slot.signal.seq;

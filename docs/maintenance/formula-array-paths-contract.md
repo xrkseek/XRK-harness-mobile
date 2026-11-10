@@ -4,7 +4,7 @@ Refs W17-B（插件协议兼容性；无新增公开 issue）。
 
 `sdk/plugin-kit/lib/formula.js` 是 App 有界公式求值器的对应实现。公式的数据来自 JSON；数组可以通过非负数字下标读取，不能把 JavaScript 数组对象本身的 `length` 属性当成 JSON 数据字段。真实对象中名为 `length` 的字段仍然可以读取，对象的数字字符串键也保留已有行为。
 
-原 SDK 用统一的 `hasOwnProperty` 读取数组和对象，所以普通 `{ rows: [2, 3] }` 上的 `data.rows.length` 得到 2，公开 `checkView` 也不报告公式缺失。App 的 `evaluateDshUiFormula` 经 `dshUiLookup` 读取 List 时只接受数字索引，同一公式结果为缺失并在 `view.value` 留下诊断。插件作者因此会得到不能在 App 重现的本地校验结果。
+原 SDK 用统一的 `hasOwnProperty` 读取数组和对象，所以普通 `{ rows: [2, 3] }` 上的 `data.rows.length` 得到 2，公开 `checkView` 也不报告公式缺失。App 的 `evaluateXrkUiFormula` 经 `xrkUiLookup` 读取 List 时只接受数字索引，同一公式结果为缺失并在 `view.value` 留下诊断。插件作者因此会得到不能在 App 重现的本地校验结果。
 
 修复只在 SDK 公式读取路径遇到数组时排除点字段，沿原失败出口返回缺失。公式语法、运算、资源上限、JSON 对象字段、数字下标与 `$` 绑定语义都不变。不增加 `length` 运算，也不修改 App 生产源码、布局、资源或协议格式。
 

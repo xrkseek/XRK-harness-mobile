@@ -93,11 +93,11 @@
   "phoneAppRuleDeny": "Hands off",
   "phoneAppRuleConfirm": "Every step",
   "phoneAppRuleNormal": "As usual",
-  "phoneAppRuleDenyHint": "No reading or tapping. Default for banking and payment apps.",
-  "phoneAppRuleConfirmHint": "Can read. Asks before tapping or typing.",
-  "phoneAppRuleNormalHint": "Asks only before sensitive actions, like sending",
+  "phoneAppRuleDenyHint": "Takes effect now: no reading or tapping. Default for banking and payment apps.",
+  "phoneAppRuleConfirmHint": "Takes effect now: can read. Asks before tapping or typing.",
+  "phoneAppRuleNormalHint": "Takes effect now: asks only before sensitive actions, like sending",
   "phoneAppRulesTitle": "App rules",
-  "phoneAppRulesSubtitle": "Unlisted apps work as usual. Sensitive actions still need approval.",
+  "phoneAppRulesSubtitle": "Unlisted apps work as usual. Sensitive actions still need approval. Changes apply immediately.",
   "phoneAppRulesUnavailable": "Can’t read app rules",
   "phoneTryLater": "Try again later",
   "phoneAppRulesChanged": "As usual · Changed by you",
@@ -183,13 +183,26 @@
   "phoneConfirmAsk": "Always ask",
   "phoneConfirmTask": "This task",
   "phoneConfirmAlways": "Always skip",
-  "phoneConfirmAskHint": "Asks before entering a new app, sending, deleting or paying",
-  "phoneConfirmTaskHint": "Asks once per task",
-  "phoneConfirmAlwaysHint": "Acts without asking",
+  "phoneConfirmAskHint": "Takes effect now: asks before entering a new app, sending, deleting or paying",
+  "phoneConfirmTaskHint": "Takes effect now: asks once per task",
+  "phoneConfirmAlwaysHint": "Takes effect now: acts without asking",
   "phoneConfirmTitle": "Confirmation",
   "phoneConfirmAlwaysTitle": "Always skip confirmation?",
   "phoneConfirmAlwaysBody": "Opening apps, tapping, sending and deleting will happen without asking you.",
   "phoneConfirmSaveFailed": "Couldn’t change. Try again later.",
+  "phoneConfirmApplied": "Changed to “{mode}”. Applies on the next action.",
+  "@phoneConfirmApplied": {
+    "placeholders": {
+      "mode": { "type": "String" }
+    }
+  },
+  "phoneAppRuleApplied": "“{app}” set to “{rule}”. Applies on the next action.",
+  "@phoneAppRuleApplied": {
+    "placeholders": {
+      "app": { "type": "String" },
+      "rule": { "type": "String" }
+    }
+  },
   "phoneEnableFailed": "Couldn’t turn on. Try again later.",
   "phoneDisableFailed": "Couldn’t turn off. Try again later.",
   "phoneEnabled": "On",

@@ -23,14 +23,14 @@
 
 ## 为什么没有 actor 不确认
 
-没有 actor 不能证明是人点的，已批准的 Host 插件和拿到网页凭据的程序也能这样调用。但网页凭据明文存在 `~/.dsh/.credentials.yaml`，能发这种请求的调用方同样能经 `$events/result` 回答确认问题，所以这里确认拦不住它们，只会让官方页面报错。
+没有 actor 不能证明是人点的，已批准的 Host 插件和拿到网页凭据的程序也能这样调用。但网页凭据明文存在 `~/.xrk/.credentials.yaml`，能发这种请求的调用方同样能经 `$events/result` 回答确认问题，所以这里确认拦不住它们，只会让官方页面报错。
 
 确认卡防的是助手工具这条路，防不住能读凭据文件的 shell。这一点和 changelog 里「授权不能代替凭据和工具执行的系统隔离」是同一个限制。
 
 ## 验证
 
-- `DSH_PREFIX=<prefix> node runtime/tests/schedule-remote-origin-live.mjs`：真实 `dsh web`、临时 HOME、真实 HTTP/Cookie/mux，没有模型调用。页面相同 RPC 的创建和修改都保存，没有确认问题。
-- `DSH_PREFIX=<prefix> node --test runtime/tests/schedule-authorization.test.mjs`：助手路径的确认、拒绝、超时、取消，内存接缝测试。
-- `DSH_PREFIX=<prefix> node runtime/tests/schedule-tool-web-live.mjs`：真实 Web 提示词经官方 mock 模型调用 `schedule_create` 并弹确认。
+- `XRK_PREFIX=<prefix> node runtime/tests/schedule-remote-origin-live.mjs`：真实 `xrkh serve`、临时 HOME、真实 HTTP/Cookie/mux，没有模型调用。页面相同 RPC 的创建和修改都保存，没有确认问题。
+- `XRK_PREFIX=<prefix> node --test runtime/tests/schedule-authorization.test.mjs`：助手路径的确认、拒绝、超时、取消，内存接缝测试。
+- `XRK_PREFIX=<prefix> node runtime/tests/schedule-tool-web-live.mjs`：真实 Web 提示词经官方 mock 模型调用 `schedule_create` 并弹确认。
 
 都没有执行浏览器点击，也没上真机。

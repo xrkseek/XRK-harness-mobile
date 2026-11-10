@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/state/providers_state.dart';
-import 'package:dsh_app/state/subscriptions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/state/providers_state.dart';
+import 'package:xrk_app/state/subscriptions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,7 +29,7 @@ void main() {
     ('gateway/peer-disposed', '没能连上引擎'),
   ]) {
     test('$code keeps its meaning ahead of endpoint message guesses', () {
-      final error = DshRemoteException(code, privateMessage, {'token': 'synthetic-private-token'});
+      final error = XrkRemoteException(code, privateMessage, {'token': 'synthetic-private-token'});
       for (final text in [describeProviderError(error), describeLoginError(error)]) {
         expect(text, reason);
         expect(text, isNot(contains('private-sentinel')));
@@ -40,7 +40,7 @@ void main() {
 
   for (final code in const ['gateway/method-not-found', 'gateway/not-found']) {
     test('$code preserves each consumer legacy unsupported wording', () {
-      final error = DshRemoteException(code, privateMessage);
+      final error = XrkRemoteException(code, privateMessage);
       expect(describeProviderError(error), appL10n.stateProviderUnsupported);
       expect(describeLoginError(error), appL10n.stateSubscriptionUnsupported);
     });
@@ -57,15 +57,15 @@ void main() {
     'gateway/internal',
   ]) {
     test('$code without a recognized business reason stays neutral', () {
-      final error = DshRemoteException(code, 'synthetic-private-message');
+      final error = XrkRemoteException(code, 'synthetic-private-message');
       expect(describeProviderError(error), appL10n.commonFailedTryAgain);
       expect(describeLoginError(error), appL10n.stateSubscriptionSignInFailed);
     });
   }
 
   test('provider conflict and credential precedence do not change login semantics', () {
-    const conflict = DshRemoteException('settings/conflict', 'synthetic-private-message');
-    const credential = DshRemoteException('credential/rejected', 'synthetic-private-message');
+    const conflict = XrkRemoteException('settings/conflict', 'synthetic-private-message');
+    const credential = XrkRemoteException('credential/rejected', 'synthetic-private-message');
     expect(describeProviderError(conflict), appL10n.stateProviderConflict);
     expect(describeProviderError(credential), appL10n.stateCredentialFromEnvironment);
     expect(describeLoginError(conflict), appL10n.stateSubscriptionSignInFailed);
@@ -74,22 +74,22 @@ void main() {
 
   test('internal gateway errors retain endpoint-specific guidance', () {
     expect(
-      describeProviderError(const DshRemoteException('gateway/internal', 'endpoint answered 403')),
+      describeProviderError(const XrkRemoteException('gateway/internal', 'endpoint answered 403')),
       appL10n.stateProviderKeyRejected,
     );
     expect(
-      describeProviderError(const DshRemoteException('gateway/internal', 'could not reach endpoint')),
+      describeProviderError(const XrkRemoteException('gateway/internal', 'could not reach endpoint')),
       appL10n.stateProviderUnreachable,
     );
     expect(
-      describeLoginError(const DshRemoteException('gateway/internal', 'fetch failed')),
+      describeLoginError(const XrkRemoteException('gateway/internal', 'fetch failed')),
       appL10n.stateSubscriptionUnreachable,
     );
-    expect(describeProviderError(const DshRemoteException('gateway/internal', 'aborted')), appL10n.commonCancelled);
+    expect(describeProviderError(const XrkRemoteException('gateway/internal', 'aborted')), appL10n.commonCancelled);
   });
 
   test('unrelated remote errors are not reclassified by the shared helper', () {
-    const missing = DshRemoteException('session/not-found', 'synthetic-private-message');
+    const missing = XrkRemoteException('session/not-found', 'synthetic-private-message');
     expect(describeProviderError(missing), appL10n.commonFailedTryAgain);
     expect(describeLoginError(missing), appL10n.stateSubscriptionSignInFailed);
     expect(describeProviderError(const ProviderFailure('already worded')), 'already worded');
@@ -99,14 +99,14 @@ void main() {
     const refused = DshHttpException(403, 'synthetic-private-message');
     expect(describeProviderError(refused), appL10n.stateEngineHttpRejected(403));
     expect(describeLoginError(refused), appL10n.stateEngineHttpRejected(403));
-    expect(describeProviderError(const DshTransportException('private')), appL10n.commonEngineUnreachable);
-    expect(describeLoginError(const DshTransportException('private')), appL10n.stateSubscriptionTimeout);
+    expect(describeProviderError(const XrkTransportException('private')), appL10n.commonEngineUnreachable);
+    expect(describeLoginError(const XrkTransportException('private')), appL10n.stateSubscriptionTimeout);
     expect(describeLoginError(TimeoutException('private')), appL10n.stateSubscriptionTimeout);
     expect(describeLoginError(const DshClosedException('private')), appL10n.stateSubscriptionDisconnected);
   });
 
   test('LoginSession exposes the unavailable bridge reason without starting a poll', () async {
-    final backend = _FailingBeginBackend(const DshRemoteException('gateway/service-unavailable', privateMessage));
+    final backend = _FailingBeginBackend(const XrkRemoteException('gateway/service-unavailable', privateMessage));
     final session = LoginSession(backend, Subscription.chatgpt);
     addTearDown(session.dispose);
     await session.start();
@@ -119,8 +119,8 @@ void main() {
 
   test('both consumers follow the current English locale', () {
     AppLocale.use(AppLocale.en);
-    const service = DshRemoteException('gateway/service-unavailable', privateMessage);
-    const operation = DshRemoteException('gateway/invocation-unavailable', privateMessage);
+    const service = XrkRemoteException('gateway/service-unavailable', privateMessage);
+    const operation = XrkRemoteException('gateway/invocation-unavailable', privateMessage);
     for (final describe in [describeProviderError, describeLoginError]) {
       expect(
         describe(service),

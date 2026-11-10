@@ -6,23 +6,23 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/ask_ai.dart';
-import 'package:dsh_app/state/compose_inbox.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/ask_ai.dart';
-import 'package:dsh_app/ui/common/list_page_row.dart';
-import 'package:dsh_app/ui/common/risk_notice.dart';
-import 'package:dsh_app/ui/features/permission_page.dart';
-import 'package:dsh_app/ui/settings/settings_screen.dart';
-import 'package:dsh_app/ui/settings/settings_widgets.dart';
-import 'package:dsh_app/ui/shell/page_frame.dart';
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/ask_ai.dart';
+import 'package:xrk_app/state/compose_inbox.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/ask_ai.dart';
+import 'package:xrk_app/ui/common/list_page_row.dart';
+import 'package:xrk_app/ui/common/risk_notice.dart';
+import 'package:xrk_app/ui/features/permission_page.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
+import 'package:xrk_app/ui/settings/settings_widgets.dart';
+import 'package:xrk_app/ui/shell/page_frame.dart';
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -35,9 +35,9 @@ import '../shell/golden_harness.dart';
 
 /// The bundled guide pages, as a map (tests don't read the asset bundle).
 Future<String> _pages(String asset) async => switch (asset) {
-  'assets/skills/dsh-go-guide/zh-04-phone-control.md' => '# 手机操控\n让 DSH 看屏幕。',
-  'assets/skills/dsh-go-guide/en-04-phone-control.md' => '# Phone control\nLet DSH read the screen.',
-  'assets/skills/dsh-go-guide/zh-03-engine-hosts.md' => '# 本机引擎与远程主机',
+  'assets/skills/xrk-guide/zh-04-phone-control.md' => '# 手机操控\n让 XRK 看屏幕。',
+  'assets/skills/xrk-guide/en-04-phone-control.md' => '# Phone control\nLet XRK read the screen.',
+  'assets/skills/xrk-guide/zh-03-engine-hosts.md' => '# 本机引擎与远程主机',
   _ => throw StateError('no asset $asset'),
 };
 
@@ -56,18 +56,18 @@ void main() {
 
     test("this phone's engine: the skill's /name and the question", () async {
       final request = await askAiRequest(AskAiTopic.phoneControl, route: GuideRoute.skill, read: _pages);
-      expect(request.text, '/dsh-go-guide 手机操控是怎么工作的？有什么风险？');
+      expect(request.text, '/xrk-guide 手机操控是怎么工作的？有什么风险？');
       expect(request.attachments, isEmpty);
       expect(request.note, isNull);
     });
 
     test('a remote host that takes files: the matching guide page rides along', () async {
       final request = await askAiRequest(AskAiTopic.phoneControl, route: GuideRoute.attachment, read: _pages);
-      expect(request.text, '关于 DSH Go App：手机操控是怎么工作的？有什么风险？\n请按附件里的使用说明回答。');
+      expect(request.text, '关于 XRK Go App：手机操控是怎么工作的？有什么风险？\n请按附件里的使用说明回答。');
       final file = request.attachments.single;
-      expect(file.name, 'dsh-go-guide-phone-control.md');
+      expect(file.name, 'xrk-guide-phone-control.md');
       expect(file.isImage, isFalse);
-      expect(utf8.decode(file.bytes), '# 手机操控\n让 DSH 看屏幕。');
+      expect(utf8.decode(file.bytes), '# 手机操控\n让 XRK 看屏幕。');
       expect(request.note, isNull);
     });
 
@@ -86,16 +86,16 @@ void main() {
         await askAiRequest(AskAiTopic.remote, route: GuideRoute.none, read: _pages),
         await askAiRequest(AskAiTopic.plugins, route: GuideRoute.attachment, read: _pages),
       ]) {
-        expect(request.text, startsWith('关于 DSH Go App：'));
+        expect(request.text, startsWith('关于 XRK Go App：'));
         expect(request.attachments, isEmpty);
-        expect(request.note, '这台主机没有 DSH Go 使用说明，回答可能不准确');
+        expect(request.note, '这台主机没有 XRK Go 使用说明，回答可能不准确');
       }
     });
 
     test('every topic names a guide page that ships with the app', () {
       final manifest = jsonDecode(
         // Read from disk: the same file the asset bundle carries.
-        File('assets/skills/dsh-go-guide/manifest.json').readAsStringSync(),
+        File('assets/skills/xrk-guide/manifest.json').readAsStringSync(),
       );
       final files = (manifest as Map)['files'] as Map;
       for (final topic in AskAiTopic.values) {
@@ -166,11 +166,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AppPage), findsNothing, reason: 'back at the chat');
       final request = _container(tester).read(composeInboxProvider).single;
-      expect(request.text, startsWith('关于 DSH Go App：怎么连接自己的电脑或服务器？'));
-      expect(request.attachments.single.name, 'dsh-go-guide-engine-hosts.md');
+      expect(request.text, startsWith('关于 XRK Go App：怎么连接自己的电脑或服务器？'));
+      expect(request.attachments.single.name, 'xrk-guide-engine-hosts.md');
     });
 
-    testWidgets('on DSH Remote, which takes no files: the question and the note', (tester) async {
+    testWidgets('on XRK Remote, which takes no files: the question and the note', (tester) async {
       await pumpPage(tester, host: const HostRef.relay('r'));
       await tester.tap(find.byTooltip('问 AI'));
       await tester.pumpAndSettle();
@@ -220,7 +220,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(row);
       await tester.pumpAndSettle();
-      expect(_container(tester).read(composeInboxProvider).single.text, '/dsh-go-guide DSH Go 能做什么？我该从哪里开始？');
+      expect(_container(tester).read(composeInboxProvider).single.text, '/xrk-guide XRK Go 能做什么？我该从哪里开始？');
     });
 
     testWidgets('使用帮助 is not there in 网页模式', (tester) async {
@@ -234,11 +234,11 @@ void main() {
 
   group('权限', () {
     late FakePluginCarrier carrier;
-    late DshClient client;
+    late XrkClient client;
 
     setUp(() {
       carrier = FakePluginCarrier();
-      client = DshClient.withCarrier(carrier);
+      client = XrkClient.withCarrier(carrier);
       const options = [
         {'value': 'workspace-write', 'name': 'workspace-write'},
         {'value': 'danger-full-access', 'name': 'danger-full-access'},
@@ -319,7 +319,7 @@ void main() {
       await tester.tap(find.text('不确定？问 AI'));
       await tester.pumpAndSettle();
       expect(find.byType(RiskNoticeSheet), findsNothing);
-      expect(_container(tester).read(composeInboxProvider).single.text, '/dsh-go-guide 「访问手机文件」打开后，AI 能读写哪些文件？怎么关掉？');
+      expect(_container(tester).read(composeInboxProvider).single.text, '/xrk-guide 「访问手机文件」打开后，AI 能读写哪些文件？怎么关掉？');
     });
   });
 

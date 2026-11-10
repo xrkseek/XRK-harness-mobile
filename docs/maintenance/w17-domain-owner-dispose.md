@@ -10,7 +10,7 @@
 
 ## 命令、golden和结果
 
-`DSH_PREFIX=<候选prefix> node --test runtime/tests/storage-domain-owner.test.mjs`：基线3失败2通过，候选5/5。三个gate的golden均close=1、retired-domains=0、retained-unit=false、reserved=0，共享backend及无关unit仍存活；替代插件可重新open。原IO异常保持原对象。
+`XRK_PREFIX=<候选prefix> node --test runtime/tests/storage-domain-owner.test.mjs`：基线3失败2通过，候选5/5。三个gate的golden均close=1、retired-domains=0、retained-unit=false、reserved=0，共享backend及无关unit仍存活；替代插件可重新open。原IO异常保持原对象。
 
 受影响门禁：workspace-lifecycle、deletion-durability、runtime-upgrade-sessions-schedule，加两项原子锁模块合计25/25；title-cache-regression通过、title-cache-stat-regression8/8、title-cache-scale两种500条路径及overlap断言通过。未用真实等待。
 

@@ -3,10 +3,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/state/artifacts.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/session_export.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/artifacts.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/session_export.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -36,7 +36,7 @@ void main() {
   final messenger = TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger;
   late HttpServer server;
   late Directory cache;
-  late DshClient client;
+  late XrkClient client;
   late SessionLogExporter exporter;
   var payload = _archive(1);
   var status = HttpStatus.ok;
@@ -55,7 +55,7 @@ void main() {
         request.response.add(payload);
         await request.response.close();
       });
-      client = DshClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
+      client = XrkClient(DshConnection(Uri.parse('http://127.0.0.1:${server.port}')));
       cache = await Directory.systemTemp.createTemp('session-share-source-');
     }, _RealHttp());
     exporter = SessionLogExporter(
@@ -154,7 +154,7 @@ void main() {
     });
     await expectLater(
       exporter.share('S'),
-      throwsA(isA<DshRemoteException>().having((e) => e.code, 'code', 'session-export/http-500')),
+      throwsA(isA<XrkRemoteException>().having((e) => e.code, 'code', 'session-export/http-500')),
     );
     expect(called, isFalse);
     expect(await cache.list().toList(), isEmpty);

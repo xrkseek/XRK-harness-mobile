@@ -6,7 +6,7 @@ import { mock } from 'node:test';
 import { setImmediate as yieldTurn } from 'node:timers/promises';
 export async function createFixture(prefix, text, maxReadBytes = 256 * 1024) {
   const require = createRequire(resolve(prefix, 'package.json'));
-  const { BashTerminalBackend } = await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-terminal-bash')));
+  const { BashTerminalBackend } = await import(pathToFileURL(require.resolve('@xrkseek/harness-cli-terminal-bash')));
   const { Context } = await import(pathToFileURL(require.resolve('@deepseek-ai/cordis')));
   const ctx = new Context();
   const owner = { id: 'fixture-agent', ctx, session: {} };

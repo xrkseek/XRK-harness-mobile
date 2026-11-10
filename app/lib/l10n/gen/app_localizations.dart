@@ -14069,7 +14069,7 @@ abstract class L10n {
   /// No description provided for @featuresExportDownloadsHint.
   ///
   /// In zh, this message translates to:
-  /// **'存进 下载/XRK-Harness'**
+  /// **'存进 下载/XRK-Harness；可再用其他应用打开'**
   String get featuresExportDownloadsHint;
 
   /// No description provided for @featuresExportContents.
@@ -14077,6 +14077,36 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'含这个对话和子代理的全部记录与附件'**
   String get featuresExportContents;
+
+  /// No description provided for @featuresExportSavedTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'日志已保存'**
+  String get featuresExportSavedTitle;
+
+  /// No description provided for @featuresExportOpenOther.
+  ///
+  /// In zh, this message translates to:
+  /// **'用其他应用打开'**
+  String get featuresExportOpenOther;
+
+  /// No description provided for @featuresExportOpenHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'系统文件管理或解压软件；本应用不内置资源管理器'**
+  String get featuresExportOpenHint;
+
+  /// No description provided for @featuresExportOpenFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有能打开 ZIP 的应用，可改用分享'**
+  String get featuresExportOpenFailed;
+
+  /// No description provided for @featuresExportOverviewHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'打包成 ZIP，可分享或存到下载'**
+  String get featuresExportOverviewHint;
 
   /// No description provided for @featuresSkillUseHere.
   ///
@@ -15239,7 +15269,7 @@ abstract class L10n {
   /// No description provided for @hubAboutAuthor.
   ///
   /// In zh, this message translates to:
-  /// **'XRK Harness 原作者'**
+  /// **'开源仓库'**
   String get hubAboutAuthor;
 
   /// No description provided for @hubAboutBilibili.
@@ -17435,7 +17465,7 @@ abstract class L10n {
   /// No description provided for @petActionVoiceMissing.
   ///
   /// In zh, this message translates to:
-  /// **'先到 App 下载离线语音模型'**
+  /// **'手机版暂不支持语音输入，请打字'**
   String get petActionVoiceMissing;
 
   /// No description provided for @petActionVoiceTitle.
@@ -18029,19 +18059,19 @@ abstract class L10n {
   /// No description provided for @phoneAppRuleDenyHint.
   ///
   /// In zh, this message translates to:
-  /// **'不读也不点，银行、支付类默认如此'**
+  /// **'立即生效：不读也不点，银行、支付类默认如此'**
   String get phoneAppRuleDenyHint;
 
   /// No description provided for @phoneAppRuleConfirmHint.
   ///
   /// In zh, this message translates to:
-  /// **'可以读，点按和输入前先问你'**
+  /// **'立即生效：可以读，点按和输入前先问你'**
   String get phoneAppRuleConfirmHint;
 
   /// No description provided for @phoneAppRuleNormalHint.
   ///
   /// In zh, this message translates to:
-  /// **'只有发送这类敏感操作先问你'**
+  /// **'立即生效：只有发送这类敏感操作先问你'**
   String get phoneAppRuleNormalHint;
 
   /// No description provided for @phoneAppRulesTitle.
@@ -18053,7 +18083,7 @@ abstract class L10n {
   /// No description provided for @phoneAppRulesSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'没列出的 App 照常处理，敏感操作仍先问你'**
+  /// **'没列出的 App 照常处理，敏感操作仍先问你；改完立即生效'**
   String get phoneAppRulesSubtitle;
 
   /// No description provided for @phoneAppRulesUnavailable.
@@ -18569,19 +18599,19 @@ abstract class L10n {
   /// No description provided for @phoneConfirmAskHint.
   ///
   /// In zh, this message translates to:
-  /// **'进新 App、发送、删除、付款前先问你'**
+  /// **'立即生效：进新 App、发送、删除、付款前先问你'**
   String get phoneConfirmAskHint;
 
   /// No description provided for @phoneConfirmTaskHint.
   ///
   /// In zh, this message translates to:
-  /// **'每个任务只问一次'**
+  /// **'立即生效：每个任务只问一次'**
   String get phoneConfirmTaskHint;
 
   /// No description provided for @phoneConfirmAlwaysHint.
   ///
   /// In zh, this message translates to:
-  /// **'从不询问，直接操作'**
+  /// **'立即生效：从不询问，直接操作'**
   String get phoneConfirmAlwaysHint;
 
   /// No description provided for @phoneConfirmTitle.
@@ -18607,6 +18637,18 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'没改成，稍后再试'**
   String get phoneConfirmSaveFailed;
+
+  /// No description provided for @phoneConfirmApplied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已改为「{mode}」，下一步起生效'**
+  String phoneConfirmApplied(String mode);
+
+  /// No description provided for @phoneAppRuleApplied.
+  ///
+  /// In zh, this message translates to:
+  /// **'「{app}」已改为「{rule}」，下一步起生效'**
+  String phoneAppRuleApplied(String app, String rule);
 
   /// No description provided for @phoneEnableFailed.
   ///
@@ -30041,7 +30083,7 @@ abstract class L10n {
   /// No description provided for @shellSkillInstallDirectory.
   ///
   /// In zh, this message translates to:
-  /// **'1. 目标目录是 `\$DSH_HOME/skills/{skill}/`（没有设置 DSH_HOME 时是 `~/.dsh/skills/{skill}/`），不存在就先建。'**
+  /// **'1. 目标目录是 `\$XRK_HOME/skills/{skill}/`（没有设置 XRK_HOME 时是 `~/.dsh/skills/{skill}/`），不存在就先建。'**
   String shellSkillInstallDirectory(String skill);
 
   /// No description provided for @shellSkillInstallFiles.

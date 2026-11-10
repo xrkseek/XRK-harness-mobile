@@ -20,5 +20,5 @@ service.readPickedFile(42)
 
 const host = createTestHost({ pkg: { name: 'type-test' } })
 host.invoke('choose', { userGesture: true })
-const publicService: DshGoService = host.dshGo
+const publicService: DshGoService = host.xrkGo
 void publicService

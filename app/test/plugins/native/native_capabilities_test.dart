@@ -6,14 +6,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/plugins/native/native_capabilities.dart';
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/plugins/native/native_platform.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/ui/plugins/native/native_capability_scope.dart';
-import 'package:dsh_app/ui/plugins/native/native_taps.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/native/native_capabilities.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/native/native_platform.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/ui/plugins/native/native_capability_scope.dart';
+import 'package:xrk_app/ui/plugins/native/native_taps.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -158,7 +158,7 @@ void main() {
 
     testWidgets('the scope opens no channel: dsh/native-media is never called', (tester) async {
       final calls = <String>[];
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(const MethodChannel('dsh/native-media'), (
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(const MethodChannel('xrk/native-media'), (
         call,
       ) async {
         calls.add(call.method);
@@ -166,7 +166,7 @@ void main() {
       });
       addTearDown(
         () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-          const MethodChannel('dsh/native-media'),
+          const MethodChannel('xrk/native-media'),
           null,
         ),
       );

@@ -1,11 +1,11 @@
-import 'package:dsh_app/ui/chat/voice/voice_bridge.dart';
+import 'package:xrk_app/ui/chat/voice/voice_bridge.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('actual MethodChannel bridge rejects retired recognizer and recorder events', (tester) async {
-    const methods = MethodChannel('dsh/voice');
-    const events = MethodChannel('dsh/voice/events');
+    const methods = MethodChannel('xrk/voice');
+    const events = MethodChannel('xrk/voice/events');
     final messenger = tester.binding.defaultBinaryMessenger;
     final calls = <MethodCall>[];
     messenger.setMockMethodCallHandler(methods, (call) async {

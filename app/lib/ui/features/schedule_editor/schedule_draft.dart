@@ -3,7 +3,7 @@
 // with validation, a one-line description and the next runs. Monthly rules
 // save as cron (the Host has no monthly kind), like the official builder.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../l10n/l10n.dart';

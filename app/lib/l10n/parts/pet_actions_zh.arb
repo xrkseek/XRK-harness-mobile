@@ -3,7 +3,7 @@
   "petActionTargetChanged": "主机已变化，重新打开「问一句」；文字已保留",
   "petActionSendFailed": "没能发出，文字已保留，请重试",
   "petActionBusy": "这个对话正在忙，请选择「新对话」",
-  "petActionVoiceMissing": "先到 App 下载离线语音模型",
+  "petActionVoiceMissing": "手机版暂不支持语音输入，请打字",
   "petActionVoiceTitle": "语音问一句",
   "petActionVoiceReturn": "返回桌宠",
   "petActionVoiceStop": "结束录音",

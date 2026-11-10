@@ -2,7 +2,7 @@
 // landing-page link (`<shareLandingUrl>#p=…`), which works in a browser too
 // (the forum's theme component draws it as an install card); in the app it
 // becomes a card whose 「安装」 hands the link to the share-code feature through
-// the app-link router (`dshgo://share/…`), the same path a link tapped in
+// the app-link router (`xrkharness://share/…`), the same path a link tapped in
 // WeChat takes.
 
 import 'package:flutter/services.dart';

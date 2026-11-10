@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/ui/plugins/installed_tab.dart';
-import 'package:dsh_app/ui/plugins/plugins_screen.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/ui/plugins/installed_tab.dart';
+import 'package:xrk_app/ui/plugins/plugins_screen.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,8 +31,8 @@ void main() {
     testWidgets('uninstall consent belongs to opened connection: $destination', (tester) async {
       final a = FakePluginCarrier();
       final b = FakePluginCarrier();
-      final ac = DshClient.withCarrier(a);
-      final bc = DshClient.withCarrier(b);
+      final ac = XrkClient.withCarrier(a);
+      final bc = XrkClient.withCarrier(b);
       addTearDown(ac.close);
       addTearDown(bc.close);
       for (final carrier in [a, b]) {
@@ -105,8 +105,8 @@ void main() {
   test('late failed toggle cannot roll back refreshed A after A to B to A', () async {
     final a = FakePluginCarrier();
     final b = FakePluginCarrier();
-    final ac = DshClient.withCarrier(a);
-    final bc = DshClient.withCarrier(b);
+    final ac = XrkClient.withCarrier(a);
+    final bc = XrkClient.withCarrier(b);
     addTearDown(ac.close);
     addTearDown(bc.close);
     var enabled = true;

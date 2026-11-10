@@ -10,26 +10,26 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
 
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/share_code/conversation_share.dart';
-import 'package:dsh_app/state/artifacts.dart' show FilesChannel;
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/common/app_sheet.dart';
-import 'package:dsh_app/ui/common/segmented_pill.dart';
-import 'package:dsh_app/ui/replay/conversation_out.dart';
-import 'package:dsh_app/ui/replay/replay_page.dart';
-import 'package:dsh_app/ui/share/share_card.dart';
-import 'package:dsh_app/ui/share/share_content.dart';
-import 'package:dsh_app/ui/share/share_export.dart';
-import 'package:dsh_app/ui/share/share_image_page.dart';
-import 'package:dsh_app/ui/share/share_panel.dart';
-import 'package:dsh_app/ui/share/share_panel_pages.dart';
-import 'package:dsh_app/ui/share/share_picker.dart';
-import 'package:dsh_app/ui/share_code/share_code_panel.dart' show ShareQrPage;
-import 'package:dsh_app/ui/theme/app_icons.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/share_code/conversation_share.dart';
+import 'package:xrk_app/state/artifacts.dart' show FilesChannel;
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/common/app_sheet.dart';
+import 'package:xrk_app/ui/common/segmented_pill.dart';
+import 'package:xrk_app/ui/replay/conversation_out.dart';
+import 'package:xrk_app/ui/replay/replay_page.dart';
+import 'package:xrk_app/ui/share/share_card.dart';
+import 'package:xrk_app/ui/share/share_content.dart';
+import 'package:xrk_app/ui/share/share_export.dart';
+import 'package:xrk_app/ui/share/share_image_page.dart';
+import 'package:xrk_app/ui/share/share_panel.dart';
+import 'package:xrk_app/ui/share/share_panel_pages.dart';
+import 'package:xrk_app/ui/share/share_picker.dart';
+import 'package:xrk_app/ui/share_code/share_code_panel.dart' show ShareQrPage;
+import 'package:xrk_app/ui/theme/app_icons.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -625,11 +625,11 @@ void main() {
 
   // ── 文件 ──────────────────────────────────────────────────────────────────
 
-  testWidgets('文件: a DSH Go file, a web page, Markdown; 预览 opens the replay', (tester) async {
+  testWidgets('文件: a XRK Go file, a web page, Markdown; 预览 opens the replay', (tester) async {
     final panel = await _open(tester, state: _fixture(), reply: 'a6', scope: ShareScope.whole);
     await _key(tester, 'share-to-file');
     expect(find.text('修复登录重复提交.dshgo'), findsOneWidget);
-    expect(find.text('在 DSH Go 里回放、接着聊'), findsOneWidget);
+    expect(find.text('在 XRK Go 里回放、接着聊'), findsOneWidget);
     await _key(tester, 'share-file-save');
     final (saved, format) = panel.out.saved.single;
     expect(format, ConversationFormat.file);
@@ -644,7 +644,7 @@ void main() {
     expect(pageFormat, ConversationFormat.page);
     expect(page.uri.pathSegments.last, '修复登录重复提交.html');
     final html = page.readAsStringSync();
-    expect(html, contains('<title>修复登录重复提交 · DSH Go</title>'));
+    expect(html, contains('<title>修复登录重复提交 · XRK Go</title>'));
     expect(html, contains("connect-src 'none'"));
 
     await _tap(tester, find.text('Markdown'));
@@ -727,7 +727,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('share-send')));
     await _settle(tester);
     final file = File(panel.exporter.shared.single.files!.single.path);
-    expect(file.path, endsWith('dsh-go-20261024-153012.png'));
+    expect(file.path, endsWith('xrk-mobile-20261024-153012.png'));
     final bytes = (await tester.runAsync(file.readAsBytes))!;
     final image = (await tester.runAsync(() async {
       final codec = await ui.instantiateImageCodec(bytes);
@@ -771,7 +771,7 @@ void main() {
 
       await _key(tester, 'share-to-file');
       expect(tester.takeException(), isNull);
-      for (final label in ['对话文件', '网页', 'Markdown', '保存', '分享', '在 DSH Go 里回放、接着聊']) {
+      for (final label in ['对话文件', '网页', 'Markdown', '保存', '分享', '在 XRK Go 里回放、接着聊']) {
         _expectWhole(tester, label);
       }
       await _back(tester);

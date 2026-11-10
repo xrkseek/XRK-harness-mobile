@@ -1,0 +1,6 @@
+# Applied when a profile selects this bundle:
+#   dsh plugin --profile web add /path/to/xrk-example-quick
+# A plain insert (id + name) mounts without a restart.
+- insert:
+    - id: xrk-example-quick
+      name: xrk-example-quick

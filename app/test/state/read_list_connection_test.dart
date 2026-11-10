@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/models_state.dart';
-import 'package:dsh_app/state/read_list_cache.dart';
-import 'package:dsh_app/state/read_list_identity.dart';
-import 'package:dsh_app/state/workspaces_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/models_state.dart';
+import 'package:xrk_app/state/read_list_cache.dart';
+import 'package:xrk_app/state/read_list_identity.dart';
+import 'package:xrk_app/state/workspaces_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,8 +56,8 @@ void main() {
       final original = a.seedWorkspace('/a', title: 'Current A');
       final id = original['workspaceId'] as String;
       final b = FakeWorkspaceHost()..seedWorkspace('/b', title: 'Current B');
-      final ac = DshClient.withCarrier(a);
-      final bc = DshClient.withCarrier(b);
+      final ac = XrkClient.withCarrier(a);
+      final bc = XrkClient.withCarrier(b);
       final aConnection = HostConnection(client: ac, isLocal: true);
       final bConnection = HostConnection(client: bc, isLocal: true);
       final identity = ReadListIdentity.of(['workspace-source']);

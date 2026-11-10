@@ -1,8 +1,8 @@
-// Tool cards: a view carried in a DSH tool's `presentationMeta`
+// Tool cards: a view carried in a XRK tool's `presentationMeta`
 // (docs/plugins/quickstart.md). Zero dependencies.
 
-/** The key the dsh-go app reads from `tool/result.meta`. */
-export const VIEW_KEY = 'dsh-go/view'
+/** The key the xrk-mobile app reads from `tool/result.meta`. */
+export const VIEW_KEY = 'xrk-mobile/view'
 
 /** A tool card is written into the conversation log, so it must stay small. */
 export const CARD_MAX_BYTES = 8 * 1024
@@ -32,9 +32,9 @@ export function jsonBytes(value) {
 }
 
 /**
- * Wrap a view builder for a DSH tool's `output.presentationMeta`.
+ * Wrap a view builder for a XRK tool's `output.presentationMeta`.
  *
- * DSH fails the whole tool call when presentationMeta throws or returns a
+ * XRK fails the whole tool call when presentationMeta throws or returns a
  * value that is not lossless JSON. The wrapper never throws: a builder error,
  * a view over `maxBytes` or a builder returning null/undefined gives `{}` (no
  * card, the app shows its generic tool row). `meta` merges extra keys of your

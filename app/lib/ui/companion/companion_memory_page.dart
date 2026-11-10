@@ -1,12 +1,12 @@
 // 她记得的事: the companion's confirmed memories on the active host
-// (packages/dsh_client/lib/src/companion_api.dart). Every change shows only
+// (packages/xrk_client/lib/src/companion_api.dart). Every change shows only
 // once the Host has answered; a conflict reads the list again instead of
 // writing over someone else's change.
 
 import 'dart:async';
 import 'dart:math';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -52,7 +52,7 @@ enum _Load { loading, ready, unsupported, failed }
 class _CompanionMemoryPageState extends ConsumerState<CompanionMemoryPage> {
   _Load _load = _Load.loading;
   CompanionMemories? _list;
-  DshClient? _client;
+  XrkClient? _client;
   late HostRef _bindingHost;
   int _bindingEpoch = 0;
   int _readSerial = 0;
@@ -156,7 +156,7 @@ class _CompanionMemoryPageState extends ConsumerState<CompanionMemoryPage> {
       await write(keeper, list);
       if (!current()) return;
       await _read();
-    } on DshRemoteException catch (error) {
+    } on XrkRemoteException catch (error) {
       if (!mounted || !current()) return;
       showBriefNotice(
         context,
@@ -229,8 +229,8 @@ class _CompanionMemoryPageState extends ConsumerState<CompanionMemoryPage> {
           TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(dialog.l10n.commonCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: DshColors.of(dialog).danger,
-              foregroundColor: DshColors.of(dialog).onDanger,
+              backgroundColor: XrkColors.of(dialog).danger,
+              foregroundColor: XrkColors.of(dialog).onDanger,
             ),
             onPressed: () => Navigator.pop(dialog, true),
             child: Text(dialog.l10n.companionMemoryForget),
@@ -304,7 +304,7 @@ class _CompanionMemoryPageState extends ConsumerState<CompanionMemoryPage> {
       title: l10n.companionMemoryTitle,
       subtitle: Text(
         l10n.companionMemoryScope(hostName),
-        style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary),
+        style: theme.textTheme.bodySmall?.copyWith(color: XrkColors.of(context).textTertiary),
       ),
       actions: [
         if (_load == _Load.ready)

@@ -7,7 +7,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../engine_settings_state.dart' show schemaAt;
 import 'plugin_config_api.dart';
@@ -123,7 +123,7 @@ class MemoryPluginConfigApi implements PluginConfigApi {
   final Map<String, MemoryPluginEntry> entries;
   bool writable;
 
-  /// Serve forms one entry at a time, as the dsh-go bridge does.
+  /// Serve forms one entry at a time, as the xrk-mobile bridge does.
   final bool lazy;
 
   /// Listed, not editable: entryId → (state, reason).

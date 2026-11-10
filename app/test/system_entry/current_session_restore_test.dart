@@ -1,7 +1,7 @@
 // A cold start from a share or 新对话 picks the new chat before the last
 // open conversation has been read back; that late read must not switch away.
 
-import 'package:dsh_app/state/sessions_state.dart';
+import 'package:xrk_app/state/sessions_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -65,7 +65,7 @@ class ActionLogRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final (icon, color) = switch (entry.decision) {
       PhoneDecision.done || PhoneDecision.allowed => (AppIcons.allowed, colors.success),
       PhoneDecision.denied || PhoneDecision.stopped => (AppIcons.stopped, colors.warning),
@@ -93,7 +93,7 @@ class ActionLogRow extends StatelessWidget {
   }
 }
 
-/// 操作记录: every step DSH took on the phone (no screen contents).
+/// 操作记录: every step XRK took on the phone (no screen contents).
 class PhoneActionLogPage extends ConsumerStatefulWidget {
   const PhoneActionLogPage({super.key});
 

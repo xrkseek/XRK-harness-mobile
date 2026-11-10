@@ -6,7 +6,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -56,11 +56,11 @@ String voiceErrorText(int code) => switch (code) {
 
 class _VoiceTarget {
   const _VoiceTarget(this.client, this.generation, this.catalog);
-  final DshClient client;
+  final XrkClient client;
   final MuxGeneration? generation;
   final SpeechCatalog catalog;
 
-  bool current(DshClient? active) => identical(client, active) && identical(generation, client.mux.generation);
+  bool current(XrkClient? active) => identical(client, active) && identical(generation, client.mux.generation);
 }
 
 class VoiceInputController extends ChangeNotifier with WidgetsBindingObserver {
@@ -87,7 +87,7 @@ class VoiceInputController extends ChangeNotifier with WidgetsBindingObserver {
   final String? requiredProviderId;
   final TextEditingController input;
   final VoiceBridge bridge;
-  final DshClient? Function() client;
+  final XrkClient? Function() client;
   final Future<VoiceMode> Function() _mode;
 
   /// The on-device voice model is ready for this host (voice settings):
@@ -103,7 +103,7 @@ class VoiceInputController extends ChangeNotifier with WidgetsBindingObserver {
   VoiceCapabilities _caps = VoiceCapabilities.none;
   _VoiceTarget? _catalog;
   _VoiceTarget? _target;
-  DshClient? _probedClient;
+  XrkClient? _probedClient;
   MuxGeneration? _probedGeneration;
   Future<void>? _refreshing;
   int _catalogProbe = 0;
@@ -117,7 +117,7 @@ class VoiceInputController extends ChangeNotifier with WidgetsBindingObserver {
   int _operation = 0;
   bool _fallbackTried = false;
   bool _switching = false;
-  DshClient? _runClient;
+  XrkClient? _runClient;
   MuxGeneration? _runGeneration;
   StreamSubscription<VoiceEvent>? _events;
   Timer? _finalTimeout;
@@ -172,7 +172,7 @@ class VoiceInputController extends ChangeNotifier with WidgetsBindingObserver {
     if (!_disposed) notifyListeners();
   }
 
-  Future<_VoiceTarget?> _readCatalog(DshClient? c, MuxGeneration? generation) async {
+  Future<_VoiceTarget?> _readCatalog(XrkClient? c, MuxGeneration? generation) async {
     if (c == null || !_caps.recorder || !identical(client(), c) || !identical(c.mux.generation, generation)) {
       return null;
     }

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../diagnostics/app_error_log.dart';
@@ -22,10 +22,10 @@ enum SendMode {
   /// Idle session: starts a turn.
   now,
 
-  /// Joins the running turn at its next step; the work goes on (DSH `steer`).
+  /// Joins the running turn at its next step; the work goes on (XRK `steer`).
   steer,
 
-  /// Waits for the running turn to finish (DSH `queue`).
+  /// Waits for the running turn to finish (XRK `queue`).
   queue,
 
   /// Stops the running turn, then starts a new one with this message.
@@ -41,9 +41,9 @@ enum InboxSlot {
   nextTurn,
 }
 
-/// `source.kind`s DSH (0.2.1-rc.4) puts in an agent inbox on its own, through
+/// `source.kind`s XRK (0.2.1-rc.4) puts in an agent inbox on its own, through
 /// `agent.inject` / `steer` / `followup`: context for the model that the
-/// next turn takes along. DSH Web leaves them out of the chat (it shows only
+/// next turn takes along. XRK Web leaves them out of the chat (it shows only
 /// `user` interjections), and the transcript hides them once they land, so
 /// they are not drawn while they wait either. `tool-jobs` is not one of them:
 /// it has its own quiet row ([PendingPrompt.isBackgroundTask]). A source the
@@ -63,7 +63,7 @@ const engineNoteSources = {
   // `team-message` is the older team relay ([TeamMessage.fromEvent]).
   'agent-message',
   'team-message',
-  // dsh-goal-round-driver: the next round toward a goal.
+  // xrk-mobileal-round-driver: the next round toward a goal.
   'goal',
   // dsh-schedule: a reminder came due.
   'schedule',
@@ -78,7 +78,7 @@ const engineNoteSources = {
 /// A prompt the transcript has not echoed yet: sent from this device, or seen
 /// waiting in the agent inbox (sent elsewhere, or before the app restarted).
 ///
-/// DSH only writes `user/message` once the prompt leaves the Agent inbox, which
+/// XRK only writes `user/message` once the prompt leaves the Agent inbox, which
 /// is immediate when idle but waits for the running turn when queued. The chat
 /// shows these as optimistic bubbles until the matching [UserChatItem]
 /// (same `requestId`) arrives.
@@ -102,7 +102,7 @@ class PendingPrompt {
   final DateTime time;
   final SendMode mode;
 
-  /// What was attached, shown from local bytes until DSH echoes the message.
+  /// What was attached, shown from local bytes until XRK echoes the message.
   final List<DraftAttachment> attachments;
 
   /// The inbox item id once the Host reports it (for `session/updateQueue`).
@@ -128,11 +128,11 @@ class PendingPrompt {
 
   bool get isBackgroundTask => sourceKind == 'tool-jobs';
 
-  /// Context DSH put in the inbox for the model ([engineNoteSources]), not
+  /// Context XRK put in the inbox for the model ([engineNoteSources]), not
   /// the person's words: it never shows in the chat and is never moved.
   bool get isEngineNote => engineNoteSources.contains(sourceKind);
 
-  /// Written by DSH, not the person: nothing may send, steer or withdraw it.
+  /// Written by XRK, not the person: nothing may send, steer or withdraw it.
   bool get isAutomatic => isBackgroundTask || isEngineNote;
 
   /// Waiting for the running turn to end.
@@ -196,7 +196,7 @@ class CommandNotice {
     this.text,
   });
 
-  /// DSH `commandId`, or `local-N` until the Host answers.
+  /// XRK `commandId`, or `local-N` until the Host answers.
   final String id;
 
   /// Registered command name without the slash (`compact`).
@@ -210,7 +210,7 @@ class CommandNotice {
   final bool done;
   final bool success;
 
-  /// The handler's result text (English from DSH's built-in commands).
+  /// The handler's result text (English from XRK's built-in commands).
   final String? text;
 
   String get key => 'cmd$id';
@@ -392,7 +392,7 @@ class ChatState {
   );
 }
 
-/// Folds `DshClient.watch(sessionId)` into [ChatState] through [ChatTranscript].
+/// Folds `XrkClient.watch(sessionId)` into [ChatState] through [ChatTranscript].
 class ChatController extends Notifier<ChatState> {
   final _interactions = <Object, bool Function()>{};
 
@@ -469,7 +469,7 @@ class ChatController extends Notifier<ChatState> {
   var _localCommands = 0;
 
   /// A send whose outcome is unknown (the connection dropped mid-call):
-  /// sending the same content again reuses its request id, which DSH dedups.
+  /// sending the same content again reuses its request id, which XRK dedups.
   ({String content, String requestId})? _unsettled;
 
   /// Device minus Host clock; null until a live event was seen (and always
@@ -477,7 +477,7 @@ class ChatController extends Notifier<ChatState> {
   Duration? _skew;
   bool _sameClock = false;
 
-  DshClient? get _client => ref.read(activeConnectionProvider).value?.client;
+  XrkClient? get _client => ref.read(activeConnectionProvider).value?.client;
 
   bool get _canControl =>
       _synchronized && (_followEpoch?.isCurrent ?? true) && identical(_snapshotGeneration, _client?.mux.generation);
@@ -740,7 +740,7 @@ class ChatController extends Notifier<ChatState> {
     }
   }
 
-  void _listen(DshClient client, RunPulse pulse, {bool building = false}) {
+  void _listen(XrkClient client, RunPulse pulse, {bool building = false}) {
     final owner = ref;
     final listener = _listenOwner = Object();
     _watchEnded = false;
@@ -863,7 +863,7 @@ class ChatController extends Notifier<ChatState> {
             _markSyncing();
             if (!_syncReady.isCompleted) _syncReady.complete(false);
             // Deleted elsewhere: back to a new chat, nothing to report.
-            if (e is DshRemoteException && e.code == 'session/not-found') {
+            if (e is XrkRemoteException && e.code == 'session/not-found') {
               if (ref.read(currentSessionProvider) == sessionId) {
                 ref.read(currentSessionProvider.notifier).select(null);
               }
@@ -1042,7 +1042,7 @@ class ChatController extends Notifier<ChatState> {
     final name = trimmed.substring(1, space < 0 ? trimmed.length : space);
     final args = space < 0 ? null : trimmed.substring(space);
     final localId = 'local-${_localCommands++}';
-    // DSH logs command/run before executing, with its own commandId. The
+    // XRK logs command/run before executing, with its own commandId. The
     // execute response only returns that id after completion, so an optimistic
     // local row cannot be safely paired with a concurrent durable event.
     state = state.copyWith(clearError: true);
@@ -1051,7 +1051,7 @@ class ChatController extends Notifier<ChatState> {
       if (!owner.mounted) return false;
       final id = result.commandId;
       if (id == null) {
-        // Invalid syntax or an unknown name: DSH logs nothing.
+        // Invalid syntax or an unknown name: XRK logs nothing.
         _commands[localId] = CommandNotice(
           id: localId,
           name: name,
@@ -1170,7 +1170,7 @@ class ChatController extends Notifier<ChatState> {
 
   /// Our pending prompts with their inbox slot, plus prompts waiting in the
   /// inbox that this device didn't send (another client, or before a restart).
-  /// What DSH put there itself for the model ([PendingPrompt.isEngineNote])
+  /// What XRK put there itself for the model ([PendingPrompt.isEngineNote])
   /// is left out: it is not anyone's message waiting to be sent, and nothing
   /// here may move it.
   List<PendingPrompt> _placePending() {
@@ -1273,7 +1273,7 @@ class ChatController extends Notifier<ChatState> {
       if (!_currentOperation(operation)) return false;
       var promptMode = effective == SendMode.steer ? PromptMode.steer : PromptMode.queue;
       String? stopFailed;
-      // Interrupt stops first, then sends: DSH keeps the inbox across a stop
+      // Interrupt stops first, then sends: XRK keeps the inbox across a stop
       // but only starts the next turn for a prompt that arrives after it (one
       // queued before the stop would wait for whatever is sent next).
       if (effective == SendMode.interrupt) {
@@ -1426,7 +1426,7 @@ class ChatController extends Notifier<ChatState> {
         fileReceiptIds: files.receipts,
         requestId: requestId,
         mode: mode,
-        // No clientTimeZone: DSH needs an IANA name, which Dart can't provide; the
+        // No clientTimeZone: XRK needs an IANA name, which Dart can't provide; the
         // local process already runs with TZ set from the device (RuntimeController).
       );
     }
@@ -1434,7 +1434,7 @@ class ChatController extends Notifier<ChatState> {
     try {
       await prompt(images, staged);
       return null;
-    } on DshRemoteException catch (e) {
+    } on XrkRemoteException catch (e) {
       if (images.isEmpty || !_imagesRefused(e) || !client.supportsFileUpload) {
         rethrow;
       }
@@ -1449,7 +1449,7 @@ class ChatController extends Notifier<ChatState> {
   }
 
   static bool _imagesRefused(Object e) =>
-      e is DshRemoteException && e.details['reason'] == 'MODEL_DOES_NOT_SUPPORT_IMAGES';
+      e is XrkRemoteException && e.details['reason'] == 'MODEL_DOES_NOT_SUPPORT_IMAGES';
 
   /// The banner for a send that did not go through.
   static String _sendFailure(Object e) => switch (e) {
@@ -1465,9 +1465,9 @@ class ChatController extends Notifier<ChatState> {
     final cause = error is _UploadFailed ? error.cause : error;
     final stage = error is _UploadFailed ? 'attachment_upload' : 'prompt';
     final category = switch (cause) {
-      DshRemoteException(code: 'session/writer-held') => 'session_writer_held',
-      DshRemoteException() => 'remote_other',
-      DshTransportException() => 'transport',
+      XrkRemoteException(code: 'session/writer-held') => 'session_writer_held',
+      XrkRemoteException() => 'remote_other',
+      XrkTransportException() => 'transport',
       DshCarrierLostException() => 'carrier_lost',
       DshHttpException() => 'http',
       DshProtocolException() => 'protocol',
@@ -1488,7 +1488,7 @@ class ChatController extends Notifier<ChatState> {
 
   /// The connection dropped mid-call: the prompt may have landed.
   static bool _outcomeUnknown(Object e) => switch (e is _UploadFailed ? e.cause : e) {
-    DshTransportException() || DshCarrierLostException() => true,
+    XrkTransportException() || DshCarrierLostException() => true,
     _ => false,
   };
 
@@ -1533,7 +1533,7 @@ class ChatController extends Notifier<ChatState> {
   }
 
   /// The stop key. What waits in the inbox then goes right away, as if the
-  /// turn had ended: DSH keeps the inbox across a stop but starts no turn
+  /// turn had ended: XRK keeps the inbox across a stop but starts no turn
   /// for it, so the last waiting prompt is taken out and put back, which
   /// wakes it with the order unchanged. Resolves to what could not be put
   /// back (the screen returns it to the composer).
@@ -1612,7 +1612,7 @@ class ChatController extends Notifier<ChatState> {
     } catch (e) {
       if (!_currentOperation(operation)) return false;
       _finishMoving(operation, prompt.requestId);
-      if (e is! DshRemoteException || e.code != 'session/queue-item-not-found') {
+      if (e is! XrkRemoteException || e.code != 'session/queue-item-not-found') {
         state = state.copyWith(error: chatErrorText(e, action: appL10n.stateSendFailed));
       }
       _publish();
@@ -1621,7 +1621,7 @@ class ChatController extends Notifier<ChatState> {
   }
 
   /// Sends [prompts] again, in order, after [_takeOut]: each under its own
-  /// request id (DSH dedups those against the inbox and the log only, so the
+  /// request id (XRK dedups those against the inbox and the log only, so the
   /// echo still lands on its bubble), files staged anew (taking a prompt out
   /// retired their receipts), an interjection as one again. The first to
   /// arrive after a stop starts the next turn. Resolves to the ones that did
@@ -1676,7 +1676,7 @@ class ChatController extends Notifier<ChatState> {
     try {
       await client.updateQueue(sessionId, id, steer: true);
       return _currentOperation(operation);
-    } on DshRemoteException catch (e) {
+    } on XrkRemoteException catch (e) {
       if (!_currentOperation(operation)) return false;
       state = state.copyWith(
         error: e.code == 'session/steer-unavailable'
@@ -1700,7 +1700,7 @@ class ChatController extends Notifier<ChatState> {
     final operation = _ChatOperation(ref, client, _syncScope);
     try {
       await client.updateQueue(sessionId, id, remove: true);
-    } on DshRemoteException catch (e) {
+    } on XrkRemoteException catch (e) {
       if (!_currentOperation(operation)) return false;
       state = state.copyWith(
         error: e.code == 'session/queue-item-not-found'
@@ -1890,7 +1890,7 @@ class ChatController extends Notifier<ChatState> {
   }
 
   // ---------------------------------------------------------------------------
-  // Message actions. DSH 0.2.1 cannot edit, regenerate or rewind a session in
+  // Message actions. XRK 0.2.1 cannot edit, regenerate or rewind a session in
   // place (the log is append-only); branching is `session/fork` at an exact
   // event prefix, and the fork opens as a new conversation.
 
@@ -1921,7 +1921,7 @@ class ChatController extends Notifier<ChatState> {
     return _branchPoints.putIfAbsent(seq, () => forkPointAfterReply(_transcript.events, seq));
   }
 
-  /// DSH `message.id` of the durable reply [item] (the feedback target).
+  /// XRK `message.id` of the durable reply [item] (the feedback target).
   String? replyMessageId(AssistantChatItem item) {
     final seq = item.seq;
     if (seq == null || item.streaming) return null;
@@ -2070,7 +2070,7 @@ class _ChatOperation {
   _ChatOperation(this.ref, this.client, this.syncScope) : generation = client.mux.generation;
 
   final Ref ref;
-  final DshClient client;
+  final XrkClient client;
   final MuxGeneration? generation;
   final Object syncScope;
   int? stopAttempt;
@@ -2089,7 +2089,7 @@ class _UploadFailed implements Exception {
 final _random = Random.secure();
 
 /// RFC 4122 v4 id for `session/prompt` (lets the echo be matched to the
-/// optimistic bubble; retries with the same id are idempotent on DSH).
+/// optimistic bubble; retries with the same id are idempotent on XRK).
 String _requestId() {
   final bytes = List<int>.generate(16, (_) => _random.nextInt(256));
   bytes[6] = (bytes[6] & 0x0f) | 0x40;

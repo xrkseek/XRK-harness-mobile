@@ -37,7 +37,7 @@ Queued `sourceHash` values always identify the current source request. Preserved
 
 ## Version 1 contract
 
-Source snapshots use `format: dsh-go-i18n-catalog`, `schemaVersion: 1`, and `sourceHashAlgorithm: sha256-canonical-source-v1`. Each source hash is defined by:
+Source snapshots use `format: xrk-mobile-i18n-catalog`, `schemaVersion: 1`, and `sourceHashAlgorithm: sha256-canonical-source-v1`. Each source hash is defined by:
 
 ```python
 payload = {"area": area, "zh": chinese_text,
@@ -55,7 +55,7 @@ A translation state looks like:
 
 ```json
 {
-  "format": "dsh-go-i18n-translations",
+  "format": "xrk-mobile-i18n-translations",
   "schemaVersion": 1,
   "locale": "ru",
   "entries": {

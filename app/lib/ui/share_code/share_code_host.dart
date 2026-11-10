@@ -1,4 +1,4 @@
-// Where share codes come in — `dshgo://share/…` links, the landing page's https
+// Where share codes come in — `xrkharness://share/…` links, the landing page's https
 // links (once App Links are verified) and `.dshgo` files opened with or shared
 // to the app — and the confirm sheet they open. A conversation file opens its
 // replay instead (lib/ui/replay/).

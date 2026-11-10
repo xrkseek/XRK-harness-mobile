@@ -2,10 +2,10 @@
 """Writes the SYNTHETIC media fixtures (session-log JSONL, one event a line).
 
 They follow the v1 contract of docs/design/media-generation.md §2.5 (the tool
-result's meta["dsh-go/media"]) and the 2026-10-28 revision (generation mode
+result's meta["xrk-mobile/media"]) and the 2026-10-28 revision (generation mode
 sends an ordinary user message with a parameter header). The event shapes copy
-a real DSH 0.2.1-rc.2 log (test/plugins/view/fixtures/live_tool_card.jsonl).
-They are stand-ins until Pro's live `dsh headless` transcripts arrive: replace
+a real XRK 0.2.1-rc.2 log (test/plugins/view/fixtures/live_tool_card.jsonl).
+They are stand-ins until Pro's live `xrkh run` transcripts arrive: replace
 each `synthetic_*.jsonl` with its `live_*.jsonl` and keep the tests.
 
   synthetic_header_image.jsonl  generation mode: header message → generate_image (n = 2, 3:4)
@@ -69,7 +69,7 @@ def media(rid, items, request, prompt, revised=None, cost=None, status='done', j
         meta['job'] = job
     if error:
         meta['error'] = error
-    return {'dsh-go/media': meta}
+    return {'xrk-mobile/media': meta}
 
 
 def picture(name, w, h, size):

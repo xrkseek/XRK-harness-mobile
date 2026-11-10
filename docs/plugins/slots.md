@@ -1,6 +1,6 @@
 # 插槽参考
 
-工具卡之外，插件还能在 dsh-go 的四个原生位置出现。位置由 `package.json` 里的 `dshGo` 清单声明，内容由宿主半侧（插件在引擎里跑的 Node 代码）通过 `ctx.dshGo` 提供。规格原文：`docs/design/native-plugins-protocol.md`。
+工具卡之外，插件还能在 xrk-mobile 的四个原生位置出现。位置由 `package.json` 里的 `xrkGo` 清单声明，内容由宿主半侧（插件在引擎里跑的 Node 代码）通过 `ctx.xrkGo` 提供。规格原文：`docs/design/native-plugins-protocol.md`。
 
 | 插槽（surface） | 原生位置 | 条目字段 | 每插件 | 文字上限 | 点按 |
 |---|---|---|---|---|---|
@@ -15,7 +15,7 @@
 
 ```jsonc
 // package.json
-"dshGo": {
+"xrkGo": {
   "v": 1,
   "title": { "zh": "快捷", "en": "Quick" },
   "icon": "bolt",
@@ -45,19 +45,19 @@
 
 - 文字字段（`title`、`label`、`text`）可以写字符串，或 `{ "zh": "…", "en": "…" }`。按 App 语言取：完全匹配 → 语言部分 → `en` → `zh` → 第一个。
 - `id`：`^[A-Za-z0-9][A-Za-z0-9_.-]{0,39}$`，**同一插件内所有插槽的 id 不能重复**。
-- 整个 `dshGo` ≤ 16 KiB。
+- 整个 `xrkGo` ≤ 16 KiB。
 - 一项写错只丢那一项，其余照常；错在哪里，插件详情页「原生界面」一行能看到，`check` 也会列出。
 
 图标名（162 个，胶囊、菜单、面板和视图里通用）：bolt star sparkle heart flag bookmark pin bell clock alarm calendar todo note document folder search code terminal globe chart lightbulb book puzzle robot chat mail translate image camera mic link summary wrench bug travel school home play refresh archive team wallet palette coin money speaker read copy quote share edit write save paste add remove delete clear fork regenerate reply select-text qr download downloads external info warning check done success error question pending running tip list table panel sidebar menu more expand collapse file folder-open workspace storage pdf zip slides article text diff gallery audio music video video-file play-video pause stop replay generate-image generate-video diagram plugin bot agent skill model tool workflow goal plan job automation command trajectory web web-search browser history time today timezone schedule repeat reminder user account group chats mention invite announcement reaction poll notification send community forum feedback wechat qq telegram discord phone computer cloud server power restart retry theme color text-size pet featured badge favorite settings
 
-## 宿主半侧：`ctx.dshGo`
+## 宿主半侧：`ctx.xrkGo`
 
 ```js
 export function apply(ctx) {
-  ctx.inject(['dshGo'], (ctx) => {          // 只有装了 dsh-go 桥接的主机才会进来
-    ctx.dshGo.on('translate', (scope, event) => ({ insert: `译成英文：\n\n${scope.clipboard}` }))
-    ctx.dshGo.strip('today', (scope, emit, caps) => watch(() => emit({ text: label(caps.locale) })))
-    ctx.dshGo.panel('usage', {
+  ctx.inject(['xrkGo'], (ctx) => {          // 只有装了 xrk-mobile 桥接的主机才会进来
+    ctx.xrkGo.on('translate', (scope, event) => ({ insert: `译成英文：\n\n${scope.clipboard}` }))
+    ctx.xrkGo.strip('today', (scope, emit, caps) => watch(() => emit({ text: label(caps.locale) })))
+    ctx.xrkGo.panel('usage', {
       view: (scope, caps) => usageView(scope, caps),
       data: (scope, emit, caps) => watch(() => emit(usageData(scope))),
       actions: { copy: (scope, event) => ({ copy: summary(), toast: '已复制' }) },
@@ -66,7 +66,7 @@ export function apply(ctx) {
 }
 ```
 
-**写 `['dshGo']`，不要写 `['dshGo?']`**，也不要把 `dshGo` 放进插件顶层的 `inject`：前者回调永远不执行，后者在没有桥接的主机上整个插件起不来。
+**写 `['xrkGo']`，不要写 `['xrkGo?']`**，也不要把 `xrkGo` 放进插件顶层的 `inject`：前者回调永远不执行，后者在没有桥接的主机上整个插件起不来。
 
 | 方法 | 用途 |
 |---|---|
@@ -134,7 +134,7 @@ export function apply(ctx) {
 **回合尾注**在宿主半侧用 `turnNote(id, dataFn)` 提供。一个对话一个订阅，每次推这个对话全部要显示的回合，键是回合序号：
 
 ```js
-ctx.dshGo.turnNote('cost', (scope, emit) => watchCosts(scope.sessionId, (costs) =>
+ctx.xrkGo.turnNote('cost', (scope, emit) => watchCosts(scope.sessionId, (costs) =>
   emit(Object.fromEntries(costs.map((c) => [c.turn, { text: `¥${c.yuan.toFixed(2)}` }])))))
 ```
 
@@ -142,7 +142,7 @@ ctx.dshGo.turnNote('cost', (scope, emit) => watchCosts(scope.sessionId, (costs) 
 - 脚注放不下时最先省掉尾注，时长、步数和花费优先。
 - `tone` 决定这段文字的颜色，每个插件各算各的；不写就和脚注同色。
 - 没有声明 `turn.note` 的插件不会产生任何订阅。一段对话最多跟前 8 个开着尾注的插件，排在后面的不显示。
-- 较旧的桥接没有 `turnNote`，直接调用会让后面的注册都走不到。要兼容就先判断：`if (typeof ctx.dshGo.turnNote === 'function')`。
+- 较旧的桥接没有 `turnNote`，直接调用会让后面的注册都走不到。要兼容就先判断：`if (typeof ctx.xrkGo.turnNote === 'function')`。
 
 ## 静态面板
 

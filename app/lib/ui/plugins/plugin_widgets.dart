@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -39,8 +39,8 @@ class PluginAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = DshColors.of(context);
-    final slot = DshColors.identityIndex(name);
+    final colors = XrkColors.of(context);
+    final slot = XrkColors.identityIndex(name);
     final shape = Squircle.border(size * 0.25);
     final label = (title?.trim().isNotEmpty ?? false) ? title!.trim() : _bareName(name);
     final fallback = DecoratedBox(
@@ -121,7 +121,7 @@ class PluginBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final (bg, fg) = switch (tone) {
       PluginBadgeTone.official => (scheme.primaryContainer, scheme.onPrimaryContainer),
       PluginBadgeTone.featured || PluginBadgeTone.warning => (colors.warningContainer, colors.onWarningContainer),
@@ -158,7 +158,7 @@ class PluginInstallButton extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final dark = theme.brightness == Brightness.dark;
     final running = job?.isActive ?? false;
     final installed = !running && status == MarketInstallStatus.installed;
@@ -217,7 +217,7 @@ class PluginInstallProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -259,7 +259,7 @@ class _PluginLogBoxState extends State<PluginLogBox> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -320,7 +320,7 @@ class PluginFailureBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     final cancelled = failure.kind == PluginFailureKind.cancelled;
     final fg = cancelled ? theme.colorScheme.onSurfaceVariant : colors.onDangerContainer;
     return DecoratedBox(
@@ -358,7 +358,7 @@ class PluginTrustNote extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return DecoratedBox(
       decoration: ShapeDecoration(color: colors.warningContainer, shape: Squircle.border(AppShape.md)),
       child: Padding(
@@ -392,7 +392,7 @@ class PluginCommandBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final colors = DshColors.of(context);
+    final colors = XrkColors.of(context);
     return DecoratedBox(
       decoration: ShapeDecoration(color: colors.codeWellBg, shape: Squircle.border(AppShape.sm)),
       child: Row(

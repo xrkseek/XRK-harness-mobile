@@ -1,5 +1,5 @@
 // 插件详情 › 网页版界面 (docs/design/plugin-ui-v3.md §3.5): where a plugin's web
-// part lives that the app has no seat for, in plain words, each a way to DSH
+// part lives that the app has no seat for, in plain words, each a way to XRK
 // Web. Nothing is dropped silently: an installed plugin with a browser half
 // always has at least one way to be seen.
 
@@ -14,7 +14,7 @@ import '../../theme/app_icons.dart';
 import '../../web/web_target.dart';
 import 'seat_links.dart' show seatWebOpenerProvider;
 
-/// A place in DSH Web, in the order the section lists them.
+/// A place in XRK Web, in the order the section lists them.
 enum WebPlace {
   besideComposer,
   header,
@@ -46,7 +46,7 @@ enum WebPlace {
     unknown => appL10n.plugslotsPlaceUnknown,
   };
 
-  /// Where [slot] sits in DSH Web.
+  /// Where [slot] sits in XRK Web.
   static WebPlace of(String slot) {
     if (slot.startsWith('conversation.input.') || slot.startsWith('conversation.composer')) return besideComposer;
     if (slot.startsWith('conversation.session.header') || slot == 'conversation.header.leading') return header;
@@ -78,7 +78,7 @@ enum WebPlace {
 }
 
 /// The places of [package]'s web part the app can't show, in order. Empty
-/// without a browser half, on a host without DSH Web, or when every place it
+/// without a browser half, on a host without XRK Web, or when every place it
 /// uses has a seat. Without the bridge's occupancy table (remote hosts) the
 /// app can't tell where it is: one [WebPlace.unknown].
 List<WebPlace> pluginWebPlaces(SeatInventory inventory, String package) {
@@ -103,7 +103,7 @@ class PluginWebPlacesSection extends ConsumerWidget {
 
   final String package;
 
-  /// The plugin's names on DSH Web's Plugins page (its titles, its package).
+  /// The plugin's names on XRK Web's Plugins page (its titles, its package).
   final List<String> pluginNames;
 
   @override

@@ -1,11 +1,11 @@
 // Model replies retain only their original controller lifetime, client, mux
-// and request order. Real DshClient and loopback HTTP/WS are used throughout.
+// and request order. Real XrkClient and loopback HTTP/WS are used throughout.
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

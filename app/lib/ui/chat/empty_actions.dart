@@ -241,7 +241,7 @@ enum SuggestionTint { teal, violet, amber, blue }
 /// The badge colour of [tint], readable on the card in both themes.
 Color suggestionTintColor(BuildContext context, SuggestionTint tint) {
   final dark = Theme.of(context).brightness == Brightness.dark;
-  final dsh = DshColors.of(context);
+  final dsh = XrkColors.of(context);
   return switch (tint) {
     SuggestionTint.teal => dsh.success,
     SuggestionTint.violet => dark ? DshPalette.duskLift : DshPalette.dusk,
@@ -299,7 +299,7 @@ class SuggestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final tint = suggestionTintColor(context, suggestion.tint);
     final detail = suggestion.detail;
     final shape = AppShape.outlined(quietCardRim(theme), radius: AppShape.lg, width: 0.5);
@@ -472,7 +472,7 @@ int Function(int count) tipStart = (count) => math.Random().nextInt(count);
 const tipDwell = Duration(seconds: 7);
 
 /// One quiet line under the suggestions: a small bulb and one tip about using
-/// DSH Go. The tips turn on their own every [tipDwell]; a tap shows the next
+/// XRK Go. The tips turn on their own every [tipDwell]; a tap shows the next
 /// one at once and starts the wait again. With reduced motion they stay put
 /// until tapped. Screen readers get the tip shown, not a live region. Every
 /// tip is shown whole: the line is as tall as the longest tip at this width
@@ -556,7 +556,7 @@ class _TipLineState extends State<TipLine> {
   Widget build(BuildContext context) {
     if (widget.tips.isEmpty) return const SizedBox.shrink();
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final l10n = context.l10n;
     final tip = widget.tips[_index];
     final style = DefaultTextStyle.of(context).style
@@ -645,7 +645,7 @@ class SetupItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
     return Semantics(
       button: true,

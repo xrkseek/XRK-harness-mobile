@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:dsh_app/state/artifacts.dart';
+import 'package:xrk_app/state/artifacts.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

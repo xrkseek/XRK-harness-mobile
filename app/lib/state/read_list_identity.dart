@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -81,7 +81,7 @@ final _resolvedDirectoriesProvider = Provider((ref) => _ResolvedDirectories());
 
 typedef _ReadListMux = ({DshConnectionState state, MuxGeneration? generation});
 
-final _readListMuxProvider = StreamProvider.autoDispose.family<_ReadListMux, DshClient>(
+final _readListMuxProvider = StreamProvider.autoDispose.family<_ReadListMux, XrkClient>(
   (ref, client) => Stream.multi((controller) {
     // Subscribe and sample without an await gap; a lost state must not be
     // missed between the initial value and the following events.

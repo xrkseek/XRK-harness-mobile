@@ -1,4 +1,4 @@
-// Dart side of the `dsh/phone` method channel and `dsh/phone/events` event
+// Dart side of the `xrk/phone` method channel and `xrk/phone/events` event
 // channel (the native side is PhonePlugin.kt). The native module is
 // built separately; every call here tolerates it being absent
 // (MissingPluginException → "未就绪") or failing (PlatformException → a reason).
@@ -175,7 +175,7 @@ class PhoneA11yStatus {
   factory PhoneA11yStatus.fromMap(Map<Object?, Object?> m) =>
       PhoneA11yStatus(enabled: _flag(m['enabled']), serviceConnected: _flag(m['serviceConnected']));
 
-  /// The user turned DSH on in the system accessibility settings.
+  /// The user turned XRK on in the system accessibility settings.
   final bool enabled;
 
   /// The service is bound and answering (false right after a force stop).
@@ -858,7 +858,7 @@ class ScreenTestResult {
 
 // ── Policies ─────────────────────────────────────────────────────────────────
 
-/// What DSH may do in one app.
+/// What XRK may do in one app.
 enum AppRule {
   /// Neither read nor act (banks, payment by default).
   deny,
@@ -932,11 +932,11 @@ enum PhoneUnlock {
   /// Password, verification-code and payment-code inputs.
   secretFields,
 
-  /// DSH Go's own screens.
+  /// XRK Go's own screens.
   ownApp,
 }
 
-/// How much the person is asked before DSH acts (`confirmMode`; the wire
+/// How much the person is asked before XRK acts (`confirmMode`; the wire
 /// value is the name). The hard rules refuse in every mode, unless lifted
 /// ([PhoneUnlock]).
 enum PhoneConfirmMode {
@@ -1210,9 +1210,9 @@ class PhonePreviewFrame {
 /// Typed wrapper over the private phone method, status, and preview channels.
 class PhoneChannel {
   PhoneChannel({MethodChannel? methods, EventChannel? events, EventChannel? preview})
-    : _methods = methods ?? const MethodChannel('dsh/phone'),
-      _events = events ?? const EventChannel('dsh/phone/events'),
-      _preview = preview ?? const EventChannel('dsh/phone/preview');
+    : _methods = methods ?? const MethodChannel('xrk/phone'),
+      _events = events ?? const EventChannel('xrk/phone/events'),
+      _preview = preview ?? const EventChannel('xrk/phone/preview');
 
   final MethodChannel _methods;
   final EventChannel _events;

@@ -4,15 +4,15 @@
 
 import 'dart:io';
 
-import 'package:dsh_app/plugins/seams/seat_models.dart' show SeatOverride, SeatOverrides;
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/runtime/runtime_state.dart';
-import 'package:dsh_app/state/appearance_state.dart';
-import 'package:dsh_app/state/drawer_view_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/settings_state.dart';
-import 'package:dsh_app/ui/theme/accent.dart';
-import 'package:dsh_app/ui_config/ui_config.dart';
+import 'package:xrk_app/plugins/seams/seat_models.dart' show SeatOverride, SeatOverrides;
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/runtime/runtime_state.dart';
+import 'package:xrk_app/state/appearance_state.dart';
+import 'package:xrk_app/state/drawer_view_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/settings_state.dart';
+import 'package:xrk_app/ui/theme/accent.dart';
+import 'package:xrk_app/ui_config/ui_config.dart';
 import 'package:flutter/material.dart' show Color, ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -279,7 +279,7 @@ void main() {
     );
     addTearDown(c.dispose);
     c.listen(uiOverridesProvider, (_, _) {});
-    final file = File('${root.path}/root/.dsh/dsh-go/ui.json');
+    final file = File('${root.path}/root/.xrk/xrk-mobile/ui.json');
     await until(() => file.parent.existsSync());
     file.writeAsStringSync('{"version": 1, "density": "compact"}');
     await until(() => c.read(uiOverridesProvider).config.density == UiDensity.compact);

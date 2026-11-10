@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:dsh_app/state/chat_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/chat_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,7 +42,7 @@ class _Host {
     }
   }
 
-  DshClient client() => DshClient.withCarrier(_Carrier(this));
+  XrkClient client() => XrkClient.withCarrier(_Carrier(this));
 }
 
 class _Carrier extends DshCarrier {
@@ -136,7 +136,7 @@ class _Link implements DshMuxLink {
 class _Harness {
   _Harness(this.host, this.clients, this.container);
   final _Host host;
-  final List<DshClient> clients;
+  final List<XrkClient> clients;
   final ProviderContainer container;
   ChatController get chat => container.read(chatProvider('s').notifier);
   ChatState get state => container.read(chatProvider('s'));
@@ -170,7 +170,7 @@ class _Harness {
     await tester.pump(const Duration(milliseconds: 40));
   }
 
-  Future<DshClient> replace(WidgetTester tester, {required bool alreadyReady}) async {
+  Future<XrkClient> replace(WidgetTester tester, {required bool alreadyReady}) async {
     final next = host.client();
     clients.add(next);
     if (alreadyReady) await next.mux.ready();

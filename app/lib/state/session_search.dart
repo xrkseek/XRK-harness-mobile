@@ -1,13 +1,13 @@
-// Portions derived from DeepSeek Harness (https://github.com/deepseek-ai/deepseek-harness), MIT, Copyright (c) 2026 DeepSeek. See THIRD_PARTY_NOTICES.md.
+// Portions derived from XRK-Harness (https://github.com/deepseek-ai/deepseek-harness), MIT, Copyright (c) 2026 DeepSeek. See THIRD_PARTY_NOTICES.md.
 //
 // Session search: local title matches merged with the Host's ranked content
-// hits, as DSH Web's sidebar search does (`deriveSearchResults`). Every term
+// hits, as XRK Web's sidebar search does (`deriveSearchResults`). Every term
 // must match, in any order, ignoring case and width; archived sessions come
 // last (the app has no archive view).
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/services.dart' show TextEditingValue;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -244,13 +244,13 @@ abstract interface class SessionContentSearch {
   void markUnsupported();
 }
 
-/// `session/search` on a [DshClient]. "No index" is remembered per client, so
+/// `session/search` on a [XrkClient]. "No index" is remembered per client, so
 /// typing on a host without content search costs one failed call, not one per
 /// keystroke; a reconnect (new client) asks again.
 class HostContentSearch implements SessionContentSearch {
   HostContentSearch(this.client);
 
-  final DshClient client;
+  final XrkClient client;
 
   static final _unsupported = Expando<bool>('sessionContentSearchUnsupported');
 
@@ -267,7 +267,7 @@ class HostContentSearch implements SessionContentSearch {
 /// Whether [error] means the Host has no content search at all (index off,
 /// query service not mounted, method missing) rather than a passing failure.
 bool isContentSearchUnsupported(Object error) {
-  if (error is! DshRemoteException) return false;
+  if (error is! XrkRemoteException) return false;
   const codes = {'gateway/method-unavailable', 'gateway/service-unavailable', 'gateway/lookup-unavailable'};
   if (codes.contains(error.code)) return true;
   final message = error.message.toLowerCase();
@@ -352,7 +352,7 @@ class SessionSearchState {
 /// 250 ms pause, never runs on an unfinished IME composition, and a newer
 /// query always wins over a late answer.
 class SessionSearchController extends Notifier<SessionSearchState> {
-  /// Same as DSH Web's sidebar search.
+  /// Same as XRK Web's sidebar search.
   static const debounce = Duration(milliseconds: 250);
 
   /// The first search on a big history builds the Host's index; past this the

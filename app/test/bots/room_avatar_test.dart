@@ -1,5 +1,5 @@
-import 'package:dsh_app/ui/bots/bot_avatar.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/ui/bots/bot_avatar.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

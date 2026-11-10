@@ -13,7 +13,7 @@
    - macOS：`~/Library/Application Support/clawd-on-desk/themes/deepy-whale/`
    - Linux：`~/.config/clawd-on-desk/themes/deepy-whale/`
 2. 在 Clawd 里打开 `Settings…` → `Theme`，选择 **Deepy 小鲸鱼**。如果列表里没有，重启一次 Clawd。
-3. 想让小鲸鱼跟着 DeepSeek 干活，可以在 `Settings…` → `Agents` 里接入 DeepSeek Harness（实验性），其他已支持的 agent 也一样能驱动它。
+3. 想让小鲸鱼跟着 DeepSeek 干活，可以在 `Settings…` → `Agents` 里接入 XRK-Harness（实验性），其他已支持的 agent 也一样能驱动它。
 
 ## 状态映射
 

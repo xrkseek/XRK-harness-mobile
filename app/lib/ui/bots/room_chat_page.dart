@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -378,7 +378,7 @@ class _GroupApprovalCardState extends State<GroupApprovalCard> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final dsh = DshColors.of(context);
+    final dsh = XrkColors.of(context);
     final name = widget.bot?.name ?? 'Bot';
     final reason = widget.approval.reason.trim();
     return ChatCard(
@@ -452,7 +452,7 @@ class _Members extends StatelessWidget {
         Text(
           names.join(l10n.botsNameSeparator),
           textAlign: TextAlign.center,
-          style: theme.textTheme.bodyMedium?.copyWith(color: DshColors.of(context).textTertiary),
+          style: theme.textTheme.bodyMedium?.copyWith(color: XrkColors.of(context).textTertiary),
         ),
       ],
     );

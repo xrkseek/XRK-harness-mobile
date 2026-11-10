@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/ui/chat/dsh_ui/dsh_ui_model.dart';
-import 'package:dsh_app/ui/plugins/view/plugin_view.dart';
+import 'package:xrk_app/ui/chat/xrk_ui/xrk_ui_model.dart';
+import 'package:xrk_app/ui/plugins/view/plugin_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -17,7 +17,7 @@ void main() {
       final budget = PluginViewBudget.values.byName(c['budget'] as String);
       final parsed = parsePluginView(c['view'], data: c['data'], budget: budget);
       results.add(switch (parsed) {
-        DshUiInvalid(:final error) => {
+        XrkUiInvalid(:final error) => {
           'name': c['name'],
           'fatal': true,
           'title': null,
@@ -25,7 +25,7 @@ void main() {
             {'path': error.path, 'message': error.message},
           ],
         },
-        DshUiParsed(:final view) => {
+        XrkUiParsed(:final view) => {
           'name': c['name'],
           'fatal': false,
           'title': view.title,
@@ -37,7 +37,7 @@ void main() {
     }
     expect(results, expected['cases']);
     for (final c in (expected['colors'] as List).cast<Map>()) {
-      expect(dshUiReadableColor(c['input'] as int, c['background'] as int), c['corrected']);
+      expect(xrkUiReadableColor(c['input'] as int, c['background'] as int), c['corrected']);
     }
   }, skip: kit.existsSync() ? null : 'Requires the SDK checkout and Node.js.');
 }

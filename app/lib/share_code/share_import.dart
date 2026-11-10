@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 import '../l10n/l10n.dart';
 import '../state/connection_state.dart';
@@ -54,7 +54,7 @@ class ImportTarget {
 
   bool get isLocal => connection.isLocal;
   String get label => connection.label;
-  DshClient get client => connection.client;
+  XrkClient get client => connection.client;
   bool get canInstall => !safeMode && client.canInstallPlugins;
 }
 
@@ -566,7 +566,7 @@ abstract class ImportPluginRunner {
 class DirectPluginRunner implements ImportPluginRunner {
   DirectPluginRunner(this.client, {required this.isLocal});
 
-  final DshClient client;
+  final XrkClient client;
   final bool isLocal;
   static var _seq = 0;
 
@@ -610,7 +610,7 @@ class QueuedPluginRunner implements ImportPluginRunner {
   QueuedPluginRunner(this.installs, this.client, {required this.isLocal});
 
   final PluginInstallsController installs;
-  final DshClient client;
+  final XrkClient client;
   final bool isLocal;
 
   @override
@@ -719,7 +719,7 @@ Future<ImportResult> applyImport(
       try {
         await target.client.mutateSettingsView(ns, step.ops, expectedRevision: view.revision);
         set(step.id, StepStatus.done);
-      } on DshRemoteException catch (e) {
+      } on XrkRemoteException catch (e) {
         set(
           step.id,
           StepStatus(

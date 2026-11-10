@@ -1,7 +1,7 @@
-# dsh-go 宠物系统设计
+# xrk-mobile 宠物系统设计
 
 > 2026-10-25。本文是宠物系统实现规格的正式版，相对规格改过的地方集中列在 §12。
-> 素材：Deepy 小鲸鱼（Clawd on Desk 主题包）、鲸娘（dshtui.com 序列帧），源文件在 `app/tool/pet_src/`，作者与授权见仓库根目录的 `ASSETS.md`。
+> 素材：Deepy 小鲸鱼（Clawd on Desk 主题包格式）、鲸娘序列帧；源文件在 `app/tool/pet_src/`。作者与出处写在各宠物包的 `pack.json`，页底原样显示。
 
 ## 0. 结论
 
@@ -21,7 +21,7 @@
 |---|---|---|---|
 | **Clawd on Desk**（rullerzhou-afk，AGPL-3.0，美术另行授权） | 给 Claude Code、Codex 等编程 agent 用的像素桌宠，由 agent hook 驱动 12 种状态 | 状态集与事件对应，优先级表（error 8、notification 7、sweeping 6、attention 5、carrying / juggling 4、working 3、thinking 2、idle / roam 1、sleeping 0）。一次性态与持续态分开：attention、error、sweeping、notification、carrying 是一次性的。按会话数分档，用 `minDisplay` / `autoReturn` 控制停留时长。Stop 先按 working 压一会儿，没有后续进展才升成 attention，避免连续轮次反复庆祝。命中框分 default、wide、sleeping 三种，可按动画覆盖。60 秒无操作入睡，被唤醒时播 waking。mini 模式贴在屏幕边上探头。尺寸可调，按 `contentBox` 和 `baseline` 锚定 | 权限气泡里直接放「允许 / 拒绝」：桌面上有键鼠还算安全，手机悬浮窗上一点就批，误触和点击劫持风险太大。眼睛跟随依赖 SVG 和鼠标，手机上没有指针 |
 | **Codex Pets**（OpenAI Codex） | Codex 内置的悬浮伙伴，只表达三件事：在跑、等你输入、可以审阅了 | 状态极少、一眼看懂。用 `/pet`、设置页、命令面板随时收起或唤回。图集格式简单：8 列 × 9 行，每格 192×208，配一个 `pet.json`。codex-pet-web 的随机待机动作平均 120 秒一次，最短 45 秒、最长 300 秒，只在宠物空闲且可见时触发 | 9 行图集里没有睡觉、出错分档之类的状态，导入时只能降级映射（§3.5） |
-| **dsh-pet**（npm 0.3.8，代码 MIT，素材禁止商用） | DSH 网页里的大肥鱼桌宠，97 段 webm，带 Electron 桌面窗 | 宠物窗只开局部小窗，从不铺满屏幕，只有身体命中区可交互。目标续跑轮单独判定，不当作完成。工作状态直接从会话事件聚合，不调模型 | 碎碎念默认开启，每 5 分钟调一次当前模型，一天约 288 次，没人看也照调。路由不鉴权，手机上任何 App 都能调它的 `/chat`。默认 462px 宽，比手机屏幕还宽。素材不能商用 |
+| **dsh-pet**（npm 0.3.8，代码 MIT，素材禁止商用） | XRK 网页里的大肥鱼桌宠，97 段 webm，带 Electron 桌面窗 | 宠物窗只开局部小窗，从不铺满屏幕，只有身体命中区可交互。目标续跑轮单独判定，不当作完成。工作状态直接从会话事件聚合，不调模型 | 碎碎念默认开启，每 5 分钟调一次当前模型，一天约 288 次，没人看也照调。路由不鉴权，手机上任何 App 都能调它的 `/chat`。默认 462px 宽，比手机屏幕还宽。素材不能商用 |
 | **Shimeji** | 在整个桌面上走、爬、被拎起来甩的角色 | 被拎起来有专门姿势，松手有落地反馈。动作数据驱动 | 全屏游走、多只复制，在手机上等于遮挡整屏 |
 | **VPet 虚拟桌宠** | 开源 WPF 桌宠，动作分「开始 → 循环 → 结束」三段 | 长任务用循环段，完成时播结束段。同一动作按状态换一套帧，逻辑不变 | 饥饿、口渴这类数值会让人内疚，不适合工具 |
 | **Desktop Goose** | 故意捣乱的鹅，会抢鼠标、拖窗口 | 性格可以靠小动作表达 | 任何抢输入、挡操作、必须处理才能继续的行为 |
@@ -209,7 +209,7 @@ app/assets/pets/<id>/<anim>.png     # 序列帧图，默认单行横条；帧多
   "id": "deepy-whale",
   "name": "Deepy 小鲸鱼",
   "author": "DSH-TUI",
-  "license": "DSH-TUI 吉祥物，作者授权 dsh-go 使用",
+  "license": "DSH-TUI 吉祥物，作者授权 xrk-mobile 使用",
   "source": "DSH-TUI（Clawd on Desk 主题包 v1.0.0）",
   "pixelArt": true,
   "scale": 5,
@@ -297,7 +297,7 @@ app/assets/pets/<id>/<anim>.png     # 序列帧图，默认单行横条；帧多
   - notification 不设 `autoReturn`，见 §4。
   - working / thinking 的 1000 是去抖，sweeping `autoReturn` 的 300000 是保险上限，两个包一样。
 - 状态名一律用 Clawd 的。动画名用包自己的：鲸娘的反应叫 `poke-left`、`poke-right`、`tickle`、`drag`，游走叫 `swim`。
-- `author`、`license`、`source` 必须如实填写，宠物页底部原样显示，见 §9。两只都是 DSH-TUI 的吉祥物，作者与授权见仓库根目录的 `ASSETS.md`。
+- `author`、`license`、`source` 必须如实填写，宠物页底部原样显示，见 §9。两只都是 XRK-TUI 的吉祥物，作者与出处写在各宠物包的 `pack.json`。
 
 ### 3.3 运行时加载
 
@@ -338,7 +338,7 @@ Codex Pet zip 复用 `PetLibrary.install`，无 `pack.json` 时才识别唯一�
 | tickle | jumping |
 | drag | running-right；当前运行时没有按拖动方向切轨道的入口 |
 
-转换保留 Codex 默认逐帧时长和轨道别名。v1 可覆盖动画、帧网格及受限 fps，但图集尺寸必须精确匹配；v2 自定义网格/动画拒绝。v2 多出的 look 行不绑定；sleeping 使用 idle 首帧，DSH 持续态循环，和 Codex 非 idle 播三轮后回 idle 有差别。每个这些损失都写进 `codexImport.warnings`，来源图摘要写进 `codexImport.sourceSha256`，供主线导入结果页展示；没有上传或联网取图。作者、授权、来源按原字段保留，缺失仅作提示，不推断可公开发布。
+转换保留 Codex 默认逐帧时长和轨道别名。v1 可覆盖动画、帧网格及受限 fps，但图集尺寸必须精确匹配；v2 自定义网格/动画拒绝。v2 多出的 look 行不绑定；sleeping 使用 idle 首帧，XRK 持续态循环，和 Codex 非 idle 播三轮后回 idle 有差别。每个这些损失都写进 `codexImport.warnings`，来源图摘要写进 `codexImport.sourceSha256`，供主线导入结果页展示；没有上传或联网取图。作者、授权、来源按原字段保留，缺失仅作提示，不推断可公开发布。
 
 Clawd 主题 zip 的导入走宠物包转换工具（`app/tool/make_pet_pack.py`），在手机端运行之前要先确定 APNG 和 GIF 怎么解码。
 
@@ -456,7 +456,7 @@ Clawd 主题 zip 的导入走宠物包转换工具（`app/tool/make_pet_pack.py`
 ### 6.3 进程与前台服务
 
 - Flutter 引擎被缓存，不随 Activity 销毁（`MainActivity.shouldDestroyEngineWithHost = false`）。所以只要进程还在，`PetMood` 就在跑。
-- 本机引擎在跑时，悬浮窗挂在 `DshService` 上。只连远程主机时，用悬浮窗自己的前台服务，类型是 `specialUse`（manifest 里已经声明了 `FOREGROUND_SERVICE_SPECIAL_USE`）。
+- 本机引擎在跑时，悬浮窗挂在 `XrkService` 上。只连远程主机时，用悬浮窗自己的前台服务，类型是 `specialUse`（manifest 里已经声明了 `FOREGROUND_SERVICE_SPECIAL_USE`）。
 - 当前 `targetSdk` 是 28。Android 15 对「凭 SAW 在后台启动前台服务」的收紧按 target 生效，眼下不受影响，但将来提高 target 时必须先保证悬浮窗可见。在 `docs/architecture.md` 的 target 升级清单里记一笔。
 
 ### 6.4 权限引导
@@ -478,7 +478,7 @@ Clawd 主题 zip 的导入走宠物包转换工具（`app/tool/make_pet_pack.py`
 |---|---|
 | 气泡 | 做完了 · 出错了 · 等你确认 · 等你回答 · 标题 · 做完了 · 3 个对话做完了 |
 | 长按菜单（App 内） | 换宠物 · 藏起来 1 小时 · 宠物设置 |
-| 长按半轮盘（悬浮窗） | 问一句 · 截图并问 DSH-Go · 新对话 · 停止当前任务（运行中）· 切换主机（多个）· 今天不再显示 · 宠物设置 |
+| 长按半轮盘（悬浮窗） | 问一句 · 截图并问 XRK-Go · 新对话 · 停止当前任务（运行中）· 切换主机（多个）· 今天不再显示 · 宠物设置 |
 | 宠物页 | 宠物 · 大小（小 / 标准 / 大）· 安静模式 · App 外显示（有事时显示 / 一直显示）· 未授权 |
 
 - 不写解释段落，不加感叹号，不用表情符号，不卖萌，不写催促或内疚式的话。
@@ -486,7 +486,7 @@ Clawd 主题 zip 的导入走宠物包转换工具（`app/tool/make_pet_pack.py`
 
 ## 9. 素材与许可
 
-- 两只宠物的作者与授权见仓库根目录的 `ASSETS.md`。`pack.json` 的 `author`、`license`、`source` 如实填写，宠物页底部原样显示，并注明「非官方」。
+- 两只宠物的作者与出处写在各宠物包的 `pack.json`。`pack.json` 的 `author`、`license`、`source` 如实填写，宠物页底部原样显示，并注明「非官方」。
 - dsh-pet 的素材禁止商用，不打进 App。
 
 ## 10. 涉及的文件
@@ -559,7 +559,7 @@ Clawd 主题 zip 的导入走宠物包转换工具（`app/tool/make_pet_pack.py`
 | 15 | 减弱动效时停在首帧、瞬移；气泡带 `liveRegion` | 规格没写。气泡替代横幅后，必须保留横幅原有的可访问性 | 聊天页 |
 | 16 | 挠痒痒改为 1.1 秒内连点 3 下 | 和鲸娘原页一致，小目标上连点 4 下太难 | 聊天页 |
 | 17 | 宠物开启时隐藏空状态里的静止鲸尾 | 一屏一个吉祥物 | empty_state |
-| 18 | 素材许可要如实填写 | 见 `ASSETS.md` | 宠物包 |
+| 18 | 素材许可要如实填写 | 写在 `pack.json` | 宠物包 |
 | 19 | 悬浮窗的 `k` 与 App 内 `petDevicePixels` 逐值对齐：像素画包（含 scale > 1 的 Deepy）一律取整数，并保持小、标准、大至少各差 1（2026-11-01，修「悬浮窗里的鲸娘特别小」） | 悬浮窗原来只四舍五入一次，且只对 scale = 1 取整：鲸娘「大」在 dpr 1.84–3.06 只有 App 内的 2/3，「标准」在 dpr < 2.45 只有一半；Deepy 也小 5–12%。文档一直写着「悬浮窗和 App 内用同一档位」 | 悬浮窗 |
 | 20 | 悬浮窗里每段动画都画全：帧格超出平时窗口的动画，播放期间窗口长到「平时窗口 ∪ 该段帧格」，不再只限 happy、waking、typing 三段；触摸只认平时窗口和当前动画的命中框（2026-11-01，修「子代理、思考的图在 App 外显示不全」） | §6.1 原来接受「其余状态的特效裁掉」，结果 juggling 的音符和道具、thinking 的思考云被截掉一大截（Deepy 的 conducting 上方 18 个美术像素）。窗口跟着画面长、并只朝需要的方向长，是在显示完整和少挡下面 App 之间的折中；溢出部分单开不可触摸窗口在应用悬浮窗上只能画成 80% 不透明，没有采用 | 悬浮窗 |
 
@@ -584,7 +584,7 @@ Clawd 主题 zip 的导入走宠物包转换工具（`app/tool/make_pet_pack.py`
 
 长按菜单的首项打开单独的、仅在打开期间可获焦点的小输入窗。显示目标对话与主机，提供「新对话」切换；返回键、点窗外收起并保留草稿。IME 根据输入窗实际屏幕位置和局部重叠量抬升，重复 inset 不累计尚未布局的偏移；键盘消失后回到原停靠位置。
 
-目标优先为宠物当前代表、位于当前主机、已知空闲且可用的对话；其他情况新建当前主机对话。宠物可能正在提示另一台仍连接的本机，此时不会悄悄切换全局主机。菜单中的「切换主机」供用户明确选择，SSH 仅列已固定主机指纹的主机，DSH Remote 仅列已信任的主机。
+目标优先为宠物当前代表、位于当前主机、已知空闲且可用的对话；其他情况新建当前主机对话。宠物可能正在提示另一台仍连接的本机，此时不会悄悄切换全局主机。菜单中的「切换主机」供用户明确选择，SSH 仅列已固定主机指纹的主机，XRK Remote 仅列已信任的主机。
 
 `askTarget` 创建 offer，绑定 host、connection、连接代次和 session；发送时重新验证。主机变化、重连、会话进入运行/审批/问题等待状态时拒绝发送并保留文本。新对话复用 `SessionsController.create`，再走 `ChatController.waitForSync/send`，保留正式聊天的历史、requestId 与同步语义。新建后发送失败的重试复用同一 session，不重复建空对话。
 
@@ -612,7 +612,7 @@ Clawd 主题 zip 的导入走宠物包转换工具（`app/tool/make_pet_pack.py`
 
 App 外长按菜单改为朝屏幕内侧的半轮盘，左右停靠镜像。原始触摸流在长按后继续路由到轮盘，不要求重新按下；滑向选项连续高亮、轻微放大并向外凸出，松手执行。中心死区、外圈之外、系统取消、多指打断、窗口/代次失效时不执行。普通单击/拖拽不变；无障碍长按提供可点选按钮，极小屏/极大字体优先保证完整标签可达。展开与选中反馈使用短缓出/逐帧插值，跟随系统关闭动画设置，不按每次 move 重建动画。
 
-「截图并问 DSH-Go」是用户主动操作，不经过 AI 手机操控工具：Android 11+ 已连接无障碍服务时，先隐藏宠物、轮盘及手机操控浮层，截取当前主屏，再自动返回 App。截图期间禁止状态刷新重新显示宠物；失败或操作失效后恢复浮层并清理私有缓存。安全窗口、缺少无障碍或系统不支持时显示稳定的本地化错误，不绕过权限和截图保护。
+「截图并问 XRK-Go」是用户主动操作，不经过 AI 手机操控工具：Android 11+ 已连接无障碍服务时，先隐藏宠物、轮盘及手机操控浮层，截取当前主屏，再自动返回 App。截图期间禁止状态刷新重新显示宠物；失败或操作失效后恢复浮层并清理私有缓存。安全窗口、缺少无障碍或系统不支持时显示稳定的本地化错误，不绕过权限和截图保护。
 
 截图经私有临时目录与受保护的 `EntryActivity` / `ShortcutsPlugin` 进入 Flutter，消息为 `{kind: screenshot, path}`；原生同时验证进程 token 与缓存路径，不能用外部 Intent 附加任意私有文件。`SystemEntryHost` 复用 `ComposeRequest.fromShare` 校验、读取并删除临时副本，回到新对话输入区。旧对话草稿不动，新对话已有文字与附件按原预算合并；原生回填不创建模型请求、不自动发送或上传图片；网页模式沿用已有分享附件通路，也不提交提问。后台拉起被 ROM 阻挡时沿用通知入口。
 

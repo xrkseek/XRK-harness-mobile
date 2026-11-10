@@ -3,11 +3,11 @@
 
 import 'dart:async';
 
-import 'package:dsh_app/state/bots_state.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_app/state/plugins_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/state/bots_state.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_app/state/plugins_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
@@ -85,7 +85,7 @@ class FakeDsBotTransport implements DsBotTransport {
   Future<Object?> call(String endpoint, Map<String, Object?> payload, {Duration? timeout}) async {
     calls.add((endpoint, payload));
     final handler = handlers[endpoint];
-    if (handler == null) throw DshRemoteException('bot/not-found', 'Unknown endpoint $endpoint');
+    if (handler == null) throw XrkRemoteException('bot/not-found', 'Unknown endpoint $endpoint');
     return handler(payload);
   }
 
@@ -321,7 +321,7 @@ const sampleApprovals = <Object?>[
 FakeDsBotTransport approvalTransport({bool readOnly = false}) {
   final data = sampleTeam(working: false);
   data.addAll(liveOf(data, approvals: sampleApprovals));
-  if (readOnly) data['readOnly'] = '另一个 DSH 正在使用这个团队';
+  if (readOnly) data['readOnly'] = '另一个 XRK 正在使用这个团队';
   final transport = FakeDsBotTransport(team: data);
   transport.handlers['state'] = (_) => data;
   transport.handlers['approval-answer'] = (_) => true;

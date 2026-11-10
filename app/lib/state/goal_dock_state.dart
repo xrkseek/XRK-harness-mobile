@@ -8,7 +8,7 @@
 
 import 'dart:async';
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,7 +19,7 @@ import 'connection_state.dart';
 
 /// The `goals/*` calls the goal bar makes; a seam for tests.
 abstract interface class GoalBackend {
-  /// `goals/get` reaches the Host (the DSH Remote relay refuses it).
+  /// `goals/get` reaches the Host (the XRK Remote relay refuses it).
   bool get canRead;
 
   /// Edit, pause, resume and clear all reach the Host.
@@ -41,7 +41,7 @@ abstract interface class GoalBackend {
 class DshGoalBackend implements GoalBackend {
   DshGoalBackend(this.client);
 
-  final DshClient client;
+  final XrkClient client;
 
   @override
   bool get canRead => client.canReadGoal;
@@ -353,7 +353,7 @@ final goalDockProvider = NotifierProvider.autoDispose.family<GoalDockController,
 /// 「[action]：原因」 for a refused goal change; transport and other failures
 /// read like the rest of the chat ([chatErrorText]).
 String goalErrorText(Object error, {required String action}) {
-  if (error is DshRemoteException) {
+  if (error is XrkRemoteException) {
     final reason = switch (error.code) {
       'GOAL_STALE_REVISION' => appL10n.stateGoalStale,
       'GOAL_NOT_FOUND' => appL10n.stateGoalMissing,

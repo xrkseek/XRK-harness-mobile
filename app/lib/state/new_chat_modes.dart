@@ -6,7 +6,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dsh_client/dsh_client.dart' show ModelSelection;
+import 'package:xrk_client/xrk_client.dart' show ModelSelection;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,7 +15,7 @@ import 'models_state.dart' show modelSelectionScopeProvider;
 
 /// Presets a new chat never offers: the companion room's own preset is set up
 /// by the room, not chosen for an ordinary conversation.
-const hiddenNewChatPresets = {'dsh-go-companion-full'};
+const hiddenNewChatPresets = {'xrk-mobile-companion-full'};
 
 /// What the new-chat screen asked for. Null fields keep the Host's default.
 class NewChatModes {

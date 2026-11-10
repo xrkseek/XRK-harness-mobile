@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dsh_app/l10n/l10n.dart';
-import 'package:dsh_app/ui/engine_settings/engine_settings_page.dart';
-import 'package:dsh_app/ui/engine_settings/field_sheets.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/l10n/l10n.dart';
+import 'package:xrk_app/ui/engine_settings/engine_settings_page.dart';
+import 'package:xrk_app/ui/engine_settings/field_sheets.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -32,11 +32,11 @@ void main() {
   ]) {
     testWidgets('$title rejected save retains draft and retry closes after acknowledgement', (tester) async {
       final host = scalarHost();
-      host.beforeMutate = (_) => throw const DshRemoteException('settings/rejected', 'rejected');
+      host.beforeMutate = (_) => throw const XrkRemoteException('settings/rejected', 'rejected');
       await pumpPage(
         tester,
         const EngineSettingsPage(ns: 'scalar'),
-        overrides: engineOverrides(DshClient.withCarrier(host)),
+        overrides: engineOverrides(XrkClient.withCarrier(host)),
       );
       await tester.tap(find.text(title));
       await settle(tester);
@@ -60,11 +60,11 @@ void main() {
     testWidgets('$title failed reset remains open and retries unset', (tester) async {
       final host = scalarHost();
       host.namespaces['scalar']!.user = {'name': 'custom', 'count': 5};
-      host.beforeMutate = (_) => throw const DshRemoteException('settings/rejected', 'rejected');
+      host.beforeMutate = (_) => throw const XrkRemoteException('settings/rejected', 'rejected');
       await pumpPage(
         tester,
         const EngineSettingsPage(ns: 'scalar'),
-        overrides: engineOverrides(DshClient.withCarrier(host)),
+        overrides: engineOverrides(XrkClient.withCarrier(host)),
       );
       await tester.tap(find.text(title));
       await settle(tester);
@@ -84,7 +84,7 @@ void main() {
     await pumpPage(
       tester,
       const EngineSettingsPage(ns: 'scalar'),
-      overrides: engineOverrides(DshClient.withCarrier(host)),
+      overrides: engineOverrides(XrkClient.withCarrier(host)),
     );
     await tester.tap(find.text(appL10n.engineFieldQuantity));
     await settle(tester);

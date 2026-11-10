@@ -1,477 +1,477 @@
-import 'dsh_glyphs.dart';
+import 'xrk_glyphs.dart';
 
 /// 图标词汇:**Phosphor Regular**(1.5 描边、圆端、几何),选中 / 点亮 / 开启态用同一
 /// 骨架的 **Fill**。规范见 `docs/design/polish-guide.md` §1。
 ///
 /// - 按**角色**命名,不按图形命名:同一个图形可以担几个角色(`regenerate` 和 `refresh`
 ///   都是顺时针箭头),一个角色只有一个图形。业务代码只写 `AppIcons.xxx`,不写
-///   `Icons.*`,也不写 `DshGlyphs.*`。换图形改这里一行;换整套只重生成 [DshGlyphs]。
-/// - 字形来自自建子集字体 `assets/fonts/DshIcons.ttf`。Phosphor 在网格里留白比
+///   `Icons.*`,也不写 `XrkGlyphs.*`。换图形改这里一行;换整套只重生成 [XrkGlyphs]。
+/// - 字形来自自建子集字体 `assets/fonts/XrkIcons.ttf`。Phosphor 在网格里留白比
 ///   Material 多,字体里已统一放大 10%,所以同一个 `size:` 和 Material 图标占同样
-///   的格子、同样的视觉大小。颜色和尺寸走 `IconTheme` / `DshColors`。
-/// - 新增角色:在下面加一行 `static const foo = DshGlyphs.barBaz;`(Phosphor 名的
+///   的格子、同样的视觉大小。颜色和尺寸走 `IconTheme` / `XrkColors`。
+/// - 新增角色:在下面加一行 `static const foo = XrkGlyphs.barBaz;`(Phosphor 名的
 ///   驼峰,`…Fill` 取 Fill),然后在 `app/` 下运行 `python3 tool/make_icon_font.py`。
 abstract final class AppIcons {
   // ── 导航与外壳 ──────────────────────────────────────────────
-  static const back = DshGlyphs.arrowLeft;
-  static const forward = DshGlyphs.arrowRight;
-  static const close = DshGlyphs.x;
-  static const menu = DshGlyphs.list;
-  static const more = DshGlyphs.dotsThree;
+  static const back = XrkGlyphs.arrowLeft;
+  static const forward = XrkGlyphs.arrowRight;
+  static const close = XrkGlyphs.x;
+  static const menu = XrkGlyphs.list;
+  static const more = XrkGlyphs.dotsThree;
 
   /// 系统「⋮」菜单(只在引导里指给用户看)。
-  static const moreVertical = DshGlyphs.dotsThreeVertical;
+  static const moreVertical = XrkGlyphs.dotsThreeVertical;
 
   /// 行尾「进入」、面包屑分隔。
-  static const disclosure = DshGlyphs.caretRight;
-  static const expand = DshGlyphs.caretDown;
-  static const collapse = DshGlyphs.caretUp;
+  static const disclosure = XrkGlyphs.caretRight;
+  static const expand = XrkGlyphs.caretDown;
+  static const collapse = XrkGlyphs.caretUp;
 
   /// 可切换的选择器:主机、工作区、余额。
-  static const dropdown = DshGlyphs.caretUpDown;
-  static const openExternal = DshGlyphs.arrowSquareOut;
-  static const openLink = DshGlyphs.arrowUpRight;
-  static const openWith = DshGlyphs.dotsNine;
-  static const allFeatures = DshGlyphs.dotsNine;
-  static const browser = DshGlyphs.browser;
-  static const scrollToBottom = DshGlyphs.arrowDown;
-  static const sidebar = DshGlyphs.sidebarSimpleRight;
-  static const dragHandle = DshGlyphs.dotsSixVertical;
-  static const swap = DshGlyphs.arrowsLeftRight;
+  static const dropdown = XrkGlyphs.caretUpDown;
+  static const openExternal = XrkGlyphs.arrowSquareOut;
+  static const openLink = XrkGlyphs.arrowUpRight;
+  static const openWith = XrkGlyphs.dotsNine;
+  static const allFeatures = XrkGlyphs.dotsNine;
+  static const browser = XrkGlyphs.browser;
+  static const scrollToBottom = XrkGlyphs.arrowDown;
+  static const sidebar = XrkGlyphs.sidebarSimpleRight;
+  static const dragHandle = XrkGlyphs.dotsSixVertical;
+  static const swap = XrkGlyphs.arrowsLeftRight;
 
   /// 终端方向键、补全面板里的回车提示。
-  static const keyUp = DshGlyphs.caretUp;
-  static const keyDown = DshGlyphs.caretDown;
-  static const keyLeft = DshGlyphs.caretLeft;
-  static const keyRight = DshGlyphs.caretRight;
-  static const enterKey = DshGlyphs.arrowElbowDownLeft;
+  static const keyUp = XrkGlyphs.caretUp;
+  static const keyDown = XrkGlyphs.caretDown;
+  static const keyLeft = XrkGlyphs.caretLeft;
+  static const keyRight = XrkGlyphs.caretRight;
+  static const enterKey = XrkGlyphs.arrowElbowDownLeft;
 
   /// 翻页(插件轮播):上一页 / 下一页。上一页在从右往左的语言里要镜像着画。
-  static const pagePrevious = DshGlyphs.caretLeft;
-  static const pageNext = DshGlyphs.caretRight;
+  static const pagePrevious = XrkGlyphs.caretLeft;
+  static const pageNext = XrkGlyphs.caretRight;
 
   // ── 输入框 ──────────────────────────────────────────────────
-  static const send = DshGlyphs.arrowUp;
+  static const send = XrkGlyphs.arrowUp;
 
   /// 输入框圆键里的停止(生成、语音):实心方块。
-  static const stopGenerating = DshGlyphs.stopFill;
-  static const voice = DshGlyphs.microphone;
+  static const stopGenerating = XrkGlyphs.stopFill;
+  static const voice = XrkGlyphs.microphone;
 
   /// 插话:本轮中途送进去。
-  static const steer = DshGlyphs.arrowElbowDownRight;
+  static const steer = XrkGlyphs.arrowElbowDownRight;
 
   /// 排队:本轮结束后发送。
-  static const queued = DshGlyphs.clock;
+  static const queued = XrkGlyphs.clock;
 
   /// 打断:停掉本轮再发。
-  static const interrupt = DshGlyphs.stopCircle;
-  static const camera = DshGlyphs.camera;
-  static const gallery = DshGlyphs.images;
-  static const files = DshGlyphs.folderOpen;
-  static const addImage = DshGlyphs.image;
+  static const interrupt = XrkGlyphs.stopCircle;
+  static const camera = XrkGlyphs.camera;
+  static const gallery = XrkGlyphs.images;
+  static const files = XrkGlyphs.folderOpen;
+  static const addImage = XrkGlyphs.image;
 
   /// 「传文件到电脑」 (Remote workspace upload).
-  static const uploadToHost = DshGlyphs.boxArrowUp;
+  static const uploadToHost = XrkGlyphs.boxArrowUp;
 
   // ── 消息操作 ────────────────────────────────────────────────
-  static const copy = DshGlyphs.copy;
-  static const quote = DshGlyphs.quotes;
-  static const share = DshGlyphs.export;
-  static const qrCode = DshGlyphs.qrCode;
-  static const shareImage = DshGlyphs.image;
+  static const copy = XrkGlyphs.copy;
+  static const quote = XrkGlyphs.quotes;
+  static const share = XrkGlyphs.export;
+  static const qrCode = XrkGlyphs.qrCode;
+  static const shareImage = XrkGlyphs.image;
 
   /// 分享面板的另两个去向:文件、文字。
-  static const shareFile = DshGlyphs.fileText;
-  static const shareText = DshGlyphs.textAlignLeft;
+  static const shareFile = XrkGlyphs.fileText;
+  static const shareText = XrkGlyphs.textAlignLeft;
 
   /// 刚生成的链接上的「停止分享」。
-  static const stopSharing = DshGlyphs.linkBreak;
+  static const stopSharing = XrkGlyphs.linkBreak;
 
   /// 分享出去的内容已隐藏密钥和个人路径。
-  static const redacted = DshGlyphs.shieldCheck;
+  static const redacted = XrkGlyphs.shieldCheck;
 
-  static const selectText = DshGlyphs.textT;
-  static const fork = DshGlyphs.gitFork;
-  static const regenerate = DshGlyphs.arrowClockwise;
-  static const edit = DshGlyphs.pencilSimple;
-  static const reply = DshGlyphs.arrowBendUpLeft;
+  static const selectText = XrkGlyphs.textT;
+  static const fork = XrkGlyphs.gitFork;
+  static const regenerate = XrkGlyphs.arrowClockwise;
+  static const edit = XrkGlyphs.pencilSimple;
+  static const reply = XrkGlyphs.arrowBendUpLeft;
 
   /// 代码、diff 的自动换行开关。
-  static const wrapLines = DshGlyphs.textWrap;
-  static const save = DshGlyphs.downloadSimple;
-  static const preview = DshGlyphs.eye;
+  static const wrapLines = XrkGlyphs.textWrap;
+  static const save = XrkGlyphs.downloadSimple;
+  static const preview = XrkGlyphs.eye;
 
   /// 操作完成的回执:已复制、已保存。
-  static const done = DshGlyphs.check;
+  static const done = XrkGlyphs.check;
 
   // ── 通用操作 ────────────────────────────────────────────────
-  static const add = DshGlyphs.plus;
+  static const add = XrkGlyphs.plus;
 
   /// 输入框尾部的「添加这一项」。
-  static const addEntry = DshGlyphs.plusCircleFill;
-  static const increment = DshGlyphs.plus;
-  static const decrement = DshGlyphs.minus;
-  static const remove = DshGlyphs.minusCircle;
-  static const rename = DshGlyphs.pencilSimpleLine;
-  static const delete = DshGlyphs.trash;
+  static const addEntry = XrkGlyphs.plusCircleFill;
+  static const increment = XrkGlyphs.plus;
+  static const decrement = XrkGlyphs.minus;
+  static const remove = XrkGlyphs.minusCircle;
+  static const rename = XrkGlyphs.pencilSimpleLine;
+  static const delete = XrkGlyphs.trash;
 
   /// 文件已被删掉的占位。
-  static const deleted = DshGlyphs.trash;
+  static const deleted = XrkGlyphs.trash;
 
   /// 清空输入框。
-  static const clear = DshGlyphs.xCircleFill;
-  static const clearAll = DshGlyphs.broom;
-  static const paste = DshGlyphs.clipboard;
-  static const download = DshGlyphs.downloadSimple;
-  static const refresh = DshGlyphs.arrowClockwise;
-  static const retry = DshGlyphs.arrowClockwise;
-  static const restart = DshGlyphs.arrowCounterClockwise;
-  static const search = DshGlyphs.magnifyingGlass;
-  static const configure = DshGlyphs.slidersHorizontal;
-  static const settings = DshGlyphs.gearSix;
-  static const link = DshGlyphs.link;
-  static const showSecret = DshGlyphs.eye;
-  static const hideSecret = DshGlyphs.eyeSlash;
-  static const newChat = DshGlyphs.notePencil;
-  static const newFolder = DshGlyphs.folderPlus;
-  static const newPost = DshGlyphs.notePencil;
-  static const moveToFolder = DshGlyphs.folderArrowRight;
-  static const multiSelect = DshGlyphs.checkCircle;
-  static const archive = DshGlyphs.archive;
-  static const unarchive = DshGlyphs.boxArrowUp;
-  static const exportLog = DshGlyphs.archive;
-  static const pin = DshGlyphs.pushPin;
-  static const pinActive = DshGlyphs.pushPinFill;
-  static const logout = DshGlyphs.signOut;
-  static const power = DshGlyphs.power;
+  static const clear = XrkGlyphs.xCircleFill;
+  static const clearAll = XrkGlyphs.broom;
+  static const paste = XrkGlyphs.clipboard;
+  static const download = XrkGlyphs.downloadSimple;
+  static const refresh = XrkGlyphs.arrowClockwise;
+  static const retry = XrkGlyphs.arrowClockwise;
+  static const restart = XrkGlyphs.arrowCounterClockwise;
+  static const search = XrkGlyphs.magnifyingGlass;
+  static const configure = XrkGlyphs.slidersHorizontal;
+  static const settings = XrkGlyphs.gearSix;
+  static const link = XrkGlyphs.link;
+  static const showSecret = XrkGlyphs.eye;
+  static const hideSecret = XrkGlyphs.eyeSlash;
+  static const newChat = XrkGlyphs.notePencil;
+  static const newFolder = XrkGlyphs.folderPlus;
+  static const newPost = XrkGlyphs.notePencil;
+  static const moveToFolder = XrkGlyphs.folderArrowRight;
+  static const multiSelect = XrkGlyphs.checkCircle;
+  static const archive = XrkGlyphs.archive;
+  static const unarchive = XrkGlyphs.boxArrowUp;
+  static const exportLog = XrkGlyphs.archive;
+  static const pin = XrkGlyphs.pushPin;
+  static const pinActive = XrkGlyphs.pushPinFill;
+  static const logout = XrkGlyphs.signOut;
+  static const power = XrkGlyphs.power;
 
   /// 行、胶囊里的启动 / 暂停 / 停止:和别的操作一样用描边。
-  static const play = DshGlyphs.play;
-  static const pause = DshGlyphs.pause;
-  static const stop = DshGlyphs.stop;
+  static const play = XrkGlyphs.play;
+  static const pause = XrkGlyphs.pause;
+  static const stop = XrkGlyphs.stop;
 
   /// 回放的播放键:媒体控件按惯例用实心。
-  static const mediaPlay = DshGlyphs.playFill;
-  static const mediaPause = DshGlyphs.pauseFill;
+  static const mediaPlay = XrkGlyphs.playFill;
+  static const mediaPause = XrkGlyphs.pauseFill;
 
   /// 回放播完后从头再放。
-  static const replay = DshGlyphs.arrowCounterClockwise;
+  static const replay = XrkGlyphs.arrowCounterClockwise;
 
   /// 回放页的「全文」。
-  static const fullText = DshGlyphs.article;
-  static const enterPath = DshGlyphs.cursorText;
-  static const viewConfig = DshGlyphs.fileText;
+  static const fullText = XrkGlyphs.article;
+  static const enterPath = XrkGlyphs.cursorText;
+  static const viewConfig = XrkGlyphs.fileText;
 
   /// 拿一条要在终端里跑的命令。
-  static const command = DshGlyphs.terminalWindow;
-  static const fetchModels = DshGlyphs.cloudArrowDown;
-  static const testConnection = DshGlyphs.broadcast;
-  static const markAllRead = DshGlyphs.checks;
-  static const manageFolders = DshGlyphs.arrowsDownUp;
+  static const command = XrkGlyphs.terminalWindow;
+  static const fetchModels = XrkGlyphs.cloudArrowDown;
+  static const testConnection = XrkGlyphs.broadcast;
+  static const markAllRead = XrkGlyphs.checks;
+  static const manageFolders = XrkGlyphs.arrowsDownUp;
 
   /// /compact:压缩上下文。
-  static const compact = DshGlyphs.arrowsInLineVertical;
+  static const compact = XrkGlyphs.arrowsInLineVertical;
 
   /// 完成后把思考与工具调用收成一行。
-  static const foldTurns = DshGlyphs.arrowsInLineVertical;
+  static const foldTurns = XrkGlyphs.arrowsInLineVertical;
 
   // ── 选择与开关(选中 / 开启态用 Fill)──────────────────────
   /// 列表里当前选中的那一项。
-  static const selected = DshGlyphs.check;
-  static const allowed = DshGlyphs.check;
-  static const radioOn = DshGlyphs.checkCircleFill;
-  static const radioOff = DshGlyphs.circle;
-  static const checkboxOn = DshGlyphs.checkSquareFill;
-  static const checkboxOff = DshGlyphs.square;
-  static const isDefault = DshGlyphs.checkCircleFill;
-  static const setDefault = DshGlyphs.checkCircle;
-  static const favorite = DshGlyphs.star;
-  static const favoriteActive = DshGlyphs.starFill;
-  static const bookmark = DshGlyphs.bookmarkSimple;
-  static const bookmarkActive = DshGlyphs.bookmarkSimpleFill;
-  static const postLike = DshGlyphs.heart;
-  static const postLikeActive = DshGlyphs.heartFill;
-  static const notifications = DshGlyphs.bell;
-  static const notificationsOn = DshGlyphs.bellFill;
-  static const notificationsOff = DshGlyphs.bellSlash;
+  static const selected = XrkGlyphs.check;
+  static const allowed = XrkGlyphs.check;
+  static const radioOn = XrkGlyphs.checkCircleFill;
+  static const radioOff = XrkGlyphs.circle;
+  static const checkboxOn = XrkGlyphs.checkSquareFill;
+  static const checkboxOff = XrkGlyphs.square;
+  static const isDefault = XrkGlyphs.checkCircleFill;
+  static const setDefault = XrkGlyphs.checkCircle;
+  static const favorite = XrkGlyphs.star;
+  static const favoriteActive = XrkGlyphs.starFill;
+  static const bookmark = XrkGlyphs.bookmarkSimple;
+  static const bookmarkActive = XrkGlyphs.bookmarkSimpleFill;
+  static const postLike = XrkGlyphs.heart;
+  static const postLikeActive = XrkGlyphs.heartFill;
+  static const notifications = XrkGlyphs.bell;
+  static const notificationsOn = XrkGlyphs.bellFill;
+  static const notificationsOff = XrkGlyphs.bellSlash;
 
   // ── 状态 ────────────────────────────────────────────────────
-  static const success = DshGlyphs.checkCircleFill;
-  static const completed = DshGlyphs.checkCircle;
-  static const error = DshGlyphs.warningCircle;
-  static const warning = DshGlyphs.warning;
-  static const info = DshGlyphs.info;
-  static const question = DshGlyphs.question;
-  static const attention = DshGlyphs.exclamationMark;
-  static const caution = DshGlyphs.warningOctagon;
+  static const success = XrkGlyphs.checkCircleFill;
+  static const completed = XrkGlyphs.checkCircle;
+  static const error = XrkGlyphs.warningCircle;
+  static const warning = XrkGlyphs.warning;
+  static const info = XrkGlyphs.info;
+  static const question = XrkGlyphs.question;
+  static const attention = XrkGlyphs.exclamationMark;
+  static const caution = XrkGlyphs.warningOctagon;
 
   /// 工具调用等的失败叉(配危险色)。
-  static const failed = DshGlyphs.x;
-  static const stopped = DshGlyphs.stopCircle;
-  static const paused = DshGlyphs.pauseCircle;
-  static const blocked = DshGlyphs.prohibit;
-  static const pending = DshGlyphs.circle;
-  static const inProgress = DshGlyphs.radioButton;
-  static const stepFailed = DshGlyphs.xCircleFill;
-  static const stepSkipped = DshGlyphs.minusCircle;
-  static const loading = DshGlyphs.hourglass;
-  static const waiting = DshGlyphs.hourglassHigh;
-  static const running = DshGlyphs.lightning;
-  static const cannotDisplay = DshGlyphs.prohibit;
-  static const empty = DshGlyphs.tray;
-  static const toConfirm = DshGlyphs.checkCircle;
-  static const allRead = DshGlyphs.checks;
-  static const outputLimit = DshGlyphs.textAlignLeft;
-  static const imageBroken = DshGlyphs.imageBroken;
-  static const noResults = DshGlyphs.magnifyingGlassX;
-  static const noMatches = DshGlyphs.funnelX;
-  static const noFolder = DshGlyphs.folderSlash;
+  static const failed = XrkGlyphs.x;
+  static const stopped = XrkGlyphs.stopCircle;
+  static const paused = XrkGlyphs.pauseCircle;
+  static const blocked = XrkGlyphs.prohibit;
+  static const pending = XrkGlyphs.circle;
+  static const inProgress = XrkGlyphs.radioButton;
+  static const stepFailed = XrkGlyphs.xCircleFill;
+  static const stepSkipped = XrkGlyphs.minusCircle;
+  static const loading = XrkGlyphs.hourglass;
+  static const waiting = XrkGlyphs.hourglassHigh;
+  static const running = XrkGlyphs.lightning;
+  static const cannotDisplay = XrkGlyphs.prohibit;
+  static const empty = XrkGlyphs.tray;
+  static const toConfirm = XrkGlyphs.checkCircle;
+  static const allRead = XrkGlyphs.checks;
+  static const outputLimit = XrkGlyphs.textAlignLeft;
+  static const imageBroken = XrkGlyphs.imageBroken;
+  static const noResults = XrkGlyphs.magnifyingGlassX;
+  static const noMatches = XrkGlyphs.funnelX;
+  static const noFolder = XrkGlyphs.folderSlash;
 
   /// 主机或版本不支持这项能力。
-  static const unsupported = DshGlyphs.puzzlePieceSlash;
-  static const taskBlocked = DshGlyphs.lockSimple;
+  static const unsupported = XrkGlyphs.puzzlePieceSlash;
+  static const taskBlocked = XrkGlyphs.lockSimple;
 
   // ── 连接、主机与引擎 ────────────────────────────────────────
-  static const offline = DshGlyphs.cloudSlash;
-  static const disconnected = DshGlyphs.linkBreak;
-  static const reconnecting = DshGlyphs.arrowsClockwise;
-  static const engine = DshGlyphs.cpu;
-  static const engineStarting = DshGlyphs.lightning;
-  static const autoSwitch = DshGlyphs.arrowsClockwise;
-  static const cloud = DshGlyphs.cloud;
-  static const computer = DshGlyphs.laptop;
-  static const thisPhone = DshGlyphs.deviceMobile;
-  static const sshHost = DshGlyphs.terminalWindow;
-  static const remoteHost = DshGlyphs.devices;
-  static const remoteHosts = DshGlyphs.devices;
-  static const webConsole = DshGlyphs.globe;
-  static const checkUpdate = DshGlyphs.arrowCircleUp;
-  static const autoUpdate = DshGlyphs.clockClockwise;
+  static const offline = XrkGlyphs.cloudSlash;
+  static const disconnected = XrkGlyphs.linkBreak;
+  static const reconnecting = XrkGlyphs.arrowsClockwise;
+  static const engine = XrkGlyphs.cpu;
+  static const engineStarting = XrkGlyphs.lightning;
+  static const autoSwitch = XrkGlyphs.arrowsClockwise;
+  static const cloud = XrkGlyphs.cloud;
+  static const computer = XrkGlyphs.laptop;
+  static const thisPhone = XrkGlyphs.deviceMobile;
+  static const sshHost = XrkGlyphs.terminalWindow;
+  static const remoteHost = XrkGlyphs.devices;
+  static const remoteHosts = XrkGlyphs.devices;
+  static const webConsole = XrkGlyphs.globe;
+  static const checkUpdate = XrkGlyphs.arrowCircleUp;
+  static const autoUpdate = XrkGlyphs.clockClockwise;
 
   // ── 安全与权限 ──────────────────────────────────────────────
-  static const lock = DshGlyphs.lockSimple;
-  static const lockActive = DshGlyphs.lockSimpleFill;
-  static const unlock = DshGlyphs.lockSimpleOpen;
+  static const lock = XrkGlyphs.lockSimple;
+  static const lockActive = XrkGlyphs.lockSimpleFill;
+  static const unlock = XrkGlyphs.lockSimpleOpen;
 
   /// 凭据只留在本机。
-  static const localOnly = DshGlyphs.lockKey;
-  static const approval = DshGlyphs.shieldWarning;
-  static const securityWarning = DshGlyphs.shieldWarning;
-  static const permissions = DshGlyphs.shield;
-  static const safeMode = DshGlyphs.shieldPlus;
-  static const verified = DshGlyphs.shieldCheck;
-  static const fingerprint = DshGlyphs.fingerprint;
-  static const apiKey = DshGlyphs.key;
-  static const noApiKey = DshGlyphs.keySlash;
-  static const autoApprove = DshGlyphs.checks;
+  static const localOnly = XrkGlyphs.lockKey;
+  static const approval = XrkGlyphs.shieldWarning;
+  static const securityWarning = XrkGlyphs.shieldWarning;
+  static const permissions = XrkGlyphs.shield;
+  static const safeMode = XrkGlyphs.shieldPlus;
+  static const verified = XrkGlyphs.shieldCheck;
+  static const fingerprint = XrkGlyphs.fingerprint;
+  static const apiKey = XrkGlyphs.key;
+  static const noApiKey = XrkGlyphs.keySlash;
+  static const autoApprove = XrkGlyphs.checks;
 
   // ── 文件与内容 ──────────────────────────────────────────────
-  static const folder = DshGlyphs.folder;
+  static const folder = XrkGlyphs.folder;
 
   /// 带分组色的实心文件夹(抽屉文件夹、文件列表)。
-  static const folderMark = DshGlyphs.folderFill;
-  static const folderOpen = DshGlyphs.folderOpen;
-  static const workspace = DshGlyphs.folder;
-  static const workspaceGroup = DshGlyphs.folders;
-  static const defaultFolder = DshGlyphs.folderStar;
-  static const sharedStorage = DshGlyphs.folderUser;
-  static const home = DshGlyphs.house;
-  static const phoneStorage = DshGlyphs.deviceMobile;
-  static const downloads = DshGlyphs.downloadSimple;
-  static const document = DshGlyphs.fileText;
-  static const instructions = DshGlyphs.fileText;
-  static const file = DshGlyphs.file;
-  static const fileNew = DshGlyphs.filePlus;
-  static const diff = DshGlyphs.gitDiff;
-  static const pdf = DshGlyphs.filePdf;
-  static const image = DshGlyphs.image;
-  static const videoFile = DshGlyphs.fileVideo;
-  static const video = DshGlyphs.filmStrip;
-  static const audioFile = DshGlyphs.fileAudio;
-  static const audio = DshGlyphs.musicNote;
-  static const zip = DshGlyphs.fileZip;
-  static const slides = DshGlyphs.slideshow;
-  static const spreadsheet = DshGlyphs.table;
-  static const article = DshGlyphs.article;
-  static const plainText = DshGlyphs.textAlignLeft;
-  static const summary = DshGlyphs.textAlignLeft;
-  static const code = DshGlyphs.code;
-  static const diagram = DshGlyphs.graph;
-  static const artifacts = DshGlyphs.package;
-  static const shareBundle = DshGlyphs.package;
+  static const folderMark = XrkGlyphs.folderFill;
+  static const folderOpen = XrkGlyphs.folderOpen;
+  static const workspace = XrkGlyphs.folder;
+  static const workspaceGroup = XrkGlyphs.folders;
+  static const defaultFolder = XrkGlyphs.folderStar;
+  static const sharedStorage = XrkGlyphs.folderUser;
+  static const home = XrkGlyphs.house;
+  static const phoneStorage = XrkGlyphs.deviceMobile;
+  static const downloads = XrkGlyphs.downloadSimple;
+  static const document = XrkGlyphs.fileText;
+  static const instructions = XrkGlyphs.fileText;
+  static const file = XrkGlyphs.file;
+  static const fileNew = XrkGlyphs.filePlus;
+  static const diff = XrkGlyphs.gitDiff;
+  static const pdf = XrkGlyphs.filePdf;
+  static const image = XrkGlyphs.image;
+  static const videoFile = XrkGlyphs.fileVideo;
+  static const video = XrkGlyphs.filmStrip;
+  static const audioFile = XrkGlyphs.fileAudio;
+  static const audio = XrkGlyphs.musicNote;
+  static const zip = XrkGlyphs.fileZip;
+  static const slides = XrkGlyphs.slideshow;
+  static const spreadsheet = XrkGlyphs.table;
+  static const article = XrkGlyphs.article;
+  static const plainText = XrkGlyphs.textAlignLeft;
+  static const summary = XrkGlyphs.textAlignLeft;
+  static const code = XrkGlyphs.code;
+  static const diagram = XrkGlyphs.graph;
+  static const artifacts = XrkGlyphs.package;
+  static const shareBundle = XrkGlyphs.package;
 
   /// 文件还在生成。
-  static const generating = DshGlyphs.sparkle;
+  static const generating = XrkGlyphs.sparkle;
 
   // ── 图像与视频生成(docs/design/media-generation.md)──────────────
   /// ＋ 面板的「生成」磁贴、设置 › 图像与视频。
-  static const generateMedia = DshGlyphs.magicWand;
+  static const generateMedia = XrkGlyphs.magicWand;
 
   /// 模式胶囊、参数弹层:图像 / 视频。
-  static const generateImage = DshGlyphs.image;
-  static const generateVideo = DshGlyphs.filmStrip;
+  static const generateImage = XrkGlyphs.image;
+  static const generateVideo = XrkGlyphs.filmStrip;
 
   /// 查看器:「详情」。
-  static const mediaDetails = DshGlyphs.info;
+  static const mediaDetails = XrkGlyphs.info;
 
   /// 查看器:变体、编辑、放大。
-  static const mediaVary = DshGlyphs.stack;
-  static const mediaEdit = DshGlyphs.pencilSimple;
-  static const mediaUpscale = DshGlyphs.arrowsInLineVertical;
+  static const mediaVary = XrkGlyphs.stack;
+  static const mediaEdit = XrkGlyphs.pencilSimple;
+  static const mediaUpscale = XrkGlyphs.arrowsInLineVertical;
 
   /// 权限胶囊:比工作区内修改更宽松。
-  static const permissionRisky = DshGlyphs.warning;
-  static const web = DshGlyphs.globe;
-  static const readText = DshGlyphs.note;
+  static const permissionRisky = XrkGlyphs.warning;
+  static const web = XrkGlyphs.globe;
+  static const readText = XrkGlyphs.note;
 
   // ── 功能 ────────────────────────────────────────────────────
-  static const terminal = DshGlyphs.terminalWindow;
-  static const plugin = DshGlyphs.puzzlePiece;
-  static const pluginInventory = DshGlyphs.listBullets;
-  static const skill = DshGlyphs.bookOpen;
-  static const model = DshGlyphs.cpu;
-  static const providers = DshGlyphs.sparkle;
+  static const terminal = XrkGlyphs.terminalWindow;
+  static const plugin = XrkGlyphs.puzzlePiece;
+  static const pluginInventory = XrkGlyphs.listBullets;
+  static const skill = XrkGlyphs.bookOpen;
+  static const model = XrkGlyphs.cpu;
+  static const providers = XrkGlyphs.sparkle;
 
   /// 模型列表里的一个模型。
-  static const modelItem = DshGlyphs.cpu;
-  static const subagents = DshGlyphs.treeStructure;
-  static const workflow = DshGlyphs.flowArrow;
-  static const todo = DshGlyphs.listChecks;
-  static const goal = DshGlyphs.flag;
-  static const plan = DshGlyphs.mapTrifold;
-  static const planMode = DshGlyphs.mapTrifold;
-  static const jobs = DshGlyphs.clipboardText;
-  static const automation = DshGlyphs.alarm;
-  static const recurring = DshGlyphs.repeat;
-  static const scheduled = DshGlyphs.clock;
-  static const time = DshGlyphs.clock;
-  static const timeZone = DshGlyphs.globe;
-  static const commandTimeout = DshGlyphs.timer;
-  static const agentLoop = DshGlyphs.arrowsClockwise;
-  static const webSearch = DshGlyphs.globeHemisphereWest;
-  static const webApp = DshGlyphs.globe;
-  static const mention = DshGlyphs.at;
-  static const translate = DshGlyphs.translate;
-  static const history = DshGlyphs.clockCounterClockwise;
-  static const sessionDetails = DshGlyphs.chartLineUp;
-  static const trajectory = DshGlyphs.path;
-  static const diagnostics = DshGlyphs.stethoscope;
-  static const cordis = DshGlyphs.squaresFour;
+  static const modelItem = XrkGlyphs.cpu;
+  static const subagents = XrkGlyphs.treeStructure;
+  static const workflow = XrkGlyphs.flowArrow;
+  static const todo = XrkGlyphs.listChecks;
+  static const goal = XrkGlyphs.flag;
+  static const plan = XrkGlyphs.mapTrifold;
+  static const planMode = XrkGlyphs.mapTrifold;
+  static const jobs = XrkGlyphs.clipboardText;
+  static const automation = XrkGlyphs.alarm;
+  static const recurring = XrkGlyphs.repeat;
+  static const scheduled = XrkGlyphs.clock;
+  static const time = XrkGlyphs.clock;
+  static const timeZone = XrkGlyphs.globe;
+  static const commandTimeout = XrkGlyphs.timer;
+  static const agentLoop = XrkGlyphs.arrowsClockwise;
+  static const webSearch = XrkGlyphs.globeHemisphereWest;
+  static const webApp = XrkGlyphs.globe;
+  static const mention = XrkGlyphs.at;
+  static const translate = XrkGlyphs.translate;
+  static const history = XrkGlyphs.clockCounterClockwise;
+  static const sessionDetails = XrkGlyphs.chartLineUp;
+  static const trajectory = XrkGlyphs.path;
+  static const diagnostics = XrkGlyphs.stethoscope;
+  static const cordis = XrkGlyphs.squaresFour;
 
   /// Bot 发来的可交互面板。
-  static const panel = DshGlyphs.squaresFour;
-  static const feedback = DshGlyphs.chatCenteredDots;
-  static const tool = DshGlyphs.wrench;
-  static const tip = DshGlyphs.lightbulb;
+  static const panel = XrkGlyphs.squaresFour;
+  static const feedback = XrkGlyphs.chatCenteredDots;
+  static const tool = XrkGlyphs.wrench;
+  static const tip = XrkGlyphs.lightbulb;
 
   /// 伙伴小屋: she now and then asks you to rest with her (companion_page.dart).
-  static const companionInvite = DshGlyphs.chatTeardropText;
+  static const companionInvite = XrkGlyphs.chatTeardropText;
 
   /// 伙伴小屋: her words read aloud (companion_voice.dart). Not the microphone: that is the person's voice.
-  static const companionVoice = DshGlyphs.musicNote;
+  static const companionVoice = XrkGlyphs.musicNote;
 
   /// 「问 AI」: a question about the app for the agent (ui/common/ask_ai.dart).
-  static const askAi = DshGlyphs.sparkle;
+  static const askAi = XrkGlyphs.sparkle;
 
-  /// 「给 dsh-go 点个 star」: the project on GitHub (ui/star/).
-  static const starProject = DshGlyphs.star;
-  static const important = DshGlyphs.sealWarning;
-  static const theme = DshGlyphs.palette;
-  static const textSize = DshGlyphs.textAa;
-  static const phoneLayout = DshGlyphs.deviceMobile;
-  static const account = DshGlyphs.userCircle;
-  static const profile = DshGlyphs.user;
-  static const avatar = DshGlyphs.userFill;
-  static const balance = DshGlyphs.wallet;
-  static const shareConfig = DshGlyphs.export;
-  static const chart = DshGlyphs.chartBar;
+  /// 「给 xrk-mobile 点个 star」: the project on GitHub (ui/star/).
+  static const starProject = XrkGlyphs.star;
+  static const important = XrkGlyphs.sealWarning;
+  static const theme = XrkGlyphs.palette;
+  static const textSize = XrkGlyphs.textAa;
+  static const phoneLayout = XrkGlyphs.deviceMobile;
+  static const account = XrkGlyphs.userCircle;
+  static const profile = XrkGlyphs.user;
+  static const avatar = XrkGlyphs.userFill;
+  static const balance = XrkGlyphs.wallet;
+  static const shareConfig = XrkGlyphs.export;
+  static const chart = XrkGlyphs.chartBar;
 
   /// 设置 › 宠物.
-  static const pet = DshGlyphs.smiley;
+  static const pet = XrkGlyphs.smiley;
 
   /// 设置 › 隐私与分享.
-  static const privacy = DshGlyphs.lockKey;
+  static const privacy = XrkGlyphs.lockKey;
 
   // ── 手机操控 ────────────────────────────────────────────────
-  static const phoneControl = DshGlyphs.handTap;
-  static const readScreen = DshGlyphs.scan;
-  static const askFirst = DshGlyphs.handPalm;
-  static const askPerTask = DshGlyphs.circleHalf;
-  static const noConfirm = DshGlyphs.lightning;
-  static const appRules = DshGlyphs.listChecks;
-  static const dndMode = DshGlyphs.stack;
-  static const keepAlive = DshGlyphs.batteryPlus;
-  static const operate = DshGlyphs.handPointing;
-  static const alarmClock = DshGlyphs.alarm;
-  static const returnToApp = DshGlyphs.arrowBendUpLeft;
-  static const backgroundPrompt = DshGlyphs.bell;
-  static const overlayOpacity = DshGlyphs.slidersHorizontal;
-  static const overlayBall = DshGlyphs.radioButton;
+  static const phoneControl = XrkGlyphs.handTap;
+  static const readScreen = XrkGlyphs.scan;
+  static const askFirst = XrkGlyphs.handPalm;
+  static const askPerTask = XrkGlyphs.circleHalf;
+  static const noConfirm = XrkGlyphs.lightning;
+  static const appRules = XrkGlyphs.listChecks;
+  static const dndMode = XrkGlyphs.stack;
+  static const keepAlive = XrkGlyphs.batteryPlus;
+  static const operate = XrkGlyphs.handPointing;
+  static const alarmClock = XrkGlyphs.alarm;
+  static const returnToApp = XrkGlyphs.arrowBendUpLeft;
+  static const backgroundPrompt = XrkGlyphs.bell;
+  static const overlayOpacity = XrkGlyphs.slidersHorizontal;
+  static const overlayBall = XrkGlyphs.radioButton;
 
   /// 解除限制, its 「已解除限制」 tag, and its three rules.
-  static const unlocks = DshGlyphs.lockSimpleOpen;
-  static const unlockSystem = DshGlyphs.gearSix;
-  static const unlockSecrets = DshGlyphs.key;
-  static const unlockOwnApp = DshGlyphs.browser;
+  static const unlocks = XrkGlyphs.lockSimpleOpen;
+  static const unlockSystem = XrkGlyphs.gearSix;
+  static const unlockSecrets = XrkGlyphs.key;
+  static const unlockOwnApp = XrkGlyphs.browser;
 
   /// 解除限制's confirmation page: what can go wrong, and the disclaimer.
-  static const riskWarning = DshGlyphs.shieldWarning;
+  static const riskWarning = XrkGlyphs.shieldWarning;
 
   // ── 系统权限(首次启动的「按功能开启」与 设置 › 系统权限)──────
-  static const systemAccess = DshGlyphs.shieldCheck;
-  static const fileAccess = DshGlyphs.folderUser;
-  static const accessibility = DshGlyphs.scan;
-  static const overlayPermission = DshGlyphs.stack;
-  static const highPower = DshGlyphs.lightning;
-  static const autostart = DshGlyphs.power;
-  static const backgroundPopUp = DshGlyphs.boxArrowUp;
+  static const systemAccess = XrkGlyphs.shieldCheck;
+  static const fileAccess = XrkGlyphs.folderUser;
+  static const accessibility = XrkGlyphs.scan;
+  static const overlayPermission = XrkGlyphs.stack;
+  static const highPower = XrkGlyphs.lightning;
+  static const autostart = XrkGlyphs.power;
+  static const backgroundPopUp = XrkGlyphs.boxArrowUp;
 
   // ── DS Bot 与群聊 ───────────────────────────────────────────
-  static const bot = DshGlyphs.robot;
-  static const groupChat = DshGlyphs.chats;
-  static const newGroupChat = DshGlyphs.userPlus;
-  static const addMember = DshGlyphs.userPlus;
-  static const removeMember = DshGlyphs.userMinus;
-  static const makeAdmin = DshGlyphs.crownSimple;
-  static const team = DshGlyphs.usersThree;
-  static const conversations = DshGlyphs.chats;
-  static const chat = DshGlyphs.chatCircle;
-  static const announcement = DshGlyphs.megaphone;
-  static const nameTag = DshGlyphs.identificationBadge;
-  static const botRole = DshGlyphs.briefcase;
-  static const color = DshGlyphs.palette;
-  static const today = DshGlyphs.calendarDot;
-  static const lastWeek = DshGlyphs.calendarDots;
-  static const lastMonth = DshGlyphs.calendar;
-  static const fullLog = DshGlyphs.receipt;
-  static const working = DshGlyphs.hammer;
-  static const presetStandard = DshGlyphs.wrench;
-  static const presetMinimal = DshGlyphs.square;
-  static const presetCordis = DshGlyphs.magicWand;
-  static const presetPtc = DshGlyphs.cards;
+  static const bot = XrkGlyphs.robot;
+  static const groupChat = XrkGlyphs.chats;
+  static const newGroupChat = XrkGlyphs.userPlus;
+  static const addMember = XrkGlyphs.userPlus;
+  static const removeMember = XrkGlyphs.userMinus;
+  static const makeAdmin = XrkGlyphs.crownSimple;
+  static const team = XrkGlyphs.usersThree;
+  static const conversations = XrkGlyphs.chats;
+  static const chat = XrkGlyphs.chatCircle;
+  static const announcement = XrkGlyphs.megaphone;
+  static const nameTag = XrkGlyphs.identificationBadge;
+  static const botRole = XrkGlyphs.briefcase;
+  static const color = XrkGlyphs.palette;
+  static const today = XrkGlyphs.calendarDot;
+  static const lastWeek = XrkGlyphs.calendarDots;
+  static const lastMonth = XrkGlyphs.calendar;
+  static const fullLog = XrkGlyphs.receipt;
+  static const working = XrkGlyphs.hammer;
+  static const presetStandard = XrkGlyphs.wrench;
+  static const presetMinimal = XrkGlyphs.square;
+  static const presetCordis = XrkGlyphs.magicWand;
+  static const presetPtc = XrkGlyphs.cards;
 
   // ── 论坛与社区 ──────────────────────────────────────────────
-  static const forum = DshGlyphs.chats;
-  static const community = DshGlyphs.usersFour;
-  static const newTopic = DshGlyphs.chatTeardropText;
-  static const moved = DshGlyphs.folderArrowRight;
-  static const invite = DshGlyphs.userPlus;
-  static const reminder = DshGlyphs.alarm;
-  static const reaction = DshGlyphs.smiley;
-  static const badgeEarned = DshGlyphs.medal;
-  static const poll = DshGlyphs.chartBar;
-  static const playVideo = DshGlyphs.playCircle;
-  static const mail = DshGlyphs.envelopeSimple;
-  static const write = DshGlyphs.notePencil;
-  static const featured = DshGlyphs.sparkle;
-  static const bug = DshGlyphs.bug;
-  static const school = DshGlyphs.graduationCap;
-  static const travel = DshGlyphs.suitcase;
-  static const calendar = DshGlyphs.calendarBlank;
+  static const forum = XrkGlyphs.chats;
+  static const community = XrkGlyphs.usersFour;
+  static const newTopic = XrkGlyphs.chatTeardropText;
+  static const moved = XrkGlyphs.folderArrowRight;
+  static const invite = XrkGlyphs.userPlus;
+  static const reminder = XrkGlyphs.alarm;
+  static const reaction = XrkGlyphs.smiley;
+  static const badgeEarned = XrkGlyphs.medal;
+  static const poll = XrkGlyphs.chartBar;
+  static const playVideo = XrkGlyphs.playCircle;
+  static const mail = XrkGlyphs.envelopeSimple;
+  static const write = XrkGlyphs.notePencil;
+  static const featured = XrkGlyphs.sparkle;
+  static const bug = XrkGlyphs.bug;
+  static const school = XrkGlyphs.graduationCap;
+  static const travel = XrkGlyphs.suitcase;
+  static const calendar = XrkGlyphs.calendarBlank;
 
   /// 社区里的外部渠道。
-  static const wechat = DshGlyphs.chatCircleFill;
-  static const qq = DshGlyphs.usersThreeFill;
-  static const telegram = DshGlyphs.paperPlaneRight;
-  static const discord = DshGlyphs.headset;
+  static const wechat = XrkGlyphs.chatCircleFill;
+  static const qq = XrkGlyphs.usersThreeFill;
+  static const telegram = XrkGlyphs.paperPlaneRight;
+  static const discord = XrkGlyphs.headset;
 }

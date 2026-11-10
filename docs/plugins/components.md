@@ -21,7 +21,7 @@
 
 | 浅色 | 深色 |
 |---|---|
-| ![text、steps、callout、compare（浅色）](../../app/test/chat/dsh_ui/goldens/dsh_ui_content_light.png) | ![text、steps、callout、compare（深色）](../../app/test/chat/dsh_ui/goldens/dsh_ui_content_dark.png) |
+| ![text、steps、callout、compare（浅色）](../../app/test/chat/xrk_ui/goldens/xrk_ui_content_light.png) | ![text、steps、callout、compare（深色）](../../app/test/chat/xrk_ui/goldens/xrk_ui_content_dark.png) |
 
 ## 数字与图表
 
@@ -33,7 +33,7 @@
 
 | 浅色 | 深色 |
 |---|---|
-| ![metric、chart（浅色）](../../app/test/chat/dsh_ui/goldens/dsh_ui_display_light.png) | ![metric、chart（深色）](../../app/test/chat/dsh_ui/goldens/dsh_ui_display_dark.png) |
+| ![metric、chart（浅色）](../../app/test/chat/xrk_ui/goldens/xrk_ui_display_light.png) | ![metric、chart（深色）](../../app/test/chat/xrk_ui/goldens/xrk_ui_display_dark.png) |
 
 ## 插件视图独有的 6 个
 
@@ -138,4 +138,4 @@
 
 ## 视图 v2 输入与结构组件
 
-输入与结构的 24 个组件、表单、双向绑定、有限公式、调度与位置预算见[输入、表单与本地状态](inputs.md)；空状态和图集见上面。完整可运行示例是[工作台](../../examples/plugins/dsh-go-example-workbench/)。
+输入与结构的 24 个组件、表单、双向绑定、有限公式、调度与位置预算见[输入、表单与本地状态](inputs.md)；空状态和图集见上面。完整可运行示例是[工作台](../../examples/plugins/xrk-example-workbench/)。

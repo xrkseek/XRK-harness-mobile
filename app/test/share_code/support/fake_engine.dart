@@ -1,12 +1,12 @@
-// A small fake DSH Host for share-code tests: settings, plugins and presets
+// A small fake XRK Host for share-code tests: settings, plugins and presets
 // answered from in-memory state, every call recorded.
 
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dsh_app/share_code/guest_fs.dart';
-import 'package:dsh_app/share_code/share_net.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/share_code/guest_fs.dart';
+import 'package:xrk_app/share_code/share_net.dart';
+import 'package:xrk_client/xrk_client.dart';
 
 class FakeEngine extends DshCarrier {
   FakeEngine({this.allowInstall = true});
@@ -92,10 +92,10 @@ class FakeEngine extends DshCarrier {
   @override
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
     calls.add((endpoint, args));
-    if (!allowsEndpoint(endpoint)) return RpcError(DshRemoteException('METHOD_NOT_ALLOWED', 'blocked'));
+    if (!allowsEndpoint(endpoint)) return RpcError(XrkRemoteException('METHOD_NOT_ALLOWED', 'blocked'));
     switch (endpoint) {
       case 'settings/describe':
-        if (describeFails) return RpcError(DshRemoteException('INTERNAL', 'describe failed'));
+        if (describeFails) return RpcError(XrkRemoteException('INTERNAL', 'describe failed'));
         return RpcOk({
           'writable': true,
           'namespaces': [for (final ns in settings.keys) _view(ns)],
@@ -103,9 +103,9 @@ class FakeEngine extends DshCarrier {
       case 'settings/mutate':
         final ns = args['ns'] as String;
         final s = settings[ns];
-        if (s == null) return RpcError(DshRemoteException('settings/rejected', 'No configurable plugin entry "$ns"'));
+        if (s == null) return RpcError(XrkRemoteException('settings/rejected', 'No configurable plugin entry "$ns"'));
         if (args['expectedRevision'] != null && args['expectedRevision'] != s['revision']) {
-          return RpcError(DshRemoteException('settings/conflict', 'stale'));
+          return RpcError(XrkRemoteException('settings/conflict', 'stale'));
         }
         final user = Map<String, Object?>.of(s['user'] as Map<String, Object?>);
         for (final op in args['ops'] as List) {
@@ -148,7 +148,7 @@ class FakeEngine extends DshCarrier {
         }
         return RpcOk({'application': 'applied', 'target': args['name'], 'changed': true});
       default:
-        return RpcError(DshRemoteException('gateway/method-not-found', endpoint));
+        return RpcError(XrkRemoteException('gateway/method-not-found', endpoint));
     }
   }
 
@@ -180,11 +180,11 @@ class FakeShareNet implements ShareNet {
   Future<String> fetchGist(String id) async => gists[id] ?? (throw const GistException('找不到这个 Gist'));
 }
 
-/// A throwaway rootfs with DSH home in it.
+/// A throwaway rootfs with XRK home in it.
 GuestFs tempGuest() {
   final runtime = Directory.systemTemp.createTempSync('share-guest-');
   final root = Directory('${runtime.path}/rootfs')..createSync();
-  Directory('${root.path}/root/.dsh').createSync(recursive: true);
+  Directory('${root.path}/root/.xrk').createSync(recursive: true);
   return GuestFs(root);
 }
 

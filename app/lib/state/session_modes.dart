@@ -3,7 +3,7 @@
 // projections, then any `permission/preset` / `plan/mode` events after them),
 // so the composer's permission pill and the ＋ panel need no extra request.
 
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'chat_state.dart';

@@ -2,9 +2,9 @@
 // and the old-client fallback; system chooser UI needs device verification.
 // Generate baselines locally with:
 // flutter test --update-goldens test/plugins/native/native_files_golden_test.dart
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/ui/plugins/native/native_panel.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/ui/plugins/native/native_panel.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

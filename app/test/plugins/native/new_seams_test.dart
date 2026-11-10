@@ -2,15 +2,15 @@
 // a conversation's actions in 信息, per-turn notes, a panel on the plugin's own page and a panel
 // that opens as a sheet. Older bridges send none of them.
 
-import 'package:dsh_app/plugins/native/native_model.dart';
-import 'package:dsh_app/plugins/native/native_state.dart';
-import 'package:dsh_app/plugins/native/native_surface.dart';
-import 'package:dsh_app/ui/chat/widgets/plus_panel.dart';
-import 'package:dsh_app/ui/chat/widgets/turn_footnote.dart';
-import 'package:dsh_app/ui/plugins/native/native_panel.dart';
-import 'package:dsh_app/ui/plugins/native/native_plugin_section.dart';
-import 'package:dsh_app/ui/theme/theme.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/plugins/native/native_model.dart';
+import 'package:xrk_app/plugins/native/native_state.dart';
+import 'package:xrk_app/plugins/native/native_surface.dart';
+import 'package:xrk_app/ui/chat/widgets/plus_panel.dart';
+import 'package:xrk_app/ui/chat/widgets/turn_footnote.dart';
+import 'package:xrk_app/ui/plugins/native/native_panel.dart';
+import 'package:xrk_app/ui/plugins/native/native_plugin_section.dart';
+import 'package:xrk_app/ui/theme/theme.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show Consumer, ProviderContainer, ProviderScope;
 import 'package:flutter_test/flutter_test.dart';
@@ -372,7 +372,7 @@ void main() {
         if (span is TextSpan && span.text != null) colors[span.text!] = span.style?.color;
         return true;
       });
-      expect(colors['超预算'], DshColors.of(tester.element(find.byType(Text))).warning);
+      expect(colors['超预算'], XrkColors.of(tester.element(find.byType(Text))).warning);
       expect(colors['省了'], isNull);
     });
 

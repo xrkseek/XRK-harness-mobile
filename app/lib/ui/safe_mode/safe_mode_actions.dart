@@ -246,7 +246,7 @@ abstract final class SafeModeActions {
           if (summary != null && summary.trim().isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-              child: Text(summary, style: AppType.monoSmall(color: DshColors.of(sheet).textTertiary)),
+              child: Text(summary, style: AppType.monoSmall(color: XrkColors.of(sheet).textTertiary)),
             ),
           Expanded(
             child: Padding(

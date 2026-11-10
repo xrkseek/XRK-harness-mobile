@@ -2,14 +2,14 @@
 // turn end is the phone's, what goes to the native side, and how the turn's
 // alert follows (lib/state/notify_state.dart).
 
-import 'package:dsh_app/phone/phone_channel.dart';
-import 'package:dsh_app/state/chat_reveal.dart';
-import 'package:dsh_app/state/connection_state.dart';
-import 'package:dsh_app/state/hosts_state.dart';
-import 'package:dsh_app/state/notify_state.dart';
-import 'package:dsh_app/state/phone_turn_end.dart';
-import 'package:dsh_app/state/sessions_state.dart';
-import 'package:dsh_client/dsh_client.dart';
+import 'package:xrk_app/phone/phone_channel.dart';
+import 'package:xrk_app/state/chat_reveal.dart';
+import 'package:xrk_app/state/connection_state.dart';
+import 'package:xrk_app/state/hosts_state.dart';
+import 'package:xrk_app/state/notify_state.dart';
+import 'package:xrk_app/state/phone_turn_end.dart';
+import 'package:xrk_app/state/sessions_state.dart';
+import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,7 +37,7 @@ ChatAlert _end(
 );
 
 /// Local sessions as the engine lists them; [running] ones are mid-turn.
-class _Client extends DshClient {
+class _Client extends XrkClient {
   _Client(this.running) : super(DshConnection(Uri.parse('http://127.0.0.1:9')));
 
   final Set<String> running;
@@ -50,7 +50,7 @@ class _Client extends DshClient {
 
 class _Local extends LocalConnectionController {
   _Local(this.client);
-  final DshClient client;
+  final XrkClient client;
 
   @override
   Future<HostConnection?> build() async => HostConnection(client: client, label: '本机', isLocal: true);

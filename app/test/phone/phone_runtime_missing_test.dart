@@ -1,8 +1,8 @@
 // Phone control on a phone without the on-device runtime: the status line
 // says the runtime comes first, not 「引擎启动后生效」 (it never would).
 
-import 'package:dsh_app/runtime/runtime_bridge.dart';
-import 'package:dsh_app/ui/phone/phone_control_screen.dart';
+import 'package:xrk_app/runtime/runtime_bridge.dart';
+import 'package:xrk_app/ui/phone/phone_control_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'harness.dart';
