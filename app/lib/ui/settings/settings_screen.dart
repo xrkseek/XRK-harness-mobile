@@ -20,7 +20,6 @@ import 'background_guide_page.dart';
 import 'diagnostics_page.dart';
 import 'language_tile.dart';
 import 'notification_settings.dart';
-import 'personalization_page.dart';
 import 'search/settings_search_page.dart';
 import 'settings_widgets.dart';
 import 'system_access_page.dart';
@@ -84,8 +83,8 @@ class SettingsScreen extends ConsumerWidget {
             onFooterTap: () => _push(context, const EngineScreen()),
           ),
         ),
-        // App-owned AI surfaces (phone files / visual replies). Models & Host
-        // YAML stay in the in-guest Web Settings via the shell ball.
+        // App-owned AI surface: permission + phone files. Models / Host YAML
+        // stay on the Host. 「个性化 / 可视化回复」was DSH leftover — removed.
         SettingsSection(
           title: l10n.hubGroupAi,
           children: [
@@ -94,12 +93,6 @@ class SettingsScreen extends ConsumerWidget {
               tint: SettingsHues.ai,
               spot: SettingsIndex.entry(SettingsPageId.permission),
               onTap: () => _push(context, const PermissionPage()),
-            ),
-            SettingsTile(
-              icon: AppIcons.profile,
-              tint: SettingsHues.ai,
-              spot: SettingsIndex.entry(SettingsPageId.personalization),
-              onTap: () => _push(context, const PersonalizationPage()),
             ),
           ],
         ),

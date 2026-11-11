@@ -196,11 +196,16 @@ class _PermissionPageState extends ConsumerState<PermissionPage> with WidgetsBin
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final connected = ref.watch(activeConnectionProvider).value != null;
+    final connection = ref.watch(activeConnectionProvider);
+    final connected = connection.value != null;
+    final hostRunning = ref.watch(activeHostProvider).isLocal &&
+        ref.watch(localRuntimeProvider.select((s) => s.status.isRunning));
+    // Host up, Face linking: wait quietly. Host up + Face error: FeatureOffline (has Retry).
+    final facePending = !connected && hostRunning && !connection.hasError;
     final state = ref.watch(permissionStateProvider(widget.sessionId));
     final value = state.value;
     final autoApprove = ref.watch(settingsProvider.select((s) => s.autoApproveCommands));
-    final isLocal = ref.watch(activeConnectionProvider).value?.isLocal ?? true;
+    final isLocal = connection.value?.isLocal ?? true;
     // 「自动执行命令」 opens every new conversation on the phone with full access.
     final forced = isLocal && autoApprove && !ref.watch(localRuntimeProvider.select((s) => s.status.inSafeMode));
 
@@ -249,7 +254,22 @@ class _PermissionPageState extends ConsumerState<PermissionPage> with WidgetsBin
       title: l10n.featuresPermissions,
       subtitle: Text(l10n.featuresPermissionsSubtitle),
       children: [
-        if (!connected)
+        if (facePending) ...[
+          // Host is up (本机引擎页 already green). Face HTTP should follow;
+          // kick reconnect and wait — do not claim the engine is down.
+          Builder(
+            builder: (context) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!context.mounted) return;
+                if (ref.read(activeConnectionProvider).value != null) return;
+                if (!ref.read(localConnectionProvider).isLoading) {
+                  ref.invalidate(localConnectionProvider);
+                }
+              });
+              return const FeatureLoading();
+            },
+          ),
+        ] else if (!connected)
           const FeatureOffline()
         else if (value == null && state.hasError)
           FeatureMessage.error(

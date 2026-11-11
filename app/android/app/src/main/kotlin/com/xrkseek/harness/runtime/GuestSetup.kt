@@ -35,36 +35,8 @@ object GuestSetup {
         |
         |## 界面与技能
         |
-        |- 这个 App 的对话壳是 Flutter；对话内容在机内 `xrkh serve` 的 Web UI。进程插件落在 `${'$'}XRK_HOME/plugins`。
+        |- 会话跑在本机 `xrkh serve`（harness-cli Host）。进程插件落在 `${'$'}XRK_HOME/plugins`。
         |- 用户报障、排查问题、写 bug 反馈时先读本机诊断快照（见下节），再动手。
-        |""").trimMargin()
-
-    /**
-     * Appended while 「可视化回复」 is on (default): how to answer with a ```xrk-ui view. The
-     * component list and the rules are adapted from DS Bot's `show_view` description and prompt
-     * rule (`ds-bot/src/host/tools.js`, `prompt.js`), rewritten for a fenced block in a phone chat.
-     */
-    // l10n:keep agent prompt
-    private val XRK_UI_SECTION = ("""
-        |
-        |## 可视化回复（xrk-ui）
-        |
-        |- 这个 App 能把带 ```xrk-ui 标记的代码块画成原生的图表和卡片。只在比文字更清楚时用：比较数值或看趋势用 chart，几个关键数字用 metric，方案对比用 compare，步骤和进度用 steps，需要用户点选时用 options 或 confirm。闲聊、单个数字、普通列表都不用。
-        |- 先用一两句话给出结论，再放视图。同一份数据不要用文字、表格、图表各写一遍。一条回复最多两个视图。
-        |- 必须写成围栏代码块：第一行单独写 ```xrk-ui，下一行开始是 JSON，最后一行单独写 ```。直接把 JSON 裸着写进正文是纯文本，画不出来。
-        |- 围栏里只放一个 JSON 对象，不写注释和尾逗号，不超过 4 KB。数据必须真实；示例或估算的数字在 caption 里说明。
-        |- 组件：stack / row {children}；text {text}；metric {label, value, tone?: good|warn|bad, caption?}；chart {kind: bar|hbar|line|donut, categories, series: [{name?, values}], unit?, caption?}（values 与 categories 一一对应，最多 6 组、每组 60 个点；donut 只放一组）；compare {items: [{title, badge?, rows: [[名称, 值]]}]}（2–4 项）；steps {items: [{label, status: done|current|todo|failed, detail?}]}；callout {text, tone?: info|good|warn|bad}；options {id, options: [{label, description?}], multi?, freetext?}（最多 8 个）；confirm {id, confirmLabel?, cancelLabel?}。根节点可以带 title。
-        |- options 想允许「选项以外」的回答时加 `freetext: true`（也可以写成一句提示词，如 `freetext: "自己写一个"`）：选项下面会出现输入框，用户填的内容会以「其他：…」跟选择一起回传。
-""" +
-        // l10n:keep agent prompt
-        """        |- 例：
-        |```xrk-ui
-        |{"type":"stack","title":"近 6 个月支出","children":[{"type":"metric","label":"月均","value":"¥4,180"},{"type":"chart","kind":"bar","categories":["5月","6月"],"series":[{"values":[3800,4100]}],"unit":"元"}]}
-        |```
-""" +
-        // l10n:keep agent prompt
-        """        |- 含 options 或 confirm 的视图放在回复最后，然后结束这一轮；用户的选择会以一条 "[xrk-ui reply]" 开头的消息发回来（如「选择：方案 A」「确认：开始」；自己填的另起一行「其他：…」）。只问一个简单问题时用 ask_user_question。
-        |- 不要用视图收集密码、密钥或验证码。
         |""").trimMargin()
 
     // l10n:keep agent prompt
@@ -103,7 +75,8 @@ object GuestSetup {
         rootfs: File,
         phoneStorage: Boolean,
         phoneControl: Boolean = false,
-        visualReplies: Boolean = true,
+        // Retired leftover (DS Bot / native ```xrk-ui fence). Session path is xrkh Host; do not inject.
+        @Suppress("UNUSED_PARAMETER") visualReplies: Boolean = false,
         directEngine: Boolean = false,
     ) {
         try {
@@ -126,8 +99,7 @@ object GuestSetup {
                     // l10n:keep agent prompt
                     "手机相册、下载等用户文件不在这个环境里，看不到；如需访问，请用户在 App 设置里打开「访问手机文件」。"
                 },
-            ) + (if (visualReplies) XRK_UI_SECTION else "") +
-                (if (phoneControl) PhoneGuest.AGENTS_SECTION else "") +
+            ) + (if (phoneControl) PhoneGuest.AGENTS_SECTION else "") +
                 DIAGNOSTICS_SECTION.replace(
                     "{PATH}",
                     if (directEngine) "${rootfs.canonicalPath}/root/.xrk/diagnostics.md"

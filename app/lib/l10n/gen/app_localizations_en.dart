@@ -7923,15 +7923,6 @@ class L10nEn extends L10n {
   String get hubPersonalization => 'Personalization';
 
   @override
-  String get hubPersonalizationAboutYou => 'About you';
-
-  @override
-  String get hubPersonalizationReplies => 'Replies';
-
-  @override
-  String get hubPersonalizationWorkStyle => 'Working style';
-
-  @override
   String get hubPrivacy => 'Privacy and sharing';
 
   @override

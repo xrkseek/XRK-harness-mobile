@@ -9,13 +9,15 @@
 
 - 机内 `@xrkseek/harness-cli@0.7.17`
 - 覆盖安装：runtime 变更时重装并抬回 `/root`；同 runtime 壳 bump 只软愈合、不重解 rootfs
-- 手机文件 / 权限与设置个性化入口完善
+- 权限页：Host 已运行时不再因 Face mux 超时误报「没能连上引擎」（HTTP 可用即连上）
+- 去掉设置「个性化 / 可视化回复」旧入口（会话走本机 `xrkh` Host）
 
 ### English
 
 - On-device `@xrkseek/harness-cli@0.7.17`
 - Overlay install: reinstall + `/root` carry when runtime changes; shell-only bumps soft-heal without rootfs re-extract
-- Phone files / permissions and Settings personalization polish
+- Permissions: with Host running, no longer false「engine unreachable」when Face mux times out (HTTP Face is enough)
+- Removed Settings「Personalization / visual replies」leftover (sessions use on-device `xrkh` Host)
 
 ## 0.7.16 · 2026-11-11（App 首发）
 

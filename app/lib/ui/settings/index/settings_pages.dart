@@ -16,7 +16,6 @@ import '../background_guide_page.dart';
 import '../diagnostics_page.dart';
 import '../notification_settings.dart';
 import '../performance_page.dart';
-import '../personalization_page.dart';
 import '../settings_screen.dart';
 import '../system_access_page.dart';
 import 'spot_anchor.dart';
@@ -34,7 +33,6 @@ Widget settingsPage(SettingsPageId id, {String? sessionId}) {
   return switch (id) {
     SettingsPageId.hub => const SettingsScreen(),
     SettingsPageId.permission => PermissionPage(sessionId: sessionId),
-    SettingsPageId.personalization => const PersonalizationPage(),
     SettingsPageId.appearance => const AppearancePage(),
     SettingsPageId.performance => const PerformancePage(),
     SettingsPageId.notifications => const NotificationSettingsPage(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../../runtime/runtime_state.dart';
 import '../../state/connection_state.dart';
 import '../../state/hosts_state.dart';
 import '../../state/sessions_state.dart';
@@ -79,6 +80,15 @@ class FeatureOffline extends ConsumerWidget {
       return host.isLocal
           ? const QuietSpinner()
           : QuietSpinner(label: l10n.featuresHostConnecting(name ?? l10n.commonRemoteHost));
+    }
+    // Host process can be up (WebView chat works) while Face is still null —
+    // offer retry instead of a dead-end offline tile.
+    if (host.isLocal && ref.watch(localRuntimeProvider.select((s) => s.status.isRunning))) {
+      return FeatureMessage(
+        icon: AppIcons.offline,
+        title: l10n.commonEngineUnreachable,
+        action: (l10n.commonRetry, () => ref.invalidate(localConnectionProvider)),
+      );
     }
     return FeatureMessage(icon: AppIcons.offline, title: l10n.commonEngineUnreachable);
   }

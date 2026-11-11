@@ -10,7 +10,6 @@ import '../remote/network_watch.dart';
 import '../remote/relay/relay_backend.dart';
 import '../remote/ssh/ssh_link.dart';
 import '../remote/ssh/ssh_transport.dart';
-import '../runtime/runtime_bridge.dart';
 import '../runtime/runtime_state.dart';
 import 'hosts_state.dart';
 import 'permission_default_repair.dart';
@@ -72,34 +71,36 @@ class LocalConnectionController extends AsyncNotifier<HostConnection?> {
       if (r.mounted && state.hasError && !state.isLoading) r.invalidateSelf();
     });
     r.onDispose(() => unawaited(kicks.cancel()));
+    // Match [RuntimeStatus.isRunning]: loopback may use an empty token string;
+    // gating Face on `token != null` left native settings offline while Host ran.
     final endpoint = r.watch(
       localRuntimeProvider.select((s) {
         final st = s.status;
-        return st.phase == RuntimePhase.running ? (st.baseUrl, st.token) : (null, null);
+        if (!st.isRunning) return (null, null);
+        return (st.baseUrl!, st.token ?? '');
       }),
     );
     final (baseUrl, token) = endpoint;
-    if (baseUrl == null || token == null) return null;
+    if (baseUrl == null) return null;
 
-    final client = await r.read(localClientConnectorProvider)(baseUri: Uri.parse(baseUrl), token: token);
+    final client = await r.read(localClientConnectorProvider)(
+      baseUri: Uri.parse(baseUrl),
+      token: token ?? '',
+    );
     if (!r.mounted) {
       await client.close();
       return null;
     }
     r.onDispose(() => unawaited(client.close()));
-    (Object, StackTrace)? readyFailure;
-    final ready = client.mux.ready(timeout: const Duration(seconds: 20));
+
+    // Permission / settings APIs are unary HTTP (`POST /api/…`). Mux is only
+    // for live host events. Requiring mux.ready used to tear down a working
+    // HTTP Face while Host was up → Settings › 权限 showed「没能连上引擎」.
     unawaited(
-      ready.then<void>(
+      client.mux.ready(timeout: const Duration(seconds: 20)).then<void>(
         (_) {},
         onError: (Object error, StackTrace stack) {
-          readyFailure = (error, stack);
-          // Error/retry states retain their previous value. Retire our published
-          // connection before closing it, without changing an unpublished build.
-          if (r.mounted && identical(state.value?.client, client)) {
-            state = const AsyncData(null);
-          }
-          unawaited(client.close());
+          // Best-effort; leave the HTTP client up.
         },
       ),
     );
@@ -116,12 +117,9 @@ class LocalConnectionController extends AsyncNotifier<HostConnection?> {
     final apiKey = r.read(settingsProvider).apiKey;
     if (apiKey.isNotEmpty) await _pushKey(client, apiKey);
     if (!r.mounted) return null;
-    if (readyFailure case final failure?) Error.throwWithStackTrace(failure.$1, failure.$2);
+
     final connection = HostConnection(client: client, isLocal: true);
-    // HTTP is usable now; keep build pending so ready failures retain Riverpod's retry policy.
     state = AsyncData(connection);
-    await ready;
-    if (!r.mounted) return null;
     // Custom providers' keys kept on the phone go back in where the engine
     // lost them; never awaited (the catalog refreshes when they land).
     unawaited(

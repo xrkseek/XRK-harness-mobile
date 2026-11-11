@@ -13706,24 +13706,6 @@ abstract class L10n {
   /// **'个性化'**
   String get hubPersonalization;
 
-  /// No description provided for @hubPersonalizationAboutYou.
-  ///
-  /// In zh, this message translates to:
-  /// **'关于你'**
-  String get hubPersonalizationAboutYou;
-
-  /// No description provided for @hubPersonalizationReplies.
-  ///
-  /// In zh, this message translates to:
-  /// **'回答'**
-  String get hubPersonalizationReplies;
-
-  /// No description provided for @hubPersonalizationWorkStyle.
-  ///
-  /// In zh, this message translates to:
-  /// **'工作方式'**
-  String get hubPersonalizationWorkStyle;
-
   /// No description provided for @hubPrivacy.
   ///
   /// In zh, this message translates to:

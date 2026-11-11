@@ -7491,15 +7491,6 @@ class L10nZh extends L10n {
   String get hubPersonalization => '个性化';
 
   @override
-  String get hubPersonalizationAboutYou => '关于你';
-
-  @override
-  String get hubPersonalizationReplies => '回答';
-
-  @override
-  String get hubPersonalizationWorkStyle => '工作方式';
-
-  @override
   String get hubPrivacy => '隐私与分享';
 
   @override

@@ -326,19 +326,20 @@ final _pages = <SettingsPageMeta>[
     freq: Freq.medium,
     links: const ['permission'],
   ),
-  // Native home for「可视化回复」(engine AGENTS.md). Reply prefs / agent
-  // presets stay Web-owned child pages (shell: false below).
+  // Retired: 「个性化 / 可视化回复」taught native ```xrk-ui fences, but product
+  // chat is LocalHostShell WebView (Host Web has no xrk-ui renderer). Deep
+  // links fall through to the hub. Reply prefs / agent presets stay Web-owned.
   SettingsPageMeta(
     SettingsPageId.personalization,
     title: (l) => l.hubPersonalization,
     group: _ai,
     keywords: (l) => l.searchKwPersonalization,
     links: const ['personalization'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.replyPrefs,
     title: (l) => l.hubSettingsPreferences,
-    parent: SettingsPageId.personalization,
     keywords: (l) => l.searchKwReplyPrefs,
     condition: SpotCondition.localHost,
     shell: false,
@@ -346,7 +347,6 @@ final _pages = <SettingsPageMeta>[
   SettingsPageMeta(
     SettingsPageId.agentPresets,
     title: (l) => l.featuresAgentPresets,
-    parent: SettingsPageId.personalization,
     keywords: (l) => l.searchKwAgentPresets,
     links: const ['agent-presets'],
     shell: false,
@@ -655,13 +655,12 @@ abstract final class Spots {
     keywords: (l) => l.searchKwPhoneConfirmEntry,
   );
 
-  // 个性化.
+  // 「可视化回复」retired with Settings › 个性化 — orphan id kept out of [_rows].
   static final visualReplies = SettingSpot(
     'visual-replies',
-    page: SettingsPageId.personalization,
+    page: SettingsPageId.hub,
     title: (l) => l.hubSettingsVisualReplies,
     keywords: (l) => l.searchKwVisualReplies,
-    condition: SpotCondition.localHost,
   );
 
   // 手机操控.

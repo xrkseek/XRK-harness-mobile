@@ -124,8 +124,7 @@ void _environment(StringBuffer b, DiagnosticsSnapshot s) {
     )
     ..writeln(
       '- 自动起本机引擎 ${s.settings.autoStartLocal} · 自动批准命令 ${s.settings.autoApproveCommands}'
-      ' · 手机存储 ${s.settings.phoneStorage} · 完成后收起过程 ${s.settings.foldCompletedTurns}'
-      ' · 可视化回复 ${s.settings.visualReplies}',
+      ' · 手机存储 ${s.settings.phoneStorage} · 完成后收起过程 ${s.settings.foldCompletedTurns}',
     )
     ..writeln();
 }

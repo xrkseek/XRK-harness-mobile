@@ -112,12 +112,12 @@ void main() {
     expect(ids.contains('page:phone'), isTrue);
     expect(ids.contains('page:appearance'), isTrue);
     expect(ids.contains('page:permission'), isTrue);
-    expect(ids.contains('page:personalization'), isTrue);
     expect(ids.contains('page:background'), isTrue);
     expect(ids.contains('language'), isTrue);
     expect(SettingsIndex.isShellPage(SettingsPageId.permission), isTrue);
-    expect(SettingsIndex.isShellPage(SettingsPageId.personalization), isTrue);
-    // Retired dual-home「界面」is not a shell surface (redirects to hub only).
+    // Retired「个性化 / 可视化回复」and dual-home「界面」are not shell surfaces.
+    expect(SettingsIndex.isShellPage(SettingsPageId.personalization), isFalse);
+    expect(ids.contains('page:personalization'), isFalse);
     expect(SettingsIndex.isShellPage(SettingsPageId.interface), isFalse);
     expect(ids.contains('page:interface'), isFalse);
     // Host-owned pages must stay shell:false and out of search.
