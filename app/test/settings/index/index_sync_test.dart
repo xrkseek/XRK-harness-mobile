@@ -16,7 +16,6 @@ import 'package:xrk_app/ui/engine_settings/engine_settings_hub.dart';
 import 'package:xrk_app/ui/engine_settings/runtime_settings_pages.dart';
 import 'package:xrk_app/ui/engine_settings/subagent_settings_page.dart';
 import 'package:xrk_app/ui/engine_settings/web_search_page.dart';
-import 'package:xrk_app/ui/features/permission_page.dart';
 import 'package:xrk_app/ui/pets/pet_settings_page.dart';
 import 'package:xrk_app/ui/phone/phone_control_screen.dart';
 import 'package:xrk_app/ui/providers/providers_page.dart';
@@ -247,34 +246,7 @@ void main() {
     await _check(tester, SettingsPageId.engine, () => _app(tester, const EngineScreen(), _running()));
   });
 
-  testWidgets('手机操控', (tester) async {
-    await _check(tester, SettingsPageId.phone, () async {
-      await pumpPhone(tester, const PhoneControlScreen(), size: const Size(390, 3200));
-    });
-  });
-
-  testWidgets('权限', (tester) async {
-    final carrier = FakePluginCarrier();
-    final client = XrkClient.withCarrier(carrier);
-    addTearDown(client.close);
-    carrier.handlers['settings.describe'] = (_) => facePermissionDescribe();
-    carrier.handlers['session/projections'] = (_) => {
-      'kind': 'sequenced',
-      'asOfSeq': 1,
-      'values': {
-        'permissions': {'currentValue': 'workspace-write'},
-      },
-    };
-    await _check(tester, SettingsPageId.permission, () async {
-      await _app(tester, const PermissionPage(sessionId: 's1'), [
-        activeConnectionProvider.overrideWithValue(AsyncData(engine.fakeConnection(client, local: false))),
-        ..._running(),
-      ]);
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 30)));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-    });
-  });
+  // 手机操控 / 权限：壳设置树已退休（球导航 · Web/CLI 档位）。
 
   testWidgets('模型', (tester) async {
     await _check(

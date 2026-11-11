@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 
 import '../../engine/engine_screen.dart';
-import '../../features/permission_page.dart';
 import '../../phone/app_rules_page.dart';
 import '../../phone/dnd_mode_page.dart';
 import '../../phone/phone_settings_gateway.dart';
@@ -32,7 +31,6 @@ Widget settingsPage(SettingsPageId id, {String? sessionId}) {
   }
   return switch (id) {
     SettingsPageId.hub => const SettingsScreen(),
-    SettingsPageId.permission => PermissionPage(sessionId: sessionId),
     SettingsPageId.appearance => const AppearancePage(),
     SettingsPageId.performance => const PerformancePage(),
     SettingsPageId.notifications => const NotificationSettingsPage(),

@@ -17,7 +17,6 @@ import '../../state/plugins_state.dart';
 import '../common/feature_tile.dart';
 import '../files/files_page.dart';
 import '../engine/engine_screen.dart';
-import '../phone/phone_control_screen.dart';
 import '../plugins/seats/plugin_seat_page.dart';
 import '../plugins/seats/seat_links.dart';
 import '../session/session_artifacts.dart';
@@ -31,7 +30,6 @@ import '../theme/app_icons.dart';
 import '../web/web_target.dart';
 import 'feature_widgets.dart' show openSessionInChat;
 import 'jobs_page.dart';
-import 'permission_page.dart';
 import 'session_export_page.dart';
 import 'skills_page.dart';
 
@@ -257,29 +255,8 @@ final featureSections = <FeatureSection>[
       web: const DshWebTarget(),
     ),
   ]),
-  // Phone-shell settings only (same homes as the Settings hub). Models /
-  // remote / plugins live in in-guest Web Settings — do not surface native
-  // Host dead pages from 全部功能. Permission + personalization are App-owned
-  // (phone files / visual replies cascades).
+  // Phone-shell settings only. 手机操控走悬浮球；权限档位 / 模型在 Web Settings。
   FeatureSection.localized((l10n) => l10n.commonSettings, [
-    FeatureItem.localized(
-      id: 'phone',
-      title: (l10n) => l10n.catalogPhoneControl,
-      summary: (l10n) => l10n.catalogPhoneControlSummary,
-      icon: AppIcons.phoneControl,
-      tile: FeatureKind.phone,
-      // Prefer Host Settings › phone (xrk-mobile-ui guest plugin). AllFeatures
-      // + Settings hub route via hostSettingsOpener; native is unlock/a11y fallback.
-      native: (_) => const PhoneControlScreen(),
-      web: const DshWebTarget(settings: DshWebSettings.phone),
-    ),
-    FeatureItem.localized(
-      id: 'permission',
-      title: (l10n) => SettingsIndex.page(SettingsPageId.permission).title(l10n),
-      summary: (l10n) => l10n.searchKwPermission,
-      icon: AppIcons.permissions,
-      native: (sessionId) => PermissionPage(sessionId: sessionId),
-    ),
     FeatureItem.localized(
       id: 'appearance',
       title: (l10n) => SettingsIndex.page(SettingsPageId.appearance).title(l10n),

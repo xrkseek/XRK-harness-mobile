@@ -29,7 +29,7 @@ import '../../state/draft_store.dart';
 import '../../state/drawer_view_state.dart';
 import '../../state/engine_control.dart';
 import '../../state/engine_settings_state.dart' show engineSettingsProvider;
-import '../../state/features_state.dart' show agentPresetsProvider, permissionStateProvider;
+import '../../state/features_state.dart' show agentPresetsProvider;
 import '../../state/hosts_state.dart' show HostKind, HostRef, activeHostProvider;
 import '../../state/media_generation.dart';
 import '../../state/mention_state.dart';
@@ -90,7 +90,7 @@ import 'usage_sheet.dart';
 import 'widgets/activity_strip.dart';
 import 'widgets/attachments.dart';
 import 'widgets/notice_row.dart';
-import 'widgets/permission_pill.dart';
+import 'widgets/permission_pill.dart' show AutoApprovePill, StripRiskChip;
 import 'widgets/plus_panel.dart';
 import 'widgets/quote_chip.dart';
 import 'widgets/read_only_bar.dart';
@@ -410,7 +410,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       // the offered one.
       final setup = OwedSetup(
         preset: newChatPresetToApply(ref.read(agentPresetsProvider).value, pendingModes.preset),
-        permission: newChatPermissionToApply(ref.read(permissionStateProvider(null)).value, pendingModes.permission),
         model: ref.read(pendingModelProvider),
       );
       _draftKey = sessionId;
@@ -449,7 +448,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final client = ref.read(activeConnectionProvider).value?.client;
     if (client == null) return false;
     // What the Host confirms is recorded even if this screen goes meanwhile.
-    final container = ProviderScope.containerOf(context, listen: false);
     final setups = ref.read(owedSetupsProvider.notifier);
     final attempt = Object();
     _applyingSetup = attempt;
@@ -458,17 +456,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       if (owed.preset case final preset?) {
         await client.selectAgentPreset(sessionId, preset);
         setups.settled(host, sessionId, preset: preset);
-        if (!current()) return false;
-      }
-      if (owed.permission case final permission?) {
-        final CommandResult result;
-        try {
-          result = await client.setPermissionPreset(sessionId, permission);
-        } finally {
-          container.invalidate(permissionStateProvider(sessionId));
-        }
-        if (!result.success) throw XrkRemoteException('permission', result.text ?? permission);
-        setups.settled(host, sessionId, permission: permission);
         if (!current()) return false;
       }
       if (owed.model case final model?) {
@@ -1985,28 +1972,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   }
 
   /// What sits on the composer's top-left edge: 「自动允许中 ×」 while this
-  /// client allows everything, else 「⚠ 完全权限 ›」 for a conversation looser
-  /// than 工作区内修改 (unless [risk] is false: they are beside the activity
-  /// strip), then the generation mode's capsule; nothing otherwise.
+  /// client allows everything (unless [risk] is false: beside the activity
+  /// strip), then the generation mode's capsule. Host permission tiers are Web.
   Widget? _composerPills(String? sessionId, {required bool autoApprove, GenerateParams? generate, bool risk = true}) {
     final capsule = generate == null
         ? null
         : GenerateCapsule(params: generate, onTap: () => _openGenerateSheet(generate), onExit: _exitGenerate);
     Widget? pill;
-    if (!risk) {
-      // Beside the activity strip ([_stripRisk]).
-    } else if (sessionId != null && autoApprove) {
+    if (risk && sessionId != null && autoApprove) {
       pill = AutoApprovePill(onDisable: () => ref.read(chatProvider(sessionId).notifier).setAutoApprove(false));
-    } else if (sessionId != null) {
-      final risky = ref.watch(sessionModesProvider(sessionId).select((m) => m.risky ? m.preset : null));
-      if (risky != null) {
-        // Beside the mode capsule it shrinks to its ⚠ (§4.2).
-        pill = PermissionPill(
-          preset: risky,
-          compact: capsule != null,
-          onTap: () => unawaited(showPermissionSheet(context, sessionId)),
-        );
-      }
     }
     if (capsule == null) return pill;
     if (pill == null) return capsule;
@@ -2020,20 +1994,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     );
   }
 
-  /// 「自动允许中」/「完全权限」 beside the activity strip while a reply generates.
+  /// 「自动允许中」 beside the activity strip while a reply generates.
   Widget? _stripRisk(String sessionId, {required bool autoApprove}) {
-    if (autoApprove) {
-      return StripRiskChip.autoApprove(
-        context,
-        onDisable: () => ref.read(chatProvider(sessionId).notifier).setAutoApprove(false),
-      );
-    }
-    final risky = ref.watch(sessionModesProvider(sessionId).select((m) => m.risky ? m.preset : null));
-    if (risky == null) return null;
-    return StripRiskChip.permission(
+    if (!autoApprove) return null;
+    return StripRiskChip.autoApprove(
       context,
-      preset: risky,
-      onTap: () => unawaited(showPermissionSheet(context, sessionId)),
+      onDisable: () => ref.read(chatProvider(sessionId).notifier).setAutoApprove(false),
     );
   }
 

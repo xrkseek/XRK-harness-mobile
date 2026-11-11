@@ -17,7 +17,8 @@ import 'package:xrk_app/ui/common/app_sheet.dart';
 import 'package:xrk_app/ui/common/ask_ai.dart';
 import 'package:xrk_app/ui/common/list_page_row.dart';
 import 'package:xrk_app/ui/common/risk_notice.dart';
-import 'package:xrk_app/ui/features/permission_page.dart';
+import 'package:xrk_app/ui/phone/phone_files_card.dart';
+import 'package:xrk_app/ui/settings/settings_screen.dart';
 import 'package:xrk_app/ui/settings/settings_screen.dart';
 import 'package:xrk_app/ui/settings/settings_widgets.dart';
 import 'package:xrk_app/ui/shell/page_frame.dart';
@@ -233,26 +234,15 @@ void main() {
     });
   });
 
-  group('权限', () {
-    late FakePluginCarrier carrier;
-    late XrkClient client;
-
-    setUp(() {
-      carrier = FakePluginCarrier();
-      client = XrkClient.withCarrier(carrier);
-      carrier.handlers['settings.describe'] = (_) => facePermissionDescribe();
-    });
-    tearDown(() => client.close());
-
-    Future<void> pumpPermission(WidgetTester tester) async {
+  group('访问手机文件', () {
+    testWidgets('settings hub switch names what AI may touch before asking the system', (tester) async {
       usePhoneSurface(tester);
       await tester.pumpWidget(
         goldenApp(
-          home: const PermissionPage(),
+          home: const SettingsScreen(),
           brightness: Brightness.light,
           overrides: [
             activeHostProvider.overrideWith(() => FixedActiveHost(HostRef.local)),
-            activeConnectionProvider.overrideWithValue(AsyncData(fakeHost(client))),
             localRuntimeProvider.overrideWith(
               () => FakeRuntime(const LocalRuntimeState(loaded: true, status: runningStatus)),
             ),
@@ -261,35 +251,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-    }
-
-    testWidgets('完全权限 for new conversations asks every time; × leaves it off', (tester) async {
-      await pumpPermission(tester);
-      Future<void> pick() async {
-        final row = find.text('完全权限');
-        await tester.ensureVisible(row);
-        await tester.pumpAndSettle();
-        await tester.tap(row);
-        await tester.pumpAndSettle();
-      }
-
-      await pick();
-      final notice = tester.widget<RiskNoticeSheet>(find.byType(RiskNoticeSheet)).notice;
-      expect(notice.id, 'permission.full-access');
-      expect(find.text('开启完全权限？'), findsOneWidget);
-      await tester.tap(find.descendant(of: find.byType(SheetHeader), matching: find.byType(SheetIconButton)));
-      await tester.pumpAndSettle();
-      expect(_container(tester).read(settingsProvider).autoApproveCommands, isFalse);
-
-      await pick();
-      await tester.tap(find.byKey(const ValueKey('risk-confirm')));
-      await tester.pumpAndSettle();
-      // On this phone, 完全权限 for new conversations is the app's own switch.
-      expect(_container(tester).read(settingsProvider).autoApproveCommands, isTrue);
-    });
-
-    testWidgets('访问手机文件 names what AI may touch before asking the system', (tester) async {
-      await pumpPermission(tester);
+      expect(find.byType(PhoneFilesCard), findsOneWidget);
       final row = find.widgetWithText(ListPageRow, '访问手机文件');
       await tester.ensureVisible(row);
       await tester.pumpAndSettle();
@@ -298,11 +260,6 @@ void main() {
       expect(find.text('让 AI 访问手机文件？'), findsOneWidget);
       expect(find.text('AI 能读取和修改相册、下载、文档等手机文件，引擎会重启一次。'), findsOneWidget);
       expect(find.widgetWithText(FilledButton, '允许读写'), findsOneWidget);
-      // 问 AI from here: the switch stays off, the question goes to the chat.
-      await tester.tap(find.text('不确定？问 AI'));
-      await tester.pumpAndSettle();
-      expect(find.byType(RiskNoticeSheet), findsNothing);
-      expect(_container(tester).read(composeInboxProvider).single.text, '/xrk-guide 「访问手机文件」打开后，AI 能读写哪些文件？怎么关掉？');
     });
   });
 

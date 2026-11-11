@@ -11,6 +11,7 @@
 - 覆盖安装：runtime 变更时重装并抬回 `/root`；同 runtime 壳 bump 只软愈合、不重解 rootfs
 - 本机 Face：XRK 回环无 launch-token；权限走 Host `settings.describe` / `settings.mutate`（去掉 DSH cookie / catalog）
 - 去掉设置「个性化 / 可视化回复」旧入口（会话走本机 `xrkh` Host）
+- 去掉 App 原生「完全权限 / 权限档位」页与对话内切换；Host 档位只在 Web / CLI；「访问手机文件」挪到设置主页；设置「手机操控」页下线（悬浮球仍进操控屏）
 
 ### English
 
@@ -18,6 +19,7 @@
 - Overlay install: reinstall + `/root` carry when runtime changes; shell-only bumps soft-heal without rootfs re-extract
 - Local Face: open loopback (no launch-token); permissions use Host `settings.describe` / `settings.mutate` (no DSH cookie / catalog)
 - Removed Settings「Personalization / visual replies」leftover (sessions use on-device `xrkh` Host)
+- Dropped native App permission-tier page and in-chat switches (Host tiers stay on Web / CLI); 「Phone files」moved to Settings hub; Settings「Phone control」page retired (ball still opens PhoneControlScreen)
 
 ## 0.7.16 · 2026-11-11（App 首发）
 

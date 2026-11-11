@@ -13,7 +13,7 @@ import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import '../update/update_tiles.dart' show UpdateBadge;
-import '../features/permission_page.dart';
+import '../phone/phone_files_card.dart';
 import 'about_page.dart';
 import 'appearance/appearance_page.dart';
 import 'background_guide_page.dart';
@@ -83,20 +83,9 @@ class SettingsScreen extends ConsumerWidget {
             onFooterTap: () => _push(context, const EngineScreen()),
           ),
         ),
-        // App-owned AI surface: permission + phone files. Models / Host YAML
-        // stay on the Host. 「个性化 / 可视化回复」was DSH leftover — removed.
-        SettingsSection(
-          title: l10n.hubGroupAi,
-          children: [
-            SettingsTile(
-              icon: AppIcons.permissions,
-              tint: SettingsHues.ai,
-              spot: SettingsIndex.entry(SettingsPageId.permission),
-              onTap: () => _push(context, const PermissionPage()),
-            ),
-          ],
-        ),
-        // 手机操控只从悬浮球进；深链 / 搜索仍可打开 PhoneControlScreen。
+        // 「访问手机文件」原在权限页；权限档位留给 Web / CLI。手机操控只从悬浮球进。
+        const PhoneFilesCard(),
+        const SizedBox(height: 24),
         SettingsSection(
           title: l10n.hubSettingsAppearance,
           children: [

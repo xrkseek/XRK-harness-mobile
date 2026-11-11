@@ -1,19 +1,5 @@
-// The composer's ＋ panel (docs/design/settings-ia.md §4.4, media-generation
-// §4.2): the attachment tiles (相册 · 拍照 · 文件, and 生成 where the host can
-// generate), then what applies to this conversation (本对话: permissions and
-// plan mode) and, while phone control is on, how it confirms.
-//
-// ```
-//                  ───
-//  ╭──────╮  ╭──────╮  ╭──────╮  ╭──────╮
-//  │ 相册 │  │ 拍照 │  │ 文件 │  │ 生成 │     equal, 8 apart, 16 from the sides
-//  ╰──────╯  ╰──────╯  ╰──────╯  ╰──────╯
-//   本对话
-//  ╭────────────────────────────────────╮   card edges = the tiles' edges
-//  │ 权限               工作区内修改  › │
-//  │ 计划模式                     [○  ] │
-//  ╰────────────────────────────────────╯
-// ```
+// The composer's ＋ panel: attachment tiles, optional 本对话 (plan mode), and
+// phone-control confirm while that is on. Host permission tiers stay in Web.
 
 import 'dart:async';
 
@@ -25,9 +11,6 @@ import '../../../l10n/l10n.dart';
 import '../../../plugins/native/native_model.dart';
 import '../../../plugins/native/native_state.dart';
 import '../../../state/chat_state.dart';
-import '../../../state/connection_state.dart';
-import '../../../state/features_state.dart';
-import '../../../state/hosts_state.dart';
 import '../../../state/phone_state.dart';
 import '../../../state/session_modes.dart';
 import '../../common/app_sheet.dart';
@@ -35,8 +18,6 @@ import '../../common/list_page_row.dart';
 import '../../common/risk_notice.dart';
 import '../../common/sheet_navigator.dart';
 import '../../common/sheet_title_bar.dart';
-import '../../features/feature_format.dart';
-import '../../features/permission_page.dart' show confirmPermission, writePermissionDefault;
 import '../../phone/phone_control_screen.dart' show PhoneConfirmModeText;
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
@@ -91,20 +72,6 @@ Future<PlusChoice?> showPlusPanel(BuildContext context, {bool files = true, bool
         child: SheetNavigator(
           root: (_) => _PlusRoot(files: files, generate: generate, sessionId: sessionId),
         ),
-      ),
-    ),
-  );
-}
-
-/// 本对话的权限 on its own (the permission pill above the composer).
-Future<void> showPermissionSheet(BuildContext context, String sessionId) {
-  return showAppSheet<void>(
-    context,
-    isScrollControlled: true,
-    builder: (sheet) => SafeArea(
-      top: false,
-      child: SingleChildScrollView(
-        child: SheetNavigator(root: (_) => SessionPermissionPage(sessionId: sessionId)),
       ),
     ),
   );
@@ -237,7 +204,7 @@ class PlusTile extends StatelessWidget {
   }
 }
 
-/// 本对话: the preset (opens its page) and plan mode.
+/// 本对话: plan mode only (permission tiers are Web / CLI).
 class _ThisChatCard extends ConsumerStatefulWidget {
   const _ThisChatCard({required this.sessionId});
 
@@ -278,14 +245,6 @@ class _ThisChatCardState extends ConsumerState<_ThisChatCard> {
       title: l10n.nearbyThisChat,
       margin: const EdgeInsets.symmetric(horizontal: PlusPanelMetrics.side),
       children: [
-        ListPageRow(
-          title: l10n.featuresPermissions,
-          value: switch (modes.preset) {
-            final preset? => permissionName(preset),
-            null => null,
-          },
-          onTap: () => SheetNavigator.of(context).push((_) => SessionPermissionPage(sessionId: widget.sessionId)),
-        ),
         MergeSemantics(
           child: ListPageRow(
             title: l10n.hubSessionPlanMode,
@@ -316,139 +275,6 @@ class _PhoneCard extends ConsumerWidget {
           onTap: mode == null ? null : () => SheetNavigator.of(context).push((_) => const _ConfirmModePage()),
         ),
       ],
-    );
-  }
-}
-
-/// 本对话的权限: the four presets, then what new conversations start with.
-class SessionPermissionPage extends ConsumerStatefulWidget {
-  const SessionPermissionPage({super.key, required this.sessionId});
-
-  final String sessionId;
-
-  @override
-  ConsumerState<SessionPermissionPage> createState() => _SessionPermissionPageState();
-}
-
-class _SessionPermissionPageState extends ConsumerState<SessionPermissionPage> {
-  /// Picked here and not yet in the log.
-  String? _picked;
-  bool _busy = false;
-
-  void _toast(String text) => ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(text)));
-
-  Future<void> _pick(String value, String? current) async {
-    if (_busy || value == current) return;
-    if (!await confirmPermission(context, value) || !mounted) return;
-    setState(() {
-      _busy = true;
-      _picked = value;
-    });
-    final ok = await ref.read(chatProvider(widget.sessionId).notifier).runCommand('/permission $value');
-    if (!mounted) return;
-    ref.invalidate(permissionStateProvider(widget.sessionId));
-    setState(() {
-      _busy = false;
-      if (!ok) _picked = null;
-    });
-    if (!ok) _toast(context.l10n.featuresSwitchFailed);
-  }
-
-  Future<void> _makeDefault(String value, int revision) async {
-    final owner = ref.read(activeHostProvider);
-    final client = ref.read(activeConnectionProvider).value?.client;
-    if (client == null || _busy) return;
-    if (!await confirmPermission(context, value) || !mounted || ref.read(activeHostProvider) != owner) return;
-    setState(() => _busy = true);
-    final problem = await writePermissionDefault(ref, client, value, revision);
-    if (!mounted) return;
-    ref.invalidate(permissionStateProvider(widget.sessionId));
-    setState(() => _busy = false);
-    if (problem != null) _toast(problem);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final dsh = XrkColors.of(context);
-    final async = ref.watch(permissionStateProvider(widget.sessionId));
-    final logged = ref.watch(sessionModesProvider(widget.sessionId)).preset;
-    final state = async.value;
-    if (_picked != null && _picked == (logged ?? state?.current)) _picked = null;
-    final current = _picked ?? logged ?? state?.current;
-
-    final Widget body;
-    if (state == null) {
-      body = SizedBox(
-        height: 160,
-        child: Center(
-          child: async.hasError
-              ? Text(
-                  l10n.featuresPermissionsReadFailed,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: dsh.textTertiary),
-                )
-              : const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2)),
-        ),
-      );
-    } else {
-      final defaults = state.defaultOptions ?? state.options.where((o) => o.value != 'auto').toList();
-      final revision = state.defaultRevision;
-      final canDefault =
-          current != null &&
-          current != state.hostDefault &&
-          revision != null &&
-          defaults.any((o) => o.value == current);
-      body = Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SheetGroup(
-            children: [
-              for (final o in state.options)
-                Semantics(
-                  selected: o.value == current,
-                  inMutuallyExclusiveGroup: true,
-                  child: ListPageRow(
-                    title: permissionName(o.value, o.name),
-                    subtitle: permissionHint(o.value, o.description),
-                    onTap: _busy ? null : () => unawaited(_pick(o.value, current)),
-                    trailing: o.value == current
-                        ? Icon(AppIcons.selected, size: 22, color: theme.colorScheme.primary)
-                        : o.value == 'danger-full-access'
-                        ? Icon(AppIcons.permissionRisky, size: 18, color: dsh.warning)
-                        : const SizedBox.square(dimension: 22),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            l10n.nearbyNewChatDefault(permissionName(state.hostDefault)),
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(color: dsh.textTertiary),
-          ),
-          if (canDefault)
-            Center(
-              child: TextButton(
-                onPressed: _busy ? null : () => unawaited(_makeDefault(current, revision)),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(l10n.nearbySetAsDefault),
-                    const SizedBox(width: 2),
-                    const Icon(AppIcons.disclosure, size: 14),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      );
-    }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [SheetTitleBar(l10n.nearbyPermissionTitle), body, const SizedBox(height: 16)],
     );
   }
 }

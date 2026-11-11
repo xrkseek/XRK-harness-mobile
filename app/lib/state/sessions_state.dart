@@ -581,12 +581,11 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
   }
 
   /// Creates a session in the workspace the drawer shows (else the default
-  /// directory) and returns its id. [autoApprove] false keeps the host's
-  /// permission preset even when 自动批准命令 is on.
-  Future<String> create({bool autoApprove = true}) async {
+  /// directory) and returns its id. Host permission tiers stay on Web / CLI.
+  Future<String> create() async {
     final conn = ref.read(activeConnectionProvider).value;
     if (conn == null) throw StateError('not connected');
-    return createForConnection(conn, autoApprove: autoApprove, isCurrent: () => true);
+    return createForConnection(conn, isCurrent: () => true);
   }
 
   /// Creates for a captured connection. The caller retires its intent through
@@ -594,7 +593,6 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
   Future<String> createForConnection(
     HostConnection conn, {
     required bool Function() isCurrent,
-    bool autoApprove = true,
   }) async {
     final owner = ref;
     void checkCurrent() {
@@ -620,17 +618,6 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
       cwd: conn.isLocal ? null : conn.workingDirectory,
       checkCurrent: checkCurrent,
     );
-    checkCurrent();
-    // Safe mode keeps the default preset: the agent there repairs the engine
-    // with a full shell already, and every command should still be asked.
-    final safeMode = ref.read(localRuntimeProvider).status.inSafeMode;
-    if (autoApprove && conn.isLocal && !safeMode && ref.read(settingsProvider).autoApproveCommands) {
-      try {
-        await conn.client.setPermissionPreset(created.sessionId, 'danger-full-access');
-      } catch (_) {
-        // Keep the default preset if the command is unavailable.
-      }
-    }
     checkCurrent();
     unawaited(refresh());
     return created.sessionId;

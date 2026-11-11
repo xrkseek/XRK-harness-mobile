@@ -9,7 +9,7 @@ import 'package:xrk_app/state/balance_state.dart';
 import 'package:xrk_app/state/chat_state.dart';
 import 'package:xrk_app/state/commands_state.dart';
 import 'package:xrk_app/state/connection_state.dart';
-import 'package:xrk_app/state/features_state.dart' show agentPresetsProvider, permissionStateProvider;
+import 'package:xrk_app/state/features_state.dart' show agentPresetsProvider;
 import 'package:xrk_app/state/models_state.dart';
 import 'package:xrk_app/state/sessions_state.dart';
 import 'package:xrk_app/state/settings_state.dart';
@@ -432,10 +432,7 @@ class ChatHarness {
       return balance;
     }),
     hostCommandsProvider.overrideWith((ref, sessionId) async => testHostCommands),
-    if (!newChatCatalogs) ...[
-      agentPresetsProvider.overrideWith((ref) async => null),
-      permissionStateProvider.overrideWith((ref, sessionId) async => null),
-    ],
+    if (!newChatCatalogs) agentPresetsProvider.overrideWith((ref) async => null),
     sessionUsageProvider.overrideWith2((id) => FakeUsage(id, usage[id] ?? SessionUsage.empty)),
     sessionsProvider.overrideWith(() => sessions),
     currentSessionProvider.overrideWith(() => FixedSession(session)),

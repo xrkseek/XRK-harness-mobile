@@ -316,15 +316,15 @@ final _pages = <SettingsPageMeta>[
     links: const ['models'],
     shell: false,
   ),
-  // Native: defaults +「访问手机文件」+ phone confirm entry. Host YAML presets
-  // still sync through Face; the phone-files cascade is App-owned.
+  // Retired: Host permission tiers live in Web / CLI. Phone files moved to
+  // 手机操控. Deep links fall through to the hub.
   SettingsPageMeta(
     SettingsPageId.permission,
     title: (l) => l.featuresPermissions,
     group: _ai,
     keywords: (l) => l.searchKwPermission,
-    freq: Freq.medium,
     links: const ['permission'],
+    shell: false,
   ),
   // Retired: 「个性化 / 可视化回复」taught native ```xrk-ui fences, but product
   // chat is LocalHostShell WebView (Host Web has no xrk-ui renderer). Deep
@@ -351,20 +351,21 @@ final _pages = <SettingsPageMeta>[
     links: const ['agent-presets'],
     shell: false,
   ),
-  // 能力
+  // 手机操控：设置索引退休（悬浮球导航）。深链 / 球仍可直接 push 原生页。
   SettingsPageMeta(
     SettingsPageId.phone,
     title: (l) => l.phoneControlTitle,
     group: _abilities,
     keywords: (l) => l.searchKwPhone,
-    freq: Freq.medium,
     links: const ['phone'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.phoneAppRules,
     title: (l) => l.phoneAppRulesTitle,
     parent: SettingsPageId.phone,
     keywords: (l) => l.searchKwAppRules,
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.phoneDnd,
@@ -372,14 +373,15 @@ final _pages = <SettingsPageMeta>[
     parent: SettingsPageId.phone,
     keywords: (l) => l.searchKwDnd,
     condition: SpotCondition.phoneControlOn,
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.phoneUnlocks,
     title: (l) => l.phoneUnlockTitle,
     parent: SettingsPageId.phone,
     keywords: (l) => l.searchKwPhoneUnlock,
-    // The overlay's 「已解除限制」 tag opens it through this link.
     links: const ['phone-unlocks'],
+    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.webSearch,
@@ -624,33 +626,31 @@ abstract final class Spots {
     keywords: (l) => l.searchKwAddProvider,
   );
 
-  // 权限.
+  // Orphan: native Host permission page retired (Web / CLI owns tiers).
   static final permissionCurrent = SettingSpot(
     'permission-current',
-    page: SettingsPageId.permission,
+    page: SettingsPageId.hub,
     title: (l) => l.featuresCurrentChat,
     keywords: (l) => l.searchKwPermissionCurrent,
-    condition: SpotCondition.openChat,
   );
   static final permissionDefault = SettingSpot(
     'permission-default',
-    page: SettingsPageId.permission,
+    page: SettingsPageId.hub,
     title: (l) => l.featuresNewChatDefault,
     keywords: (l) => l.searchKwPermissionDefault,
-    freq: Freq.medium,
-    link: 'permission-default',
   );
   static final phoneFiles = SettingSpot(
     'phone-files',
-    page: SettingsPageId.permission,
+    page: SettingsPageId.hub,
     title: (l) => l.hubSettingsPhoneFiles,
     keywords: (l) => l.searchKwPhoneFiles,
     link: 'phone-files',
     condition: SpotCondition.localHost,
   );
+  // Orphan: confirm entry used to live on the retired permission page.
   static final permissionPhoneConfirm = SettingSpot(
     'permission-phone-confirm',
-    page: SettingsPageId.permission,
+    page: SettingsPageId.hub,
     title: (l) => l.hubPermissionPhoneConfirm,
     keywords: (l) => l.searchKwPhoneConfirmEntry,
   );
@@ -1056,11 +1056,8 @@ abstract final class Spots {
 /// references but are not indexed here.
 final _rows = <SettingSpot>[
   Spots.language,
-  Spots.phoneA11yRestore,
-  Spots.phoneConfirm,
-  Spots.phoneAutoCollapse,
-  Spots.phoneReturn,
-  Spots.phoneBackgroundGuide,
+  Spots.phoneFiles,
+  // 手机操控子行不进设置搜索：页从悬浮球进，不在壳设置树里。
   Spots.darkMode,
   Spots.accent,
   // 功能图标 / 桌面图标 / 图片快捷方式 / 壁纸已撤出外观页，不进搜索。

@@ -1,9 +1,7 @@
 // The new conversation's options on the empty state: the agent preset it
-// starts with, its permissions and the drawer folder it is filed in. One light
-// row under the workspace chip; each item opens a short sheet. (The model is
-// the header's model chip.) Preset and permission picks are held in
-// pendingNewChatModesProvider and applied when the first message creates the
-// session (chat_screen.dart `_ensureSession`), before the prompt.
+// starts with and the drawer folder it is filed in. Permission tiers stay in
+// Web / CLI. Preset picks are held in pendingNewChatModesProvider and applied
+// when the first message creates the session (chat_screen.dart `_ensureSession`).
 
 import 'dart:async';
 
@@ -12,18 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../runtime/runtime_state.dart';
-import '../../state/connection_state.dart';
 import '../../state/features_state.dart';
 import '../../state/models_state.dart' show modelSelectionScopeProvider;
 import '../../state/new_chat_modes.dart';
 import '../../state/sessions_state.dart' show currentSessionProvider;
-import '../../state/settings_state.dart';
 import '../common/app_sheet.dart';
 import '../common/list_page_row.dart';
 import '../common/sheet_title_bar.dart';
 import '../features/feature_format.dart';
-import '../features/permission_page.dart' show confirmPermission;
 import '../theme/app_icons.dart';
 import 'empty_actions.dart';
 
@@ -64,13 +58,6 @@ String? newChatPresetToApply(List<AgentPresetInfo>? all, String? picked) {
   return null;
 }
 
-/// The permission to apply to a new session for [picked]: null (keep the
-/// effective default) when nothing is picked or the Host no longer offers it.
-String? newChatPermissionToApply(PermissionState? state, String? picked) {
-  if (picked == null || state == null) return picked;
-  return state.options.any((o) => o.value == picked) ? picked : null;
-}
-
 IconData presetIcon(String id) => switch (id) {
   'standard' => AppIcons.presetStandard,
   'ptc' => AppIcons.presetPtc,
@@ -79,29 +66,9 @@ IconData presetIcon(String id) => switch (id) {
   _ => AppIcons.configure,
 };
 
-/// The permission a new session gets without a pick: on this device with
-/// 自动批准命令 on (and outside safe mode) session creation switches to full
-/// access (sessions_state.dart `createForConnection`); elsewhere the Host's
-/// default for new sessions.
-String effectiveNewChatPermission(
-  PermissionState state, {
-  required bool local,
-  required bool autoApprove,
-  required bool safeMode,
-}) => local && autoApprove && !safeMode ? 'danger-full-access' : state.hostDefault;
-
-/// [effectiveNewChatPermission] for this screen, read once (callbacks).
-String _readEffectivePermission(WidgetRef ref, PermissionState state) => effectiveNewChatPermission(
-  state,
-  local: ref.read(activeConnectionProvider).value?.isLocal ?? false,
-  autoApprove: ref.read(settingsProvider).autoApproveCommands,
-  safeMode: ref.read(localRuntimeProvider).status.inSafeMode,
-);
-
-/// The options row: the agent preset, the permissions and (with folders) the
-/// drawer folder this new chat starts with — light items in one centred line.
-/// The preset and permission items appear once the Host has said what it
-/// offers, and only when there is a real choice.
+/// The options row: the agent preset and (with folders) the drawer folder —
+/// light items in one centred line. The preset appears once the Host has said
+/// what it offers, and only when there is a real choice.
 class NewChatOptions extends ConsumerWidget {
   const NewChatOptions({super.key, this.folderLabel, this.onFolder});
 
@@ -119,24 +86,6 @@ class NewChatOptions extends ConsumerWidget {
     AgentPresetInfo? shownPreset = fallbackPreset;
     for (final preset in presets) {
       if (preset.id == pending.preset && preset.broken == null) shownPreset = preset;
-    }
-
-    final permissions = ref.watch(permissionStateProvider(null)).value;
-    final hasPermissions = permissions != null && permissions.options.isNotEmpty;
-    final local = ref.watch(activeConnectionProvider.select((c) => c.value?.isLocal ?? false));
-    final autoApprove = ref.watch(settingsProvider.select((s) => s.autoApproveCommands));
-    final safeMode = ref.watch(localRuntimeProvider.select((s) => s.status.inSafeMode));
-    final permission = hasPermissions
-        ? pending.permission ??
-              effectiveNewChatPermission(permissions, local: local, autoApprove: autoApprove, safeMode: safeMode)
-        : null;
-    String? permissionLabel;
-    if (permissions != null && permission != null) {
-      String? hostName;
-      for (final option in permissions.options) {
-        if (option.value == permission) hostName = option.name;
-      }
-      permissionLabel = permissionName(permission, hostName);
     }
 
     Widget item(Key key, IconData icon, String label, String name, VoidCallback onTap) => ConstrainedBox(
@@ -159,14 +108,6 @@ class NewChatOptions extends ConsumerWidget {
           agentPresetName(shownPreset),
           l10n.featuresAgentPresets,
           () => unawaited(_pickPreset(context, ref)),
-        ),
-      if (permissionLabel != null)
-        item(
-          const ValueKey('new-chat-permission'),
-          AppIcons.permissions,
-          permissionLabel,
-          l10n.featuresPermissions,
-          () => unawaited(_pickPermission(context, ref)),
         ),
       if (folderLabel != null && onFolder != null)
         item(const ValueKey('new-chat-folder'), AppIcons.folder, folderLabel!, l10n.viewNewChatFolder, onFolder!),
@@ -207,42 +148,8 @@ class NewChatOptions extends ConsumerWidget {
         selected: selected,
       ),
     );
-    // The options may be gone by now (a session opened): `ref` with them.
     if (pick == null || !context.mounted || !current()) return;
     ref.read(pendingNewChatModesProvider.notifier).selectPreset(pick == fallback.id ? null : pick);
-  }
-
-  Future<void> _pickPermission(BuildContext context, WidgetRef ref) async {
-    final current = _owner(ref);
-    final state = ref.read(permissionStateProvider(null)).value;
-    if (state == null || state.options.isEmpty) return;
-    final fallback = _readEffectivePermission(ref, state);
-    final selected = ref.read(pendingNewChatModesProvider).permission ?? fallback;
-    final pick = await showAppSheet<String>(
-      context,
-      isScrollControlled: true,
-      builder: (sheet) => _ChoiceSheet(
-        title: sheet.l10n.viewNewChatPermissionTitle,
-        rows: [
-          for (final option in state.options)
-            _Choice(
-              value: option.value,
-              icon: option.value == 'danger-full-access' || option.value == 'auto'
-                  ? AppIcons.securityWarning
-                  : AppIcons.permissions,
-              title: permissionName(option.value, option.name),
-              subtitle: permissionHint(option.value, option.description),
-              meta: option.value == fallback ? sheet.l10n.viewNewChatDefault : null,
-            ),
-        ],
-        selected: selected,
-      ),
-    );
-    if (pick == null || pick == selected || !context.mounted || !current()) return;
-    // Full access and auto review ask once, as on the 权限 page.
-    if (pick != fallback && !await confirmPermission(context, pick)) return;
-    if (!context.mounted || !current()) return;
-    ref.read(pendingNewChatModesProvider.notifier).selectPermission(pick == fallback ? null : pick);
   }
 }
 

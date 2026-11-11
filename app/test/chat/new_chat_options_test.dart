@@ -280,32 +280,15 @@ void main() {
     expect(newChatPresetToApply([standard, broken], 'broken'), isNull);
     expect(newChatPresetToApply(null, 'minimal'), 'minimal', reason: 'nothing known to check against');
     expect(newChatPresetToApply([const AgentPresetInfo(id: 'standard'), minimal, companion], null), 'standard');
-
-    const state = PermissionState(
-      options: [PermissionOption('read-only', 'Read only')],
-      hostDefault: 'workspace-write',
-    );
-    expect(newChatPermissionToApply(state, 'read-only'), 'read-only');
-    expect(newChatPermissionToApply(state, 'gone'), isNull);
-    expect(newChatPermissionToApply(state, null), isNull);
-    expect(newChatPermissionToApply(null, 'read-only'), 'read-only');
   });
 
-  test('defaults: the marked preset, else the first; full access only where creation switches to it', () {
+  test('defaults: the marked preset, else the first; retired companion presets stay hidden', () {
     const a = AgentPresetInfo(id: 'a');
     const b = AgentPresetInfo(id: 'b', isDefault: true);
     expect(defaultPreset([a, b])?.id, 'b');
     expect(defaultPreset([a])?.id, 'a');
     expect(defaultPreset(const []), isNull);
     expect(newChatPresets([a, const AgentPresetInfo(id: 'xrk-mobile-companion-full')]).map((p) => p.id), ['a']);
-
-    const state = PermissionState(options: [], hostDefault: 'workspace-write');
-    String effective({bool local = true, bool autoApprove = true, bool safeMode = false}) =>
-        effectiveNewChatPermission(state, local: local, autoApprove: autoApprove, safeMode: safeMode);
-    expect(effective(), 'danger-full-access');
-    expect(effective(autoApprove: false), 'workspace-write');
-    expect(effective(safeMode: true), 'workspace-write');
-    expect(effective(local: false), 'workspace-write');
   });
 }
 
