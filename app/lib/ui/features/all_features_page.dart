@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../state/bots_state.dart';
 import '../../state/host_settings_opener.dart';
 import '../../state/sessions_state.dart';
 import '../phone/phone_control_screen.dart';
@@ -188,7 +187,7 @@ class FeatureTileFor extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final scheme = Theme.of(context).colorScheme;
-    final unread = item.id == 'ds-bot' ? ref.watch(dsBotInboxProvider.select((inbox) => inbox.total)) : 0;
+    final unread = 0;
     return FeatureCard(
       icon: item.icon,
       art: switch (item.tile) {

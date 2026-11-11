@@ -214,7 +214,7 @@ class MainActivity : FlutterActivity() {
     private var framesActive = true
 
     companion object {
-        private const val ENGINE_ID = "dsh-main"
+        private const val ENGINE_ID = "xrk-main"
 
         /** The app is on screen (resumed). */
         @Volatile var inForeground = false

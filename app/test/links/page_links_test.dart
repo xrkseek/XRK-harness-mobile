@@ -73,7 +73,7 @@ void main() {
     // The ids before the settings index (0.9.6): none may stop working.
     const before = {
       'schedules', 'permission', 'agent-presets', 'models', 'subagent-settings', 'agent-loop', //
-      'shell-settings', 'web-search', 'plugins', 'plugin-inventory', 'cordis', 'agent-team', 'forum', //
+      'shell-settings', 'web-search', 'plugins', 'plugin-inventory', 'agent-team', 'forum', //
       'community', 'ds-bot', 'notifications', 'workspaces', 'general', 'account', 'remote', 'phone', //
       'engine', 'diagnostics', 'settings', 'appearance', 'pets', 'shared-links', 'engine-settings', //
       'all-features', 'background',

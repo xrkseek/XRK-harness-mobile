@@ -10,7 +10,7 @@ import java.util.concurrent.Future
 internal class BackgroundDisplayIo<C : Any> {
     val owner: String = UUID.randomUUID().toString()
     private val lock = Any()
-    private val io = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-display-io").apply { isDaemon = true } }
+    private val io = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-display-io").apply { isDaemon = true } }
     private var activeCalls = 0
     private var previewCalls = 0
     private var releaseStarted = false

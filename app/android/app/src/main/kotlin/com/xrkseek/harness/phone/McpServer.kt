@@ -136,7 +136,7 @@ class McpServer(
             "tools" to mapOf("listChanged" to false),
             "experimental" to mapOf(PhoneCaller.META_KEY to mapOf("v" to 1, "taskIsolation" to 1, "parallelLimit" to 1, "runLifecycle" to 1)),
         ),
-        "serverInfo" to linkedMapOf("name" to "dsh-app-phone", "version" to serverVersion),
+        "serverInfo" to linkedMapOf("name" to "xrk-app-phone", "version" to serverVersion),
     )
 
     internal fun runCall(id: Any?, name: String, args: Map<String, Any?>, caller: PhoneCaller?, handler: ((String, Map<String, Any?>, PhoneCaller?) -> ToolOutput)? = null): String {

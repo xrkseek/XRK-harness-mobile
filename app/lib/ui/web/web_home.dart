@@ -38,7 +38,6 @@ import '../../state/settings_state.dart';
 import '../../state/ui_mode_state.dart';
 import '../common/discard_guard.dart';
 import '../common/empty_view.dart';
-import '../forum/forum_link_host.dart';
 import '../notify/chat_alert_host.dart';
 import '../pets/pet_settings_page.dart';
 import '../shell/page_frame.dart';
@@ -176,7 +175,7 @@ class _WebHomeState extends ConsumerState<WebHome> {
     return ChatAlertHost(
       child: Stack(
         fit: StackFit.expand,
-        children: [page, const LinkHost(), const WebEntryHost(), const ForumLinkHost(), const _PetHost()],
+        children: [page, const LinkHost(), const WebEntryHost(), const _PetHost()],
       ),
     );
   }

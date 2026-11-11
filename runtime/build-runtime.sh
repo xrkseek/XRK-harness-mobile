@@ -320,10 +320,36 @@ PYEOF
   local got; got="$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' \
     "$prefix/node_modules/@xrkseek/harness-cli/package.json")"
   [[ "$got" == "$ENGINE_VERSION" ]] || die "installed harness-cli $got != $ENGINE_VERSION"
+  merge_mobile_skill_seeds "$prefix"
 }
 
-# Back-compat name used by older docs / scripts.
-install_dsh() { install_engine "$@"; }
+# Fold harness-cli seeds/mobile/skills/* into seeds/skills/ so guest establish
+# (unchanged fingerprint path) picks up phone-only playbooks. Desktop/npm
+# consumers never run this — they only establish seeds/skills/ as published.
+merge_mobile_skill_seeds() {  # $1 = npm prefix holding node_modules/@xrkseek/harness-cli
+  local cli="$1/node_modules/@xrkseek/harness-cli"
+  local src="$cli/seeds/mobile/skills"
+  local dst="$cli/seeds/skills"
+  # Mobile runtime MUST ship phone playbooks. Silent skip left guests without
+  # xrk-phone (skill tool → "unknown") while phone_* tools still worked.
+  if [[ ! -d "$src" ]]; then
+    die "harness-cli missing seeds/mobile/skills (ENGINE_TGZ / package incomplete — pack apps/cli/seeds/mobile)"
+  fi
+  if [[ ! -f "$src/xrk-phone/SKILL.md" ]]; then
+    die "harness-cli missing seeds/mobile/skills/xrk-phone/SKILL.md"
+  fi
+  mkdir -p "$dst"
+  local entry base merged=0
+  for entry in "$src"/*; do
+    [[ -d "$entry" ]] || continue
+    base="$(basename "$entry")"
+    rm -rf "$dst/$base"
+    cp -a "$entry" "$dst/$base"
+    log "merged mobile skill seed → seeds/skills/$base"
+    merged=$((merged + 1))
+  done
+  [[ "$merged" -gt 0 ]] || die "seeds/mobile/skills had no skill directories to merge"
+}
 
 # pnpm for the guest (zero dependencies, plain JS). Same lock-then-`npm ci` scheme as XRK; the
 # lock's integrity must equal PNPM_INTEGRITY, so a regenerated lock cannot swap the tarball.

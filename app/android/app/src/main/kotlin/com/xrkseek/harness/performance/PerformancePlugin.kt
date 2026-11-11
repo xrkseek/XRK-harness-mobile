@@ -66,7 +66,7 @@ class PerformancePlugin : FlutterPlugin, EventChannel.StreamHandler {
             }.onFailure { listenerError = it.javaClass.simpleName }
         }
         ThermalRuntime.lightweight = if (listener != null) thermal.lightweight else null
-        worker = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-performance").apply { isDaemon = true } }
+        worker = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-performance").apply { isDaemon = true } }
         worker!!.execute {
             val facts = runCatching { DevicePerformance.read(app) }.getOrElse { DeviceProfile(sdkInt = Build.VERSION.SDK_INT) }
             main.post {

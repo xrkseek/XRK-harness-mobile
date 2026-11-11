@@ -10,7 +10,7 @@ class SafeMoveAsideTest {
     private fun fixture(block: (File) -> Unit) {
         val root = Files.createTempDirectory("safe-move-").toFile()
         try { block(root) } finally {
-            File(root, "root/.dsh").setWritable(true)
+            File(root, "root/.xrk").setWritable(true)
             File(root, "root").setWritable(true)
             root.deleteRecursively()
         }
@@ -61,25 +61,22 @@ class SafeMoveAsideTest {
     }
 
     @Test fun partialFailurePreservesMovesAndCanRetryRemainingFiles() = fixture { root ->
-        val first = SafeMode.MOVABLE[2] // /root/.env: writable parent
-        val blocked = SafeMode.MOVABLE[0] // /root/.xrk: locked parent
-        val remaining = SafeMode.MOVABLE[1]
+        val first = SafeMode.MOVABLE[1] // /root/.env: writable parent
+        val blocked = SafeMode.MOVABLE[0] // /root/.xrk/.env: locked parent
         val firstFile = put(root, first)
         val blockedFile = put(root, blocked)
-        val remainingFile = put(root, remaining)
         lock(blockedFile.parentFile!!)
-        val result = SafeMode.moveAside(root, listOf(first, blocked, remaining), "test")
+        val result = SafeMode.moveAside(root, listOf(first, blocked), "test")
         assertNotNull(result.failure)
         assertEquals(listOf(first to "$first.off-test"), result.moved)
         assertTrue(result.failure!!.message!!.contains("1 file(s) already moved"))
         assertFalse(firstFile.exists())
         assertEquals(first, SafeMode.guestFile(root, result.moved.single().second).readText())
         assertEquals(blocked, blockedFile.readText())
-        assertEquals(remaining, remainingFile.readText())
         assertTrue(blockedFile.parentFile!!.setWritable(true, false))
-        val retry = SafeMode.moveAside(root, listOf(first, blocked, remaining), "retry")
+        val retry = SafeMode.moveAside(root, listOf(first, blocked), "retry")
         assertNull(retry.failure)
-        assertEquals(listOf(blocked to "$blocked.off-retry", remaining to "$remaining.off-retry"), retry.moved)
+        assertEquals(listOf(blocked to "$blocked.off-retry"), retry.moved)
         assertEquals(first, SafeMode.guestFile(root, result.moved.single().second).readText())
     }
 }

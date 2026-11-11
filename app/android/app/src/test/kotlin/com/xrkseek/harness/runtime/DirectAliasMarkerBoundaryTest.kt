@@ -11,8 +11,8 @@ class DirectAliasMarkerBoundaryTest {
         try {
             val root = File(base, "rootfs")
             File(root, "root").mkdirs()
-            File(root, "opt/dsh-app/direct").mkdirs()
-            File(root, "opt/dsh-app/direct/config.json").writeText("{\"schema\":2}")
+            File(root, "opt/xrk-app/direct").mkdirs()
+            File(root, "opt/xrk-app/direct/config.json").writeText("{\"schema\":2}")
             val target = File(base, "untouched").apply { writeText("unrelated bytes\n") }
             val marker = File(root, "root/.xrk-mobile-direct-path-alias")
             Files.createSymbolicLink(marker.toPath(), target.toPath())
@@ -27,8 +27,8 @@ class DirectAliasMarkerBoundaryTest {
         val base = Files.createTempDirectory("direct-home-link").toFile()
         try {
             val root = File(base, "rootfs")
-            File(root, "opt/dsh-app/direct").mkdirs()
-            File(root, "opt/dsh-app/direct/config.json").writeText("{\"schema\":2}")
+            File(root, "opt/xrk-app/direct").mkdirs()
+            File(root, "opt/xrk-app/direct/config.json").writeText("{\"schema\":2}")
             val unrelated = File(base, "unrelated-home").apply { mkdirs() }
             Files.createSymbolicLink(File(root, "root").toPath(), unrelated.toPath())
             assertThrows(IllegalStateException::class.java) { DirectLaunch.preservePhysicalAlias(root) }

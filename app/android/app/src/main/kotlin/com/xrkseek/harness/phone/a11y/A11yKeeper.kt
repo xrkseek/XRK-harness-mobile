@@ -11,7 +11,7 @@ import android.util.Log
 import com.xrkseek.harness.phone.PhoneControl
 
 /**
- * 自动恢复无障碍. With phone control switched on in XRK Go and WRITE_SECURE_SETTINGS granted
+ * 自动恢复无障碍. With phone control switched on in XRK Harness and WRITE_SECURE_SETTINGS granted
  * (`pm grant` from a computer or a root shell, or the one tap through the privileged channel), it
  * puts [PhoneA11yService] back into ENABLED_ACCESSIBILITY_SERVICES when something took it out (a
  * force stop does, on stock Android too), and takes it out and back in when it stays listed but
@@ -96,7 +96,7 @@ object A11yKeeper {
                 } finally {
                     pending.finish()
                 }
-            }, "dsh-a11y-keeper").start()
+            }, "xrk-a11y-keeper").start()
         }
     }
 }
@@ -116,7 +116,7 @@ class KeeperPlan(private val pkg: String, private val cls: String) {
     private var nextAt = 0L
 
     /**
-     * What to do at [now]: [on] — phone control is switched on in XRK Go; [granted] —
+     * What to do at [now]: [on] — phone control is switched on in XRK Harness; [granted] —
      * WRITE_SECURE_SETTINGS is held; [list] — the setting as read; [connected] — our service is bound.
      */
     fun next(on: Boolean, granted: Boolean, list: String?, connected: Boolean, now: Long): Step {

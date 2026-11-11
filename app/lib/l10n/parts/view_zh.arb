@@ -681,7 +681,6 @@
   "viewTipShareSelect": "分享对话时长按再滑动，可以一次选中多条消息",
   "viewTipChartDrag": "回复里的图表可以左右拖动，看每个点的数值",
   "viewTipCopyPath": "改动卡里长按某个文件，可以复制它的路径",
-  "viewTipCompanion": "「伙伴小屋」藏在切换主机的面板里",
   "viewTipAnswerInline": "AI 向你提问时，直接在输入框里打字就是回答",
   "viewTipWallpaper": "壁纸可以拖动、缩放，还能调模糊和明暗",
   "viewTipModelHere": "这里就能换模型、预设和权限，只对这次对话生效",

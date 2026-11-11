@@ -1,7 +1,7 @@
 // The update check's User-Agent on the beta channel names the installed
-// build, `dsh-app-updater/0.9.9+10301000 (arm64-v8a)`, so the share host can
+// build, `xrk-harness-updater/0.9.9+10301000 (arm64-v8a)`, so the share host can
 // count versions and ABIs (docs/design/share-links.md §15). Nobody else gets
-// more than `dsh-app-updater`. Real sockets here: no binding in this file.
+// more than `xrk-harness-updater`. Real sockets here: no binding in this file.
 
 import 'dart:io';
 
@@ -18,21 +18,21 @@ import 'support.dart';
 
 const _token = 'dshc_0123456789abcdefghijklmnopqrstuvwxyzABCDEFG';
 const _feed = 'https://xrkseek.com/beta/update.json';
-const _agent = 'dsh-app-updater/0.9.9+10301000 (arm64-v8a)';
+const _agent = 'xrk-harness-updater/0.9.9+10301000 (arm64-v8a)';
 
 /// The share host's reading of it (services/share-worker/src/stats.ts).
-final _hostReads = RegExp(r'^dsh-app-updater\/([0-9][0-9A-Za-z.+-]{0,39})(?:\s+\(([a-z0-9_-]{1,16})\))?');
+final _hostReads = RegExp(r'^xrk-harness-updater\/([0-9][0-9A-Za-z.+-]{0,39})(?:\s+\(([a-z0-9_-]{1,16})\))?');
 
 void main() {
   test('the agent: version, build and ABI, as much as is known', () {
     expect(updaterUserAgent(version: '0.9.9', build: 10301000, abi: 'arm64-v8a'), _agent);
-    expect(updaterUserAgent(version: '0.9.9', build: 10301000), 'dsh-app-updater/0.9.9+10301000');
-    expect(updaterUserAgent(version: '0.9.9', abi: 'x86_64'), 'dsh-app-updater/0.9.9 (x86_64)');
-    expect(updaterUserAgent(version: '0.9.9', build: 0), 'dsh-app-updater/0.9.9');
+    expect(updaterUserAgent(version: '0.9.9', build: 10301000), 'xrk-harness-updater/0.9.9+10301000');
+    expect(updaterUserAgent(version: '0.9.9', abi: 'x86_64'), 'xrk-harness-updater/0.9.9 (x86_64)');
+    expect(updaterUserAgent(version: '0.9.9', build: 0), 'xrk-harness-updater/0.9.9');
     for (final odd in [null, '', 'v1', '0.9.9 (evil)', '1.0.0\r\nx: y']) {
       expect(updaterUserAgent(version: odd, build: 1, abi: 'arm64-v8a'), updaterAgent, reason: '$odd');
     }
-    expect(updaterUserAgent(version: '0.9.9', abi: 'ARM 64'), 'dsh-app-updater/0.9.9');
+    expect(updaterUserAgent(version: '0.9.9', abi: 'ARM 64'), 'xrk-harness-updater/0.9.9');
     final m = _hostReads.firstMatch(_agent)!;
     expect(m[1], '0.9.9+10301000');
     expect(m[2], 'arm64-v8a');

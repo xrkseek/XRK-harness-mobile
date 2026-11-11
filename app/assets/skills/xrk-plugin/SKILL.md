@@ -38,7 +38,7 @@ whenToUse: The user wants to add something of their own to the xrk-mobile phone 
 | 某个工具的结果画成卡片 | 本技能：工具 `output.presentationMeta` 返回 `{ "xrk-mobile/view": 视图 }`，不需要清单 |
 | 把回复读出来、开口就停、跟读字幕 | 本技能：`capabilities` + `media` / `micro` / `overlays`（见下文「声音与字幕」） |
 
-胶囊、菜单、状态条、面板只在装了 xrk-mobile 桥接的主机上出现：手机本机引擎有（`/etc/dsh-app/runtime.json` 存在就是）；其他主机只有工具卡。
+胶囊、菜单、状态条、面板只在装了 xrk-mobile 桥接的主机上出现：手机本机引擎有（`/etc/xrk-app/runtime.json` 存在就是）；其他主机只有工具卡。
 
 ## 步骤
 

@@ -53,7 +53,7 @@ class PetOverlayService : Service() {
 
     companion object {
         private const val ACTION_SNOOZE = "com.xrkseek.harness.PET_SNOOZE"
-        private const val CHANNEL_ID = "dsh-pet"
+        private const val CHANNEL_ID = "xrk-pet"
         private const val NOTIFICATION_ID = 3090
 
         @Volatile var running = false

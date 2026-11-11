@@ -41,10 +41,10 @@ const pluginSkillName = 'xrk-plugin';
 /// how to use the app. Read-only; installed and kept current the same way.
 const guideSkillName = 'xrk-guide';
 
-/// The fourth: troubleshooting and bug-report playbook. Reads the diagnostics
-/// snapshot the app writes into the engine (`$XRK_HOME/dsh-app/diagnostics.md`)
-/// and turns a symptom into a redacted environment summary / issue draft.
-const supportSkillName = 'xrk-mobile-support';
+/// Troubleshooting / bug-report playbook (asset folder under assets/skills/).
+/// phone_* playbook is **not** Flutter-managed: xrkh `seeds/mobile/skills`
+/// merges into `seeds/skills/` at mobile runtime build (fingerprint establish).
+const supportSkillName = 'xrk-support';
 
 /// The managed line inside SKILL.md's front matter.
 const uiSkillManagedMarker = '# xrk-mobile:managed';

@@ -84,7 +84,7 @@ internal object PetOverlay {
     }
 
     private const val TAG = "DshPet"
-    private const val PREFS = "dsh_pet_overlay"
+    private const val PREFS = "xrk_pet_overlay"
     private const val K_ENABLED = "enabled"
     private const val K_ALWAYS = "alwaysShow"
     private const val K_SNOOZE = "snoozedUntil"
@@ -96,7 +96,7 @@ internal object PetOverlay {
     private const val MENU_MS = 8_000L
     private const val TARGET_DP = 56f
     private const val TARGET_GAP_DP = 28f
-    private const val CHANNEL_OPEN = "dsh-pet-open"
+    private const val CHANNEL_OPEN = "xrk-pet-open"
     private const val NOTICE_ID = 3091
     /** An answer key takes touches this long after its bubble shows (as phone control's prompt). */
     private const val ARM_MS = 600L
@@ -112,7 +112,7 @@ internal object PetOverlay {
     private lateinit var prefs: SharedPreferences
     private lateinit var sprites: PetSprites
     private val main = Handler(Looper.getMainLooper())
-    private val worker = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-pet").apply { isDaemon = true } }
+    private val worker = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-pet").apply { isDaemon = true } }
     private var initialized = false
 
     val machine = OverlayMachine()
@@ -1442,7 +1442,7 @@ internal object PetOverlay {
         PetScreenshot.capture(app) { result ->
             val accepted = capture.finish(request) && alive(ticket) && interactive() && machine.enabled &&
                 started == 0 && !machine.appForeground && !machine.snoozed(now()) &&
-                // A phone task that began meanwhile keeps the screen; XRK Go doesn't jump in front of it.
+                // A phone task that began meanwhile keeps the screen; XRK Harness doesn't jump in front of it.
                 PhoneControl.peek()?.foregroundLine() == null
             val path = result.path
             if (accepted && path != null) {

@@ -54,7 +54,7 @@ class SafeDirectoryTest {
             SafeMode.prepare(root, briefing())
             assertTrue(dir.isDirectory)
             assertFalse(Files.isSymbolicLink(dir.toPath()))
-            assertTrue(File(dir, "overlay.patch.yml").isFile)
+            assertFalse(File(dir, "overlay.patch.yml").exists())
             assertTrue(File(dir, "agents/AGENTS.md").isFile)
             assertEquals(listOf("keep.txt"), target.list()!!.sorted())
             assertEquals("unchanged", File(target, "keep.txt").readText())

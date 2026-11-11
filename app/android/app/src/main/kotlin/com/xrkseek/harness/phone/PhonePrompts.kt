@@ -241,7 +241,7 @@ class PhonePrompts(
         private const val EXTRA_NONCE = "phone_prompt_nonce"
         fun unavailable(reason: String) = PromptResult(PromptOutcome.UNAVAILABLE, PromptSurface.NONE, reason).toMap()
         fun openIntent(app: Context, p: PromptPresentation): Intent = Intent(app, MainActivity::class.java)
-            .setAction(ACTION_OPEN).setData(Uri.parse("dsh-phone-prompt://request/${p.nonce}"))
+            .setAction(ACTION_OPEN).setData(Uri.parse("xrk-phone-prompt://request/${p.nonce}"))
             .putExtra(EXTRA_NONCE, p.nonce)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
     }

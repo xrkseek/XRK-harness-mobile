@@ -67,8 +67,6 @@ import '../shell/adaptive/adaptive_layout.dart' show WindowClass;
 import '../shell/drawer/folder_sheets.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import '../workspace/workspace_switcher.dart' show showWorkspaceSheet;
-import '../workspace/workspaces_page.dart';
 import 'balance_widgets.dart';
 import 'chat_header.dart';
 import 'chat_list.dart';
@@ -1611,12 +1609,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                           : inHostDefault
                                           ? context.l10n.viewEmptyHostDefaultDirectory
                                           : null,
-                                      onWorkspace: () => showWorkspaceSheet(
-                                        context,
-                                        onManage: () =>
-                                            Navigator.of(context)
-                                                .push(MaterialPageRoute<void>(builder: (_) => const WorkspacesPage())),
-                                      ),
+                                      // Native workspaces page removed — guest Web owns workspace UI.
+                                      onWorkspace: null,
                                     ),
                                   ],
                                 ),

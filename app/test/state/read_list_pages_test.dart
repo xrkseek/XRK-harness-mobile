@@ -24,7 +24,6 @@ import 'package:xrk_app/ui/providers/providers_page.dart';
 import 'package:xrk_app/ui/shell/drawer/drawer_filter_bar.dart';
 import 'package:xrk_app/ui/shell/drawer/drawer_list.dart';
 import 'package:xrk_app/ui/shell/sessions_drawer.dart';
-import 'package:xrk_app/ui/workspace/workspace_switcher.dart';
 import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -253,84 +252,6 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('whole drawer keeps workspace label, row and scroll through disconnected 3-second refresh', (
-    tester,
-  ) async {
-    usePhoneView(tester);
-    final host = ListHost('A');
-    final other = ListHost('B')..paused.add('sessions');
-    addTearDown(host.client.close);
-    addTearDown(other.client.close);
-    final response = ListHost.sessions('A', count: 50);
-    host.carrier.handlers['session/list'] = (_) => response;
-    final workspace = Workspace(
-      workspaceId: 'w',
-      path: '/project',
-      title: '研究工作区',
-      sessionIds: [for (var i = 0; i < 50; i++) 'A-$i'],
-    );
-    final ready = WorkspacesState(status: WorkspacesStatus.ready, workspaces: [workspace]);
-    final registry = SwitchWorkspaces(ready);
-    final prefs = SwitchWorkspacePrefs(const WorkspacePrefs(loaded: true, selected: 'w'));
-    var opened = 0;
-    await tester.pumpWidget(
-      testApp(
-        Scaffold(
-          body: SizedBox(
-            width: 390,
-            child: SessionsDrawer(onClose: () => opened++, onOpen: (_) {}),
-          ),
-        ),
-        overrides: [
-          ...listOverrides(host, workspaces: registry, prefs: prefs),
-          ..._chrome(),
-        ],
-      ),
-    );
-    await tester.pumpAndSettle();
-    final c = ProviderScope.containerOf(tester.element(find.byType(SessionsDrawer)));
-    final scroll = _scroll(tester);
-    final workspaceTop = tester.getTopLeft(find.byType(WorkspaceSwitcher)).dy;
-    final listTop = tester.getTopLeft(find.byType(DrawerConversationList)).dy;
-    c.read(switchConnectionProvider.notifier).set(null);
-    registry.set(const WorkspacesState());
-    await tester.pump(const Duration(milliseconds: 16));
-    await tester.pumpAndSettle();
-    expect(find.text('研究工作区'), findsOneWidget);
-    expect(tester.getTopLeft(find.byType(WorkspaceSwitcher)).dy, closeTo(workspaceTop, 0.01));
-    expect(tester.getTopLeft(find.byType(DrawerConversationList)).dy, closeTo(listTop, 0.01));
-    expect(tester.widget<SessionTile>(find.byType(SessionTile).first).onLongPress, isNull);
-    c.read(switchConnectionProvider.notifier).set(other.connection);
-    c.read(sessionsProvider.future);
-    final start = tester.binding.clock.now();
-    final waiting = other.requests['sessions']!.single;
-    Timer(const Duration(seconds: 3), () {
-      registry.set(ready);
-      waiting.complete(response);
-    });
-    await tester.pump(const Duration(milliseconds: 16));
-    expect(find.textContaining('上次结果'), findsWidgets);
-    final before = scroll.position.pixels;
-    await tester.drag(_scrollFinder(scroll), const Offset(0, -250));
-    await tester.pump(const Duration(milliseconds: 200));
-    expect(scroll.position.pixels, greaterThan(before));
-    expect(waiting.isCompleted, isFalse);
-    expect(find.byType(DrawerFilterBar), findsOneWidget);
-    _measure('sessions', tester, start, scroll, before);
-    await tester.tap(find.byType(SessionTile).hitTestable().first);
-    await tester.pump();
-    expect(opened, 1, reason: 'cached session navigation responds before the engine read');
-    final held = scroll.position.pixels;
-    await tester.pump(const Duration(seconds: 3));
-    await tester.pumpAndSettle();
-    expect(_scroll(tester), same(scroll));
-    expect(scroll.position.pixels, closeTo(held, 0.01));
-    expect(c.read(drawerScopeProvider)!.readOnly, isFalse);
-    await tester.tap(find.byType(SessionTile).hitTestable().first);
-    await tester.pump();
-    expect(opened, 2);
-    await tester.pumpWidget(const SizedBox());
-  });
 
   testWidgets('back and reopening providers respond while the three-second read is pending', (tester) async {
     usePhoneView(tester);

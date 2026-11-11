@@ -13,7 +13,7 @@ internal object ResourceRecovery {
     fun uuid(value: Any?): String? = (value as? String)?.takeIf {
         runCatching { UUID.fromString(it).toString() == it }.getOrDefault(false)
     }
-    fun tag(owner: String): String = "dsh-background-$owner"
+    fun tag(owner: String): String = "xrk-background-$owner"
     private fun version(value: (String) -> Any?): Boolean = value(Proto.RESOURCE_RECOVERY_VERSION) is Int &&
         value(Proto.RESOURCE_RECOVERY_VERSION) == 1
 

@@ -23,11 +23,6 @@ import { STATUS_CODES, get as httpGet } from "node:http";
 import { get as httpsGet } from "node:https";
 import { createPluginConfig, pluginConfigUnavailable } from "./plugin-config.js";
 import { createSessionDeletion, sessionDeletionUnavailable } from "./session-deletion.js";
-import { createCompanionRoutes } from "./companion/routes.js";
-import { createCompanionStore } from "./companion/store.js";
-import { createRecallCoordinator } from "./companion/recall.js";
-import { createRecallContexts } from "./companion/recall-context.js";
-import { createCompanionSignals } from "./companion/signals.js";
 import { NativeCore } from "./native/core.js";
 import { effectiveLimits } from "./native/limits.js";
 import { STREAM_PATH, createNativeRoutes } from "./native/routes.js";
@@ -271,27 +266,6 @@ export function apply(ctx, config) {
   const native = new NativeCore(ctx, effectiveLimits(options.native), VERSION);
   ctx.effect(() => () => native.dispose(), "xrk-bridge: native core");
   ctx.provide("xrkGo", native.service);
-  const companionSignals = createCompanionSignals(ctx);
-  ctx.effect(() => () => companionSignals.dispose(), "xrk-bridge: companion signals");
-  // HTTP writes and engine admission share exactly one store/coordinator per
-  // bridge generation. Missing or incompatible engine modules keep recall off.
-  const companionStore = createCompanionStore();
-  const companionContexts = createRecallContexts();
-  let recallDisposed = false;
-  const recallAdapter = import("./companion/recall-engine.js")
-    .then((module) => recallDisposed ? undefined : module.createRecallEngineAdapter(ctx, { contexts: companionContexts }))
-    .then((adapter) => {
-      if (!recallDisposed && adapter) ctx.provide("xrkGoCompanionRecallEngine", adapter);
-      return recallDisposed ? undefined : adapter;
-    }).catch(() => undefined);
-  const companionRecall = createRecallCoordinator({ store: companionStore, adapter: recallAdapter });
-  companionRecall.registerContext = companionContexts.registerContext;
-  ctx.provide("xrkGoCompanionRecall", companionRecall);
-  ctx.effect(() => () => {
-    recallDisposed = true;
-    companionRecall.dispose();
-    companionContexts.dispose();
-  }, "xrk-bridge: companion recall");
   ctx.on("internal/plugin", () => native.markDirty());
   let pluginConfig;
   ctx.on("internal/status", (fiber) => { native.markDirty(); pluginConfig?.statusChanged(fiber); });
@@ -367,7 +341,6 @@ export function apply(ctx, config) {
     const nativeRoutes = createNativeRoutes(native);
     pluginConfig = createPluginConfig(webCtx, { readBody, send });
     const sessionDeletion = createSessionDeletion(webCtx, { readBody, send });
-    const companionRoutes = createCompanionRoutes({ send, store: companionStore, recall: companionRecall, signals: companionSignals });
     webCtx.effect(() => () => nativeRoutes.dispose(), "xrk-bridge: native routes");
     webCtx.effect(() => webCtx.webServer.registerUpgrade({
       path: STREAM_PATH,
@@ -388,7 +361,6 @@ export function apply(ctx, config) {
       const path = url.pathname;
       if (await sessionDeletion.handle(req, res, path)) return;
       if (await pluginConfig.handle(req, res, path)) return;
-      if (await companionRoutes.handle(req, res, path)) return;
       if (path.startsWith(`${PREFIX}/v1/`) && await nativeRoutes.handle(req, res, path, url)) return;
       if (path === `${PREFIX}/v1/inventory`) {
         if (req.method !== "GET" && req.method !== "HEAD") return send(res, 405, "method not allowed");

@@ -51,10 +51,10 @@ class UpdateHttpResponse {
 }
 
 /// The updater's User-Agent everywhere but the beta channel.
-const updaterAgent = 'dsh-app-updater';
+const updaterAgent = 'xrk-harness-updater';
 
 /// The User-Agent of a check on the beta channel, with as much of the
-/// installed build as is known: `dsh-app-updater/0.9.9+10301000 (arm64-v8a)`.
+/// installed build as is known: `xrk-harness-updater/0.9.9+10301000 (arm64-v8a)`.
 /// The share host takes the version and ABI from it (docs/design/share-links.md §15).
 String updaterUserAgent({String? version, int? build, String? abi}) {
   final v = version?.trim() ?? '';

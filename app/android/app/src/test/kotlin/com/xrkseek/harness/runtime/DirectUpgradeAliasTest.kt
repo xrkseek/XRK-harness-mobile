@@ -19,8 +19,8 @@ class DirectUpgradeAliasTest {
         File(root, "root/workspace").mkdirs()
         File(root, "root/workspace/keep.txt").writeText("user bytes\n")
         if (direct) {
-            File(root, "opt/dsh-app/direct").mkdirs()
-            File(root, "opt/dsh-app/direct/config.json").writeText("{\"schema\":2}")
+            File(root, "opt/xrk-app/direct").mkdirs()
+            File(root, "opt/xrk-app/direct/config.json").writeText("{\"schema\":2}")
         }
     }
 
@@ -30,7 +30,7 @@ class DirectUpgradeAliasTest {
         File(base, "staging/etc/version").writeText(version)
         activateRootfs(base, version, sync = {})
         assertEquals("user bytes\n", File(root, "root/workspace/keep.txt").readText())
-        assertFalse(File(root, "opt/dsh-app/direct/config.json").exists())
+        assertFalse(File(root, "opt/xrk-app/direct/config.json").exists())
     }
 
     private fun hasAlias() = DirectLaunch.prootArguments(root, args, direct = false).contains(DirectLaunch.samePathBind(root))
@@ -73,7 +73,7 @@ class DirectUpgradeAliasTest {
 
     @Test fun aSymlinkConfigDoesNotCreateAnUpgradeMarker() {
         installed(direct = false)
-        val config = File(root, "opt/dsh-app/direct/config.json")
+        val config = File(root, "opt/xrk-app/direct/config.json")
         config.parentFile.mkdirs()
         val unrelated = File(base, "unrelated.json").apply { writeText("{}") }
         Files.createSymbolicLink(config.toPath(), unrelated.toPath())

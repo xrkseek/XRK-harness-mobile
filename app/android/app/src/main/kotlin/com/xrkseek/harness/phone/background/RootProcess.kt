@@ -13,7 +13,7 @@ import kotlin.concurrent.thread
 /** A root child on private pipes. Only fixed reason codes leave it, never what su printed. */
 internal class RootProcess private constructor(private val process: Process) : Closeable {
     private val closed = AtomicBoolean(false)
-    private val io = Executors.newSingleThreadExecutor { task -> Thread(task, "dsh-root-pipe").apply { isDaemon = true } }
+    private val io = Executors.newSingleThreadExecutor { task -> Thread(task, "xrk-root-pipe").apply { isDaemon = true } }
     private var synced = false
     private val muxGuard = Any()
     @Volatile private var mux: FramedMuxSession<Bundle>? = null
@@ -31,7 +31,7 @@ internal class RootProcess private constructor(private val process: Process) : C
     init {
         // su and the manager write here too (authorization prompts included): drain it so the
         // pipe never fills, keep nothing.
-        thread(isDaemon = true, name = "dsh-root-stderr") {
+        thread(isDaemon = true, name = "xrk-root-stderr") {
             runCatching { val buffer = ByteArray(4096); while (process.errorStream.read(buffer) >= 0) { } }
         }
     }
@@ -71,7 +71,7 @@ internal class RootProcess private constructor(private val process: Process) : C
         io.shutdownNow()
         // Closing a pipe another thread reads can block, so not on the caller's thread. Our
         // server also exits on stdin EOF; killing su revokes nothing at the manager.
-        thread(isDaemon = true, name = "dsh-root-close") {
+        thread(isDaemon = true, name = "xrk-root-close") {
             runCatching { process.destroyForcibly() }
             runCatching { process.outputStream.close() }
             runCatching { process.inputStream.close() }

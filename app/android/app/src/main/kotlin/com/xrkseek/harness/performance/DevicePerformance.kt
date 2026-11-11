@@ -13,7 +13,7 @@ object DevicePerformance {
 
     @Synchronized fun read(context: Context): DeviceProfile {
         memory?.let { return it }
-        val prefs = context.getSharedPreferences("dsh_performance_device", Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences("xrk_performance_device", Context.MODE_PRIVATE)
         val key = PerformanceRules.cacheKey(Build.VERSION.SDK_INT, Build.FINGERPRINT)
         val stored = runCatching {
             if (prefs.getString("key", null) == key) prefs.getString("facts", null)?.let(::decode) else null

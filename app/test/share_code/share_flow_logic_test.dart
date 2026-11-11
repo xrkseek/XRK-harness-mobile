@@ -77,7 +77,7 @@ void main() {
       writeGuest(fs, '/root/.xrk/skills/outline/scripts/count.sh', 'wc -l "\$1"');
       writeGuest(fs, '/root/.xrk/skills/quick.md', '---\nname: quick\ndescription: "快速回答"\n---\n简短。');
       writeGuest(fs, '/root/.xrk/skills/.system/hidden/SKILL.md', 'x');
-      writeGuest(fs, '/root/.xrk/AGENTS.md', '<!-- dsh-app:managed -->\n托管内容');
+      writeGuest(fs, '/root/.xrk/AGENTS.md', '<!-- xrkh-app:managed -->\n托管内容');
       writeGuest(fs, '/root/.agents/AGENTS.md', '# 我的习惯\n回答用中文。\n');
     });
     tearDown(() => fs.root.parent.deleteSync(recursive: true));

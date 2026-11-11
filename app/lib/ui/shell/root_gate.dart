@@ -8,6 +8,7 @@ import '../../launch/launch_state.dart';
 import '../../runtime/runtime_bridge.dart';
 import '../../runtime/runtime_state.dart';
 import '../../share_code/guest_fs.dart';
+import '../../shell/local_host_shell.dart';
 import '../../state/engine_control.dart';
 import '../../state/hosts_state.dart';
 import '../../state/notify_state.dart';
@@ -173,6 +174,9 @@ class _RootGateState extends ConsumerState<RootGate> {
   void _maybeAutoStart() {
     if (_autoStartDone) return;
     _autoStartDone = true;
+    // Product home [LocalHostShell] owns cold start (install + start + error gate).
+    // Dual start here raced native SafePolicy and looked like a 启动失败 loop.
+    if (widget.home is LocalHostShell) return;
     final settings = ref.read(settingsProvider);
     if (!settings.autoStartLocal) return;
     final status = ref.read(localRuntimeProvider).status;

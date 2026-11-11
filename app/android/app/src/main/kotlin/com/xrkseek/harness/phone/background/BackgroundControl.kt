@@ -140,10 +140,10 @@ class BackgroundControl private constructor(context: Context) {
     private val keepPrefs = app.getSharedPreferences("phone-privileged-keep", Context.MODE_PRIVATE)
     private val keep = PrivilegedKeepState(keepPrefs.getString("keptMode", "off") ?: "off",
         PhoneControl.switchedOn(app), Build.VERSION.SDK_INT >= BackgroundPolicy.MIN_SDK)
-    private val recovery = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-privileged-keep").apply { isDaemon = true } }
+    private val recovery = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-privileged-keep").apply { isDaemon = true } }
     // Pairing from the App and from the notification share one queue: an older attempt can't
     // stop a newer one's discovery, and its result can't replace the newer one's notification.
-    private val pairing = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-adb-pair").apply { isDaemon = true } }
+    private val pairing = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-adb-pair").apply { isDaemon = true } }
     private var restoring: FutureTask<PrivilegedChannel?>? = null
     private var restoringTicket: PrivilegedKeepState.Ticket? = null
     private var restoreAgain = false

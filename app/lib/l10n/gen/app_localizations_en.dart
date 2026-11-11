@@ -4825,799 +4825,6 @@ class L10nEn extends L10n {
   }
 
   @override
-  String get companionTitle => 'Companion room';
-
-  @override
-  String get companionEntrySubtitle => 'Spend some time with her';
-
-  @override
-  String get companionDefaultName => 'her';
-
-  @override
-  String companionInputHint(String name) {
-    return 'Say something to $name';
-  }
-
-  @override
-  String get companionMenu => 'More';
-
-  @override
-  String get companionVoice => 'Voice';
-
-  @override
-  String get companionStop => 'Ask her to stop';
-
-  @override
-  String get companionSend => 'Send';
-
-  @override
-  String get companionNotConnected => 'I can\'t reach the engine right now. Tell me again in a bit?';
-
-  @override
-  String get companionSendFailed => 'That didn\'t get through. Say it again?';
-
-  @override
-  String get companionLogTitle => 'Log';
-
-  @override
-  String get companionLogEmpty => 'Nothing said yet.';
-
-  @override
-  String get companionLogYou => 'You';
-
-  @override
-  String get companionLogOpenChat => 'Open in chat';
-
-  @override
-  String get companionLogOlder => 'Load earlier messages';
-
-  @override
-  String get companionMenuHistory => 'View chat history';
-
-  @override
-  String get companionMenuRestart => 'Start over';
-
-  @override
-  String get companionMenuRestartHint => 'Begin a new conversation';
-
-  @override
-  String get companionMenuRestartConfirm =>
-      'She will forget this conversation. The old record stays on the host and is not deleted.';
-
-  @override
-  String get companionMenuRemovePack => 'Remove assets';
-
-  @override
-  String get companionMenuRemoveConfirm =>
-      'The character assets on this phone will be deleted. Chats aren\'t affected. You\'ll need to import them again next time.';
-
-  @override
-  String companionCreditAuthor(String name) {
-    return 'By $name';
-  }
-
-  @override
-  String get companionSetupTitle => 'Bring her home';
-
-  @override
-  String get companionSetupBody =>
-      'Character assets aren\'t part of the app and only land on your phone when you want them. Import an asset pack (zip) to meet her.';
-
-  @override
-  String get companionSetupImport => 'Import asset pack';
-
-  @override
-  String get companionFailedTitle => 'She couldn\'t come out';
-
-  @override
-  String companionFailedBody(String reason) {
-    return 'Loading failed on this phone ($reason). You can import the asset pack again and retry.';
-  }
-
-  @override
-  String get companionPackBroken => 'This file can\'t be opened. It may not be an asset pack, or it may be damaged.';
-
-  @override
-  String get companionPackRuntimeMismatch => 'The runtime in this pack doesn\'t match this version of the app.';
-
-  @override
-  String get companionPackNoRuntime =>
-      'This pack only has a character and there\'s no runtime on this phone yet. Import a full asset pack first.';
-
-  @override
-  String get companionPackNoModel =>
-      'No Live2D model (.model3.json) found in the pack. Zip the model\'s whole folder and try again.';
-
-  @override
-  String get companionPackUnsafe => 'The pack has files or paths that aren\'t allowed, so it wasn\'t imported.';
-
-  @override
-  String get companionPackTooLarge => 'This asset pack is too large.';
-
-  @override
-  String get companionPackStorage => 'Couldn\'t write the files. Check your phone\'s free storage.';
-
-  @override
-  String companionGreetFirst(String name) {
-    return 'Hi, I\'m $name. I live here now, nice to meet you.';
-  }
-
-  @override
-  String get companionGreetMorning => 'Morning! Don\'t skip breakfast today.';
-
-  @override
-  String get companionGreetNoon => 'It\'s noon already. Have you eaten?';
-
-  @override
-  String get companionGreetAfternoon => 'Good afternoon. I was just daydreaming.';
-
-  @override
-  String get companionGreetEvening => 'Good evening. How was your day?';
-
-  @override
-  String get companionGreetLate => 'Still up this late?';
-
-  @override
-  String get companionGreetLong => 'It\'s been a while! I thought you\'d forgotten me.';
-
-  @override
-  String get companionGreetBack => 'Hm? Back again.';
-
-  @override
-  String get companionWake => 'Mm... I wasn\'t asleep. Just resting my eyes.';
-
-  @override
-  String get companionPat1 => 'Hehe... you can keep going a little longer.';
-
-  @override
-  String get companionPat2 => 'Mmm, that\'s nice.';
-
-  @override
-  String get companionPat3 => 'You\'re messing up my hair.';
-
-  @override
-  String get companionTapHead1 => 'What\'s up?';
-
-  @override
-  String get companionTapHead2 => 'Hm?';
-
-  @override
-  String get companionTapFace1 => 'Don\'t poke my face.';
-
-  @override
-  String get companionTapFace2 => 'Whoa, your hands are cold.';
-
-  @override
-  String get companionTapFace3 => 'Is there something on my face?';
-
-  @override
-  String get companionTapBody1 => 'Oh! You startled me.';
-
-  @override
-  String get companionTapBody2 => 'What is it?';
-
-  @override
-  String get companionTapBody3 => 'I just washed this apron!';
-
-  @override
-  String get companionTapTail1 => 'Tails are not for touching!';
-
-  @override
-  String get companionTapTail2 => 'Eek, that tickles.';
-
-  @override
-  String get companionTapTail3 => 'This is a very important tail.';
-
-  @override
-  String get companionTapLegs1 => 'Is something on the floor?';
-
-  @override
-  String get companionTapLegs2 => 'Where are you looking?';
-
-  @override
-  String get companionTease1 => 'Stop it, I\'m getting dizzy.';
-
-  @override
-  String get companionTease2 => 'One more poke and I\'m ignoring you!';
-
-  @override
-  String get companionTease3 => 'Don\'t you have anything better to do?';
-
-  @override
-  String get companionStatusIdle => 'Daydreaming';
-
-  @override
-  String get companionStatusListening => 'Listening';
-
-  @override
-  String get companionStatusThinking => 'Thinking';
-
-  @override
-  String get companionStatusSpeaking => 'Talking';
-
-  @override
-  String get companionStatusSleeping => 'Asleep';
-
-  @override
-  String get companionStatusAway => 'Away';
-
-  @override
-  String get companionListening => 'Listening…';
-
-  @override
-  String get companionTouchHint => 'Try patting her head';
-
-  @override
-  String get companionArriving => 'She\'s swimming over…';
-
-  @override
-  String get companionPrivacyLine => 'Assets stay on this phone. Chats go through the current host.';
-
-  @override
-  String get companionMemoryTitle => 'What she remembers';
-
-  @override
-  String companionMemoryScope(String host) {
-    return 'Kept on $host. She doesn\'t bring these up by herself yet; a later version will.';
-  }
-
-  @override
-  String get companionMemoryAdd => 'Add';
-
-  @override
-  String get companionMemoryEdit => 'Edit';
-
-  @override
-  String get companionMemorySave => 'Save';
-
-  @override
-  String get companionMemoryHint => 'For example: I like unsweetened tea and don\'t drink coffee';
-
-  @override
-  String get companionMemoryForget => 'Forget';
-
-  @override
-  String get companionMemoryForgetTitle => 'Have her forget this?';
-
-  @override
-  String get companionMemoryEmpty => 'Nothing saved yet';
-
-  @override
-  String get companionMemoryEmptyHint =>
-      'Write down what you\'d like her to remember. It stays on the current host, and you can edit or delete it anytime.';
-
-  @override
-  String get companionMemoryUnsupported => 'This host can\'t keep her memories yet';
-
-  @override
-  String get companionMemoryUnsupportedHint =>
-      'It isn\'t available over the XRK Remote relay, or this host\'s xrk-harness bridge is older.';
-
-  @override
-  String get companionMemoryLoadFailed => 'Couldn\'t load';
-
-  @override
-  String get companionMemoryRetry => 'Retry';
-
-  @override
-  String get companionMemoryConflict => 'It was just changed elsewhere, so it\'s been refreshed';
-
-  @override
-  String get companionMemoryFull => 'The list is full. Delete some first';
-
-  @override
-  String get companionMemorySaveFailed => 'Couldn\'t save. Try again?';
-
-  @override
-  String get companionStatusSnacking => 'Having a snack';
-
-  @override
-  String get companionStatusPlaying => 'Playing with the bubble';
-
-  @override
-  String get companionStatusResting => 'Resting on the cushion';
-
-  @override
-  String get companionSnack1 => 'Nom! So good!';
-
-  @override
-  String get companionSnack2 => 'Seaweed flavour. Thank you.';
-
-  @override
-  String get companionSnack3 => 'Mm... can I have another?';
-
-  @override
-  String get companionPlay1 => 'Hey, got it!';
-
-  @override
-  String get companionPlay2 => 'The bubble is so squishy. Fun!';
-
-  @override
-  String get companionPlay3 => 'It floated back again.';
-
-  @override
-  String get companionRest1 => 'I\'ll lean here for a while, then.';
-
-  @override
-  String get companionRest2 => 'Go on, I\'m listening.';
-
-  @override
-  String get companionTouchHintHome => 'Tap the shell, the bubble and the cushion, or drag a snack to her mouth';
-
-  @override
-  String get companionMenuMode => 'How she talks';
-
-  @override
-  String get companionModeLight => 'Light';
-
-  @override
-  String get companionModeLightHint => 'Chat only. The phone talks to the model; no engine';
-
-  @override
-  String get companionModeFull => 'Full';
-
-  @override
-  String get companionModeFullHint => 'XRK on the host, with tools and phone control';
-
-  @override
-  String get companionLightNoKey => 'Light mode needs a DeepSeek API key. Add one in Settings and we can talk.';
-
-  @override
-  String get companionLightBadKey => 'The API key seems wrong, or it is no longer valid.';
-
-  @override
-  String get companionLightBusy => 'It is busy over there. Tell me again in a bit?';
-
-  @override
-  String get companionNotConnectedTryLight =>
-      'I can\'t reach the host right now. If you just want to chat, switch to Light in the menu at the top right.';
-
-  @override
-  String get companionMenuRestartLightHint => 'Clear the chat on this phone';
-
-  @override
-  String get companionMenuRestartLightConfirm =>
-      'She will forget this conversation, and the chat on this phone is deleted.';
-
-  @override
-  String get companionInviteRest => 'Rest on the cushion with me for a bit?';
-
-  @override
-  String get companionInviteAccept => 'Sure';
-
-  @override
-  String get companionInviteDecline => 'Not now';
-
-  @override
-  String get companionInviteYes1 => 'Hehe, just for a little while.';
-
-  @override
-  String get companionInviteYes2 => 'I\'ll get comfy. You relax too.';
-
-  @override
-  String get companionMenuInvite => 'Invitations';
-
-  @override
-  String get companionMenuInviteHint => 'When you sit quietly with her, she may now and then ask you to rest together';
-
-  @override
-  String get companionSetupBundled => 'Bring her home';
-
-  @override
-  String get companionSetupBodyBundled =>
-      'She comes with the app: one tap and she\'s here, unpacked only on this phone. You can also import another asset pack, or zip up a Live2D model\'s folder and import that.';
-
-  @override
-  String get companionSetupImportOther => 'Import another pack';
-
-  @override
-  String get companionMenuRemoveConfirmBundled =>
-      'The character assets unpacked on this phone will be deleted. Chats aren\'t affected. You can bring her back anytime.';
-
-  @override
-  String get companionHug1 => 'Mm... a hug.';
-
-  @override
-  String get companionHug2 => 'I feel safe like this.';
-
-  @override
-  String get companionHug3 => 'A little longer, just a little.';
-
-  @override
-  String get companionBondTitle => 'You two';
-
-  @override
-  String get companionBond0 => 'Just met';
-
-  @override
-  String get companionBond1 => 'Getting to know each other';
-
-  @override
-  String get companionBond2 => 'Close';
-
-  @override
-  String get companionBond3 => 'Very close';
-
-  @override
-  String get companionCloser1 => 'I think... I\'m not so nervous anymore.';
-
-  @override
-  String get companionCloser2 => 'Being with you feels easier and easier.';
-
-  @override
-  String get companionCloser3 => 'Keep coming back, okay? I\'ll miss you.';
-
-  @override
-  String get companionPatClose => 'I love it when you pat my head.';
-
-  @override
-  String get companionHugClose => 'You can hold me tighter, you know.';
-
-  @override
-  String companionTaskDone(String title) {
-    return '\"$title\" is done over there.';
-  }
-
-  @override
-  String get companionTaskDoneUntitled => 'Your task over there is done.';
-
-  @override
-  String companionTaskFailed(String title) {
-    return '\"$title\" seems to have hit an error. Take a look?';
-  }
-
-  @override
-  String get companionTaskFailedUntitled => 'Your task over there seems to have hit an error. Take a look?';
-
-  @override
-  String companionTaskApproval(String title) {
-    return '\"$title\" is waiting for your approval.';
-  }
-
-  @override
-  String get companionTaskApprovalUntitled => 'Something over there is waiting for your approval.';
-
-  @override
-  String companionTaskQuestion(String title) {
-    return '\"$title\" has a question for you.';
-  }
-
-  @override
-  String get companionTaskQuestionUntitled => 'There\'s a question waiting for you over there.';
-
-  @override
-  String get companionTaskOpen => 'Take a look';
-
-  @override
-  String get companionMenuVoice => 'Her voice';
-
-  @override
-  String get companionMenuVoiceHint => 'Reads her words aloud with the phone\'s own voice';
-
-  @override
-  String get companionVoiceHello => 'Hi, this is my voice. Keep it on if you like it.';
-
-  @override
-  String get companionVoiceUnavailable =>
-      'This phone has no Chinese voice to use. You can add one under Text-to-speech in system settings.';
-
-  @override
-  String get companionWidgetWaiting => 'Waiting for you in the room';
-
-  @override
-  String get companionVoiceOn => 'Let her speak';
-
-  @override
-  String get companionVoiceOffHint => 'When you turn it on, she says hello in the chosen voice first.';
-
-  @override
-  String get companionVoiceOff => 'Off';
-
-  @override
-  String get companionVoiceSource => 'Voice';
-
-  @override
-  String get companionVoiceSystem => 'The phone\'s own';
-
-  @override
-  String get companionVoiceSystemHint => 'System text-to-speech, works offline';
-
-  @override
-  String get companionVoiceOpenai => 'OpenAI-compatible API';
-
-  @override
-  String get companionVoiceOpenaiHint =>
-      'OpenAI, SiliconFlow, and most self-hosted GPT-SoVITS, CosyVoice or edge-tts servers';
-
-  @override
-  String get companionVoiceCustom => 'Custom HTTP';
-
-  @override
-  String get companionVoiceCustomHint => 'Anything else: describe the request and the reply';
-
-  @override
-  String get companionVoiceApi => 'API';
-
-  @override
-  String get companionVoiceBase => 'Address';
-
-  @override
-  String get companionVoiceBaseHelper => 'Up to /v1; the app adds /audio/speech';
-
-  @override
-  String get companionVoiceKeyHelper => 'Kept in this phone\'s secure storage';
-
-  @override
-  String get companionVoiceModel => 'Model';
-
-  @override
-  String get companionVoiceVoice => 'Voice';
-
-  @override
-  String get companionVoiceVoiceHelper => 'The service\'s voice name, like alloy, or a speaker on your own server';
-
-  @override
-  String get companionVoiceRequest => 'Request';
-
-  @override
-  String get companionVoiceUrl => 'Request URL';
-
-  @override
-  String get companionVoiceUrlHelper => '{text} works in the URL too';
-
-  @override
-  String get companionVoiceMethod => 'Method';
-
-  @override
-  String get companionVoiceHeaders => 'Headers';
-
-  @override
-  String get companionVoiceHeadersHelper => 'One per line; kept in secure storage';
-
-  @override
-  String get companionVoiceBody => 'Body';
-
-  @override
-  String get companionVoiceBodyHelper => '{text} becomes what she says';
-
-  @override
-  String get companionVoiceField => 'Audio field';
-
-  @override
-  String get companionVoiceFieldHelper =>
-      'If the reply is JSON: where the audio is (base64 or a link), like data.audio. Leave empty when it returns audio';
-
-  @override
-  String get companionVoicePrivacy => 'What she says is sent to the service you enter.';
-
-  @override
-  String get companionVoicePreview => 'Preview';
-
-  @override
-  String get companionVoicePreviewing => 'Requesting…';
-
-  @override
-  String get companionVoicePreviewOk => 'It works. Did you hear her?';
-
-  @override
-  String companionVoicePreviewFailed(String reason) {
-    return 'Didn\'t work: $reason';
-  }
-
-  @override
-  String get companionVoiceNotSetUp => 'Fill in the address above first.';
-
-  @override
-  String get companionVoiceFallback => 'Couldn\'t reach her voice service, so the phone\'s own voice stood in';
-
-  @override
-  String get companionGreetFirstNameless => 'Hi, I live here now. Nice to meet you.';
-
-  @override
-  String companionRenamed(String name) {
-    return '\"$name\"... okay, that\'s my name from now on.';
-  }
-
-  @override
-  String get companionVoicePreset => 'Popular services';
-
-  @override
-  String get companionVoicePresetHint => 'Xiaomi MiMo, OpenAI, SiliconFlow, Alibaba Model Studio: just add a key';
-
-  @override
-  String get companionVoiceService => 'Service';
-
-  @override
-  String companionVoiceKeyWhere(String site) {
-    return 'Get one at $site; kept in this phone\'s secure storage';
-  }
-
-  @override
-  String get companionVoiceVoiceCustomHelper => 'Pick one, or type a voice ID the service gave you';
-
-  @override
-  String get companionVoiceStyle => 'Speaking style';
-
-  @override
-  String get companionVoiceStyleHelper =>
-      'Describe her tone and the service reads in it; leave empty for the default gentle girl\'s voice';
-
-  @override
-  String get companionVoiceFemale => 'female';
-
-  @override
-  String get companionVoiceMale => 'male';
-
-  @override
-  String get companionClonePreset => 'Preset voices';
-
-  @override
-  String get companionCloneMine => 'Clone a voice';
-
-  @override
-  String get companionVoicePresetVoice => 'Preset voice';
-
-  @override
-  String get companionCloneRecording => 'Recording';
-
-  @override
-  String get companionCloneHelper =>
-      '5–30 seconds of one person speaking with no background noise, mp3 or wav, up to 7 MB. Only use your own voice, or one whose owner agreed. Every line she says sends this recording to Xiaomi.';
-
-  @override
-  String get companionCloneNone => 'No recording yet';
-
-  @override
-  String companionCloneReady(String detail) {
-    return 'Uploaded · $detail';
-  }
-
-  @override
-  String companionCloneSeconds(int n) {
-    return '$n s';
-  }
-
-  @override
-  String get companionClonePick => 'Choose a recording';
-
-  @override
-  String get companionCloneReplace => 'Replace';
-
-  @override
-  String get companionCloneTooLarge => 'The recording is too large (7 MB at most). Trim it and try again.';
-
-  @override
-  String get companionCloneNotAudio => 'Only mp3 or wav recordings work.';
-
-  @override
-  String get companionCloneFailed => 'Couldn\'t read that recording.';
-
-  @override
-  String get companionMenuPersona => 'About her';
-
-  @override
-  String get companionPersonaName => 'Name';
-
-  @override
-  String get companionPersonaNameHelper => 'Leave empty for the pack\'s name';
-
-  @override
-  String get companionPersonaCallMe => 'What she calls you';
-
-  @override
-  String get companionPersonaCallMeHint => 'e.g. Sam';
-
-  @override
-  String get companionPersonaCallMeHelper => 'Leave empty for nothing in particular';
-
-  @override
-  String get companionPersonaText => 'Persona';
-
-  @override
-  String get companionPersonaTextLabel => 'Who she is and how she talks';
-
-  @override
-  String get companionPersonaTextHelper =>
-      'Her personality, who she is, how she talks, what she won\'t say: all yours to write or delete. Only the format of her expression marks is added by the app.';
-
-  @override
-  String get companionPersonaReset => 'Reset';
-
-  @override
-  String get companionPersonaFooter =>
-      'Light mode uses it from her next reply; full mode tells her with your next message.';
-
-  @override
-  String get companionMenuMoves => 'Moves and faces';
-
-  @override
-  String get companionMovesHint =>
-      'These come with the model. The ones switched on are offered to the AI (up to 24 expressions and 24 motions, in list order) and she uses them in her replies; tap a name to give it a clearer one, tap ▶ to try it on her.';
-
-  @override
-  String get companionMovesNone =>
-      'This model brings no expressions or motions of its own; she uses her built-in ones.';
-
-  @override
-  String get companionMovesRename => 'Rename';
-
-  @override
-  String get companionMovesTry => 'Try it';
-
-  @override
-  String get companionPackLegacyModel =>
-      'This is an old Cubism 2 model (.moc and model.json); the runtime on the phone only reads .moc3 from Cubism 3 on. Open it in Cubism Editor, export it as moc3 and import that.';
-
-  @override
-  String companionFailedMocVersion(String version, String latest) {
-    return 'This model was exported by a newer Cubism (moc version $version); the runtime on the phone reads up to $latest. Export it for an older version in Cubism Editor and import that.';
-  }
-
-  @override
-  String get companionMenuAdapt => 'Fit this model';
-
-  @override
-  String get companionAdaptHint =>
-      'Your own model (your key, billed per request) reads this character and matches up her head, eyes, expressions and where she can be touched. Sent: the model\'s name, its parameter list, the names of its expressions, motions and parts, what you write below and the current fitting. Never the model files or textures.';
-
-  @override
-  String get companionAdaptOffer =>
-      'This model needs fitting: your own model reads its parameter list and the names of its expressions and motions (never the model files), using your key once. New models after this are fitted on their own; you can turn that off in the menu.';
-
-  @override
-  String get companionAdaptOfferYes => 'Fit it';
-
-  @override
-  String get companionAdaptOfferNo => 'Not now';
-
-  @override
-  String get companionAdaptNote => 'What\'s off? (optional)';
-
-  @override
-  String get companionAdaptNoteHint =>
-      'For example: patting her head does nothing, her face goes dark when she\'s happy';
-
-  @override
-  String get companionAdaptRun => 'Let the AI fit it';
-
-  @override
-  String get companionAdaptUndo => 'Undo the fitting';
-
-  @override
-  String get companionAdaptAuto => 'Fit new models when they\'re imported';
-
-  @override
-  String get companionAdaptStart => 'Let me get used to this new body…';
-
-  @override
-  String get companionAdaptDone => 'There, I\'ve got the hang of this body.';
-
-  @override
-  String companionAdaptDoneNote(String note) {
-    return 'There, I\'ve got the hang of this body. $note';
-  }
-
-  @override
-  String get companionAdaptUndone => 'OK, back to how I was.';
-
-  @override
-  String get companionAdaptNoKey => 'To fit me with your model, add an API key in Settings first.';
-
-  @override
-  String companionAdaptFailed(String reason) {
-    return 'That didn\'t work ($reason). You can try again from Fit this model in the menu.';
-  }
-
-  @override
-  String get companionAdaptUnreadable => 'the model\'s answer made no sense';
-
-  @override
-  String get companionAdaptEmpty => 'the model found nothing to match';
-
-  @override
-  String get companionAdaptNetwork => 'no connection';
-
-  @override
   String get systemImeTitle => 'System input-method diagnostics';
 
   @override
@@ -8036,10 +7243,10 @@ class L10nEn extends L10n {
   String get featuresSkillsEmpty => 'No skills in this chat yet';
 
   @override
-  String get featuresSkillsEmptyHint => 'Skills in .dsh/skills appear here';
+  String get featuresSkillsEmptyHint => 'Skills in .xrk/skills appear here';
 
   @override
-  String get featuresSkillsSourceHint => 'From the project’s and ~/.dsh skills folders';
+  String get featuresSkillsSourceHint => 'From the project’s and ~/.xrk skills folders';
 
   @override
   String featuresSkillUsage(String usage) {
@@ -14320,7 +13527,7 @@ class L10nEn extends L10n {
       'dsh isn’t installed on the host. Install it and retry, or enter its full path as the start command.';
 
   @override
-  String get remoteStartCommandExample => 'Example start command: ~/.nvm/versions/node/v22.0.0/bin/dsh web';
+  String get remoteStartCommandExample => 'Example start command: ~/.nvm/versions/node/v22.0.0/bin/xrkh serve';
 
   @override
   String get remoteErrDshStartTimeout => 'Remote XRK took too long to start';
@@ -14993,7 +14200,7 @@ class L10nEn extends L10n {
   String get remoteSelfHostedServer => 'Self-hosted server';
 
   @override
-  String get remoteSelfHostedSignInHelp => 'Sign in to your own liguobao/ds-harness-remote with email and password';
+  String get remoteSelfHostedSignInHelp => 'Sign in to your own liguobao/xrk-remote with email and password';
 
   @override
   String get remoteServerAddress => 'Server address';
@@ -15005,7 +14212,7 @@ class L10nEn extends L10n {
   String get remotePassword => 'Password';
 
   @override
-  String get remoteRestoreServer => 'Restore default server dsh.r2049.cn';
+  String get remoteRestoreServer => 'Restore the default server';
 
   @override
   String get remoteConsole => 'Remote console';
@@ -15032,7 +14239,7 @@ class L10nEn extends L10n {
   String get remoteWebConsole => 'Web remote console';
 
   @override
-  String get remoteWebConsoleProvider => 'dsh.r2049.cn · Third-party page';
+  String get remoteWebConsoleProvider => 'Third-party page';
 
   @override
   String remoteActiveHost(String name) {
@@ -16069,7 +15276,7 @@ class L10nEn extends L10n {
   String get searchKwTheme => 'appearance,colors,colours,accent,icons';
 
   @override
-  String get searchKwPets => 'pet,pets,companion,whale,overlay';
+  String get searchKwPets => 'pet,pets,whale,overlay';
 
   @override
   String get searchKwPerformance => 'battery,smooth,lag,lite,full,speed';
@@ -17366,7 +16573,7 @@ class L10nEn extends L10n {
 
   @override
   String shellSkillInstallDirectory(String skill) {
-    return '1. Create the target folder `\$XRK_HOME/skills/$skill/` if needed (or `~/.dsh/skills/$skill/` if XRK_HOME isn’t set).';
+    return '1. Create the target folder `\$XRK_HOME/skills/$skill/` if needed (or `~/.xrk/skills/$skill/` if XRK_HOME isn’t set).';
   }
 
   @override
@@ -18797,7 +18004,7 @@ class L10nEn extends L10n {
 
   @override
   String stateSafeRepairPrompt(String what) {
-    return 'My XRK has a problem in normal mode ($what). Follow the Safe mode instructions to find the cause. Fix the web configuration using reversible changes, verify startup with dsh-app-plugins trial, then tell me what changed.';
+    return 'My XRK has a problem in normal mode ($what). Follow the Safe mode instructions to find the cause. Fix the web configuration using reversible changes, verify startup with xrkh plugins trial, then tell me what changed.';
   }
 
   @override
@@ -19337,7 +18544,7 @@ class L10nEn extends L10n {
 
   @override
   String viewUiResendMessage(Object value) {
-    return 'The previous dsh-ui view couldn’t be displayed: $value. Fix it and resend.';
+    return 'The previous plugin view couldn’t be displayed: $value. Fix it and resend.';
   }
 
   @override
@@ -19896,9 +19103,6 @@ class L10nEn extends L10n {
   String get viewTipCopyPath => 'Long-press a file in a changes card to copy its path';
 
   @override
-  String get viewTipCompanion => 'The Companion Room lives in the Switch Host sheet';
-
-  @override
   String get viewTipAnswerInline => 'When the AI asks you something, just type the answer in the composer';
 
   @override
@@ -20378,7 +19582,7 @@ class L10nEn extends L10n {
 
   @override
   String viewShareInstallCommand(String value) {
-    return 'Install: dsh plugin add $value';
+    return 'Install: xrkh plugin add $value';
   }
 
   @override

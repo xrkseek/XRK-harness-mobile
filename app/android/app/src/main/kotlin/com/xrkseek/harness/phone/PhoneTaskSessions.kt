@@ -25,7 +25,7 @@ class PhoneTaskSessions(
     },
     private val journal: PhoneTaskJournal? = null,
     private val recoveryAdmission: () -> String? = { null },
-    private val createBackgroundWorker: () -> SerialWorker = { SerialWorker("dsh-phone-background") },
+    private val createBackgroundWorker: () -> SerialWorker = { SerialWorker("xrk-phone-background") },
 ) {
     internal class SkillScope(val owner: PhoneTasks.Owner, val draftEpoch: Long, val launchEpoch: Long) {
         var endOwner: PhoneTasks.Owner? = null

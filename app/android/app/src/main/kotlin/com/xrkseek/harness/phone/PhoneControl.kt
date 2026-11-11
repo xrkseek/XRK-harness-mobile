@@ -52,10 +52,10 @@ class PhoneControl private constructor(private val app: Context) : PhoneEnv, Con
     private val prefs = app.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     private val main = Handler(Looper.getMainLooper())
     private val nm = app.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    private val ticker = Executors.newSingleThreadScheduledExecutor { r -> Thread(r, "dsh-phone-status").apply { isDaemon = true } }
+    private val ticker = Executors.newSingleThreadScheduledExecutor { r -> Thread(r, "xrk-phone-status").apply { isDaemon = true } }
 
     private val taskIds = java.util.concurrent.atomic.AtomicLong()
-    private val cleanupIo = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-phone-cleanup").apply { isDaemon = true } }
+    private val cleanupIo = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-phone-cleanup").apply { isDaemon = true } }
 
     private val taskJournal = PhoneTaskJournal(
         read = { app.getSharedPreferences("phone_task_journal", Context.MODE_PRIVATE).getString("records", null) },
@@ -1089,7 +1089,7 @@ class PhoneControl private constructor(private val app: Context) : PhoneEnv, Con
 
     companion object {
         const val SERVER_VERSION = "1"
-        private const val PREFS = "dsh_phone"
+        private const val PREFS = "xrk_phone"
         private const val K_ENABLED = "enabled"
         private const val K_SKILL_PROMPT = "skillSavePrompt"
 
@@ -1097,7 +1097,7 @@ class PhoneControl private constructor(private val app: Context) : PhoneEnv, Con
         internal val keeperSwitchLock = Any()
         private const val K_POLICIES = "policies"
         private const val K_TCP_FALLBACK = "tcpFallback"
-        private const val CHANNEL_FIX = "dsh-phone-fix"
+        private const val CHANNEL_FIX = "xrk-phone-fix"
         private const val NOTIFY_FIX_ID = 4099
 
         /** How long a call needing the main screen waits for 自动恢复无障碍 to bring it back. */

@@ -300,15 +300,15 @@ void main() {
       expect(modes(items), [(SeatMode.native, 'p')]);
     });
 
-    test('the standard Cordis adapter is partial and always matches', () {
+    test('cordis view has no native adapter under the standard registry', () {
       final items = plan(
         Slots.cordisView,
         occupants,
         using: SlotAdapterRegistry.standard(),
         seat: _seat(sessionId: 's'),
       );
-      expect(modes(items), [(SeatMode.native, 'p'), (SeatMode.island, 'p')]);
-      expect(items.first.adapter, isA<CordisAdapter>());
+      expect(modes(items), [(SeatMode.island, 'p')]);
+      expect(items.first.adapter, isNull);
     });
   });
 
@@ -394,7 +394,6 @@ void main() {
     test('the standard batch, in §4.2 order', () {
       expect(SlotAdapterRegistry.standard().adapters.map((a) => a.id), [
         'schema-config',
-        'cordis',
         'dsh-ui-panel',
         'pet',
       ]);

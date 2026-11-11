@@ -1,4 +1,4 @@
-// System permissions by what they are for: first run's 「想让 XRK Go 帮你做哪些
+// System permissions by what they are for: first run's 「想让 XRK Harness 帮你做哪些
 // 事」 (lib/ui/onboarding/access_step.dart) and 设置 › 系统权限
 // (lib/ui/settings/system_access_page.dart) read and open the same items here.
 //

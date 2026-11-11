@@ -356,7 +356,7 @@ class LastKnownGood {
   /// Of [disable]: upgraded in place since (can only be turned off, not downgraded).
   final List<String> changed;
 
-  /// The settings layer (`cordis.patch.yml`) would go back to the snapshot's.
+  /// Legacy Cordis settings-layer flag; always false under xrkh plugin inventory LKG.
   final bool patchChanged;
 
   /// Restoring would change nothing.
@@ -491,7 +491,7 @@ class ResetKeep {
   /// Guest UI prefs dir (`ui.json`) and the user's skills.
   final bool uiAndSkills;
 
-  /// Installed plugins with their settings, `cordis.patch.yml` and `.env`.
+  /// Installed plugins with inventory / soft-disable / `.env` hazards.
   final bool pluginsAndSettings;
 
   /// The reset dialog's starting choice.
@@ -582,7 +582,7 @@ class RuntimeBridge {
 
   /// [phoneStorage] mounts the phone's shared storage at /sdcard (needs [requestStorage] first).
   /// [mode] null keeps the current mode; [EngineMode.normal] while in safe mode starts the
-  /// two-minute trial back in normal mode. [visualReplies] writes the dsh-ui section
+  /// two-minute trial back in normal mode. [visualReplies] writes the xrk-ui section
   /// into the managed AGENTS.md.
   Future<void> start({
     Map<String, String> env = const {},

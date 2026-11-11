@@ -14,7 +14,7 @@ data class OverlayPrefs(val idleOpacity: Float = DEFAULT_OPACITY, val autoFold: 
     fun toMap(): Map<String, Any?> = linkedMapOf("idleOpacity" to idleOpacity.toDouble(), "autoCollapse" to autoFold)
 
     companion object {
-        const val FILE = "dsh_phone_overlay"
+        const val FILE = "xrk_phone_overlay"
         const val K_OPACITY = "idleOpacity"
         const val K_AUTO_FOLD = "autoFold"
 

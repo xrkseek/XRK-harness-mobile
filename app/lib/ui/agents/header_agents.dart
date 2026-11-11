@@ -19,7 +19,6 @@ import '../common/status_dot.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'lineage_sheet.dart';
-import 'team_page.dart';
 
 /// What the header shows for the conversation on screen; null for a new chat.
 final _currentAgentsProvider = Provider.autoDispose<(String, HeaderAgents)?>((ref) {
@@ -189,11 +188,8 @@ class HeaderAgentsKey extends StatelessWidget {
       ),
     );
     void open() {
-      if (team != null) {
-        Navigator.of(context).push(TeamPage.route(sessionId: sessionId));
-      } else {
-        showLineageSheet(context, sessionId: sessionId);
-      }
+      // Guest Web owns agent-team UI; native header only opens lineage.
+      showLineageSheet(context, sessionId: sessionId);
     }
 
     return Tooltip(

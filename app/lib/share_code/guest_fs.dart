@@ -14,7 +14,10 @@ import 'share_models.dart';
 
 /// The app-managed global AGENTS.md starts with this (GuestSetup.kt); such a
 /// file is the app's, not the person's.
-const managedAgentsMarker = '<!-- dsh-app:managed';
+/// Must match GuestSetup.kt `AGENTS_MARKER` (`<!-- xrkh-app:managed`).
+/// Accept legacy `dsh-app` so older installs are still treated as app-managed.
+const managedAgentsMarker = '<!-- xrkh-app:managed';
+const legacyManagedAgentsMarker = '<!-- dsh-app:managed';
 
 /// One user skill found on disk.
 class LocalSkill {
@@ -34,14 +37,14 @@ class GuestFs {
   /// The rootfs directory (guest `/`).
   final Directory root;
 
-  /// Guest XRK home.
-  static const dshHome = '/root/.xrk';
+  /// Guest XRK home (`$XRK_HOME`).
+  static const xrkHome = '/root/.xrk';
 
   /// Guest shared agents home (`$XRK_AGENTS_HOME` default).
   static const agentsHome = '/root/.agents';
 
   /// Where imported skills go.
-  static const skillsRoot = '$dshHome/skills';
+  static const skillsRoot = '$xrkHome/skills';
 
   /// Where an imported AGENTS.md goes: the shared agents root, loaded after
   /// XRK home's (app-managed) one.
@@ -64,12 +67,17 @@ class GuestFs {
   /// The person's own AGENTS.md text: XRK home's unless the app manages it,
   /// else the shared agents root's. Null when there is none.
   Future<String?> readUserAgentsMd() async {
-    for (final path in ['$dshHome/AGENTS.md', importedAgentsMd]) {
+    for (final path in ['$xrkHome/AGENTS.md', importedAgentsMd]) {
       final f = file(path);
       try {
         if (!f.existsSync() || f.lengthSync() > ProfileShare.maxAgentsMdChars * 4) continue;
         final text = f.readAsStringSync();
-        if (text.trimLeft().startsWith(managedAgentsMarker) || text.trim().isEmpty) continue;
+        final head = text.trimLeft();
+        if (head.startsWith(managedAgentsMarker) ||
+            head.startsWith(legacyManagedAgentsMarker) ||
+            text.trim().isEmpty) {
+          continue;
+        }
         return text.length <= ProfileShare.maxAgentsMdChars ? text : null;
       } catch (_) {}
     }

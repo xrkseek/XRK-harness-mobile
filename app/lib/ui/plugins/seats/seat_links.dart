@@ -87,7 +87,7 @@ DshWebTarget seatWebTarget(SlotOccupant o, {String? sessionId, PluginBundle? bun
       final panel = DshWebPanel.values.where((p) => p.key == o.cell).firstOrNull;
       return panel == null ? const DshWebTarget(sidebar: true) : DshWebTarget(panel: panel);
     case Slots.cordisView:
-      return DshWebTarget(sessionId: sessionId, panel: DshWebPanel.cordis);
+      return DshWebTarget(sessionId: sessionId, sidebar: true);
   }
   return DshWebTarget(sessionId: sessionId);
 }

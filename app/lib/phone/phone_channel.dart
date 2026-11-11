@@ -932,7 +932,7 @@ enum PhoneUnlock {
   /// Password, verification-code and payment-code inputs.
   secretFields,
 
-  /// XRK Go's own screens.
+  /// XRK Harness's own screens.
   ownApp,
 }
 

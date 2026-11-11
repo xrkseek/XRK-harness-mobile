@@ -15,7 +15,7 @@ Reset and uninstall both delete data on this phone; you rarely need them to fix 
 
 To report a problem, export a diagnostics bundle here. It includes the version, device, bounded engine logs and captured errors, not all system logs or a complete crash history. The app attempts to remove keys and tokens; still inspect the bundle before sharing it.
 
-To let the AI look into it, tap **Let the AI read diagnostics**. The app writes a bounded snapshot for the local engine, then ask the AI to "check the diagnostics". The bundled `xrk-mobile-support` skill walks the symptoms and drafts an issue you can paste.
+To let the AI look into it, tap **Let the AI read diagnostics**. The app writes a bounded snapshot for the local engine, then ask the AI to "check the diagnostics". The bundled `xrk-support` skill walks the symptoms and drafts an issue you can paste.
 
 ### Input-method or keyboard problems
 

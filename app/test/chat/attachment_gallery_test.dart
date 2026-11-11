@@ -47,7 +47,7 @@ List<MethodCall> _mockGallery(WidgetTester tester) {
   const channel = MethodChannel('xrk/media');
   tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
     calls.add(call);
-    return 'Pictures/XRK Go/saved.png';
+    return 'Pictures/XRK Harness/saved.png';
   });
   addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
   return calls;

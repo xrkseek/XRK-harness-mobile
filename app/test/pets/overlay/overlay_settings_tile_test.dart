@@ -88,8 +88,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(RestrictedSettingsGuidePage), findsOneWidget);
     expect(find.text('侧载的 App 要先放行这一项，悬浮窗开关才点得动'), findsOneWidget);
-    expect(find.textContaining('先去「悬浮窗」设置里点一次 XRK Go 的开关'), findsOneWidget);
-    expect(find.text('回到「悬浮窗」设置，打开 XRK Go。'), findsOneWidget);
+    expect(find.textContaining('先去「悬浮窗」设置里点一次 XRK Harness 的开关'), findsOneWidget);
+    expect(find.text('回到「悬浮窗」设置，打开 XRK Harness。'), findsOneWidget);
     expect(find.text('去开悬浮窗'), findsOneWidget);
   });
 

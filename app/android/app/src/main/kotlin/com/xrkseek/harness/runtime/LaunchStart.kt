@@ -46,7 +46,7 @@ object LaunchStart {
         tried = true
         val app = context.applicationContext
         // The first device probe includes sysfs. Start it beside Flutter, never on the UI thread.
-        thread(name = "dsh-launch-policy", isDaemon = true) {
+        thread(name = "xrk-launch-policy", isDaemon = true) {
             val profile = runCatching { DevicePerformance.read(app) }.getOrDefault(DeviceProfile())
             Handler(Looper.getMainLooper()).post { startIfAllowed(app, profile) }
         }

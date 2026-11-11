@@ -307,7 +307,10 @@ class _RowView extends StatelessWidget {
 
 /// 文字里的 dsh-ui 围栏不再当视图画（防递归），按 JSON 代码显示。
 String _noNestedViews(String text) =>
-    text.replaceAllMapped(RegExp(r'^(\s{0,3}(?:`{3,}|~{3,}))\s*dsh-ui\b', multiLine: true), (m) => '${m.group(1)}json');
+    text.replaceAllMapped(
+      RegExp(r'^(\s{0,3}(?:`{3,}|~{3,}))\s*(?:xrk-ui|dsh-ui)\b', multiLine: true),
+      (m) => '${m.group(1)}json',
+    );
 
 class _TextView extends StatelessWidget {
   const _TextView({required this.node});

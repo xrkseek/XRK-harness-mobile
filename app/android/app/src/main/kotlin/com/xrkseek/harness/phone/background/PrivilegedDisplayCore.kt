@@ -839,7 +839,7 @@ class PrivilegedDisplayCore internal constructor(
             // Presentation requires this flag for the gate's inert receiver. Actual tasks keep
             // their existing display flags; this tests delivery, not every target app's policy.
             displayCreationAttempted = true
-            val vd = displays.createVirtualDisplay(if (hosted?.recovery == true) ResourceRecovery.tag(checkNotNull(owner)) else "dsh-background", w, h, 320, ir.surface,
+            val vd = displays.createVirtualDisplay(if (hosted?.recovery == true) ResourceRecovery.tag(checkNotNull(owner)) else "xrk-background", w, h, 320, ir.surface,
                 flags or if (probe) DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION else 0)
             display = vd; reader = ir; pendingReader = null
             releasingDisplayId = vd.display.displayId
@@ -1037,7 +1037,7 @@ class PrivilegedDisplayCore internal constructor(
         response.putInt(Proto.DISPLAY_ID, id)
         response.putString(Proto.FG_PKG, pkg)
         response.putBoolean(Proto.PORTRAIT, height >= width)
-        val captureResult = runCatching { tracePhase("dsh.bg.capture") { capture(localVisual || coordinates || coordinatePost != null) } }
+        val captureResult = runCatching { tracePhase("xrk.bg.capture") { capture(localVisual || coordinates || coordinatePost != null) } }
         val captureFailure = captureResult.exceptionOrNull()
         if (captureFailure is InterruptedException ||
             captureFailure is Fault && captureFailure.code == "cancelled") throw captureFailure
@@ -1234,7 +1234,7 @@ class PrivilegedDisplayCore internal constructor(
                             BackgroundFrameReadiness.Next.RETRY -> Unit
                             BackgroundFrameReadiness.Next.READY -> {
                                 val buffer = ByteArrayOutputStream()
-                                tracePhase("dsh.bg.jpeg") {
+                                tracePhase("xrk.bg.jpeg") {
                                     bitmap.compress(Bitmap.CompressFormat.JPEG, 80, buffer)
                                 }
                                 // Reuse the already-copied RGBA buffer only for an active local preview.
@@ -1466,7 +1466,7 @@ class PrivilegedDisplayCore internal constructor(
     private fun readTree(displayId: Int, pkg: String, scanOtherWindows: Boolean = false, inspectVisual: Boolean = false, targetEvidence: SelfCheckTargetEvidence? = null, coordinates: Boolean = false): TreeRead {
         val vd = display ?: throw Fault("displayMissing")
         return withTreeConnection(vd.display, pkg, "treeUnavailable") { automation ->
-            tracePhase("dsh.bg.treeRead") {
+            tracePhase("xrk.bg.treeRead") {
                 readTree(automation, displayId, pkg, scanOtherWindows = scanOtherWindows, inspectVisual = inspectVisual, targetEvidence = targetEvidence, coordinates = coordinates)
             }
         }

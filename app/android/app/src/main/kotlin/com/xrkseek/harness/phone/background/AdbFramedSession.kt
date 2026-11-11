@@ -69,7 +69,7 @@ class AdbFramedSession(
         current?.close()
         // libadb.close first wakes readers, then writes CLSE; a blocked transport write must not
         // hold the caller or delay the logical invalidation above. No DESTROY exchange is sent.
-        Thread({ runCatching { closeTransport() } }, "dsh-adb-close").apply {
+        Thread({ runCatching { closeTransport() } }, "xrk-adb-close").apply {
             isDaemon = true
             start()
         }

@@ -33,7 +33,7 @@ internal object InjectGuard {
 }
 
 internal class Actuator(private val service: AccessibilityService, private val overlay: ControlOverlay) {
-    private val gestureThread = HandlerThread("dsh-a11y-gesture").apply { start() }
+    private val gestureThread = HandlerThread("xrk-a11y-gesture").apply { start() }
     private val gestureHandler = Handler(gestureThread.looper)
     private val main = Handler(Looper.getMainLooper())
 

@@ -12,7 +12,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/connection_state.dart';
 import '../../state/hosts_state.dart';
 import '../../state/notify_state.dart';
-import '../bots/bot_alerts.dart';
 import '../common/discard_guard.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
@@ -87,8 +86,6 @@ class _ChatAlertHostState extends ConsumerState<ChatAlertHost> {
   Future<void> _onTap(NotifyTap tap) async {
     if (!mounted || !await DiscardGuard.confirmLeave(context) || !mounted) return;
     widget.onReveal?.call(false);
-    // A Bot or group chat notification opens that chat.
-    if (openDsBotTap(context, tap)) return;
     Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
     ref.read(chatAlertsProvider.notifier).open(tap.host, tap.sessionId);
   }

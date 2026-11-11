@@ -54,7 +54,7 @@ class LaunchClipPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                     result.error("invalid", null, null)
                     return
                 }
-                thread(name = "dsh-launch-probe", isDaemon = true) {
+                thread(name = "xrk-launch-probe", isDaemon = true) {
                     val answer = probe(path, poster)
                     main.post { result.success(answer) }
                 }

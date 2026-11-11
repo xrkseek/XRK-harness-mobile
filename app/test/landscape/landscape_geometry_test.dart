@@ -12,7 +12,6 @@ import 'package:xrk_app/state/chat_state.dart';
 import 'package:xrk_app/state/session_search.dart';
 import 'package:xrk_app/state/sessions_state.dart';
 import 'package:xrk_app/state/settings_state.dart';
-import 'package:xrk_app/ui/bots/bot_sheets.dart' show confirmDelete;
 import 'package:xrk_app/ui/chat/chat_screen.dart';
 import 'package:xrk_app/ui/chat/composer.dart';
 import 'package:xrk_app/ui/chat/dock/dock_stack.dart';
@@ -29,6 +28,7 @@ import 'package:xrk_app/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:xrk_app/ui/common/confirm_delete.dart' show confirmDelete;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../chat/support/harness.dart' hide fakeConnection;

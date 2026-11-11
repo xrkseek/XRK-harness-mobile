@@ -27,7 +27,7 @@ void main() {
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(DiagnosticsPublisher.channel, (call) async {
       calls.add(call);
-      return {'bytes': 42, 'path': '/data/rootfs/root/.xrk/dsh-app/diagnostics.md'};
+      return {'bytes': 42, 'path': '/data/rootfs/root/.xrk/diagnostics.md'};
     });
     addTearDown(() => messenger.setMockMethodCallHandler(DiagnosticsPublisher.channel, null));
 

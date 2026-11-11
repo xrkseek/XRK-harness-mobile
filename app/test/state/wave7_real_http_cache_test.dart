@@ -9,7 +9,6 @@ import 'package:xrk_app/l10n/l10n.dart';
 import 'package:xrk_app/plugins/native/native_state.dart';
 import 'package:xrk_app/runtime/runtime_state.dart';
 import 'package:xrk_app/state/account_state.dart';
-import 'package:xrk_app/state/bots_state.dart';
 import 'package:xrk_app/state/connection_state.dart';
 import 'package:xrk_app/state/drawer_view_state.dart';
 import 'package:xrk_app/state/hosts_state.dart';
@@ -214,8 +213,6 @@ List<Override> _overrides(XrkClient client) => [
     ),
   ),
   workspacePrefsProvider.overrideWith(() => SwitchWorkspacePrefs(const WorkspacePrefs(loaded: true, selected: 'w'))),
-  dsBotOwnedSessionsProvider.overrideWithValue(const {}),
-  dsBotApiFactoryProvider.overrideWithValue((_) => null),
   localRuntimeProvider.overrideWith(() => FakeRuntime(const LocalRuntimeState(loaded: true, status: runningStatus))),
   settingsProvider.overrideWith(() => FakeSettings(const AppSettings(loaded: true))),
   accountProvider.overrideWith(() => FixedAccount(const AccountState(phase: AccountPhase.signedOut))),

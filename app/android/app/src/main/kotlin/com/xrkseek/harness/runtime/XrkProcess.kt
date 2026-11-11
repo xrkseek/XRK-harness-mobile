@@ -78,6 +78,7 @@ class XrkProcess(
      * [binds] are extra proot `-b host:guest` mounts, inserted before the guest command.
      * [safe] boots the rescue profile instead of `web` (see [SafeMode.profileArg]).
      */
+    @Suppress("UNUSED_PARAMETER")
     fun start(guestEnv: Map<String, String>, binds: List<String> = emptyList(), safe: Boolean = false, phone: Boolean = false, directEngine: Boolean = false, directFailed: Boolean = false, searchOverlay: Boolean = false, authOverlay: Boolean = false, onLaunchMethod: ((Boolean) -> Unit)? = null) {
         check(process == null) { "already started" }
         var selection = DirectLaunch.select(rootfs, directEngine, safe, directFailed)
@@ -90,7 +91,7 @@ class XrkProcess(
         direct = selection.direct
         check(cleanup.complete || (!direct && !cleanup.ownedRemaining)) { "runtime cleanup incomplete; stop the engine and retry" }
         if (!cleanup.complete) listener.onLog("[xrkh-app] starting proot with incomplete process observation; no captured runtime identities remain", "system")
-        val pidFile = File(rootfs, "tmp/dsh-web.pid")
+        val pidFile = File(rootfs, "tmp/xrk-web.pid")
         pidFile.delete() // also removes a stale/dangling symlink; never reuse a previous run's PID
         check(!java.nio.file.Files.exists(pidFile.toPath(), java.nio.file.LinkOption.NOFOLLOW_LINKS)) { "cannot remove stale runtime pid file" }
         port = pickPort()
@@ -124,11 +125,11 @@ class XrkProcess(
         check(manifest.launchArgv.isNotEmpty()) { "runtime manifest has no launch.argv" }
         var bindsPlaced = false
         var profileSelected = false
-        // Only overlays successfully prepared for this launch; cleanup may leave an old file behind.
-        // Also require the file in place (a missing --patch file stops XRK).
-        var searchPending = !safe && searchOverlay && SessionSearchGuest.file(rootfs).isFile
-        // Subscription sign-in: the same rule for the auth bridge overlay.
-        var authPending = !safe && authOverlay && AppAuthGuest.file(rootfs).isFile
+        // Host `--patch` is JSON only. Never inject Cordis YAML overlays into argv.
+        File(rootfs, "opt/xrk-app/auth/auth.patch.yml").delete()
+        File(rootfs, "opt/dsh-app/auth/auth.patch.yml").delete()
+        File(rootfs, "opt/xrk-app/phone/phone.patch.yml").delete()
+        File(rootfs, "opt/dsh-app/phone/phone.patch.yml").delete()
         for (arg in launchArgv) {
             if (!bindsPlaced && arg == "/usr/bin/env") {
                 allBinds.forEach { argv += "-b"; argv += it }
@@ -140,14 +141,10 @@ class XrkProcess(
             } else {
                 val selected = SafeMode.profileArg(arg, safe)
                 if (selected != null) profileSelected = true
-                // Phone: XRK mounts via process plugin + loopback API; legacy XRK via --patch.
+                // Phone tools mount via $XRK_HOME/plugins; mark mounted when serve argv is seen.
                 val withPhone = if (phone && !safe && !phoneMounted) PhoneGuest.launchArg(selected ?: arg) else null
                 if (withPhone != null) phoneMounted = true
-                val withSearch = if (searchPending) SessionSearchGuest.launchArg(withPhone ?: selected ?: arg) else null
-                if (withSearch != null) searchPending = false
-                val withAuth = if (authPending) AppAuthGuest.launchArg(withSearch ?: withPhone ?: selected ?: arg) else null
-                if (withAuth != null) authPending = false
-                argv += expand(withAuth ?: withSearch ?: withPhone ?: selected ?: arg)
+                argv += expand(withPhone ?: selected ?: arg)
             }
         }
         check(!safe || profileSelected) { "safe mode: this runtime's launch command has no `xrkh serve` to replace" }
@@ -186,7 +183,7 @@ class XrkProcess(
         launchDiagnostics.spawned()
         val out = pump(p.inputStream.bufferedReader(), "stdout")
         val err = pump(p.errorStream.bufferedReader(), "stderr")
-        waiter = thread(name = "dsh-wait", isDaemon = true) {
+        waiter = thread(name = "xrk-wait", isDaemon = true) {
             val code = try { p.waitFor() } catch (_: InterruptedException) { -1 }
             startupSignal.countDown()
             // The fatal message is usually the last output: let the pumps drain it before reporting.
@@ -207,7 +204,7 @@ class XrkProcess(
             listener.onExit(this, code, expectedExit)
         }
         // XRK loopback has no token gate: poll TCP (+ optional HTTP) until ready.
-        thread(name = "dsh-ready-poll", isDaemon = true) {
+        thread(name = "xrk-ready-poll", isDaemon = true) {
             val deadline = System.currentTimeMillis() + TOKEN_TIMEOUT_MS
             while (System.currentTimeMillis() < deadline && !stopping && process === p && p.isAlive) {
                 if (canConnect(port) && httpOk(port)) {
@@ -294,7 +291,7 @@ class XrkProcess(
         if (expected) expectedExit = true
         if (stopper != null) return
         val p = process ?: return
-        stopper = thread(name = "dsh-stop", isDaemon = true) {
+        stopper = thread(name = "xrk-stop", isDaemon = true) {
             try {
                 val node = if (p.isAlive) guestRecord() else null
                 val proot = if (direct) null else node?.let { child -> processSnapshot().records.firstOrNull { it.pid == child.parent && it.proot } }
@@ -328,13 +325,13 @@ class XrkProcess(
 
     private fun captureGuestRecord(): RuntimeProcessRecord? {
         return try {
-            val pid = File(rootfs, "tmp/dsh-web.pid").takeIf { it.isFile }?.readText()?.trim()?.toIntOrNull() ?: return null
+            val pid = File(rootfs, "tmp/xrk-web.pid").takeIf { it.isFile }?.readText()?.trim()?.toIntOrNull() ?: return null
             val records = processSnapshot().records
             val owned = RuntimeProcessOwnership.owned(records, setOf(rootfs.absolutePath, rootfs.canonicalPath), AndroidProcess.myPid())
             owned.forEach { cleanupKnown[it.pid] = it.started }
             val record = owned.firstOrNull { it.pid == pid } ?: return null
             if (record.argv.any {
-                    it.contains("/opt/node") || it.contains("dsh") || it.contains("xrkh") || it.contains("harness-cli")
+                    it.contains("/opt/node") || it.contains("xrkh") || it.contains("xrk") || it.contains("xrkh") || it.contains("harness-cli")
                 }) record else null
         } catch (_: Exception) {
             null
@@ -348,7 +345,7 @@ class XrkProcess(
         }
     }
 
-    private fun pump(reader: java.io.BufferedReader, stream: String) = thread(name = "dsh-$stream", isDaemon = true) {
+    private fun pump(reader: java.io.BufferedReader, stream: String) = thread(name = "xrk-$stream", isDaemon = true) {
         try {
             reader.useLines { lines ->
                 lines.forEach { line ->
@@ -370,7 +367,7 @@ class XrkProcess(
         readyReported = true
         startupSignal.countDown()
         val base = "http://127.0.0.1:$port"
-        thread(name = "dsh-ready", isDaemon = true) {
+        thread(name = "xrk-ready", isDaemon = true) {
             val deadline = System.currentTimeMillis() + 90_000
             while (System.currentTimeMillis() < deadline && !stopping && process?.isAlive == true) {
                 if (canConnect(port)) {
@@ -405,7 +402,7 @@ class XrkProcess(
         RuntimeProcessOwnership.scan(processReader, AndroidProcess.myUid(), AndroidProcess.myPid(), known)
 
     private fun pidHint(): Int? = try {
-        File(rootfs, "tmp/dsh-web.pid").readText().trim().toIntOrNull()?.takeIf { it > 0 }
+        File(rootfs, "tmp/xrk-web.pid").readText().trim().toIntOrNull()?.takeIf { it > 0 }
     } catch (_: Exception) { null }
 
     private fun remember(snapshot: RuntimeProcessSnapshot) {

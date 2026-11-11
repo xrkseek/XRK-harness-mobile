@@ -251,7 +251,7 @@ void main() {
     final saved = <MethodCall>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(const MethodChannel('xrk/media'), (call) async {
       saved.add(call);
-      return 'Pictures/XRK Go/截图.png';
+      return 'Pictures/XRK Harness/截图.png';
     });
     addTearDown(
       () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(const MethodChannel('xrk/media'), null),

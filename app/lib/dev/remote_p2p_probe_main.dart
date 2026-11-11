@@ -45,7 +45,7 @@ Future<void> _probe() async {
   final account = RemoteAccount(
     secrets: _Secrets(),
     serverUrl: config['server'],
-    deviceName: 'XRK Go P2P probe',
+    deviceName: 'XRK Harness P2P probe',
     peerConnector: config['direct'] == false ? null : flutterPeerConnector,
     onDirectFallback: (reason) => _log('automatic fallback: $reason'),
     controlTracer: (direction, frame) {

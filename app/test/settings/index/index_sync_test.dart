@@ -27,7 +27,6 @@ import 'package:xrk_app/ui/settings/background_guide_page.dart';
 import 'package:xrk_app/ui/settings/notification_settings.dart';
 import 'package:xrk_app/ui/settings/interface_page.dart';
 import 'package:xrk_app/ui/settings/performance_page.dart';
-import 'package:xrk_app/ui/settings/personalization_page.dart';
 import 'package:xrk_app/ui/settings/privacy_page.dart';
 import 'package:xrk_app/ui/settings/settings_screen.dart';
 import 'package:xrk_app/state/app_info.dart';
@@ -202,17 +201,8 @@ void main() {
     );
   });
 
-  testWidgets('个性化', (tester) async {
-    await _check(
-      tester,
-      SettingsPageId.personalization,
-      () => _app(tester, const PersonalizationPage(), _running()),
-      // Only with this phone's engine files at hand.
-      absent: {'page:replyPrefs'},
-    );
-  });
 
-  testWidgets('关于 XRK Go', (tester) async {
+  testWidgets('关于 XRK Harness', (tester) async {
     await _check(tester, SettingsPageId.about, () => _app(tester, const AboutPage(), _running()));
   });
 

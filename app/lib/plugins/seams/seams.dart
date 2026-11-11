@@ -2,7 +2,6 @@
 // (docs/design/plugin-seams.md §2–§5). Native adapter first, web island
 // second, "open in XRK Web" last.
 
-export 'adapters/cordis_adapter.dart' show CordisAdapter, CordisSeat;
 export 'adapters/xrk_ui_panel_adapter.dart' show XrkUiPanelAdapter;
 export 'adapters/pet_adapter.dart' show PetAdapter;
 export 'adapters/schema_config_adapter.dart' show SchemaConfigAdapter, SchemaConfigSeat;

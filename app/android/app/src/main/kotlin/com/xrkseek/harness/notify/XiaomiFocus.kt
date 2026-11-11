@@ -57,7 +57,7 @@ object XiaomiFocus {
         return mapOf(
             "param_v2" to mapOf(
                 "protocol" to 1,
-                "business" to "dsh_live_${c.kind.wire}",
+                "business" to "xrk_live_${c.kind.wire}",
                 "updatable" to true,
                 "enableFloat" to false,
                 "ticker" to "$word · $title",

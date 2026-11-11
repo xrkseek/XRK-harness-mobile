@@ -19,9 +19,9 @@ import '../../pets/pet_pack.dart';
 import '../../pets/pet_prefs.dart';
 import '../../pets/pet_signals.dart';
 import '../../pets/pet_state.dart';
-import '../bots/bot_sheets.dart' show confirmDelete;
 import '../common/pressable.dart';
 import '../theme/app_icons.dart';
+import '../common/confirm_delete.dart' show confirmDelete;
 import '../theme/theme.dart';
 import 'pet_sprite.dart';
 
@@ -71,6 +71,8 @@ String petImportProblemText(L10n l10n, PetImportException error) => switch (erro
 /// ╰────────╯  ╰────────╯  ╰────────╯
 ///  Deepy 小鲸鱼   鲸娘       不显示
 /// ```
+
+
 class PetPicker extends ConsumerStatefulWidget {
   const PetPicker({super.key, this.padding = const EdgeInsets.all(16), this.onPicked, this.importable = false});
 

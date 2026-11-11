@@ -17,7 +17,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/l10n.dart';
-import 'bots_state.dart';
 import 'hosts_state.dart';
 import 'read_list_cache.dart';
 import 'read_list_identity.dart';
@@ -486,8 +485,7 @@ Map<SessionDay, String> get sessionDayLabels => {
   SessionDay.earlier: appL10n.stateDrawerEarlier,
 };
 
-/// The drawer's conversations of the active host after the workspace scope,
-/// with DS Bot's own conversations split out (they fold into one row).
+/// The drawer's conversations of the active host after the workspace scope.
 class DrawerScope {
   const DrawerScope({
     required this.sessions,
@@ -501,7 +499,7 @@ class DrawerScope {
   /// Listed conversations, newest activity first.
   final List<SessionSummary> sessions;
 
-  /// DS Bot's conversations in scope.
+  /// Always empty — native DS Bot shell removed; kept for cache shape.
   final List<SessionSummary> bots;
 
   /// A workspace is selected (folders without members in it are hidden).
@@ -567,16 +565,9 @@ final drawerScopeProvider = Provider<DrawerScope?>((ref) {
     for (final s in all)
       if (!archived.contains(s.sessionId) && (members == null || members.contains(s.sessionId))) s,
   ];
-  final botOwned = ref.watch(dsBotOwnedSessionsProvider);
   final result = DrawerScope(
-    sessions: [
-      for (final s in inScope)
-        if (!botOwned.contains(s.sessionId)) s,
-    ],
-    bots: [
-      for (final s in inScope)
-        if (botOwned.contains(s.sessionId)) s,
-    ],
+    sessions: inScope,
+    bots: const [],
     scoped: workspace != null,
     readOnly: readOnly,
     status: readOnly ? status : ReadListStatus.current,

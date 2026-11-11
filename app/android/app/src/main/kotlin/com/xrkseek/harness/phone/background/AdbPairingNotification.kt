@@ -21,9 +21,9 @@ import com.xrkseek.harness.R
  * android.app APIs only (minSdk 26), so no extra support-library dependency.
  */
 object AdbPairingNotification {
-    const val CHANNEL_ID = "dsh_phone_pairing"
+    const val CHANNEL_ID = "xrk_phone_pairing"
     const val NOTIFICATION_ID = 0x05D4
-    const val CODE_KEY = "dsh_pairing_code"
+    const val CODE_KEY = "xrk_pairing_code"
     private const val ACTION_SUBMIT = "com.xrkseek.harness.PHONE_ADB_PAIR_CODE"
 
     fun show(context: Context) {

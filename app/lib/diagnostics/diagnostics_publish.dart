@@ -1,7 +1,7 @@
 // Publishes the diagnostics snapshot where the on-device engine's agent can
-// read it: `$XRK_HOME/dsh-app/diagnostics.md`. The app's daemon writes it (the
-// Dart side does not know the rootfs), after the engine comes up, when its
-// observed connection settles, and whenever the person asks from 设置 → 诊断.
+// read it: `$XRK_HOME/diagnostics.md` (GuestSetup.writeDiagnostics). The
+// app's daemon writes it (Dart does not know the rootfs), after the engine
+// comes up, when its observed connection settles, and from 设置 → 诊断.
 
 import 'dart:async';
 

@@ -28,7 +28,7 @@ import java.security.SecureRandom
  * this class owns the channels, per-conversation grouping, lock-screen redaction and the tap.
  *
  * Identity: one conversation is one group. Every notification of it carries the tag
- * `dsh-chat|<group>` (group = `<host>|<sessionId>`, built by Flutter) and an id derived from
+ * `xrk-chat|<group>` (group = `<host>|<sessionId>`, built by Flutter) and an id derived from
  * its key (`turn`, or the approval / question event id), so a newer turn replaces the older one
  * and a redelivered request updates in place. With two or more in a group a silent summary
  * (id [SUMMARY_ID]) bundles them.
@@ -38,7 +38,7 @@ import java.security.SecureRandom
  * the device is locked, the notification itself carries only that public text whatever the
  * setting, and gets its real title and text once the person unlocks (USER_PRESENT), silently.
  *
- * Kept apart from the engine (`dsh-runtime`) and phone-control (`dsh-phone-confirm`) channels.
+ * Kept apart from the engine (`xrk-host`) and phone-control channels.
  */
 class ChatNotifier(private val app: Context) {
 
@@ -289,7 +289,7 @@ class ChatNotifier(private val app: Context) {
     fun sessionIntent(sessionId: String, host: String, kind: String, eventId: String?, requestCode: Int): PendingIntent {
         val intent = Intent(app, MainActivity::class.java)
             .setAction(ACTION_OPEN)
-            .setData(Uri.Builder().scheme("dsh-notify").authority("open")
+            .setData(Uri.Builder().scheme("xrk-notify").authority("open")
                 .appendQueryParameter("host", host)
                 .appendQueryParameter("session", sessionId)
                 .appendQueryParameter("kind", kind)
@@ -307,7 +307,7 @@ class ChatNotifier(private val app: Context) {
     private fun actionIntent(post: Post, decision: String): PendingIntent {
         val intent = Intent(app, NotifyActionReceiver::class.java)
             // Unique per button, so no two notifications' buttons share a PendingIntent.
-            .setData(Uri.Builder().scheme("dsh-notify").authority("action").appendPath(post.group).appendPath(post.key).appendPath(decision).build())
+            .setData(Uri.Builder().scheme("xrk-notify").authority("action").appendPath(post.group).appendPath(post.key).appendPath(decision).build())
             .putExtra("group", post.group)
             .putExtra("key", post.key)
             .putExtra("decision", decision)
@@ -381,11 +381,11 @@ class ChatNotifier(private val app: Context) {
     }
 
     companion object {
-        const val CHANNEL_DONE = "dsh-chat-done-2"
-        private const val LEGACY_CHANNEL_DONE = "dsh-chat-done"
-        const val CHANNEL_ATTENTION = "dsh-chat-attention"
-        private const val GROUP_ID = "dsh-chat"
-        private const val TAG_PREFIX = "dsh-chat|"
+        const val CHANNEL_DONE = "xrk-chat-done-2"
+        private const val LEGACY_CHANNEL_DONE = "xrk-chat-done"
+        const val CHANNEL_ATTENTION = "xrk-chat-attention"
+        private const val GROUP_ID = "xrk-chat"
+        private const val TAG_PREFIX = "xrk-chat|"
         private const val SUMMARY_ID = 0
 
         /** An approval notification with buttons; [decision] is set once one was tapped. */
@@ -397,14 +397,14 @@ class ChatNotifier(private val app: Context) {
         private val actions = HashMap<Pair<String, Int>, ActionEntry>()
 
         const val ACTION_OPEN = "com.xrkseek.harness.OPEN_SESSION"
-        private const val EXTRA_TOKEN = "dsh.notify.token"
-        private const val EXTRA_SESSION = "dsh.notify.session"
-        private const val EXTRA_HOST = "dsh.notify.host"
-        private const val EXTRA_KIND = "dsh.notify.kind"
-        private const val EXTRA_EVENT = "dsh.notify.event"
-        private const val PREFS = "dsh_notify"
+        private const val EXTRA_TOKEN = "xrk.notify.token"
+        private const val EXTRA_SESSION = "xrk.notify.session"
+        private const val EXTRA_HOST = "xrk.notify.host"
+        private const val EXTRA_KIND = "xrk.notify.kind"
+        private const val EXTRA_EVENT = "xrk.notify.event"
+        private const val PREFS = "xrk_notify"
         private const val PREF_TOKEN = "tap_token"
-        // The UI notifier and dsh-live worker create different ChatNotifier instances.
+        // The UI notifier and live worker create different ChatNotifier instances.
         private val tokenLock = Any()
 
         /**

@@ -138,13 +138,6 @@ final currentPetPackProvider = Provider<PetPack?>((ref) {
 /// Where `ChatAlertsController` hands every alert, for the pet.
 class PetEventBus {
   final _events = StreamController<PetEvent>.broadcast(sync: true);
-  final _companionSignals = StreamController<CompanionAlertDelivery>.broadcast(sync: true);
-
-  /// Independent metadata lane; it never calls old PetEvent text handlers.
-  Stream<CompanionAlertDelivery> get companionSignals => _companionSignals.stream;
-  void companionSignal(CompanionAlertDelivery delivery) {
-    if (!_companionSignals.isClosed && delivery.current) _companionSignals.add(delivery);
-  }
 
   Stream<PetEvent> get events => _events.stream;
 
@@ -196,7 +189,6 @@ class PetEventBus {
 
   void dispose() {
     unawaited(_events.close());
-    unawaited(_companionSignals.close());
   }
 }
 

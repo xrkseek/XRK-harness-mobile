@@ -36,7 +36,7 @@ export function installModules(paths, inventory = { schema: 1, files: {} }) {
     throw identityError(new Error('native module inventory is missing or invalid'));
   }
   const nativeFiles = new Map(Object.entries(inventory.files).map(([file, digest]) => {
-    if (!file.startsWith('/opt/dsh/node_modules/') || !file.endsWith('.node') ||
+    if (!file.startsWith('/opt/xrk/node_modules/') || !file.endsWith('.node') ||
         posix.normalize(file) !== file || file.includes('\u0000') || !/^[a-f0-9]{64}$/u.test(digest)) throw identityError();
     return [paths.root + file, digest];
   }));

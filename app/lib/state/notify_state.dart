@@ -11,10 +11,8 @@ import '../notify/answer_native_request.dart';
 import '../notify/notify_channel.dart';
 import '../phone/phone_channel.dart';
 import '../phone/phone_approval.dart';
-import '../companion/companion_state.dart';
 import '../pets/pet_signals.dart' show petHearAlert, petOnScreenProvider, petEventBusProvider;
 import 'app_info.dart';
-import 'bots_state.dart';
 import 'chat_state.dart';
 import 'connection_state.dart';
 import 'hosts_state.dart';
@@ -484,11 +482,6 @@ class ChatAlertsController extends Notifier<ChatAlert?> {
       onRequestEpochChanged: (host) {
         if (attached()) _cancelPhonePrompt(host: host);
       },
-      companionConnection: connection,
-      isCompanionAttached: attached,
-      onCompanionSignal: (delivery) {
-        if (attached()) scope.read(petEventBusProvider).companionSignal(delivery);
-      },
       skipApproval: (sessionId) =>
           attached() && scope.exists(chatProvider(sessionId)) && scope.read(chatProvider(sessionId)).autoApprove,
       announceDelay: timing.announce,
@@ -557,8 +550,7 @@ class ChatAlertsController extends Notifier<ChatAlert?> {
         !alert.kind.attention ||
         alert.eventId == null ||
         ref.read(appForegroundProvider) ||
-        _phonePrompt != null ||
-        ref.read(dsBotSessionFilterProvider)(alert.host, alert.sessionId)) {
+        _phonePrompt != null) {
       return false;
     }
     final attached = _trackers[alert.host];
@@ -692,11 +684,6 @@ class ChatAlertsController extends Notifier<ChatAlert?> {
 
   void _deliver(ChatAlert alert) {
     // DS Bot's own conversations: it sends its own notifications.
-    if (ref.read(dsBotSessionFilterProvider)(alert.host, alert.sessionId)) return;
-    // The companion's reply is on her page; it isn't a finished task. A request
-    // that really waits on the person (an older host's preset has tools) still
-    // goes through.
-    if (!alert.kind.attention && ref.read(companionSessionFilterProvider)(alert.host, alert.sessionId)) return;
     final prefs = ref.read(notifyPrefsProvider);
     final foreground = ref.read(appForegroundProvider);
     final delivery = deliveryFor(

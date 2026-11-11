@@ -36,7 +36,7 @@ abstract final class UiSchema {
   /// chat, conversation details (the title pill's panel key on wide
   /// windows), the schedule clock, the agents capsule and the model chip.
   /// The menu key and the title pill always stay.
-  static const headerBuiltins = ['newChat', 'detail', 'schedule', 'agents', 'model'];
+  static const headerBuiltins = ['newChat', 'detail', 'agents', 'model'];
   static const headerCustomMax = 3;
   static const headerLabelMax = 8;
 
@@ -135,7 +135,6 @@ abstract final class UiSchema {
     'skills',
     'subagents',
     'reference',
-    'schedules',
     'permission',
     'agent-presets',
     'models',
@@ -145,17 +144,11 @@ abstract final class UiSchema {
     'web-search',
     'plugins',
     'plugin-inventory',
-    'cordis',
-    'agent-team',
     'cot-translation',
     'voice-input',
-    'forum',
-    'community',
-    'ds-bot',
     'share-profile',
     'search',
     'notifications',
-    'workspaces',
     'general',
     'account',
     'remote',

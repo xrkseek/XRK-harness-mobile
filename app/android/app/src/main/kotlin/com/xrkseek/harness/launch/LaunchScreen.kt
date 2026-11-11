@@ -55,7 +55,7 @@ import kotlin.concurrent.thread
  * Dart's first frame is then the launch screen. Later activities keep the system's own exit.
  */
 object LaunchScreen {
-    private const val TAG = "DshLaunch"
+    private const val TAG = "XrkLaunch"
 
     /** The splash dissolves into the app's frame: unseen when the two match, soft where a vendor's differs. */
     private const val FADE_MS = 160L
@@ -121,7 +121,7 @@ object LaunchScreen {
         val dpi = LaunchGeometry.iconDpi(sdk, metrics.densityDpi)
         val app = activity.applicationContext
         val iconRes = mipmapOf(variant)
-        icon = FutureTask { render(app, iconRes, dpi, iconPx) }.also { thread(name = "dsh-launch-icon", isDaemon = true) { it.run() } }
+        icon = FutureTask { render(app, iconRes, dpi, iconPx) }.also { thread(name = "xrk-launch-icon", isDaemon = true) { it.run() } }
         val splashExit = sdk >= LaunchGeometry.SPLASH_SDK && listenForSplash(activity)
         info = mapOf(
             "active" to true,
@@ -292,7 +292,7 @@ object LaunchScreen {
         val task = icon
         val base = info
         val context = appContext
-        thread(name = "dsh-launch-begin", isDaemon = true) {
+        thread(name = "xrk-launch-begin", isDaemon = true) {
             val pixels = try {
                 task?.get(ICON_WAIT_MS, TimeUnit.MILLISECONDS)
             } catch (_: Exception) {
@@ -308,7 +308,7 @@ object LaunchScreen {
 
     /** What the launch window shows now (the current 桌面图标's icon, the system's mode): for a preview. */
     internal fun snapshot(context: Context, result: MethodChannel.Result) {
-        thread(name = "dsh-launch-preview", isDaemon = true) {
+        thread(name = "xrk-launch-preview", isDaemon = true) {
             val map = try {
                 val sdk = Build.VERSION.SDK_INT
                 val metrics = context.resources.displayMetrics

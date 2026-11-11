@@ -97,7 +97,7 @@ Cards live in the conversation log; a chat opened a year later must still draw. 
 
 | XRK | Status |
 |---|---|
-| 0.2.2-rc.1 | The engine XRK Go ships: the slot catalog (109 slots) and the web island recipes are checked against it |
+| 0.2.2-rc.1 | The engine XRK Harness ships: the slot catalog (109 slots) and the web island recipes are checked against it |
 | 0.2.1-rc.4 | Development baseline: the slot catalog (103 slots) and the web island recipes are checked against it |
 | 0.2.1-rc.2 | Verified (tool card path, plugin install, bridge) |
 | Other 0.2.x | Declare in `engines.dsh`; `presentationMeta` exists since 0.2.0 |

@@ -64,7 +64,7 @@ internal class PhoneSelfCheck(
     }
     private val lock = Any()
     private val worker = Executors.newSingleThreadExecutor { r ->
-        Thread(r, "dsh-phone-selfcheck").apply { isDaemon = true }
+        Thread(r, "xrk-phone-selfcheck").apply { isDaemon = true }
     }
     private var starting: Starting? = null
     private var latest: Run? = null

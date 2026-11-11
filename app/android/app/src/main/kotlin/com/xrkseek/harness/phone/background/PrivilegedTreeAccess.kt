@@ -15,13 +15,13 @@ import java.lang.reflect.Proxy
 internal class PrivilegedTreeAccess(private val context: Context) {
     class Failure(val code: String) : Exception()
     private val transactions = TreeTransactions<TreeConnection> { connection ->
-        tracePhase("dsh.bg.treeClose") { connection.close() }
+        tracePhase("xrk.bg.treeClose") { connection.close() }
     }
     fun ready(): Boolean = transactions.ready()
     fun closeOwned(scope: Any): Boolean = transactions.closeOwned(scope)
     fun <T> read(scope: Any, display: Display, pkg: String, unavailable: String, body: (UiAutomation) -> T): T = try {
         transactions.read(scope, { TreeConnection(context, pkg) }) { connection ->
-            val automation = try { tracePhase("dsh.bg.treeConnect") { connection.open(display) } }
+            val automation = try { tracePhase("xrk.bg.treeConnect") { connection.open(display) } }
                 catch (_: Throwable) { throw Failure(unavailable) }
             body(automation)
         }

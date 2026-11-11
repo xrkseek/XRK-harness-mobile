@@ -39,7 +39,7 @@ class AdbStarter(private val context: Context, private val onChanged: () -> Unit
         }
         override fun getPrivateKey(): PrivateKey = keys.privateKey()
         override fun getCertificate(): Certificate = keys.certificate()
-        override fun getDeviceName(): String = "dsh-app"
+        override fun getDeviceName(): String = "xrk-app"
     }
 
     @Volatile private var pairingMdns: AdbMdns? = null
@@ -235,7 +235,7 @@ class AdbStarter(private val context: Context, private val onChanged: () -> Unit
             }
         }
         published?.close(); candidate?.close()
-        if (cleanup != null) Thread({ finish(cleanup, preserve = false); onChanged() }, "dsh-adb-disconnect").apply {
+        if (cleanup != null) Thread({ finish(cleanup, preserve = false); onChanged() }, "xrk-adb-disconnect").apply {
             isDaemon = true
             start()
         }

@@ -15,7 +15,7 @@ void main() {
     group: 'local|s1',
     key: 'phone-1',
     attention: true,
-    title: 'XRK Go',
+    title: 'XRK Harness',
     text: 'Task complete',
     publicText: 'Task ended',
     sessionId: 's1',

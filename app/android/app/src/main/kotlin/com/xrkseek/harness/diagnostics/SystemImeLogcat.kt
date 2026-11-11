@@ -10,7 +10,7 @@ object SystemImeLogcat {
     data class Capture(val code: String, val capturedAt: Long, val events: List<SystemImeEvent> = emptyList())
     private val busy = AtomicBoolean(false)
     private val timer = Executors.newSingleThreadScheduledExecutor { r ->
-        Thread(r, "dsh-ime-deadline").apply { isDaemon = true }
+        Thread(r, "xrk-ime-deadline").apply { isDaemon = true }
     }
 
     fun collect(appPid: Int): Capture {

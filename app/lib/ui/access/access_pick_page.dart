@@ -1,4 +1,4 @@
-// First run, 「想让 XRK Go 帮你做哪些事」: what XRK Go should do, by feature
+// First run, 「想让 XRK Harness 帮你做哪些事」: what XRK Harness should do, by feature
 // (docs: lib/state/access_state.dart). Nothing is picked to begin with; 跳过
 // leaves everything as it is.
 
@@ -19,7 +19,7 @@ import 'access_widgets.dart';
 import 'phone_mode_sheet.dart';
 
 /// ```
-///   ▣  想让 XRK Go 帮你做哪些事
+///   ▣  想让 XRK Harness 帮你做哪些事
 ///      选好后逐项开启
 ///   ╭──────────────────────────────────╮
 ///   │ ▢ 读写手机里的文件            ☐  │

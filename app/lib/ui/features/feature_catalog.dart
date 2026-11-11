@@ -15,21 +15,13 @@ import '../../plugins/native/native_state.dart';
 import '../../plugins/seams/seams.dart';
 import '../../state/plugins_state.dart';
 import '../common/feature_tile.dart';
-import '../agents/team_page.dart';
-import '../bots/bots_page.dart';
-import '../community/community_page.dart';
-import '../cordis/cordis_page.dart';
 import '../files/files_page.dart';
-import '../forum/forum_home_page.dart';
 import '../engine/engine_screen.dart';
 import '../phone/phone_control_screen.dart';
-import '../plugins/plugin_detail_sheet.dart';
-import '../plugins/plugins_screen.dart';
 import '../plugins/seats/plugin_seat_page.dart';
 import '../plugins/seats/seat_links.dart';
 import '../session/session_artifacts.dart';
 import '../session/session_detail_page.dart';
-import '../share_code/profile_share_sheet.dart';
 import '../shell/session_search_page.dart';
 import '../settings/appearance/appearance_page.dart';
 import '../settings/index/spots.dart';
@@ -37,10 +29,8 @@ import '../settings/notification_settings.dart';
 import '../terminal/terminal_page.dart';
 import '../theme/app_icons.dart';
 import '../web/web_target.dart';
-import '../workspace/workspaces_page.dart';
 import 'feature_widgets.dart' show openSessionInChat;
 import 'jobs_page.dart';
-import 'schedules_page.dart';
 import 'session_export_page.dart';
 import 'skills_page.dart';
 
@@ -148,37 +138,9 @@ class FeatureSection {
 
 String _session(String? id) => id ?? '';
 
-/// 社区, with the forum card at its top opening the forum's home.
-Widget communityPage() =>
-    Builder(builder: (context) => CommunityPage(onOpenForum: () => Navigator.of(context).push(ForumHomePage.route())));
-
 /// Back to the chat, where the composer does the rest (`@`, the mic).
 void _backToChat(BuildContext context, WidgetRef ref, String? _) =>
     Navigator.of(context).popUntil((route) => route.isFirst);
-
-/// The settings sheet of an official optional bundle, when the host has it.
-Future<void> _bundleSheet(BuildContext context, WidgetRef ref, String name) async {
-  final messenger = ScaffoldMessenger.maybeOf(context);
-  List<PluginBundle>? bundles;
-  try {
-    bundles = await ref.read(installedPluginsProvider.future).timeout(const Duration(seconds: 10));
-  } catch (_) {
-    bundles = null;
-  }
-  final bundle = bundles?.where((b) => b.name == name).firstOrNull;
-  if (!context.mounted) return;
-  if (bundle == null) {
-    final l10n = context.l10n;
-    messenger?.showSnackBar(
-      SnackBar(content: Text(bundles == null ? l10n.commonEngineUnreachable : l10n.catalogHostPluginMissing)),
-    );
-    return;
-  }
-  await showBundleSheet(context, bundle);
-}
-
-/// XRK's optional reasoning-translation bundle.
-const cotTranslationBundle = '@xrkseek/harness-cli-experimental-cot-translation-bundle';
 
 /// The last section: shortcuts to settings pages (the same pages, by the same
 /// names), followed by 全部设置.
@@ -271,86 +233,7 @@ final featureSections = <FeatureSection>[
       action: _backToChat,
     ),
   ]),
-  FeatureSection.localized((l10n) => l10n.catalogAutomationSection, [
-    FeatureItem.localized(
-      id: 'schedules',
-      title: (l10n) => l10n.catalogSchedules,
-      summary: (l10n) => l10n.catalogSchedulesSummary,
-      icon: AppIcons.automation,
-      tile: FeatureKind.automation,
-      native: (_) => const SchedulesPage(),
-    ),
-  ]),
   FeatureSection.localized((l10n) => l10n.catalogPlugins, [
-    FeatureItem.localized(
-      id: 'plugins',
-      title: (l10n) => l10n.catalogPlugins,
-      summary: (l10n) => l10n.catalogPluginsSummary,
-      icon: AppIcons.plugin,
-      tile: FeatureKind.plugins,
-      native: (_) => const PluginsScreen(),
-    ),
-    FeatureItem.localized(
-      id: 'cordis',
-      title: (_) => 'Cordis',
-      summary: (l10n) => l10n.catalogCordisSummary,
-      icon: AppIcons.cordis,
-      native: (id) => CordisPage(sessionId: id),
-    ),
-    FeatureItem.localized(
-      id: 'agent-team',
-      title: (l10n) => l10n.catalogAgentTeam,
-      summary: (l10n) => l10n.catalogAgentTeamSummary,
-      icon: AppIcons.team,
-      native: (id) => TeamPage(sessionId: id),
-    ),
-    FeatureItem.localized(
-      id: 'cot-translation',
-      title: (l10n) => l10n.catalogCotTranslation,
-      summary: (l10n) => l10n.catalogCotTranslationSummary,
-      icon: AppIcons.translate,
-      action: (context, ref, _) => _bundleSheet(context, ref, cotTranslationBundle),
-    ),
-    FeatureItem.localized(
-      id: 'voice-input',
-      title: (l10n) => l10n.catalogVoiceInput,
-      summary: (l10n) => l10n.catalogVoiceInputSummary,
-      icon: AppIcons.voice,
-      action: _backToChat,
-      // l10n:keep XRK Web plugin title aliases used for deep-link matching
-      web: const DshWebTarget(pluginItem: ['语音输入', 'Voice input']),
-    ),
-  ]),
-  FeatureSection.localized((l10n) => l10n.catalogCommunitySharingSection, [
-    FeatureItem.localized(
-      id: 'forum',
-      title: (l10n) => l10n.catalogForum,
-      summary: (l10n) => l10n.catalogForumSummary,
-      icon: AppIcons.forum,
-      native: (_) => const ForumHomePage(),
-    ),
-    FeatureItem.localized(
-      id: 'community',
-      title: (l10n) => l10n.catalogCommunity,
-      summary: (l10n) => l10n.catalogCommunitySummary,
-      icon: AppIcons.community,
-      tile: FeatureKind.community,
-      native: (_) => communityPage(),
-    ),
-    FeatureItem.localized(
-      id: 'ds-bot',
-      title: (_) => 'DS Bot',
-      summary: (l10n) => l10n.catalogBotSummary,
-      icon: AppIcons.bot,
-      native: (_) => const BotsPage(),
-    ),
-    FeatureItem.localized(
-      id: 'share-profile',
-      title: (l10n) => l10n.catalogShareProfile,
-      summary: (l10n) => l10n.catalogShareProfileSummary,
-      icon: AppIcons.shareConfig,
-      action: (context, ref, _) => showShareProfileSheet(context),
-    ),
   ]),
   FeatureSection.localized((l10n) => l10n.catalogToolsSection, [
     FeatureItem.localized(
@@ -364,14 +247,6 @@ final featureSections = <FeatureSection>[
           openSessionInChat(context, ref, id);
         }
       },
-    ),
-    FeatureItem.localized(
-      id: 'workspaces',
-      title: (l10n) => l10n.catalogWorkspaces,
-      summary: (l10n) => l10n.catalogWorkspacesSummary,
-      icon: AppIcons.workspace,
-      tile: FeatureKind.workspace,
-      native: (_) => const WorkspacesPage(),
     ),
     FeatureItem.localized(
       id: 'web',
@@ -420,59 +295,5 @@ final featureSections = <FeatureSection>[
   ], id: settingsFeatureSection),
 ];
 
-/// The section the host's plugin panels join.
-String get pluginFeatureSection => appL10n.catalogPlugins;
-
-/// 全部功能's sections, with an entry per plugin panel the host has (`main`)
-/// at the end of 插件. Exactly [featureSections] without one.
-final featureSectionsProvider = Provider.autoDispose<List<FeatureSection>>((ref) {
-  final plan = ref.watch(seatPlanProvider(const SeatRequest(slot: Slots.main, placement: SeatPlacement.page)));
-  final items = plan.visible;
-  if (items.isEmpty) return featureSections;
-  final bundles = ref.watch(installedPluginsProvider.select((s) => s.value));
-  final inventory = ref.watch(seatInventoryProvider);
-  final panels = [
-    for (final item in items)
-      pluginPanelFeature(
-        item,
-        bundles: bundles,
-        inventory: inventory,
-        // A native panel's plugin may have declared a title of its own.
-        owner: item.mode == SeatMode.native ? ref.watch(nativePluginTitleProvider(item.occupant.package)) : null,
-      ),
-  ];
-  return [
-    for (final section in featureSections)
-      section.items.any((item) => item.id == 'plugins')
-          ? FeatureSection.localized(
-              (l10n) => l10n.catalogPlugins,
-              [...section.items, ...panels],
-              note: section.note,
-              id: section.id,
-            )
-          : section,
-  ];
-});
-
-/// One plugin panel as an entry: its native or island page, or XRK Web (the
-/// card then says 「网页版」) when neither can come up. [owner] is the
-/// plugin's name for people (its declared title); a package name is never
-/// shown: then the card just says 「插件面板」.
-FeatureItem pluginPanelFeature(SeatItem item, {List<PluginBundle>? bundles, SeatInventory? inventory, String? owner}) {
-  final o = item.occupant;
-  final bundle = seatBundleOf(bundles, o.package);
-  // The panel's name is on its sidebar entry; `main` itself has none.
-  final title = seatEntryTitle(o, inventory: inventory, bundle: bundle);
-  final by = owner ?? bundle?.title() ?? o.package;
-  final named = by.trim().isNotEmpty && by != o.package && by != title;
-  final native = inventory?.nativePanel(o.package, o.cell);
-  final page = SeatRequest(slot: Slots.main, placement: SeatPlacement.page, package: o.package, cell: o.cell);
-  return FeatureItem.localized(
-    id: 'plugin-panel:${o.package}#${o.cell}',
-    title: (_) => title,
-    summary: (l10n) => named ? by : l10n.catalogPluginPanel,
-    icon: nativeIcon(native?.icon) ?? AppIcons.plugin,
-    native: item.mode == SeatMode.webLink ? null : (_) => PluginSeatPage(title: title, request: page),
-    web: item.mode == SeatMode.webLink ? seatWebTarget(o, bundle: bundle) : null,
-  );
-}
+/// Plugin seat panels are guest-Web / plugin UI — not mirrored in 全部功能.
+final featureSectionsProvider = Provider.autoDispose<List<FeatureSection>>((ref) => featureSections);

@@ -175,7 +175,7 @@ class FilesPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && !canWriteShared()) {
             return if (asked) result.error("permission", "storage permission denied", null) else ask(result, retry)
         }
-        thread(name = "dsh-files", isDaemon = true) {
+        thread(name = "xrk-files", isDaemon = true) {
             val outcome = runCatching { saveNow(file, name, mime) }
             main.post {
                 val error = outcome.exceptionOrNull()
@@ -304,7 +304,7 @@ class FilesPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
     // ---------------------------------------------------------------------------------------------
 
     private fun <T> background(result: MethodChannel.Result, work: () -> T) {
-        thread(name = "dsh-files", isDaemon = true) {
+        thread(name = "xrk-files", isDaemon = true) {
             val outcome = try {
                 Result.success(work())
             } catch (e: Throwable) {
@@ -339,7 +339,7 @@ class FilesPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
          *  No space: the agent types this path into shell commands. */
         private const val SUBDIR = "XRK-Harness"
         /** Pre-rebrand folders; nothing new is written there. */
-        private const val LEGACY_SUBDIR = "DSH-Go"
+        private const val LEGACY_SUBDIR = "xrk-Go"
         private const val LEGACY_SUBDIR_OLD = "DSH"
         private const val STORAGE_REQUEST = 0x5d6
         private const val MAX_OUTPUTS = 500

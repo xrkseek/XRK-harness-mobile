@@ -265,7 +265,7 @@
     <string name="safe_auto_started">Host 连续两次启动失败，已用安全模式启动。你的对话都在。</string>
     <string name="safe_patch_hazard">全局补丁文件：对所有配置（包括安全模式）都生效，可能就是它让 Host 起不来。</string>
     <string name="safe_env_hazard">设置了 %1$s，Host 不允许在 .env 里设置这些变量，会拒绝启动。</string>
-    <string name="safe_config_missing">找不到主配置 profiles/web/package.json</string>
+    <string name="safe_config_missing">找不到插件清单 plugins/.xrk-plugins.json</string>
     <string name="safe_config_busy">插件配置正被别的程序修改，稍后再试</string>
     <!-- service -->
     <string name="service_stopped_channel">引擎停止提醒</string>

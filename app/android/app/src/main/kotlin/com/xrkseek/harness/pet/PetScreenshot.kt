@@ -28,7 +28,7 @@ internal object PetScreenshot {
     private const val SETTLE_MS = 120L
     private val main by lazy { Handler(Looper.getMainLooper()) }
     private val worker by lazy {
-        Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-pet-shot").apply { isDaemon = true } }
+        Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-pet-shot").apply { isDaemon = true } }
     }
     private var active: Capture? = null // main thread only
 

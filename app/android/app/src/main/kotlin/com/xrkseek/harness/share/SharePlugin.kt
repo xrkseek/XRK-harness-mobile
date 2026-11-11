@@ -50,7 +50,7 @@ class SharePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
     private var slotSeq = 0
 
     /** One share at a time, in arrival order. */
-    private val worker = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-share").apply { isDaemon = true } }
+    private val worker = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-share").apply { isDaemon = true } }
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         context = binding.applicationContext

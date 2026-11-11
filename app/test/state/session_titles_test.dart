@@ -14,7 +14,6 @@
 
 import 'dart:async';
 
-import 'package:xrk_app/state/bots_state.dart';
 import 'package:xrk_app/state/connection_state.dart';
 import 'package:xrk_app/state/hosts_state.dart';
 import 'package:xrk_app/state/read_list_identity.dart';
@@ -131,7 +130,6 @@ ProviderContainer _container(_SshHost host) => ProviderContainer(
     readListIdentityProvider.overrideWithValue(ReadListIdentity.of(['ssh-a'])),
     workspacesProvider.overrideWith(_Workspaces.new),
     workspacePrefsProvider.overrideWith(_WorkspacePrefs.new),
-    dsBotOwnedSessionsProvider.overrideWithValue(const {}),
   ],
 );
 

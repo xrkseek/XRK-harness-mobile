@@ -14,7 +14,7 @@ import java.util.concurrent.Executors
  * thread-safe, so every call runs on one worker thread.
  */
 class PdfPages {
-    private val worker = Executors.newSingleThreadExecutor { Thread(it, "dsh-pdf").apply { isDaemon = true } }
+    private val worker = Executors.newSingleThreadExecutor { Thread(it, "xrk-pdf").apply { isDaemon = true } }
     private var path: String? = null
     private var fd: ParcelFileDescriptor? = null
     private var renderer: PdfRenderer? = null

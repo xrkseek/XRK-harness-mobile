@@ -32,7 +32,7 @@ class MediaVideoPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallH
     private lateinit var audio: AudioManager
     private val main = Handler(Looper.getMainLooper())
     private val clips = HashMap<Long, Clip>()
-    private val posterWorker = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-video-poster").apply { isDaemon = true } }
+    private val posterWorker = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-video-poster").apply { isDaemon = true } }
     private val probing = AtomicBoolean(false)
     private var activity: Activity? = null
     private var foreground = false

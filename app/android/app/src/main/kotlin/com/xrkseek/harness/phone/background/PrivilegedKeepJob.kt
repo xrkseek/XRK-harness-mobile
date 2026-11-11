@@ -31,7 +31,7 @@ class PrivilegedKeepJob : JobService() {
             } finally {
                 jobFinished(params, false)
             }
-        }, "dsh-privileged-boot").apply { isDaemon = true }.start()
+        }, "xrk-privileged-boot").apply { isDaemon = true }.start()
         return true
     }
 

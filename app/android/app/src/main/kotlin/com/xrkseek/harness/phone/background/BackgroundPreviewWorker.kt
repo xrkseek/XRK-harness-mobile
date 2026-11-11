@@ -9,7 +9,7 @@ internal class BackgroundPreviewWorker {
     fun acquire(): ExecutorService? {
         val old = worker
         if (old != null && !old.isTerminated) return old.takeUnless { it.isShutdown }
-        return Executors.newSingleThreadExecutor { job -> Thread(job, "dsh-preview").apply { isDaemon = true } }
+        return Executors.newSingleThreadExecutor { job -> Thread(job, "xrk-preview").apply { isDaemon = true } }
             .also { worker = it }
     }
     fun stop() { worker?.shutdown() }

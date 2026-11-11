@@ -24,8 +24,8 @@ import kotlin.concurrent.thread
  *   densityDpi, fontScale}}, manifest: {runtimeVersion, abi,
  *   engineVersionAlias, nodeVersion, pnpmVersion, ubuntuVersion, prootVersion, rootfsBytes,
  *   uncompressedBytes, files}}` (the bundled runtime's `assets/runtime/manifest.json`).
- * - `engineLog {maxBytes}` → the last lines of the engine's log file (`dsh.log`, and the
- *   rotated `dsh.log.1` before it), which outlives the app process. Lines were already
+ * - `engineLog {maxBytes}` → the last lines of the engine's log file (`xrk.log`, with
+ *   fallback to a rotated/legacy copy), which outlives the app process. Lines were already
  *   masked when written (`CrashClassifier.redact`); Dart masks them again.
  *
  * System IME capture returns only allowlisted events; raw lines are confined to the
@@ -69,7 +69,7 @@ class DiagnosticsPlugin : FlutterPlugin, io.flutter.embedding.engine.plugins.act
     }
 
     private fun background(result: MethodChannel.Result, work: () -> Any?) {
-        thread(name = "dsh-diagnostics") {
+        thread(name = "xrk-diagnostics") {
             val outcome = runCatching(work)
             main.post {
                 outcome.fold(
@@ -130,8 +130,10 @@ class DiagnosticsPlugin : FlutterPlugin, io.flutter.embedding.engine.plugins.act
 
     private fun engineLog(maxBytes: Int): List<String> {
         val dir = File(context.filesDir, "runtime/logs")
-        val current = File(dir, "dsh.log")
-        val rotated = File(dir, "dsh.log.1")
+        val current = sequenceOf("xrk.log", "xrk.log").map { File(dir, it) }.firstOrNull { it.isFile } ?: File(dir, "xrk.log")
+        val rotated = File(dir, current.name + ".1").takeIf { it.isFile }
+            ?: File(dir, "xrk.log.1").takeIf { it.isFile }
+            ?: File(dir, "xrk.log.1")
         val fromCurrent = tail(current, maxBytes)
         val room = maxBytes - fromCurrent.sumOf { it.toByteArray(Charsets.UTF_8).size + 1 }
         val fromRotated = if (room > 1024) tail(rotated, room) else emptyList()

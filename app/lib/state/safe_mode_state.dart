@@ -15,7 +15,7 @@ final lastKnownGoodProvider = FutureProvider.autoDispose<LastKnownGood>((ref) as
   }
 });
 
-/// Home-level files that would also break the safe profile (`/root/.xrk/cordis.patch.yml`,
+/// Home-level files that would also break the safe profile (`/root/.xrk/.env`,
 /// `.env` files with launch-only variables).
 final safePreflightProvider = FutureProvider.autoDispose<List<SafeHazard>>((ref) async {
   ref.watch(localRuntimeProvider.select((s) => (s.status.phase, s.status.mode)));

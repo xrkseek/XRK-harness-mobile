@@ -92,7 +92,7 @@ internal object LaunchThemes {
  * remembers what was applied: a launch reads it to know what its own splash showed.
  */
 internal object LaunchThemeSync {
-    private const val TAG = "DshLaunch"
+    private const val TAG = "XrkLaunch"
     private const val PREFS = "launch_theme"
     private const val KEY_APPLIED = "applied"
 

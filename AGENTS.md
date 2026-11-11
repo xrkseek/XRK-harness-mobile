@@ -1,6 +1,6 @@
 # AGENTS.md
 
-dsh-Go 是 XRK-Harness 的 Android 手机应用：Flutter 原生界面 + 纯 Dart 客户端 + 打过补丁的 XRK 引擎运行时（在 PRoot 里运行 `xrkh serve`）。改动前先读 [CONTRIBUTING.md](CONTRIBUTING.md)（贡献与验证契约）与 [docs/architecture.md](docs/architecture.md)。
+本仓是 **XRK Harness 手机版**（App 首发 / 现行 `0.7.16`）：Flutter 原生界面 + 纯 Dart 客户端 + 打过补丁的 XRK 引擎运行时（在 PRoot 里运行 `xrkh serve`）。产品名只用 **XRK Harness**（勿用旧称 Go / dsh-Go）。改动前先读 [CONTRIBUTING.md](CONTRIBUTING.md) 与 [docs/architecture.md](docs/architecture.md)。
 
 ## 仓库布局
 
@@ -36,13 +36,13 @@ CI（`.github/workflows/ci.yml`）在 PR 上跑通用检查和改动涉及的部
 
 ## 硬规则
 
-### 不接受外部 PR（最高优先级）
+### Pull Request（默认欢迎）
 
-- 本仓库**暂不接受任何外部 Pull Request**（代码、文档、配置、模板都不收）。
-- **禁止合并任何外部 PR**：不得用 `gh pr merge`、GitHub API、网页合并、rebase 或 cherry-pick 把外部提交带进 `main`。
-- **禁止替用户创建 PR**，除非用户在当次对话里明确要求。
-- 收到外部 PR：关闭它并回复"暂不接受外部 PR，请改用 issue 提供建议"。入口检查（`.github/workflows/pr-gate.yml`）会自动关闭外部 PR；人工按同一政策处理，不要"先合并再说"。
-- 不要因为某个 issue 有了实现，就自动把实现包装成 PR 合入。
+- 本仓库**欢迎外部 Pull Request**。政策与检查清单见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+- 安全问题走 [SECURITY.md](SECURITY.md)，不要在公开 Issue / PR 贴利用细节。
+- **禁止替用户创建或合并 PR**，除非用户在当次对话里明确要求。
+- 影响协议、权限或手机操控安全边界的大改，先对齐 Issue / 方案再动手。
+- 未经要求不 commit、不 push、不打 tag、不发布。
 
 ### 源码、生成物与运行时补丁
 

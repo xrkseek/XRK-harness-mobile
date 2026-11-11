@@ -74,7 +74,7 @@ class VoiceCapture(
         if (playing) g.setPlaying(true, SystemClock.elapsedRealtime())
         running = true
         val mine = ++session
-        thread = Thread({ capture(r, g, mine) }, "dsh-plugin-voice").also { it.start() }
+        thread = Thread({ capture(r, g, mine) }, "xrk-plugin-voice").also { it.start() }
         return true
     }
 

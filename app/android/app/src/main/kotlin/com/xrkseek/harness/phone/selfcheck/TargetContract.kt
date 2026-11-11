@@ -18,8 +18,8 @@ internal object TargetContract {
     private val uuid = Regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
 
     fun validRun(value: String): Boolean = uuid.matches(value)
-    fun identifier(targetRun: String): String = "dsh-selfcheck-c1:$targetRun"
-    fun marker(targetRun: String): String = "dsh-c1:$targetRun"
+    fun identifier(targetRun: String): String = "xrk-selfcheck-c1:$targetRun"
+    fun marker(targetRun: String): String = "xrk-c1:$targetRun"
     fun counter(value: Int): String = value.toString()
     fun viewId(packageName: String, name: String): String = "$packageName:id/$name"
 }

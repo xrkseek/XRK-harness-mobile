@@ -17,7 +17,7 @@ class RuntimeLogs(
     private val post: (() -> Unit) -> Unit,
     private val deliver: (List<Entry>) -> Unit,
     private val writer: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor {
-        Thread(it, "dsh-logs").apply { isDaemon = true }
+        Thread(it, "xrk-logs").apply { isDaemon = true }
     },
 ) {
     data class Entry(val seq: Long, val line: String, val stream: String, internal val warning: Boolean = false) {

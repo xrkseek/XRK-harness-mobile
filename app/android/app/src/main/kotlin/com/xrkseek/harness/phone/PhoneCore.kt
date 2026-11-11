@@ -43,7 +43,7 @@ class PhoneCore(
     private val env: PhoneEnv,
     val tasks: PhoneTasks,
     val log: ActionLog,
-    val worker: SerialWorker = SerialWorker("dsh-phone"),
+    val worker: SerialWorker = SerialWorker("xrk-phone"),
     val skillTrace: PhoneTaskTrace = PhoneTaskTrace(),
     private val onExecution: (PhoneTasks.Owner) -> (((() -> Unit) -> Boolean)?) = { owner ->
         { update -> tasks.runIfCurrent(owner, update) }

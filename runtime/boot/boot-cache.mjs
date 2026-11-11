@@ -1,4 +1,4 @@
-// dsh-app boot cache for `xrkh serve`, preloaded by the /usr/local/bin/dsh shim (`--import`).
+// xrk-app boot cache for `xrkh serve`, preloaded via NODE_OPTIONS --import.
 //
 // Under proot every path lookup traps into the tracer. While XRK boots, its plugin loader
 // canonicalizes and probes the same read-only package tree thousands of times (realpath walks
@@ -8,7 +8,7 @@
 // paths, other call shapes, and everything after boot go straight to node:fs.
 //
 // ROOTS only holds trees nothing writes to while XRK runs (the runtime replaces them only while
-// XRK is stopped; the app's own files under /opt/dsh-app are written before the launch, and are
+// XRK is stopped; the app's own files under /opt/xrk-app are written before the launch, and are
 // not cached anyway). Symbolic links are followed only into ROOTS; ambiguous path
 // spellings and links outside those trees fall back to node:fs.
 import fs from 'node:fs';
@@ -16,7 +16,7 @@ import { syncBuiltinESMExports } from 'node:module';
 import { resolve } from 'node:path';
 import { isMainThread } from 'node:worker_threads';
 
-export const ROOTS = ['/opt/dsh/', '/opt/node/', '/opt/xrk-mobile/'];
+export const ROOTS = ['/opt/xrk/', '/opt/node/', '/opt/xrk-mobile/'];
 
 /** Answer for "not cacheable here": the caller uses node:fs. */
 export const PASS = Symbol('pass');
@@ -192,9 +192,9 @@ export function install({ roots = ROOTS, fsImpl = fs, stdout = process.stdout, m
 }
 
 // Preloaded by the shim for `xrkh serve` only; inert anywhere else (workers, other commands).
-if (isMainThread && process.argv[2] === 'web' && process.env.DSH_GO_BOOT_CACHE !== '0') {
+if (isMainThread && (process.argv[2] === 'serve' || process.argv[2] === 'web') && process.env.XRK_GO_BOOT_CACHE !== '0') {
   try {
-    const root = globalThis[Symbol.for('dsh.go.direct')]?.root;
+    const root = globalThis[Symbol.for('xrk.go.direct')]?.root;
     install({ roots: root ? ROOTS.map((path) => root + path) : ROOTS });
   } catch {
     // Never in the way of the launch: without the cache XRK just boots slower.

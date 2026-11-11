@@ -7,7 +7,7 @@
   "searchNeedsAnimations": "Available with animations on",
   "searchNeedsChat": "Available with a chat open",
   "searchKwTheme": "appearance,colors,colours,accent,icons",
-  "searchKwPets": "pet,pets,companion,whale,overlay",
+  "searchKwPets": "pet,pets,whale,overlay",
   "searchKwPerformance": "battery,smooth,lag,lite,full,speed",
   "searchKwVoice": "speech recognition,dictation,microphone,mic,voice",
   "searchKwNotifications": "alerts,push,banner,sound",

@@ -7,15 +7,22 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class DirectLaunchTest {
-    private val prefix = "echo \$\$ > /tmp/dsh-web.pid; exec /usr/local/bin/dsh "
-    private val command = prefix + "web --patch /etc/dsh-app/dsh-web.patch.yml --patch /opt/dsh-app/auth/auth.patch.yml --host 127.0.0.1 --port 3080 --no-open"
+    private val prefix = "echo \$\$ > /tmp/xrk-web.pid; exec /usr/local/bin/xrkh "
+    private val command = prefix + "serve --host 127.0.0.1 --port 3080 --workspace \${XRK_HOME:-/root/.xrk}/xiangyang-workspace"
 
-    @Test fun webFlagsKeepOverlayOrderAndLiteralArguments() {
-        assertEquals(listOf("web", "--patch", "/etc/dsh-app/dsh-web.patch.yml", "--patch", "/opt/dsh-app/auth/auth.patch.yml", "--host", "127.0.0.1", "--port", "3080", "--no-open"), DirectLaunch.webArguments(command))
+    @Test fun webFlagsKeepHostPortAndWorkspace() {
+        assertEquals(
+            listOf("serve", "--host", "127.0.0.1", "--port", "3080", "--workspace", "\${XRK_HOME:-/root/.xrk}/xiangyang-workspace"),
+            DirectLaunch.webArguments(command),
+        )
+        assertEquals(
+            listOf("serve", "--host", "127.0.0.1", "--port", "3080"),
+            DirectLaunch.webArguments(prefix + "web --host 127.0.0.1 --port 3080"),
+        )
     }
 
     @Test fun unknownShellSyntaxAndNetworkExposureFailClosed() {
-        for (bad in listOf(command + "; echo bad", command + " \$(id)", command.replace("127.0.0.1", "0.0.0.0"), command.replace("3080", "65536"), command + " --unknown", command.replace("xrkh serve", "dsh --profile safe"))) {
+        for (bad in listOf(command + "; echo bad", command + " \$(id)", command.replace("127.0.0.1", "0.0.0.0"), command.replace("3080", "65536"), command + " --unknown", command.replace("xrkh serve", "xrkh doctor"))) {
             assertThrows(IllegalArgumentException::class.java) { DirectLaunch.webArguments(bad) }
         }
     }
@@ -40,9 +47,9 @@ class DirectLaunchTest {
 
     @Test fun nativeLibrarySearchUsesOnlyTheLockedRuntimePackages() {
         val x64 = DirectLaunch.libraryDirectories("x86_64")
-        assertEquals(listOf("opt/dsh/node_modules/@img/sharp-libvips-linux-x64/lib", "opt/dsh/node_modules/sherpa-onnx-linux-x64"), x64.takeLast(2))
+        assertEquals(listOf("opt/xrk/node_modules/@img/sharp-libvips-linux-x64/lib", "opt/xrk/node_modules/sherpa-onnx-linux-x64"), x64.takeLast(2))
         val arm64 = DirectLaunch.libraryDirectories("arm64-v8a")
-        assertEquals(listOf("opt/dsh/node_modules/@img/sharp-libvips-linux-arm64/lib", "opt/dsh/node_modules/sherpa-onnx-linux-arm64"), arm64.takeLast(2))
+        assertEquals(listOf("opt/xrk/node_modules/@img/sharp-libvips-linux-arm64/lib", "opt/xrk/node_modules/sherpa-onnx-linux-arm64"), arm64.takeLast(2))
         assertTrue((x64 + arm64).none { it.contains("profiles") || it.startsWith('/') })
         assertThrows(IllegalStateException::class.java) { DirectLaunch.libraryDirectories("unknown") }
     }
@@ -147,8 +154,8 @@ class DirectLaunchTest {
     @Test fun priorGeneratedConfigRetainsAliasForDefaultAndIsIdempotent() {
         val root = kotlin.io.path.createTempDirectory("direct-prior-alias").toFile()
         try {
-            File(root, "opt/dsh-app/direct").mkdirs()
-            File(root, "opt/dsh-app/direct/config.json").writeText("{\"schema\":2}")
+            File(root, "opt/xrk-app/direct").mkdirs()
+            File(root, "opt/xrk-app/direct/config.json").writeText("{\"schema\":2}")
             val argv = listOf("proot", "-b", "/dev", "/usr/bin/env", "-i", "/bin/sh", "-c", "exit 0")
             val once = DirectLaunch.prootArguments(root, argv, direct = false)
             assertTrue(once.contains(DirectLaunch.samePathBind(root)))
@@ -163,7 +170,7 @@ class DirectLaunchTest {
             File(other, "direct").mkdirs()
             File(other, "direct/config.json").writeText("{\"schema\":2}")
             File(root, "opt").mkdirs()
-            java.nio.file.Files.createSymbolicLink(File(root, "opt/dsh-app").toPath(), other.toPath())
+            java.nio.file.Files.createSymbolicLink(File(root, "opt/xrk-app").toPath(), other.toPath())
             val argv = listOf("proot", "/usr/bin/env", "-i", "/bin/sh", "-c", "exit 0")
             assertEquals(argv, DirectLaunch.prootArguments(root, argv, direct = false))
         } finally { root.deleteRecursively() }
@@ -236,7 +243,7 @@ class DirectLaunchTest {
             val elf = ByteArray(120)
             elf[0] = 0x7f; elf[1] = 69; elf[2] = 76; elf[3] = 70; elf[4] = 2; elf[5] = 1
             ByteBuffer.wrap(elf).order(ByteOrder.LITTLE_ENDIAN).putLong(32, 64).putShort(54, 56).putShort(56, 1).putInt(64, 1)
-            File(root, "opt/dsh/node_modules/@vscode/ripgrep-linux-x64/bin/rg").apply { parentFile.mkdirs(); writeBytes(elf) }
+            File(root, "opt/xrk/node_modules/@vscode/ripgrep-linux-x64/bin/rg").apply { parentFile.mkdirs(); writeBytes(elf) }
             val path = root.canonicalPath
             val argv = listOf("/native/libproot.so", "--rootfs=$path", "-b", "$path:$path", "/usr/bin/env", "-i",
                 "HOME=/root", "PATH=/usr/local/bin:/usr/bin:/bin", "NODE_OPTIONS=--dns-result-order=ipv4first",

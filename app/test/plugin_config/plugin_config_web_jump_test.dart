@@ -14,7 +14,7 @@ import 'package:xrk_app/state/ui_mode_state.dart';
 import 'package:xrk_app/ui/engine_settings/field_row.dart';
 import 'package:xrk_app/ui/plugins/config/plugin_config_page.dart';
 import 'package:xrk_app/ui/plugins/seats/seat_links.dart' show seatWebOpenerProvider;
-import 'package:xrk_app/ui/web/dsh_web_launcher.dart';
+import 'package:xrk_app/ui/web/xrk_web_launcher.dart';
 import 'package:xrk_app/ui/web/web_target.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

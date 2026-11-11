@@ -37,13 +37,13 @@ class RuntimeResetKeepTest {
             "rootfs/root/.xrk/xrk-mobile/ui.json",
             "rootfs/root/.xrk/skills/mine/SKILL.md",
             "rootfs/root/.agents/skills/shared/SKILL.md",
-            "rootfs/root/.xrk/profiles/web/package.json",
-            "rootfs/root/.xrk/cordis.patch.yml",
+            "rootfs/root/.xrk/plugins/.xrk-plugins.json",
+            "rootfs/root/.xrk/settings.yaml",
             "rootfs/root/.xrk/.env",
             "rootfs/root/.xrk/sessions/s1.jsonl",
             "rootfs/root/.xrk/.credentials.yaml",
             "rootfs/root/workspace/notes",
-            "logs/dsh.log",
+            "logs/xrk.log",
         )
         File(base, "rootfs.version").writeText("r1")
     }
@@ -100,7 +100,7 @@ class RuntimeResetKeepTest {
         assertEquals("ui.json", text("root/.xrk/xrk-mobile/ui.json"))
         assertEquals("SKILL.md", text("root/.xrk/skills/mine/SKILL.md"))
         assertEquals("SKILL.md", text("root/.agents/skills/shared/SKILL.md"))
-        for (gone in listOf("root/.xrk/profiles/web/package.json", "root/.xrk/cordis.patch.yml", "root/.xrk/.env")) {
+        for (gone in listOf("root/.xrk/plugins/.xrk-plugins.json", "root/.xrk/settings.yaml", "root/.xrk/.env")) {
             assertNull(gone, text(gone))
         }
         assertUserDataGone()
@@ -112,10 +112,17 @@ class RuntimeResetKeepTest {
         retireRuntime(base, retired, keep, ui + plugins)
         install()
         assertSettled()
-        for (path in listOf("root/.xrk/xrk-mobile/ui.json", "root/.xrk/profiles/web/package.json", "root/.xrk/cordis.patch.yml", "root/.xrk/.env")) {
+        for (path in listOf(
+            "root/.xrk/xrk-mobile/ui.json",
+            "root/.xrk/plugins/.xrk-plugins.json",
+            "root/.xrk/settings.yaml",
+            "root/.xrk/.credentials.yaml",
+        )) {
             assertNotNull(path, text(path))
         }
-        assertUserDataGone()
+        assertNull("root/.xrk/.env", text("root/.xrk/.env"))
+        assertNull("root/.xrk/sessions/s1.jsonl", text("root/.xrk/sessions/s1.jsonl"))
+        assertNull("root/workspace/notes", text("root/workspace/notes"))
     }
 
     @Test fun keepingNothingDeletesEverything() {
@@ -162,14 +169,14 @@ class RuntimeResetKeepTest {
         install()
         assertSettled()
         assertEquals("ui.json", text("root/.xrk/xrk-mobile/ui.json"))
-        assertNull(text("root/.xrk/profiles/web/package.json"))
+        assertNull(text("root/.xrk/plugins/.xrk-plugins.json"))
     }
 
     @Test fun aResetKilledWhileMovingResumesWhereItStopped() {
         installed()
         File(base, "reset.keep").writeText(ui.joinToString("\n"))
         assertTrue(base.renameTo(retired))
-        File(keep, "root/.dsh").mkdirs()
+        File(keep, "root/.xrk").mkdirs()
         assertTrue(File(retired, "rootfs/root/.xrk/xrk-mobile").renameTo(File(keep, "root/.xrk/xrk-mobile"))) // killed here
         retireRuntime(base, retired, keep, ui) // the next reset (no runtime left) finishes it
         assertFalse(retired.exists())
@@ -287,7 +294,7 @@ class RuntimeResetKeepTest {
         assertSettled()
         for (path in listOf(
             "root/.xrk/xrk-mobile/ui.json", "root/.xrk/skills/mine/SKILL.md", "root/.agents/skills/shared/SKILL.md",
-            "root/.xrk/profiles/web/package.json", "root/.xrk/cordis.patch.yml", "root/.xrk/.env",
+            "root/.xrk/plugins/.xrk-plugins.json", "root/.xrk/settings.yaml", "root/.xrk/.env",
         )) assertNotNull(path, text(path))
     }
 
@@ -313,7 +320,7 @@ class RuntimeResetKeepTest {
         assertTrue(base.renameTo(retired))
         settleReset(retired, keep)
         assertFalse(retired.exists())
-        assertEquals(listOf("xrk-mobile"), File(keep, "root/.dsh").list()!!.toList())
+        assertEquals(listOf("xrk-mobile"), File(keep, "root/.xrk").list()!!.toList())
     }
 
     @Test fun anUnreadableKeepListTakesNothingAndDropsNothing() {

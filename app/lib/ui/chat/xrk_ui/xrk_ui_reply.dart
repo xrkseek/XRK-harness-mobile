@@ -10,7 +10,9 @@ import '../../../l10n/l10n.dart';
 import 'xrk_ui_model.dart';
 
 /// 回复消息首行的标记。用户点了视图里的按钮，App 发出的消息以它开头。
-const xrkUiReplyMarker = '[dsh-ui reply]';
+const xrkUiReplyMarker = '[xrk-ui reply]';
+/// Older transcripts may still start with this marker.
+const xrkUiReplyMarkerLegacy = '[dsh-ui reply]';
 
 enum XrkUiReplyKind {
   /// `选择：方案 A`（多选用「、」连接）。
@@ -134,12 +136,17 @@ String? _flat(String? text) {
   return flat == null || flat.isEmpty ? null : flat;
 }
 
-/// 认 `[dsh-ui reply]` 消息；不是的返回 null。
+/// 认 `[xrk-ui reply]` / legacy `[dsh-ui reply]`；不是的返回 null。
 XrkUiReply? parseXrkUiReply(String text) {
   final lines = text.trimLeft().split(RegExp(r'\r?\n'));
   final head = lines.first.trim();
-  if (!head.startsWith(xrkUiReplyMarker)) return null;
-  final title = _flat(head.substring(xrkUiReplyMarker.length));
+  final marker = head.startsWith(xrkUiReplyMarker)
+      ? xrkUiReplyMarker
+      : head.startsWith(xrkUiReplyMarkerLegacy)
+      ? xrkUiReplyMarkerLegacy
+      : null;
+  if (marker == null) return null;
+  final title = _flat(head.substring(marker.length));
   final body = [
     for (final line in lines.skip(1))
       if (line.trim().isNotEmpty) line.trim(),

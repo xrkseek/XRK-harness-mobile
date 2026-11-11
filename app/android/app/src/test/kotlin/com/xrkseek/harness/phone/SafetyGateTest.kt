@@ -43,12 +43,12 @@ class SafetyGateTest {
             }
             assertEquals("system-page", refused(verdict(PhoneUnlocks(secretFields = true), "com.android.settings")))
 
-            // XRK Go itself: read, open, write, and its screens come back whole.
+            // XRK Harness itself: read, open, write, and its screens come back whole.
             val own = gate(PhoneUnlocks(ownApp = true))
             assertNull(refused(own.checkWrite(WriteKind.TAP, target(), SafetyRules.OWN_PACKAGE, null)))
             assertNull(own.checkRead(SafetyRules.OWN_PACKAGE, null))
             assertNull(own.checkOpen(SafetyRules.OWN_PACKAGE, null))
-            val screen = ScreenSnapshot("s1", "对话列表", "XRK Go", SafetyRules.OWN_PACKAGE)
+            val screen = ScreenSnapshot("s1", "对话列表", "XRK Harness", SafetyRules.OWN_PACKAGE)
             assertSame(screen, own.filterScreen(screen))
             assertEquals("system-page", refused(own.checkWrite(WriteKind.TAP, target(), "com.android.settings", null)))
 

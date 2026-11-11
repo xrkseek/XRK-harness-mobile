@@ -1,24 +1,16 @@
-// How the feature pages hook into the shell. The drawer folds DS Bot's
-// conversations into one row and offers one 「分享」; the session detail bar
-// has the terminal key (mirroring back);
-// a subagent tool row opens that child; a one-shot child gets the read-only
-// bar instead of the composer; a lapsed ChatGPT / Claude sign-in reads as such
-// with 「重新登录」; delivered files have one 「分享」 (the share panel); the
-// empty chat names its workspace. Goldens in light and
-// dark:
+// Shell wiring smoke: session detail, chat subagent rows, sharing, empty chat.
+// Native DS Bot drawer row removed — guest Web owns bot surfaces.
 //
 //   flutter test --update-goldens test/integration
 
 import 'package:xrk_app/runtime/runtime_state.dart';
 import 'package:xrk_app/ui/share/share_panel.dart';
 import 'package:xrk_app/state/artifacts.dart';
-import 'package:xrk_app/state/bots_state.dart';
 import 'package:xrk_app/state/chat_state.dart';
 import 'package:xrk_app/state/session_detail_state.dart';
 import 'package:xrk_app/state/sessions_state.dart';
 import 'package:xrk_app/state/workspace_state.dart';
 import 'package:xrk_app/state/workspaces_state.dart';
-import 'package:xrk_app/ui/bots/bots_page.dart';
 import 'package:xrk_app/ui/chat/chat_screen.dart';
 import 'package:xrk_app/ui/chat/composer.dart';
 import 'package:xrk_app/ui/chat/empty_state.dart' show chatClock;
@@ -29,8 +21,6 @@ import 'package:xrk_app/ui/chat/widgets/tool_row.dart';
 import 'package:xrk_app/ui/common/segmented_pill.dart';
 import 'package:xrk_app/ui/features/all_features_page.dart';
 import 'package:xrk_app/ui/session/session_detail_page.dart';
-import 'package:xrk_app/ui/shell/home_shell.dart';
-import 'package:xrk_app/ui/shell/sessions_drawer.dart';
 import 'package:xrk_app/ui/theme/app_icons.dart';
 import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
@@ -44,41 +34,6 @@ import '../chat/support/run_info_fixture.dart';
 import '../chat/support/sample_chat.dart';
 import '../shell/golden_harness.dart'
     show FakeCurrentSession, FakeRuntime, FakeSessions, goldenBoth, runningStatus, sampleSessions;
-
-// ── DS Bot fakes ──────────────────────────────────────────────────────────────
-
-class _ReadyBot extends DsBotController {
-  @override
-  DsBotStatus build() => const DsBotStatus(availability: DsBotAvailability.ready, team: DsBotTeam(revision: 1));
-}
-
-class _Inbox extends DsBotInboxController {
-  _Inbox(this.initial);
-
-  final DsBotInbox initial;
-
-  @override
-  DsBotInbox build() => initial;
-}
-
-/// The drawer over a stand-in chat, with s3 and s5 belonging to DS Bot.
-List<Override> _drawerOverrides({int unread = 3, Set<String>? owned, bool installed = true}) => [
-  localRuntimeProvider.overrideWith(() => FakeRuntime(const LocalRuntimeState(loaded: true, status: runningStatus))),
-  sessionsProvider.overrideWith(() => FakeSessions(sampleSessions())),
-  currentSessionProvider.overrideWith(() => FakeCurrentSession('s2')),
-  dsBotProvider.overrideWith(installed ? _ReadyBot.new : _MissingBot.new),
-  dsBotOwnedSessionsProvider.overrideWithValue(owned ?? const {'s3', 's5'}),
-  dsBotInboxProvider.overrideWith(() => _Inbox(DsBotInbox(unread: unread == 0 ? const {} : {'b1': unread}))),
-];
-
-class _Chat extends StatelessWidget {
-  const _Chat();
-
-  @override
-  Widget build(BuildContext context) => const ColoredBox(color: Colors.transparent);
-}
-
-Widget _drawer() => HomeShell(chatBuilder: (_) => const _Chat(), initiallyOpen: true);
 
 // ── Session detail fakes ──────────────────────────────────────────────────────
 
@@ -180,81 +135,7 @@ void main() {
     });
   });
 
-  group('drawer', () {
-    testWidgets('DS Bot conversations fold into one row with the unread count', (tester) async {
-      usePhoneView(tester);
-      await tester.pumpWidget(testApp(_drawer(), overrides: _drawerOverrides()));
-      await pumpFrames(tester, 6);
-      final drawer = find.byType(SessionsDrawer);
-      expect(find.descendant(of: drawer, matching: find.text('DS Bot')), findsOneWidget);
-      // s3, s5 are the Bots'; the rest stay listed.
-      expect(find.text('解释 proot 的 link2symlink'), findsNothing);
-      expect(find.text('写一个解析 tar.xz 的 Kotlin 工具'), findsNothing);
-      expect(find.text('给设置页加深色模式'), findsOneWidget);
-      expect(find.descendant(of: find.byType(DsBotDrawerRow), matching: find.text('3')), findsOneWidget);
-
-      // On the drawer's grid: glyph on the 20 text line, a 44 row.
-      final drawerLeft = tester.getRect(drawer).left;
-      final row = tester.getRect(find.byType(DsBotDrawerRow));
-      expect(row.height, 44);
-      final glyph = tester.getRect(
-        find.descendant(of: find.byType(DsBotDrawerRow), matching: find.byIcon(AppIcons.bot)),
-      );
-      expect(glyph.left - drawerLeft, 20);
-      expect(glyph.center.dy, moreOrLessEquals(row.center.dy));
-
-      await tester.tap(find.byType(DsBotDrawerRow));
-      await tester.pumpAndSettle();
-      expect(find.byType(BotsPage), findsOneWidget);
-    });
-
-    testWidgets('no Bot conversations and no DS Bot: no row', (tester) async {
-      usePhoneView(tester);
-      await tester.pumpWidget(testApp(_drawer(), overrides: [..._drawerOverrides(owned: const {}, installed: false)]));
-      await pumpFrames(tester, 6);
-      expect(find.byType(DsBotDrawerRow), findsNothing);
-      expect(find.text('解释 proot 的 link2symlink'), findsOneWidget);
-    });
-
-    testWidgets('long press offers one 分享: the share panel at the whole conversation', (tester) async {
-      usePhoneView(tester);
-      await tester.pumpWidget(testApp(_drawer(), overrides: _drawerOverrides()));
-      await pumpFrames(tester, 6);
-      await tester.longPress(find.text('给设置页加深色模式'));
-      await pumpFrames(tester, 8);
-      expect(find.text('分享'), findsOneWidget);
-      expect(find.text('分享图片'), findsNothing);
-      expect(find.text('分享对话'), findsNothing);
-      expect(find.text('重命名'), findsOneWidget);
-      expect(find.text('归档'), findsOneWidget);
-      await tester.tap(find.text('分享'));
-      await pumpFrames(tester, 8);
-      expect(find.byType(SharePanel), findsOneWidget);
-      final scope = tester.widget<SegmentedPill<ShareScope>>(find.byType(SegmentedPill<ShareScope>));
-      expect(scope.selected, ShareScope.whole);
-      expect([for (final s in scope.segments) s.value], [ShareScope.picked, ShareScope.whole]);
-    });
-  });
-
   group('session detail', () {
-    testWidgets('the terminal key mirrors the back key', (tester) async {
-      usePhoneView(tester);
-      final harness = ChatHarness(session: 's1', states: {'s1': runInfoState(finished: true)});
-      await tester.pumpWidget(
-        testApp(
-          const SessionDetailPage(sessionId: 's1'),
-          overrides: [...harness.overrides, sessionPanelsProvider.overrideWith2(_Panels.new)],
-        ),
-      );
-      await pumpFrames(tester, 6);
-      final width = tester.view.physicalSize.width / tester.view.devicePixelRatio;
-      final back = tester.getRect(find.byTooltip('返回'));
-      final terminal = tester.getRect(find.byTooltip('终端'));
-      expect(terminal.size, back.size);
-      expect(terminal.top, back.top);
-      expect(width - terminal.right, back.left);
-    });
-
     testWidgets('six tabs: the last one keeps the same inset as the first', (tester) async {
       usePhoneView(tester);
       await tester.pumpWidget(
@@ -374,8 +255,6 @@ void main() {
   });
 
   group('goldens', () {
-    goldenBoth('drawer_ds_bot', _drawer, overrides: _drawerOverrides);
-
     for (final brightness in Brightness.values) {
       final mode = brightness.name;
 
@@ -448,7 +327,3 @@ void main() {
   });
 }
 
-class _MissingBot extends DsBotController {
-  @override
-  DsBotStatus build() => const DsBotStatus(availability: DsBotAvailability.missing);
-}

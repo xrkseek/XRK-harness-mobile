@@ -58,7 +58,7 @@ void main() {
       final result = await importAgents();
       expect(result.statuses['agents-md']!.state, ImportStepState.done);
       expect(source.readAsStringSync(), incoming);
-      final root = fs.dir('${GuestFs.dshHome}/backups');
+      final root = fs.dir('${GuestFs.xrkHome}/backups');
       final backups = root.existsSync()
           ? root
                 .listSync(recursive: true, followLinks: false)
@@ -80,7 +80,7 @@ void main() {
     source.parent.createSync(recursive: true);
     final original = utf8.encode('旧习惯');
     source.writeAsBytesSync(original);
-    final blocked = fs.file('${GuestFs.dshHome}/backups');
+    final blocked = fs.file('${GuestFs.xrkHome}/backups');
     blocked.parent.createSync(recursive: true);
     blocked.writeAsStringSync('a file occupies the required backup directory');
     final result = await importAgents();

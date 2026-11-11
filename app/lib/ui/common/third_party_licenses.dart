@@ -212,7 +212,7 @@ Copyright (c) 2023 Phosphor Icons
 
 $_mitTerms''';
 
-/// discourse-emojis: the forum emoji names and aliases (`lib/forum/emoji_data.g.dart`, data
+/// discourse-emojis: retired with the forum shell.
 /// only). The project ships no LICENSE file; its gemspec declares MIT.
 const _discourseEmojisMit = '''
 discourse-emojis (https://github.com/discourse/discourse-emojis)

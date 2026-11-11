@@ -95,47 +95,26 @@ data class Hazard(val path: String, val kind: String, val detail: String) {
  * the agent what broke and how to repair the main profile.
  */
 object SafeMode {
-    const val PROFILE = "dsh-app-safe"
-    const val GUEST_DIR = "/var/lib/dsh-app/safe-mode"
+    const val PROFILE = "xrk-app-safe"
+    const val GUEST_DIR = "/var/lib/xrk-app/safe-mode"
     const val ORIGINAL_HOME = "/root/.xrk"
     const val HOME = "$GUEST_DIR/home"
-    const val OVERLAY = "$GUEST_DIR/overlay.patch.yml"
     const val AGENTS_HOME = "$GUEST_DIR/agents"
-    const val TOOL = "$GUEST_DIR/bin/dsh-app-plugins"
+    const val TOOL = "$GUEST_DIR/bin/xrk-app-plugins"
 
     /** Optional launch-template placeholder; templates without it get [LEGACY_NORMAL] rewritten. */
     const val PROFILE_ARGS_PLACEHOLDER = "{XRK_PROFILE_ARGS}"
-    const val NORMAL_PROFILE_ARGS = "web"
-    const val SAFE_PROFILE_ARGS = "--profile $PROFILE --from-default-profile web --patch $OVERLAY"
+    // Host CLI: `serve` (alias `web`). No Cordis `--profile` / YAML `--patch`.
+    const val NORMAL_PROFILE_ARGS = "serve"
+    const val SAFE_PROFILE_ARGS = "serve"
     private const val LEGACY_NORMAL = "/usr/local/bin/xrkh serve "
-    private const val LEGACY_SAFE = "/usr/local/bin/dsh $SAFE_PROFILE_ARGS "
+    private const val LEGACY_SAFE = "/usr/local/bin/xrkh $SAFE_PROFILE_ARGS "
 
     /** Extra guest environment for safe starts only. */
     val GUEST_ENV: Map<String, String> = linkedMapOf(
         "XRK_HOME" to HOME, "XRK_APP_ORIGINAL_HOME" to ORIGINAL_HOME,
         "XRK_AGENTS_HOME" to AGENTS_HOME, "XRK_APP_SAFE_MODE" to "1",
     )
-
-    // l10n:keep agent repair briefing
-    const val OVERLAY_YAML = """# dsh-app safe mode overlay (rewritten by the app on every safe start).
-# The rescue profile never gains plugins: no plugin installs, no plugin_manager tool backend.
-- id: plugin-manager
-  disabled: true
-- id: tool-plugin-manager
-  disabled: true
-# rc.1 Standard and Creator presets contain their own plugin-manager tools.
-# Keep the shipped PTC and Minimal compositions, which do not enable those tools.
-- id: preset-standard
-  disabled: true
-- id: preset-cordis
-  disabled: true
-- id: agent-preset-registry
-  config:
-    default: ptc
-# No live recomposition: edits to any profile take effect only on the next boot.
-- id: hmr
-  disabled: true
-"""
 
     /**
      * The launch argument with the profile selection for this mode, or null when [arg] selects
@@ -154,10 +133,13 @@ object SafeMode {
 
     // ── Preflight ───────────────────────────────────────────────────────────────────
 
-    /** Files that move aside on request; nothing else is ever renamed. */
-    val MOVABLE = listOf("/root/.xrk/cordis.patch.yml", "/root/.xrk/.env", "/root/.env")
+    /**
+     * Files that move aside on request; nothing else is ever renamed.
+     * Cordis `cordis.patch.yml` is gone — xrkh reads `settings.yaml` / plugin inventory, not YAML overlays.
+     */
+    val MOVABLE = listOf("/root/.xrk/.env", "/root/.env")
 
-    /** XRK 0.2.1's bootstrap-only names (`isBootstrapOnly` in dsh-app-boot): a `.env` setting one stops every profile. */
+    /** XRK 0.2.1's bootstrap-only names (`isBootstrapOnly` in xrk-app-boot): a `.env` setting one stops every profile. */
     private val BOOTSTRAP_NAMES = setOf(
         "PATH", "HOME", "USERPROFILE", "SHELL", "NODE_OPTIONS", "NODE_PATH", "NODE_EXTRA_CA_CERTS",
         "LD_PRELOAD", "LD_LIBRARY_PATH", "LD_AUDIT", "BASH_ENV", "ENV", "SHELLOPTS", "BASHOPTS",
@@ -191,27 +173,21 @@ object SafeMode {
 
     fun preflight(
         rootfs: File,
-        patchDetail: String = "全局补丁文件：对所有配置（包括安全模式）都生效，可能就是它让 XRK 起不来。", // l10n:keep test default
         envDetail: (List<String>) -> String = { names ->
             "设置了 ${names.joinToString("、")}，XRK 不允许在 .env 里设置这些变量，会拒绝启动。" // l10n:keep test default
         },
     ): List<Hazard> {
         val out = ArrayList<Hazard>()
         readIfFile(guestFile(rootfs, MOVABLE[0]))?.let { text ->
-            if (!isTrivialPatch(text)) {
-                out += Hazard(MOVABLE[0], "homePatch", patchDetail)
+            val names = launchOnlyNames(text, home = true)
+            if (names.isNotEmpty()) {
+                out += Hazard(MOVABLE[0], "homeEnv", envDetail(names))
             }
         }
         readIfFile(guestFile(rootfs, MOVABLE[1]))?.let { text ->
-            val names = launchOnlyNames(text, home = true)
-            if (names.isNotEmpty()) {
-                out += Hazard(MOVABLE[1], "homeEnv", envDetail(names))
-            }
-        }
-        readIfFile(guestFile(rootfs, MOVABLE[2]))?.let { text ->
             val names = launchOnlyNames(text, home = false)
             if (names.isNotEmpty()) {
-                out += Hazard(MOVABLE[2], "cwdEnv", envDetail(names))
+                out += Hazard(MOVABLE[1], "cwdEnv", envDetail(names))
             }
         }
         return out
@@ -254,7 +230,7 @@ object SafeMode {
         val timeZone: TimeZone = TimeZone.getDefault(),
     )
 
-    /** Writes the overlay, the agent briefing, the failure data and the repair tool under [GUEST_DIR]. */
+    /** Writes the agent briefing, the failure data and the repair tool under [GUEST_DIR]. */
     fun prepare(rootfs: File, briefing: Briefing) {
         val dir = realDir(guestFile(rootfs, GUEST_DIR))
         val home = File(dir, "home")
@@ -264,7 +240,8 @@ object SafeMode {
         realDir(home)
         val agents = realDir(File(dir, "agents"))
         val bin = realDir(File(dir, "bin"))
-        writeAtomic(File(dir, "overlay.patch.yml"), OVERLAY_YAML)
+        // Host `--patch` is JSON only — never leave Cordis YAML overlays for argv injection.
+        File(dir, "overlay.patch.yml").delete()
         writeAtomic(File(agents, "AGENTS.md"), renderBriefing(briefing))
         writeAtomic(
             File(dir, "last-failure.log"),
@@ -280,7 +257,7 @@ object SafeMode {
         } else {
             writeAtomic(lkgFile, json(mapOf("at" to briefing.lkgAt, "bundles" to briefing.lkgBundles, "versions" to briefing.lkgVersions)) + "\n")
         }
-        val tool = File(bin, "dsh-app-plugins")
+        val tool = File(bin, "xrk-app-plugins")
         writeAtomic(tool, PLUGINS_SCRIPT)
         tool.setReadable(true, false)
         tool.setExecutable(true, false)
@@ -289,7 +266,7 @@ object SafeMode {
     fun renderBriefing(b: Briefing): String = buildString {
         val f = b.failure
         // l10n:keep agent repair briefing
-        appendLine("<!-- dsh-app:safe-mode — XRK App 每次进入安全模式时重写本文件，改了也会被覆盖 -->")
+        appendLine("<!-- xrk-app:safe-mode — XRK App 每次进入安全模式时重写本文件，改了也会被覆盖 -->")
         // l10n:keep agent repair briefing
         appendLine("# 你现在运行在「安全模式」")
         appendLine()
@@ -355,22 +332,20 @@ object SafeMode {
         // l10n:keep agent repair briefing
         appendLine("- 当前救援 XRK_HOME 是 `$HOME`；原数据在 `$ORIGINAL_HOME`，修复工具和 trial 始终针对原目录。原对话不会显示在救援会话列表里。")
         // l10n:keep agent repair briefing
-        appendLine("- 救援模式的 App 诊断快照在 `$HOME/dsh-app/diagnostics.md`；先在 App 设置里生成诊断。")
+        appendLine("- 救援模式的 App 诊断快照在 `$HOME/diagnostics.md`；先在 App 设置里生成诊断。")
         // l10n:keep agent repair briefing
-        appendLine("- 无需模型或发送消息：已有救援会话可直接打开标题详情里的终端。首次空库时，先切换到「网页模式」，让官方页面自动创建空救援会话，再通过 XRK 原生悬浮手柄「切回原生界面」保留该会话，打开标题详情里的终端。运行 `$TOOL export \"\$PWD/dsh-recovery.tar\"`，再在该对话的文件页长按归档保存到手机。必须指定尚不存在、位于原数据目录之外的输出文件。")
+        appendLine("- 无需模型或发送消息：已有救援会话可直接打开标题详情里的终端。首次空库时，先切换到「网页模式」，让官方页面自动创建空救援会话，再通过 XRK 原生悬浮手柄「切回原生界面」保留该会话，打开标题详情里的终端。运行 `$TOOL export \"\$PWD/xrk-recovery.tar\"`，再在该对话的文件页长按归档保存到手机。必须指定尚不存在、位于原数据目录之外的输出文件。")
         // l10n:keep agent repair briefing
         appendLine("- 导出保留原始 sessions、attachments 和 workspace 元数据，包括损坏记录；不会修复数据，不是完整插件或工作区备份。符号链接只保存链接，不读取目标。归档含私人对话和图片，妥善保存；诊断包使用 App 设置里的诊断导出入口。")
         appendLine()
         // l10n:keep agent repair briefing
         appendLine("## 主配置在哪")
         // l10n:keep agent repair briefing
-        appendLine("- `/root/.xrk/profiles/web/package.json`：`dependencies` 是装了的包，`dsh.profile.bundles` 是启用的组合包（按顺序叠加）。")
+        appendLine("- `/root/.xrk/plugins/`：进程插件与 client 壳插件（`.xrk-plugins.json` 为清单）。")
         // l10n:keep agent repair briefing
-        appendLine("- `/root/.xrk/profiles/web/cordis.patch.yml`：web 的设置层（网页版设置页改的东西在这里）。")
+        appendLine("- `/root/.xrk/.credentials.yaml` · `/root/.xrk/settings.yaml`：凭据与设置；`/root/.xrk/logs/`：Host 启动诊断。")
         // l10n:keep agent repair briefing
-        appendLine("- `/root/.xrk/profiles/web/.plugin-manager/logs/`：插件安装日志；`/root/.xrk/logs/`：XRK 的启动诊断。")
-        // l10n:keep agent repair briefing
-        appendLine("- 原数据根下的配置受 `/root/.xrk/cordis.patch.yml`、`/root/.xrk/.env` 影响；救援数据根与它们隔离。工作目录的 `/root/.env` 仍需单独检查。")
+        appendLine("- 原数据根下的 `/root/.xrk/.env` 仍可能影响启动；救援数据根与原 HOME 隔离。工作目录的 `/root/.env` 仍需单独检查。")
         if (b.lkgAt == null) {
             // l10n:keep agent repair briefing
             appendLine("- App 还没有记录过正常运行时的插件配置。")
@@ -385,35 +360,25 @@ object SafeMode {
         // l10n:keep agent repair briefing
         appendLine("## 怎么查")
         // l10n:keep agent repair briefing
-        appendLine("1. `$TOOL list`：web 的插件、是否启用、是否第三方、和上次正常运行时比有没有变。")
-        appendLine(
-            // l10n:keep agent repair briefing
-            "2. `$TOOL blame`：列出被第三方插件、设置层或全局补丁加入 / 改过的配置行；" +
-                // l10n:keep agent repair briefing
-                "启动失败信息里写着 `某行 (required)` 时，用 `$TOOL blame 某行`，`patched by` 后面的包通常就是元凶。",
-        )
-        appendLine(
-            // l10n:keep agent repair briefing
-            "3. 运行时崩溃看栈：路径里的 `/root/.xrk/profiles/web/node_modules/<包名>/` 就是出事的包；" +
-                // l10n:keep agent repair briefing
-                "它也可能只是某个插件的依赖，用 `grep -l '\"<包名>\"' /root/.xrk/profiles/web/node_modules/*/package.json` 查是谁依赖它。",
-        )
+        appendLine("1. `$TOOL list`：已装插件清单、是否第三方、和上次正常运行时比有没有变。")
+        // l10n:keep agent repair briefing
+        appendLine("2. `$TOOL blame`：打印 `xrkh dump-config` 的 JSON 摘要，对照失败日志里的配置字段。")
+        // l10n:keep agent repair briefing
+        appendLine("3. 运行时崩溃看 `/root/.xrk/logs/` 与 `$TOOL trial`（对原 HOME 试启 `xrkh serve`）。")
         appendLine()
         // l10n:keep agent repair briefing
         appendLine("## 怎么修（先做可逆的）")
         // l10n:keep agent repair briefing
         appendLine("1. 停用可疑插件：`$TOOL disable <包名>`。只改启用清单，不删文件，不需要网络；`$TOOL enable <包名>` 可以撤销。")
-        appendLine(
-            // l10n:keep agent repair briefing
-            "2. 设置写坏了：先备份 `cp /root/.xrk/profiles/web/cordis.patch.yml /root/.xrk/profiles/web/cordis.patch.yml.bak-\$(date +%Y%m%d%H%M)`，再改原文件。",
-        )
         // l10n:keep agent repair briefing
-        appendLine("3. 用户确认不要这个插件了，再卸载：`XRK_HOME=$ORIGINAL_HOME dsh plugin --profile web remove <包名>`。")
+        appendLine("2. 设置写坏了：备份后编辑 `/root/.xrk/settings.yaml` / `.credentials.yaml`（或移开 `/root/.xrk/.env`）。")
+        // l10n:keep agent repair briefing
+        appendLine("3. 用户确认不要这个插件了，再卸载：`XRK_HOME=$ORIGINAL_HOME xrkh plugin remove <包名>`。")
         appendLine(
             // l10n:keep agent repair briefing
-            "4. 实在修不好，先问用户，再 `mv /root/.xrk/profiles/web /root/.xrk/profiles/web.broken-\$(date +%Y%m%d%H%M)`：" +
+            "4. 实在修不好，先问用户，再移开可疑插件目录或 `.xrk-plugins.json` 条目：" +
                 // l10n:keep agent repair briefing
-                "下次正常启动会重建一个干净的 web，插件和设置要重新装，对话不受影响。",
+                "下次正常启动会按干净清单加载；对话历史不受影响。",
         )
         // l10n:keep agent repair briefing
         appendLine("每一步改了什么都告诉用户。")
@@ -432,9 +397,9 @@ object SafeMode {
         // l10n:keep agent repair briefing
         appendLine("## 不要做")
         // l10n:keep agent repair briefing
-        appendLine("- 不要往 `$PROFILE` 装插件，不要改救援工具、说明、`/opt/dsh`、`/opt/node`：它们会被重建或覆盖。救援 HOME 内的新对话保留，与原对话分开。")
+        appendLine("- 不要往 `$PROFILE` 装插件，不要改救援工具、说明、`/opt/xrk`、`/opt/node`：它们会被重建或覆盖。救援 HOME 内的新对话保留，与原对话分开。")
         // l10n:keep agent repair briefing
-        appendLine("- 不要结束 `/tmp/dsh-web.pid` 里的进程（那就是你自己），不要 `pkill node`。")
+        appendLine("- 不要结束 `/tmp/xrk-web.pid` 里的进程（那就是你自己），不要 `pkill node`。")
         // l10n:keep agent repair briefing
         appendLine("- 不要删 `/root/.xrk/sessions`、`/root/.xrk/storages`、`/root/.xrk/.credentials.yaml`。")
         // l10n:keep agent repair briefing
@@ -484,7 +449,7 @@ object SafeMode {
 
     /** Writes a sibling temp file and renames it over [file] (replacing, not following, a symlink). */
     fun writeAtomic(file: File, text: String) {
-        val tmp = File(file.parentFile, ".${file.name}.dsh-app-${System.nanoTime()}.tmp")
+        val tmp = File(file.parentFile, ".${file.name}.xrk-app-${System.nanoTime()}.tmp")
         try {
             tmp.writeText(text)
             if (!tmp.renameTo(file)) throw IOException("could not replace ${file.path}")
@@ -520,17 +485,17 @@ object SafeMode {
     }
 
     /**
-     * `bin/dsh-app-plugins`, the agent's repair tool (list / disable / enable / blame / trial).
+     * `bin/xrk-app-plugins`, the agent's repair tool (list / disable / enable / blame / trial).
      * Written without `$` so the raw string needs no escaping; verified on a PC XRK 0.2.1 home.
      */
     // l10n:keep agent repair briefing
     const val PLUGINS_SCRIPT = """#!/usr/bin/env node
-// dsh-app safe mode helper. The XRK App rewrites this file on every safe start.
+// xrk-app safe mode helper. The XRK App rewrites this file on every safe start.
 //   list                 plugins of the main profile (web): enabled, third-party, changed since the last good run
-//   disable <pkg>...     drop packages from dsh.profile.bundles (files stay; enable undoes it)
-//   enable <pkg>...      put installed packages back into dsh.profile.bundles
-//   blame [row-id...]    which package inserted / patched each config row (dsh --dump-config)
-//   trial [profile]      boot the original profile on a spare port and report PASS / FAIL
+//   disable <pkg>...     drop packages from inventory / legacy bundles (files stay; enable undoes it)
+//   enable <pkg>...      put installed packages back into the enable list
+//   blame                print xrkh dump-config JSON (Host layered config)
+//   trial                boot xrkh serve against the original HOME on a spare port
 //   export <output.tar>  preserve raw original conversations outside the original HOME
 'use strict'
 const fs = require('fs')
@@ -538,14 +503,12 @@ const path = require('path')
 const cp = require('child_process')
 
 const HOME = process.env.XRK_APP_ORIGINAL_HOME || process.env.XRK_HOME || '/root/.xrk'
-const SAFE = process.env.XRK_APP_SAFE_DIR || '/var/lib/dsh-app/safe-mode'
-const APP_PATCH = process.env.XRK_APP_PATCH || '/etc/dsh-app/dsh-web.patch.yml'
-const SHIPPED = '@deepseek-ai/'
-const CORE = ['@xrkseek/harness-cli-base', '@xrkseek/harness-cli-web-app']
-const PROFILE = 'web'
+const SAFE = process.env.XRK_APP_SAFE_DIR || '/var/lib/xrk-app/safe-mode'
+const CORE = ['xrk-mobile', 'xrk-mobile-host']
+const PLUGINS_DIR = process.env.XRK_PLUGINS_DIR || path.join(HOME, 'plugins')
+const INVENTORY = path.join(PLUGINS_DIR, '.xrk-plugins.json')
+const DISABLED = path.join(PLUGINS_DIR, '.xrk-plugins-disabled.json')
 
-function profileDir () { return path.join(HOME, 'profiles', PROFILE) }
-function manifestPath () { return path.join(profileDir(), 'package.json') }
 function readText (file) { try { return fs.readFileSync(file, 'utf8') } catch (e) { return null } }
 function readJson (file, fallback) {
   const text = readText(file)
@@ -565,60 +528,28 @@ function alive (pid) {
   try { process.kill(pid, 0); return true } catch (e) { return e.code === 'EPERM' }
 }
 
-function readManifest () {
-  const m = readJson(manifestPath(), null)
-  if (!m || typeof m !== 'object') die('读不到 ' + manifestPath() + '（文件不存在或不是合法 JSON）')
-  return m
+function inventoryEntries () {
+  const raw = readJson(INVENTORY, null)
+  if (Array.isArray(raw)) return raw
+  if (raw && Array.isArray(raw.plugins)) return raw.plugins
+  return []
 }
-function bundlesOf (m) {
-  const b = m.dsh && m.dsh.profile && m.dsh.profile.bundles
-  return Array.isArray(b) ? b.slice() : []
+function disabledSet () {
+  const raw = readJson(DISABLED, null)
+  if (Array.isArray(raw)) return new Set(raw)
+  if (raw && Array.isArray(raw.ids)) return new Set(raw.ids)
+  return new Set()
 }
-function depsOf (m) { return m.dependencies && typeof m.dependencies === 'object' ? m.dependencies : {} }
-function installedVersion (name) {
-  const pkg = readJson(path.join(profileDir(), 'node_modules', name, 'package.json'), null)
-  return pkg && typeof pkg.version === 'string' ? pkg.version : null
+function writeDisabled (ids) {
+  writeAtomic(DISABLED, JSON.stringify({ ids: ids }, null, 2) + '\n')
 }
-
-// Match XRK's installation-first package lookup without requiring a package
-// to export package.json. Resolve metadata only; enabling does not boot code.
-function requireInstalledBundle (name) {
-  if (!/^(@[^/\\]+\/)?[^/\\]+$/.test(name) || name.split('/').some(function (part) { return part === '.' || part === '..' })) {
-    throw new Error('不是有效的包名：' + name)
-  }
-  const createRequire = require('module').createRequire
-  const anchors = ['/opt/dsh/node_modules/@xrkseek/harness-cli/package.json', manifestPath()]
-  for (const anchor of anchors) {
-    const paths = createRequire(anchor).resolve.paths(name) || []
-    for (const directory of paths) {
-      const file = path.join(directory, name, 'package.json')
-      try {
-        fs.statSync(file)
-      } catch (e) {
-        if (e.code === 'ENOENT' || e.code === 'ENOTDIR') continue
-        throw e
-      }
-      // A broken installation copy must not silently select a profile copy.
-      const pkg = JSON.parse(fs.readFileSync(file, 'utf8'))
-      const bundle = pkg && pkg.dsh && pkg.dsh.bundle
-      if (!bundle || typeof bundle !== 'object' || Array.isArray(bundle)) {
-        throw new Error(name + ' 的 package.json 没有有效的 dsh.bundle，不能启用')
-      }
-      // Reuse the installed runtime's read-only patch dialect (including !!js
-      // data and ordered/empty arrays). Never boot plugins or rewrite layers.
-      // Keep this import lazy: a damaged runtime must not break list/disable.
-      const boot = createRequire(anchors[0])('@xrkseek/harness-cli-app-boot')
-      for (const patch of boot.bundlePatchFiles(bundle)) {
-        boot.loadOverlayPatches('dsh-app-plugins', path.join(path.dirname(file), patch))
-      }
-      return
-    }
-  }
-  throw new Error(name + ' 在 XRK 安装和 web profile 中都无法解析，不能启用')
+function entryName (e) {
+  return (e && (e.name || e.id || e.package)) || ''
+}
+function entryVersion (e) {
+  return (e && e.version) || ''
 }
 
-// Same protocol as XRK's own writers: a `wx`-created <file>.lock holding the writer's pid,
-// taken over when that pid no longer exists; the new content lands by rename.
 function withLock (file, fn) {
   const lock = file + '.lock'
   const deadline = Date.now() + 5000
@@ -633,30 +564,17 @@ function withLock (file, fn) {
         fs.rmSync(lock, { force: true })
         continue
       }
-      if (Date.now() > deadline) die('package.json 正被别的进程修改（锁文件 ' + lock + '），稍后再试')
+      if (Date.now() > deadline) die('插件清单正被别的进程修改（锁文件 ' + lock + '），稍后再试')
       sleep(100)
     }
   }
   try { return fn() } finally { fs.rmSync(lock, { force: true }) }
 }
 function writeAtomic (file, text) {
+  fs.mkdirSync(path.dirname(file), { recursive: true })
   const tmp = file + '.' + process.pid + '.' + Date.now() + '.tmp'
   fs.writeFileSync(tmp, text)
   fs.renameSync(tmp, file)
-}
-function updateBundles (change) {
-  const file = manifestPath()
-  return withLock(file, function () {
-    const m = readManifest()
-    const before = bundlesOf(m)
-    const after = change(before, depsOf(m))
-    if (JSON.stringify(before) === JSON.stringify(after)) return false
-    if (!m.dsh || typeof m.dsh !== 'object') m.dsh = {}
-    if (!m.dsh.profile || typeof m.dsh.profile !== 'object') m.dsh.profile = {}
-    m.dsh.profile.bundles = after
-    writeAtomic(file, JSON.stringify(m, null, 2) + '\n')
-    return true
-  })
 }
 
 function lastGood () {
@@ -665,19 +583,17 @@ function lastGood () {
 }
 
 function list () {
-  const m = readManifest()
-  const bundles = bundlesOf(m)
-  const deps = depsOf(m)
+  const entries = inventoryEntries()
+  const disabled = disabledSet()
   const lkg = lastGood()
-  const names = bundles.concat(Object.keys(deps).filter(function (n) { return bundles.indexOf(n) < 0 }))
-  out('web 的组合包（' + manifestPath() + '，dsh.profile.bundles 按顺序叠加）：')
-  for (const name of names) {
-    const enabled = bundles.indexOf(name) >= 0
-    const thirdParty = Object.prototype.hasOwnProperty.call(deps, name) || name.indexOf(SHIPPED) !== 0
-    const version = installedVersion(name) || deps[name] || ''
+  out('插件清单（' + INVENTORY + '）：')
+  for (const e of entries) {
+    const name = entryName(e)
+    if (!name) continue
+    const enabled = !disabled.has(name)
+    const version = entryVersion(e)
     const notes = []
-    if (!thirdParty) notes.push('XRK 自带')
-    if (thirdParty && !Object.prototype.hasOwnProperty.call(deps, name)) notes.push('启用了但没安装')
+    if (e.kind) notes.push(String(e.kind))
     if (lkg) {
       const was = lkg.bundles.indexOf(name) >= 0
       const lkgVersion = lkg.versions && lkg.versions[name]
@@ -687,44 +603,49 @@ function list () {
     }
     out((enabled ? '  [启用] ' : '  [停用] ') + name + (version ? '@' + version : '') + (notes.length ? '  — ' + notes.join('；') : ''))
   }
-  if (!names.length) out('  （空）')
+  if (!entries.length) out('  （空）')
   out(lkg ? '上次正常运行的配置记录于 ' + when(lkg.at) + '。' : '没有上次正常运行的配置记录。')
+  out('停用清单：' + DISABLED)
 }
 
 function disable (names) {
-  if (!names.length) die('用法：dsh-app-plugins disable <包名>...')
-  for (const name of names) if (CORE.indexOf(name) >= 0) die(name + ' 是 XRK 的核心组件，不能停用')
-  const notEnabled = []
-  const changed = updateBundles(function (bundles) {
-    for (const name of names) if (bundles.indexOf(name) < 0) notEnabled.push(name)
-    return bundles.filter(function (b) { return names.indexOf(b) < 0 })
+  if (!names.length) die('用法：xrk-app-plugins disable <包名>...')
+  for (const name of names) if (CORE.indexOf(name) >= 0) die(name + ' 是手机壳自带插件，不能停用')
+  const installed = new Set(inventoryEntries().map(entryName).filter(Boolean))
+  withLock(DISABLED, function () {
+    const disabled = disabledSet()
+    const newly = []
+    for (const name of names) {
+      if (!installed.has(name)) { out(name + ' 不在插件清单里'); continue }
+      if (disabled.has(name)) { out(name + ' 本来就没有启用'); continue }
+      disabled.add(name)
+      newly.push(name)
+    }
+    writeDisabled(Array.from(disabled).sort())
+    if (newly.length) out('已停用：' + newly.join('、') + '。文件没有删除，可以用 enable 撤销；重启到正常模式后生效。')
   })
-  for (const name of notEnabled) out(name + ' 本来就没有启用')
-  if (changed) out('已停用：' + names.filter(function (n) { return notEnabled.indexOf(n) < 0 }).join('、') + '。文件没有删除，可以用 enable 撤销；重启到正常模式后生效。')
 }
 
 function enable (names) {
-  if (!names.length) die('用法：dsh-app-plugins enable <包名>...')
-  let changed
-  try {
-    changed = updateBundles(function (bundles, deps) {
-      for (const name of names) {
-        if (!Object.prototype.hasOwnProperty.call(deps, name) && name.indexOf(SHIPPED) !== 0) throw new Error(name + ' 没有安装在 web 里（不在 dependencies 中），不能启用')
-        requireInstalledBundle(name)
-      }
-      const next = bundles.slice()
-      for (const name of names) if (next.indexOf(name) < 0) next.push(name)
-      return next
-    })
-  } catch (e) {
-    die(e.message)
-  }
-  out(changed ? '已启用：' + names.join('、') + '。重启到正常模式后生效。' : '这些包本来就是启用的')
+  if (!names.length) die('用法：xrk-app-plugins enable <包名>...')
+  const installed = new Set(inventoryEntries().map(entryName).filter(Boolean))
+  withLock(DISABLED, function () {
+    const disabled = disabledSet()
+    const newly = []
+    for (const name of names) {
+      if (!installed.has(name)) die(name + ' 不在插件清单里，不能启用（先 xrkh plugin add）')
+      if (!disabled.has(name)) { out(name + ' 本来就是启用的'); continue }
+      disabled.delete(name)
+      newly.push(name)
+    }
+    writeDisabled(Array.from(disabled).sort())
+    if (newly.length) out('已启用：' + newly.join('、') + '。重启到正常模式后生效。')
+  })
 }
 
 // A raw rescue copy, independent of session parsing and model credentials.
 function exportOriginal (args) {
-  if (args.length !== 1 || !args[0]) die('用法：dsh-app-plugins export <output.tar>')
+  if (args.length !== 1 || !args[0]) die('用法：xrk-app-plugins export <output.tar>')
   let output
   let fd
   try {
@@ -788,64 +709,29 @@ function cleanEnv () {
   env.XRK_HOME = HOME
   return env
 }
-function patchArgs () { return fs.existsSync(APP_PATCH) ? ['--patch', APP_PATCH] : [] }
-
-function describeSource (src) {
-  if (src === path.join(profileDir(), 'cordis.patch.yml')) return 'web 的设置层（' + src + '）'
-  if (src === path.join(HOME, 'cordis.patch.yml')) return '全局补丁（' + src + '，对所有 profile 生效）'
-  return src
-}
-function isOwnSource (src) { return src.indexOf(SHIPPED) === 0 || src === APP_PATCH }
-
 function blame (ids) {
-  if (!ids.length) {
-    const failure = readJson(path.join(SAFE, 'failure.json'), null)
-    if (failure && Array.isArray(failure.requiredRows)) ids = failure.requiredRows
-  }
-  const r = cp.spawnSync('dsh', ['--profile', PROFILE].concat(patchArgs(), ['--dump-config']), {
+  const r = cp.spawnSync('xrkh', ['dump-config'], {
     encoding: 'utf8', env: cleanEnv(), maxBuffer: 64 * 1024 * 1024
   })
-  if (r.error) die('运行 dsh 失败：' + r.error.message)
+  if (r.error) die('运行 xrkh 失败：' + r.error.message)
   if (r.status !== 0) {
-    out('dsh --dump-config 失败（退出码 ' + r.status + '），主配置的补丁层本身可能有语法错误：')
-    out(redact(String(r.stderr || '').split('\n').slice(-30).join('\n')))
+    out('xrkh dump-config 失败（退出码 ' + r.status + '）：')
+    out(redact(String(r.stderr || r.stdout || '').split('\n').slice(-40).join('\n')))
     process.exit(1)
   }
-  const rows = []
-  let header = null // one header covers every row up to the next one
-  for (const line of String(r.stdout).split('\n')) {
-    if (line.indexOf('# == ') === 0) { header = line.slice(5).trim(); continue }
-    if (line.indexOf('- id: ') === 0) {
-      const id = line.slice(6).trim().replace(/['"]/g, '')
-      const parts = (header || '').split(', patched by ')
-      const by = parts.length > 1 ? parts.slice(1).join(', patched by ').split(', ') : []
-      rows.push({ id: id, inserted: parts[0] || '?', patched: by })
-    }
-  }
-  const describe = function (row) {
-    let text = row.id + '：由 ' + describeSource(row.inserted) + ' 加入'
-    if (row.patched.length) text += '，被 ' + row.patched.map(describeSource).join('、') + ' 改过'
-    const suspects = [row.inserted].concat(row.patched).filter(function (s) { return !isOwnSource(s) })
-    if (suspects.length) text += ' → 可疑：' + suspects.map(describeSource).join('、')
-    return text
-  }
+  const text = String(r.stdout || '')
   if (ids.length) {
     for (const id of ids) {
-      const row = rows.find(function (x) { return x.id === id })
-      out(row ? describe(row) : id + '：当前 web 配置里没有这一行')
+      const hit = text.split('\n').filter(function (line) { return line.indexOf(id) >= 0 }).slice(0, 20)
+      out(hit.length ? ('匹配 ' + id + '：\n' + hit.join('\n')) : (id + '：dump-config 输出里没有这一段'))
     }
     return
   }
-  const touched = rows.filter(function (row) {
-    return [row.inserted].concat(row.patched).some(function (s) { return !isOwnSource(s) })
-  })
-  out('被第三方插件、设置层或全局补丁加入 / 改过的配置行（共 ' + rows.length + ' 行）：')
-  for (const row of touched) out('  ' + describe(row))
-  if (!touched.length) out('  （没有，web 的配置行都来自 XRK 自带组件）')
+  out('xrkh dump-config（前 80 行；完整 JSON 请直接跑 xrkh dump-config）：')
+  out(text.split('\n').slice(0, 80).join('\n'))
 }
 
 function trial (args) {
-  const profile = args[0] || PROFILE
   const hold = parseInt(process.env.TRIAL_HOLD || '30', 10)
   const limit = parseInt(process.env.TRIAL_LIMIT || '240', 10)
   const started = Date.now()
@@ -853,7 +739,7 @@ function trial (args) {
   let upAt = 0
   let passed = false
   let finished = false
-  const child = cp.spawn('dsh', ['--profile', profile].concat(patchArgs(), ['--host', '127.0.0.1', '--port', '0', '--no-open']), {
+  const child = cp.spawn('xrkh', ['serve', '--host', '127.0.0.1', '--port', '0'], {
     env: cleanEnv(), stdio: ['ignore', 'pipe', 'pipe']
   })
   const seconds = function (ms) { return Math.round(ms / 1000) }
@@ -862,7 +748,7 @@ function trial (args) {
       if (!line) continue
       tail.push(redact(line))
       if (tail.length > 60) tail.shift()
-      if (!upAt && line.indexOf('token=') >= 0) upAt = Date.now()
+      if (!upAt && (/listening|http:\/\/127\.0\.0\.1|Host ready|serve /i.test(line) || line.indexOf('token=') >= 0)) upAt = Date.now()
     }
   }
   child.stdout.on('data', onData)
@@ -879,11 +765,11 @@ function trial (args) {
     }
     process.exit(code)
   }
-  child.on('error', function (e) { finish(1, 'FAIL: 无法运行 dsh：' + e.message, false) })
+  child.on('error', function (e) { finish(1, 'FAIL: 无法运行 xrkh：' + e.message, false) })
   child.on('exit', function (code, signal) {
-    if (passed) return finish(0, 'PASS: ' + profile + ' 在 ' + seconds(upAt - started) + ' 秒内启动，并稳定运行了 ' + hold + ' 秒', false)
-    finish(1, 'FAIL: ' + profile + ' 在 ' + seconds(Date.now() - started) + ' 秒时退出（' + (signal ? '信号 ' + signal : '退出码 ' + code) + '）' +
-      (upAt ? '，它在 ' + seconds(upAt - started) + ' 秒时已经打印了登录地址' : '，没打印登录地址') + '。最后的输出：', true)
+    if (passed) return finish(0, 'PASS: xrkh serve 在 ' + seconds(upAt - started) + ' 秒内启动，并稳定运行了 ' + hold + ' 秒', false)
+    finish(1, 'FAIL: xrkh serve 在 ' + seconds(Date.now() - started) + ' 秒时退出（' + (signal ? '信号 ' + signal : '退出码 ' + code) + '）' +
+      (upAt ? '，它在 ' + seconds(upAt - started) + ' 秒时已经打印了就绪信息' : '，没打印就绪信息') + '。最后的输出：', true)
   })
   const stop = function () {
     child.kill('SIGTERM')
@@ -893,7 +779,7 @@ function trial (args) {
     if (upAt && Date.now() - upAt >= hold * 1000 && !passed) { passed = true; stop() }
     if (!upAt && Date.now() - started >= limit * 1000 && !finished) {
       child.kill('SIGKILL')
-      finish(1, 'FAIL: ' + profile + ' 在 ' + limit + ' 秒内没有打印登录地址（可能卡住了）。最后的输出：', true)
+      finish(1, 'FAIL: xrkh serve 在 ' + limit + ' 秒内没有打印就绪信息（可能卡住了）。最后的输出：', true)
     }
   }, 500)
 }
@@ -908,7 +794,7 @@ else if (command === 'blame') blame(rest)
 else if (command === 'trial') trial(rest)
 else if (command === 'export') exportOriginal(rest)
 else {
-  out('用法：dsh-app-plugins list | disable <包名>... | enable <包名>... | blame [配置行 id...] | trial [profile] | export <output.tar>')
+  out('用法：xrk-app-plugins list | disable <包名>... | enable <包名>... | blame [配置行 id...] | trial [profile] | export <output.tar>')
   process.exit(command ? 1 : 0)
 }
 """

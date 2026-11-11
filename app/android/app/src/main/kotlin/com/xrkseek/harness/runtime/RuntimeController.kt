@@ -33,11 +33,11 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
     }
 
     private val main = Handler(Looper.getMainLooper())
-    private val worker = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-runtime") }
+    private val worker = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-runtime") }
     private val sinks = LinkedHashSet<EventSink>()
     private val logDir = File(app.filesDir, "runtime/logs")
     private val runtimeLogs = RuntimeLogs(
-        File(logDir, "dsh.log"), SystemClock::elapsedRealtime,
+        File(logDir, "xrk.log"), SystemClock::elapsedRealtime,
         post = { action -> main.post { action() } },
         deliver = { entries ->
             val event = mapOf("type" to "logs", "entries" to entries.map { it.toMap() })
@@ -46,7 +46,7 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
         },
     )
     private val lkgFile = File(app.filesDir, "runtime/lkg/lkg.json")
-    private val prefs = app.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private val prefs = migratePrefs(app, PREFS, LEGACY_PREFS)
     private val workspaceRecovery = WorkspaceRecoveryMode(prefs.getBoolean(K_WORKSPACE_RECOVERY, false))
 
     val manifest: RuntimeManifest by lazy { RuntimeManifest.load(app) }
@@ -63,7 +63,7 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
     @Volatile private var error: String? = null
     @Volatile private var pendingEnv: Map<String, String> = emptyMap()
     @Volatile private var pendingPhoneStorage = false
-    /** Whether the managed AGENTS.md tells the model about ```dsh-ui views (settings, on by default). */
+    /** Whether the managed AGENTS.md tells the model about ```xrk-ui views (settings, on by default). */
     @Volatile private var pendingVisualReplies = true
 
     // Safe mode and failure detection. State that must survive the app being killed lives in [prefs].
@@ -329,7 +329,7 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
 
     /**
      * Writes the app's diagnostics snapshot where the engine's agent can read it
-     * (`$XRK_HOME/dsh-app/diagnostics.md`). A few KB on the platform thread, after the
+     * (`$XRK_HOME/diagnostics.md`). A few KB on the platform thread, after the
      * engine came up or when the person asks from 设置 → 诊断. Null when the runtime is
      * not installed or the write failed.
      */
@@ -708,7 +708,8 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
     fun safePreflight(onDone: (List<Map<String, Any?>>) -> Unit) {
         worker.execute {
             val hazards = try {
-                SafeMode.preflight(installer.rootfs, AppStrings.get(app, R.string.safe_patch_hazard)) { names ->
+                // Cordis patch hazard removed with SafeMode.preflight (env .env only).
+                SafeMode.preflight(installer.rootfs) { names ->
                     AppStrings.get(app, R.string.safe_env_hazard, names.joinToString(if (AppStrings.isEnglish(app)) ", " else "、"))
                 }.map { it.toMap() }
             } catch (_: Exception) {
@@ -1055,7 +1056,31 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
     }
 
     companion object {
-        private const val PREFS = "dsh_runtime"
+        private const val PREFS = "xrk_runtime"
+        private const val LEGACY_PREFS = "dsh_runtime"
+
+        /** Copy keys from a renamed SharedPreferences file once, then drop the legacy file. */
+        private fun migratePrefs(app: Context, name: String, legacy: String): android.content.SharedPreferences {
+            val dest = app.getSharedPreferences(name, Context.MODE_PRIVATE)
+            if (dest.all.isNotEmpty()) return dest
+            val src = app.getSharedPreferences(legacy, Context.MODE_PRIVATE)
+            if (src.all.isEmpty()) return dest
+            val edit = dest.edit()
+            for ((k, v) in src.all) {
+                when (v) {
+                    is Boolean -> edit.putBoolean(k, v)
+                    is Float -> edit.putFloat(k, v)
+                    is Int -> edit.putInt(k, v)
+                    is Long -> edit.putLong(k, v)
+                    is String -> edit.putString(k, v)
+                    is Set<*> -> @Suppress("UNCHECKED_CAST") edit.putStringSet(k, v as Set<String>)
+                }
+            }
+            edit.commit()
+            src.edit().clear().commit()
+            return dest
+        }
+
         private const val K_SAFE_STATE = "safeState"
         private const val K_SAFE_REASON = "safeReason"
         private const val K_STRIKES = "strikes"

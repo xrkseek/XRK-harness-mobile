@@ -134,9 +134,12 @@ fi
 stop_daemon() {
   ((keep_daemon)) && return 0
   (cd "$APP/android" && ./gradlew --stop -q >/dev/null 2>&1) || true
-  local pids
-  pids=$(pgrep -f '[G]radleDaemon' || true)
-  [[ -n $pids ]] && kill $pids 2>/dev/null || true
+  # Git Bash on Windows often has no pgrep — gradlew --stop is enough there.
+  if command -v pgrep >/dev/null 2>&1; then
+    local pids
+    pids=$(pgrep -f '[G]radleDaemon' || true)
+    [[ -n $pids ]] && kill $pids 2>/dev/null || true
+  fi
 }
 drop_beta() { [[ -f $beta_json ]] && shred -u "$beta_json" 2>/dev/null || rm -f "$beta_json"; }
 trap 'drop_beta; stop_daemon' EXIT

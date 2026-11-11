@@ -1,7 +1,6 @@
-// Chinese wording for the native mirrors of official XRK Web pages: schedule
-// rules, job states, preset names. Rule wording follows the official
-// `dsh-client-ui-schedule` / `dsh-client-ui-permission-presets` /
-// `dsh-client-ui-agent-preset` copy where it exists.
+// Shared wording for native feature pages: job states, permission /
+// agent preset names. Schedule copy lived with the deleted native
+// schedule editor — guest Web owns automation UI.
 
 import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/foundation.dart';
@@ -9,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import '../../l10n/l10n.dart';
 import '../../state/engine_error_text.dart';
 import '../chat/run_info.dart';
-import 'schedule_editor/schedule_draft.dart' show taskRuleText;
 
 /// A short reason for a failed request, or null when there is nothing worth
 /// saying; host diagnostics stay in the debug log.
@@ -24,10 +22,6 @@ String featureErrorText(String title, Object error) {
   return reason == null ? title : appL10n.featuresErrorReason(title, reason);
 }
 
-/// How often a task runs, in the one rule wording the editor preview uses
-/// too (`ruleText`): `每天 09:00`, `每个工作日 09:00`, `每周一、三 18:30`,
-/// `每 2 小时`, `仅一次`, cron rules in words.
-String scheduleRule(ScheduleTask task) => taskRuleText(task);
 
 /// A moment in the device's time zone, relative to [now]: `今天 09:00`,
 /// `明天 09:00`, `昨天 21:15`, `10月25日 09:00`, `2025年1月3日 09:00`.
@@ -50,16 +44,6 @@ String formatWhen(DateTime at, {DateTime? now}) {
   };
 }
 
-/// One list line under a task's title.
-String scheduleSummary(ScheduleTask task, {DateTime? now}) {
-  final rule = scheduleRule(task);
-  if (task.active) {
-    final next = task.scheduledAt;
-    return next == null ? rule : appL10n.featuresScheduleSummaryNext(rule, formatWhen(next, now: now));
-  }
-  final last = task.lastDeliveredAt;
-  return last == null ? appL10n.featuresEnded : appL10n.featuresScheduleSummaryEnded(formatWhen(last, now: now));
-}
 
 /// `运行中`, `正在停止`, `已完成`, `已停止`, `失败`.
 String jobStatusLabel(String status) => switch (status) {

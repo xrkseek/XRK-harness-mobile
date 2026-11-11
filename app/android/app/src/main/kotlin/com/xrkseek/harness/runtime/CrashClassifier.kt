@@ -74,9 +74,13 @@ object CrashClassifier {
     const val TAIL_LINES = 300
 
     private val FATAL = listOf(
+        Regex("^xrkh: startup failed:"),
+        Regex("^xrkh: fatal (uncaught exception|load failure):"),
+        Regex("^[A-Za-z]*Error: xrkh: "),
+        Regex("^xrkh: profile startup and cleanup failed"),
+        // Legacy DSH CLI prefixes still appear in old homes / rotated logs.
         Regex("^dsh: startup failed:"),
         Regex("^dsh: fatal (uncaught exception|load failure):"),
-        // Thrown before startup proper: a malformed patch layer, a .env with a launch-only variable, ...
         Regex("^[A-Za-z]*Error: dsh: "),
         Regex("^dsh: profile startup and cleanup failed"),
     )
@@ -87,7 +91,7 @@ object CrashClassifier {
     private val NO_SPACE = Regex("ENOSPC|No space left on device")
     // Fixed executable and shell prefix: a plugin's generic error is not launch evidence.
     private val EXEC_FAILED = Regex(
-        "^(?:/bin/)?(?:sh|bash|dash): (?:[0-9]+: )?exec: /usr/local/bin/dsh: " +
+        "^(?:/bin/)?(?:sh|bash|dash): (?:[0-9]+: )?exec: /usr/local/bin/xrkh: " +
             "(?:Bad address|Exec format error|Permission denied|not found|Function not implemented|Operation not permitted)$",
     )
     // The first guest command failed before env or XRK could run; this is not an Android kill.
@@ -95,7 +99,7 @@ object CrashClassifier {
         "^proot error: execve\\(\"/usr/bin/env\"\\): (?:Permission denied|Too many symbolic links encountered)$",
     )
     private val DIRECT_FAILED = listOf(
-        Regex("^\\[dsh-app-direct] launch failed: .+"),
+        Regex("^\\[xrk-app-direct] launch failed: .+"),
         Regex("^/.*/opt/node/bin/node: (?:error while loading shared libraries: .+|.+: version [`'].+['`] not found.*)$"),
         Regex("^/.*/ld-linux[^/: ]+\\.so(?:\\.[0-9]+)?: (?:cannot open shared object file|failed to map segment|invalid ELF header|ELF load command|cannot execute).*$"),
         Regex("^Error \\[ERR_MODULE_NOT_FOUND]: Cannot find module ['\"].*/opt/xrk-mobile/direct/(?:preload|dns|paths|processes|modules)\\.mjs['\"].*$"),
@@ -111,8 +115,9 @@ object CrashClassifier {
     private val REQUIRED_ROW = Regex("^\\s{2}(\\S+) \\(required\\)")
     private val PACKAGE = Regex("^\\s+Package: (\\S+)")
     private val TOKEN = Regex("token=[A-Za-z0-9._~%-]+")
-    private const val WEB_MODULES = "/profiles/web/node_modules/"
-    private const val SHIPPED_SCOPE = "@deepseek-ai/"
+    /** Stack frames under managed plugins or leftover Cordis profile trees. */
+    private val MODULE_MARKERS = listOf("/plugins/", "/profiles/web/node_modules/", "/node_modules/")
+    private const val SHIPPED_SCOPE = "@xrkseek/"
     private const val SUMMARY_MAX = 240
 
     /** A token deadline must not hide existing evidence, nor invent it for a silent loader. */
@@ -178,13 +183,25 @@ object CrashClassifier {
         )
     }
 
-    /** `…/profiles/web/node_modules/[.pnpm/x@1/node_modules/]<pkg>/…` → `<pkg>` (scoped names kept whole). */
+    /** `…/node_modules/[.pnpm/x@1/node_modules/]<pkg>/…` (or plugins path) → `<pkg>` (scoped names kept). */
     fun stackPackage(line: String): String? {
-        val start = line.indexOf(WEB_MODULES)
+        var start = -1
+        var markerLen = 0
+        for (marker in MODULE_MARKERS) {
+            val at = line.lastIndexOf(marker)
+            if (at >= 0 && at >= start) {
+                start = at
+                markerLen = marker.length
+            }
+        }
         if (start < 0) return null
-        var rest = line.substring(start + WEB_MODULES.length).takeWhile { !it.isWhitespace() && it != ')' }
+        var rest = line.substring(start + markerLen).takeWhile { !it.isWhitespace() && it != ')' }
         val nested = rest.lastIndexOf("node_modules/")
         if (nested >= 0) rest = rest.substring(nested + "node_modules/".length)
+        // Skip inventory-relative segments before the package name when marker was `/plugins/`.
+        while (rest.startsWith("web/") || rest.startsWith("node_modules/")) {
+            rest = rest.substring(rest.indexOf('/') + 1)
+        }
         val parts = rest.split('/')
         val name = if (parts[0].startsWith("@") && parts.size > 1) parts[0] + "/" + parts[1] else parts[0]
         return name.takeIf { it.isNotEmpty() && !it.startsWith(".") && !it.contains(':') }
@@ -192,8 +209,8 @@ object CrashClassifier {
 
     private fun summarize(line: String): String {
         var text = redact(line.trim())
-        text = text.removePrefix("dsh: ")
-        text = text.replaceFirst(Regex("^[A-Za-z]*Error: dsh: "), "")
+        text = text.removePrefix("xrkh: ").removePrefix("dsh: ")
+        text = text.replaceFirst(Regex("^[A-Za-z]*Error: (?:xrkh|dsh): "), "")
         return if (text.length > SUMMARY_MAX) text.take(SUMMARY_MAX - 1) + "…" else text
     }
 }

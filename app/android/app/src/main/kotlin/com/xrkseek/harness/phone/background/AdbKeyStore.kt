@@ -50,7 +50,7 @@ class AdbKeyStore(context: Context) {
         val generator = KeyPairGenerator.getInstance("RSA").apply { initialize(2048) }
         val keyPair = generator.generateKeyPair()
         val now = System.currentTimeMillis()
-        val subject = X500Principal("CN=dsh-app")
+        val subject = X500Principal("CN=xrk-app")
         val builder = JcaX509v3CertificateBuilder(
             subject,
             BigInteger.valueOf(now),

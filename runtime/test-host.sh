@@ -39,7 +39,7 @@ m = json.load(open(sys.argv[1])); argv = m["launch"]["argv"]
 tail = argv[argv.index("/usr/bin/env"):]
 for a in tail:
     if a == "{GUEST_ENV}":
-        print("DEEPSEEK_API_KEY=sk-dsh-app-smoke-test-not-a-real-key"); print("TZ=Asia/Shanghai")
+        print("DEEPSEEK_API_KEY=sk-xrk-app-smoke-test-not-a-real-key"); print("TZ=Asia/Shanghai")
         continue
     print(a.replace("{PORT}", sys.argv[2]))
 PY
@@ -48,7 +48,7 @@ PY
 run() {  # run [extra bwrap args...] -- argv...
   local -a extra=()
   while [[ "$1" != "--" ]]; do extra+=("$1"); shift; done; shift
-  bwrap --bind "$ROOT" / --dev /dev --proc /proc --bind "$ROOT/var/lib/dsh-app/shm" /dev/shm \
+  bwrap --bind "$ROOT" / --dev /dev --proc /proc --bind "$ROOT/var/lib/xrk-app/shm" /dev/shm \
     --unshare-user --uid 0 --gid 0 --unshare-ipc --unshare-uts --die-with-parent --chdir /root \
     "${extra[@]}" "$@"
 }
@@ -82,7 +82,7 @@ run --share-net -- "${GUEST[@]:0:${#GUEST[@]}-3}" /bin/bash -c '
   set -e
   echo "pnpm $(pnpm --version); pnpm registry: $(pnpm config get registry); npm registry: $(npm config get registry)"
   test "$(pnpm config get registry)" = https://registry.npmmirror.com/
-  export XRK_HOME=/tmp/dsh-plugin-test; rm -rf "$XRK_HOME"
+  export XRK_HOME=/tmp/xrk-plugin-test; rm -rf "$XRK_HOME"
   SECONDS=0; dsh plugin --profile web add "$1" > /tmp/plugin-add.log 2>&1 || { tail -30 /tmp/plugin-add.log; exit 1; }
   echo "added $1 in ${SECONDS}s; profile $(du -sh "$XRK_HOME/profiles/web" | cut -f1), store $(du -sh "$(pnpm store path)" | cut -f1)"
   grep -q "\"${1%@*}\"" "$XRK_HOME/profiles/web/package.json"
@@ -93,7 +93,7 @@ run --share-net -- "${GUEST[@]:0:${#GUEST[@]}-3}" /bin/bash -c '
 else echo "  (skipped: NETWORK=0)"; fi
 
 echo "== xrkh serve (online, port $PORT)"; SECONDS=0
-LOG="$HERE/.work/$ABI/dsh-web.log"
+LOG="$HERE/.work/$ABI/xrk-web.log"
 run --share-net -- "${GUEST[@]}" > "$LOG" 2>&1 &
 BG=$!
 token=""; for _ in $(seq 1 240); do
@@ -111,10 +111,10 @@ asset="$(curl -s -H "Cookie: $cookie" "$B/" | grep -oE '(src|href)="\./[^"]+\.(j
 if [[ -n "$asset" ]]; then
   code="$(curl -s -o /dev/null -w '%{http_code}' "$B$asset")"; [[ "$code" == 200 ]] && pass "static $asset without cookie -> 200" || fail "static $asset -> $code"
 fi
-pid="$(cat "$ROOT/tmp/dsh-web.pid" 2>/dev/null || true)"
+pid="$(cat "$ROOT/tmp/xrk-web.pid" 2>/dev/null || true)"
 if [[ -n "$pid" ]] && grep -q 'lib/bin.js' "/proc/$pid/cmdline" 2>/dev/null; then
   pass "pid file names the dsh node process ($pid)"
-  kill -TERM "$pid"     # what the app does: SIGTERM the pid from {ROOTFS}/tmp/dsh-web.pid
+  kill -TERM "$pid"     # what the app does: SIGTERM the pid from {ROOTFS}/tmp/xrk-web.pid
 else
   fail "pid file missing or not the dsh process"; kill -TERM "$BG" 2>/dev/null || true
 fi
@@ -123,7 +123,7 @@ if kill -0 "$BG" 2>/dev/null; then fail "still running 10s after SIGTERM"; kill 
 else rc=0; wait "$BG" || rc=$?; pass "dsh exited after SIGTERM (rc=$rc)"; fi
 
 echo "== xrkh serve offline (no network namespace access)"
-LOG2="$HERE/.work/$ABI/dsh-web-offline.log"
+LOG2="$HERE/.work/$ABI/xrk-web-offline.log"
 run --unshare-net -- "${GUEST[@]}" > "$LOG2" 2>&1 &
 BG=$!
 ok=0; for _ in $(seq 1 240); do grep -q '^xrkh serve: http' "$LOG2" && { ok=1; break; }; kill -0 "$BG" 2>/dev/null || break; sleep 0.5; done
@@ -143,20 +143,20 @@ for name, versions in sorted(json.load(open(pins))["patches"].items()):
         terminal[rel] = pin["after"]
     assert name in m["enginePatches"], m["enginePatches"]
 for rel, expected in terminal.items():
-    got = hashlib.sha256(open(os.path.join(root, "opt/dsh", rel), "rb").read()).hexdigest()
+    got = hashlib.sha256(open(os.path.join(root, "opt/xrk", rel), "rb").read()).hexdigest()
     assert got == expected, (rel, got)
 assert os.path.isfile(os.path.join(root, "opt/xrk-mobile/xrk-bridge/lib/client.js"))
-assert "/opt/xrk-mobile/xrk-bridge/lib/index.js" in open(os.path.join(root, "etc/dsh-app/dsh-web.patch.yml")).read()
+assert "/opt/xrk-mobile/xrk-bridge/lib/index.js" in open(os.path.join(root, "etc/xrk-app/xrk-web.patch.yml")).read()
 PY
 rm -rf "$ROOT/tmp/route-probe"; mkdir -p "$ROOT/tmp/route-probe"
 cp "$HERE/tests/route-probe/"* "$HERE/tests/route-guard.mjs" "$ROOT/tmp/route-probe/"
-printf -- '- insert:\n    - id: dsh-app-route-probe\n      name: /tmp/route-probe/index.js\n' > "$ROOT/tmp/route-probe/probe.patch.yml"
+printf -- '- insert:\n    - id: xrk-app-route-probe\n      name: /tmp/route-probe/index.js\n' > "$ROOT/tmp/route-probe/probe.patch.yml"
 GPORT=$((PORT + 1))
 GUARD_GUEST=("${GUEST[@]}")   # same launch, another port, plus the test-only probe plugin
 GUARD_GUEST[-1]="${GUARD_GUEST[-1]/--port $PORT/--port $GPORT}"
 # extra overlays go right after the shipped one: options after the app's own flags reach the app
-GUARD_GUEST[-1]="${GUARD_GUEST[-1]/dsh-web.patch.yml/dsh-web.patch.yml --patch /tmp/route-probe/probe.patch.yml}"
-LOG3="$HERE/.work/$ABI/dsh-web-guard.log"
+GUARD_GUEST[-1]="${GUARD_GUEST[-1]/xrk-web.patch.yml/xrk-web.patch.yml --patch /tmp/route-probe/probe.patch.yml}"
+LOG3="$HERE/.work/$ABI/xrk-web-guard.log"
 run --share-net -- "${GUARD_GUEST[@]}" > "$LOG3" 2>&1 &
 BG=$!
 token=""; for _ in $(seq 1 240); do
@@ -170,7 +170,7 @@ if [[ -n "$token" ]]; then
 else
   fail "xrkh serve with the route probe did not start"; tail -20 "$LOG3"
 fi
-pid="$(cat "$ROOT/tmp/dsh-web.pid" 2>/dev/null || true)"
+pid="$(cat "$ROOT/tmp/xrk-web.pid" 2>/dev/null || true)"
 [[ -n "$pid" ]] && kill -TERM "$pid" 2>/dev/null || kill -TERM "$BG" 2>/dev/null || true
 wait "$BG" 2>/dev/null || true
 
@@ -183,8 +183,8 @@ printf -- '- insert:\n    - id: fx-usage\n      name: /tmp/native-test/fixtures/
 NPORT=$((PORT + 2))
 NATIVE_GUEST=("${GUEST[@]}")
 NATIVE_GUEST[-1]="${NATIVE_GUEST[-1]/--port $PORT/--port $NPORT}"
-NATIVE_GUEST[-1]="${NATIVE_GUEST[-1]/dsh-web.patch.yml/dsh-web.patch.yml --patch /tmp/native-test/fixtures.patch.yml}"
-LOG4="$HERE/.work/$ABI/dsh-web-native.log"
+NATIVE_GUEST[-1]="${NATIVE_GUEST[-1]/xrk-web.patch.yml/xrk-web.patch.yml --patch /tmp/native-test/fixtures.patch.yml}"
+LOG4="$HERE/.work/$ABI/xrk-web-native.log"
 run --share-net -- "${NATIVE_GUEST[@]}" > "$LOG4" 2>&1 &
 BG=$!
 token=""; for _ in $(seq 1 240); do
@@ -199,7 +199,7 @@ if [[ -n "$token" ]]; then
 else
   fail "xrkh serve with the native fixtures did not start"; tail -20 "$LOG4"
 fi
-pid="$(cat "$ROOT/tmp/dsh-web.pid" 2>/dev/null || true)"
+pid="$(cat "$ROOT/tmp/xrk-web.pid" 2>/dev/null || true)"
 [[ -n "$pid" ]] && kill -TERM "$pid" 2>/dev/null || kill -TERM "$BG" 2>/dev/null || true
 wait "$BG" 2>/dev/null || true
 rm -rf "$ROOT/tmp/native-test"
@@ -213,8 +213,8 @@ printf -- '- insert:\n    - id: fx-voice\n      name: /tmp/native-test/fixtures/
 VPORT=$((PORT + 3))
 VOICE_GUEST=("${GUEST[@]}")
 VOICE_GUEST[-1]="${VOICE_GUEST[-1]/--port $PORT/--port $VPORT}"
-VOICE_GUEST[-1]="${VOICE_GUEST[-1]/dsh-web.patch.yml/dsh-web.patch.yml --patch /tmp/native-test/voice.patch.yml}"
-LOG5="$HERE/.work/$ABI/dsh-web-native-v12.log"
+VOICE_GUEST[-1]="${VOICE_GUEST[-1]/xrk-web.patch.yml/xrk-web.patch.yml --patch /tmp/native-test/voice.patch.yml}"
+LOG5="$HERE/.work/$ABI/xrk-web-native-v12.log"
 run --share-net -- "${VOICE_GUEST[@]}" > "$LOG5" 2>&1 &
 BG=$!
 token=""; for _ in $(seq 1 240); do
@@ -229,7 +229,7 @@ if [[ -n "$token" ]]; then
 else
   fail "xrkh serve with the v1.2 fixture did not start"; tail -20 "$LOG5"
 fi
-pid="$(cat "$ROOT/tmp/dsh-web.pid" 2>/dev/null || true)"
+pid="$(cat "$ROOT/tmp/xrk-web.pid" 2>/dev/null || true)"
 [[ -n "$pid" ]] && kill -TERM "$pid" 2>/dev/null || kill -TERM "$BG" 2>/dev/null || true
 wait "$BG" 2>/dev/null || true
 rm -rf "$ROOT/tmp/native-test"
@@ -241,7 +241,7 @@ if [[ -n "${DIRECT_PROOT:-}" ]]; then
   # extraction of the same pinned archive for the direct/proot comparison.
   # The true non-root session gate must be able to traverse every ancestor.
   # Only this new disposable directory has its mode/ownership changed.
-  DIRECT_ROOT="$(mktemp -d /tmp/dsh-direct-host.XXXXXX)"
+  DIRECT_ROOT="$(mktemp -d /tmp/xrk-direct-host.XXXXXX)"
   chmod 0755 "$DIRECT_ROOT"
   tar -xf "$archive" -C "$DIRECT_ROOT"
   if bash "$HERE/tests/direct/run-tests.sh" "$DIRECT_ROOT" "$MANIFEST" "$DIRECT_PROOT" \

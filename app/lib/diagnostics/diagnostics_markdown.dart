@@ -1,6 +1,6 @@
 // The diagnostics snapshot as one compact Markdown file. The app writes it
-// inside the engine's rootfs (`$XRK_HOME/dsh-app/diagnostics.md`) so the
-// agent there can read it by itself when the person reports a problem.
+// inside the engine's rootfs (`$XRK_HOME/diagnostics.md`) so the agent there
+// can read it by itself when the person reports a problem.
 
 import 'dart:convert';
 

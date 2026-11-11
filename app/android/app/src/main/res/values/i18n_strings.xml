@@ -272,7 +272,7 @@
     <string name="safe_auto_started">Host failed to start twice and opened in Safe mode. Your chats are safe.</string>
     <string name="safe_patch_hazard">This global patch applies to every configuration, including Safe mode, and may be preventing Host from starting.</string>
     <string name="safe_env_hazard">%1$s are set in .env. Host won’t start with these variables set there.</string>
-    <string name="safe_config_missing">Main configuration profiles/web/package.json not found</string>
+    <string name="safe_config_missing">Plugin inventory plugins/.xrk-plugins.json not found</string>
     <string name="safe_config_busy">Another program is changing the plugin configuration. Try again later</string>
     <!-- service -->
     <string name="service_stopped_channel">Engine stopped</string>

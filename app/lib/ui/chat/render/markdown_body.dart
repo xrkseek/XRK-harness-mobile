@@ -441,9 +441,9 @@ class MarkdownBody extends StatefulWidget {
   static Widget _buildCode(BuildContext context, String name, String code, bool closed) {
     final info = name.trim();
     final language = info.isEmpty ? null : info.split(RegExp(r'\s+')).first;
-    // A visual reply (dsh-ui): drawn as native cards. The cursor sentinel inside an open fence means it is still
-    // streaming; open without it means the reply was cut short.
-    if (language == 'dsh-ui') {
+    // A visual reply (`xrk-ui` fence; `dsh-ui` kept for older transcripts): native cards.
+    // The cursor sentinel inside an open fence means it is still streaming; open without it means cut short.
+    if (language == 'xrk-ui' || language == 'dsh-ui') {
       return XrkUiBlock(
         source: code.replaceAll(_cursorSentinel, ''),
         streaming: !closed && (code.contains(_cursorSentinel) || _RevealStreaming.of(context)),

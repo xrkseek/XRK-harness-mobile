@@ -62,7 +62,7 @@ const defaultSuggestions = <ChatSuggestion>[
   ChatSuggestion._default(AppIcons.tip, 3, SuggestionTint.blue),
 ];
 
-/// Tips about using XRK Go, one at a time under the suggestions. Each names
+/// Tips about using XRK Harness, one at a time under the suggestions. Each names
 /// a gesture or entry the app really has (see the handlers it describes).
 List<String> defaultTips() => [
   appL10n.viewTipSteer,
@@ -93,7 +93,6 @@ List<String> defaultTips() => [
   appL10n.viewTipShareSelect,
   appL10n.viewTipChartDrag,
   appL10n.viewTipCopyPath,
-  appL10n.viewTipCompanion,
   appL10n.viewTipAnswerInline,
   appL10n.viewTipWallpaper,
 ];

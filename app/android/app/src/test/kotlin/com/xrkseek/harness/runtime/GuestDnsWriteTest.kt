@@ -15,7 +15,7 @@ import org.junit.rules.TemporaryFolder
 class GuestDnsWriteTest {
     @get:Rule val temporary = TemporaryFolder()
     private val servers = listOf("1.1.1.1", "2001:4860:4860::8888", "223.5.5.5")
-    private val expected = "# written by dsh-app from the device's active network\n" +
+    private val expected = "# written by xrk-app from the device's active network\n" +
         "nameserver 1.1.1.1\nnameserver 2001:4860:4860::8888\nnameserver 223.5.5.5\n" +
         "options timeout:2 attempts:2\n"
 
@@ -34,7 +34,7 @@ class GuestDnsWriteTest {
         assertEquals(DnsConfigOutcome.WRITTEN, report.outcome)
         assertEquals(servers, report.requestedServers)
         assertEquals(expected, File(root, "etc/resolv.conf").readText())
-        assertFalse(File(root, "etc/.resolv.conf.dsh-tmp").exists())
+        assertFalse(File(root, "etc/.resolv.conf.xrk-tmp").exists())
     }
 
     @Test fun matchingFileDoesNotWriteOrRename() {
@@ -48,7 +48,7 @@ class GuestDnsWriteTest {
         assertEquals(0, replacements)
         assertEquals(before, file.lastModified())
         assertEquals(expected, file.readText())
-        assertFalse(File(root, "etc/.resolv.conf.dsh-tmp").exists())
+        assertFalse(File(root, "etc/.resolv.conf.xrk-tmp").exists())
     }
 
     @Test fun changedSymlinkIsReplacedWithoutChangingItsReferent() {
@@ -90,7 +90,7 @@ class GuestDnsWriteTest {
     @Test fun occupiedTemporaryPathReportsWriteFailure() {
         val root = temporary.newFolder()
         val target = existing(root)
-        assertTrue(File(root, "etc/.resolv.conf.dsh-tmp").mkdir())
+        assertTrue(File(root, "etc/.resolv.conf.xrk-tmp").mkdir())
         val report = GuestSetup.writeResolvConf(root, servers) { _, _ -> fail("Write failed before rename") }
         assertEquals(DnsConfigOutcome.FAILED, report.outcome)
         assertEquals(DnsConfigStage.WRITE, report.stage)

@@ -53,12 +53,12 @@ class GuestAgentsModeTest {
             GuestSetup.writeAgentsMd(root, phoneStorage = false)
             val proot = file.readText()
             assertTrue(proot.contains("## 本机诊断"))
-            assertTrue(proot.contains("`\$XRK_HOME/dsh-app/diagnostics.md`"))
-            assertTrue(proot.contains("xrk-mobile-support"))
+            assertTrue(proot.contains("`\$XRK_HOME/diagnostics.md`"))
+            assertTrue(proot.contains("xrk-support"))
             GuestSetup.writeAgentsMd(root, phoneStorage = false, directEngine = true)
             val direct = file.readText()
-            assertTrue(direct.contains("`${root.canonicalPath}/root/.xrk/dsh-app/diagnostics.md`"))
-            assertFalse(direct.contains("\$XRK_HOME/dsh-app/diagnostics.md"))
+            assertTrue(direct.contains("`${root.canonicalPath}/root/.xrk/diagnostics.md`"))
+            assertFalse(direct.contains("\$XRK_HOME/diagnostics.md"))
         } finally { root.deleteRecursively() }
     }
 
@@ -66,7 +66,7 @@ class GuestAgentsModeTest {
         val root = kotlin.io.path.createTempDirectory("agents-write").toFile()
         try {
             val file = GuestSetup.writeDiagnostics(root, "# first\n")
-            assertEquals(File(root, "root/.xrk/dsh-app/diagnostics.md").absoluteFile, file.absoluteFile)
+            assertEquals(File(root, "root/.xrk/diagnostics.md").absoluteFile, file.absoluteFile)
             assertEquals("# first\n", file.readText())
             GuestSetup.writeDiagnostics(root, "# second\n")
             assertEquals("# second\n", file.readText())
@@ -81,7 +81,7 @@ class GuestAgentsModeTest {
             val originalBytes = original.readBytes()
             val safeFile = GuestSetup.writeDiagnostics(root, "# rescue\n", safe = true)
             assertEquals(
-                File(root, "var/lib/dsh-app/safe-mode/home/dsh-app/diagnostics.md").absoluteFile,
+                File(root, "var/lib/xrk-app/safe-mode/home/diagnostics.md").absoluteFile,
                 safeFile.absoluteFile,
             )
             assertEquals("# rescue\n", safeFile.readText())

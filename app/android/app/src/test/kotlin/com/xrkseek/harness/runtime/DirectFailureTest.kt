@@ -4,7 +4,7 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class DirectFailureTest {
-    private val marker = "[dsh-app-direct] launch failed: direct DNS: resolv.conf has no nameserver"
+    private val marker = "[xrk-app-direct] launch failed: direct DNS: resolv.conf has no nameserver"
     private fun classify(lines: List<String>, ready: Long? = null, code: Int = 1, direct: Boolean = true) =
         CrashClassifier.classify(code, ready, 50_000, 123, lines, false, direct)
 
@@ -29,7 +29,7 @@ class DirectFailureTest {
         assertTrue(SafePolicy.directLaunchFailed(launch, direct = true))
         assertFalse(SafePolicy.directLaunchFailed(launch, direct = false))
         // PRoot's own exec failure is a launch failure too, but not Direct's.
-        val proot = classify(listOf("sh: exec: /usr/local/bin/dsh: Permission denied"), direct = false)
+        val proot = classify(listOf("sh: exec: /usr/local/bin/xrkh: Permission denied"), direct = false)
         assertEquals(FailureKind.LAUNCH_FAILED, proot.kind)
         assertFalse(SafePolicy.directLaunchFailed(proot, direct = false))
         // Normal crashes of a direct run keep today's path (strikes, safe mode, auto restart).

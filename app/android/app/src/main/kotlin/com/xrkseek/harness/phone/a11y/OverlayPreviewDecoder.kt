@@ -27,7 +27,7 @@ internal class OverlayPreviewDecoder(private val present: (Bitmap?) -> Unit) {
     private fun start() {
         val ticket = queue.start() ?: return
         val executor = worker ?: Executors.newSingleThreadExecutor { job ->
-            Thread(job, "dsh-overlay-preview").apply { isDaemon = true }
+            Thread(job, "xrk-overlay-preview").apply { isDaemon = true }
         }.also { worker = it }
         executor.execute {
             val bitmap = runCatching { BitmapFactory.decodeByteArray(ticket.bytes, 0, ticket.bytes.size) }.getOrNull()

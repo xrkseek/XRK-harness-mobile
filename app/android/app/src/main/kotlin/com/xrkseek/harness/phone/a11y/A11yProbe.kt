@@ -42,7 +42,7 @@ import java.util.concurrent.Executors
  *        asynchronous: inspect the service callback log, then task; own test devices only)
  */
 internal class A11yProbe(private val service: PhoneA11yService, private val driver: MainScreenDriver, private val overlay: ControlOverlay) {
-    private val executor = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-a11y-probe") }
+    private val executor = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-a11y-probe") }
     private val dir = File(service.filesDir, "a11y-probe").apply { mkdirs() }
 
     private val receiver = object : BroadcastReceiver() {

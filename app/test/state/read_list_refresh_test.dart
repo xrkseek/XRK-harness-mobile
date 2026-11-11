@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:xrk_app/state/bots_state.dart';
 import 'package:xrk_app/state/connection_state.dart';
 import 'package:xrk_app/state/drawer_view_state.dart';
 import 'package:xrk_app/state/hosts_state.dart';
@@ -130,7 +129,6 @@ List<Override> listOverrides(
   localSafeModeProvider.overrideWithValue(false),
   workspacesProvider.overrideWith(() => workspaces ?? SwitchWorkspaces()),
   workspacePrefsProvider.overrideWith(() => prefs ?? SwitchWorkspacePrefs()),
-  dsBotOwnedSessionsProvider.overrideWithValue(const {}),
   if (cache != null) readListCacheProvider.overrideWithValue(cache),
 ];
 

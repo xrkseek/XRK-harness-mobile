@@ -30,14 +30,16 @@ import 'empty_actions.dart';
 /// The longest a single option may grow before its label is cut.
 const _itemMaxWidth = 200.0;
 
-/// Presets a new chat can start with, in the Host's order.
+/// Retired Host presets (old companion shell) — never offered on a new chat.
+bool isRetiredNewChatPreset(String id) =>
+    id == 'xrk-mobile-companion-full' || id.startsWith('xrk-mobile-companion-');
+
+/// Presets a new chat can start with, in the Host's order (product tool surfaces).
 List<AgentPresetInfo> newChatPresets(List<AgentPresetInfo>? all) => [
-  for (final preset in all ?? const <AgentPresetInfo>[])
-    if (!hiddenNewChatPresets.contains(preset.id)) preset,
+  ...?all?.where((p) => !isRetiredNewChatPreset(p.id)),
 ];
 
-/// The Host's default preset among [presets] (the first when none is marked,
-/// or when the marked one is hidden from new chats).
+/// The Host's default preset among [presets] (the first when none is marked).
 AgentPresetInfo? defaultPreset(List<AgentPresetInfo> presets) {
   for (final preset in presets) {
     if (preset.isDefault) return preset;
@@ -45,19 +47,21 @@ AgentPresetInfo? defaultPreset(List<AgentPresetInfo> presets) {
   return presets.isEmpty ? null : presets.first;
 }
 
-/// The preset to apply to a new session for [picked] (null: the offered
-/// default), given the Host's whole list [all]. A pick the Host no longer
-/// offers falls back to the default, as its chip already shows. When the
-/// Host's own default is a hidden preset, the offered default is applied
-/// explicitly: the session would otherwise start in the hidden one. Null
-/// keeps the Host default.
+/// The preset to apply to a new session for [picked] (null: keep Host default),
+/// given the Host's list [all]. A pick the Host no longer offers falls back to
+/// keeping the Host default (null). When the Host default itself is retired,
+/// apply the first offered preset explicitly so the chip matches the session.
 String? newChatPresetToApply(List<AgentPresetInfo>? all, String? picked) {
   if (all == null) return picked;
-  final presets = newChatPresets(all);
-  if (picked != null && presets.any((p) => p.id == picked && p.broken == null)) return picked;
-  final hiddenDefault = all.any((p) => p.isDefault && hiddenNewChatPresets.contains(p.id));
-  final fallback = defaultPreset(presets);
-  return hiddenDefault && fallback != null && fallback.broken == null ? fallback.id : null;
+  final offered = newChatPresets(all);
+  if (picked != null) {
+    return offered.any((p) => p.id == picked && p.broken == null) ? picked : null;
+  }
+  final hostDefault = defaultPreset(all);
+  if (hostDefault != null && isRetiredNewChatPreset(hostDefault.id)) {
+    return defaultPreset(offered)?.id;
+  }
+  return null;
 }
 
 /// The permission to apply to a new session for [picked]: null (keep the

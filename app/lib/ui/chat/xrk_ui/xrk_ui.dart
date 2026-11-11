@@ -1,8 +1,8 @@
-/// 可交互回复（dsh-ui）：模型在回复里写 ```` ```dsh-ui ```` 围栏，里面是一份
-/// JSON 蓝图，App 用原生组件画出来。
+/// 可交互回复（xrk-ui）：模型在回复里写 ```` ```xrk-ui ```` 围栏，里面是一份
+/// JSON 蓝图，App 用原生组件画出来（旧会话里的 ```` ```dsh-ui ```` 仍认）。
 ///
 /// 接入点：
-/// - `MarkdownBody._codeBuilder`：语言是 `dsh-ui` 时返回 [XrkUiBlock]；
+/// - `MarkdownBody._codeBuilder`：语言是 `xrk-ui` / `dsh-ui` 时返回 [XrkUiBlock]；
 /// - `MarkdownBody.repairBareViews`：模型忘了写围栏时，裸 JSON 也按视图画
 ///   （[fenceBareXrkUiViews] 补围栏）；
 /// - `AssistantMessage` 外面包 [XrkUiScope]（状态用 [xrkUiStateFor] 推）；

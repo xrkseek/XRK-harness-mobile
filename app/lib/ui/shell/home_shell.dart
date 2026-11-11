@@ -16,12 +16,10 @@ import '../../state/adaptive_layout_state.dart';
 import '../../state/drawer_view_state.dart' show drawerSelectionProvider;
 import '../../state/quick_panel_state.dart';
 import '../../state/sessions_state.dart' show currentSessionProvider;
-import '../bots/bot_alerts.dart';
 import '../chat/chat_screen.dart';
 import '../chat/composer_toast.dart' show composerToastGap;
 import '../engine/engine_screen.dart';
 import '../features/all_features_page.dart';
-import '../forum/forum_link_host.dart';
 import '../notify/background_net_host.dart';
 import '../notify/chat_alert_host.dart';
 import '../plugins/plugins_screen.dart';
@@ -345,10 +343,6 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
                       const ShareCodeHost(),
                       // Share sheet, launcher shortcuts, the tile: into the chat (draws nothing).
                       SystemEntryHost(onReveal: _revealChat),
-                      // Forum links (sign-in return, topics): registers them with the router.
-                      const ForumLinkHost(),
-                      // DS Bot: keeps its feed and notifications alive with the shell.
-                      const BotAlertsHost(),
                       ExcludeSemantics(
                         excluding: _open || _quickPanelOpen,
                         child: _SideParallax(

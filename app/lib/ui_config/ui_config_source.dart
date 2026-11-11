@@ -324,7 +324,7 @@ abstract interface class UiRemoteHost {
 
 /// XRK home from the skill's SKILL.md path: `<home>/skills/xrk-ui/SKILL.md`
 /// (or the folder itself). Null when the path does not have that shape.
-String? dshHomeFromSkillPath(String path) {
+String? xrkHomeFromSkillPath(String path) {
   final parts = path.split('/');
   while (parts.isNotEmpty && parts.last.isEmpty) {
     parts.removeLast();
@@ -438,7 +438,7 @@ class RemoteUiConfigSource implements UiConfigSource {
       }
       final skill = await host.skillFile(session).catchError((Object _) => null);
       if (_out == null) return;
-      var home = skill == null ? null : dshHomeFromSkillPath(skill);
+      var home = skill == null ? null : xrkHomeFromSkillPath(skill);
       final guessed = home == null;
       if (home == null) {
         final userHome = host.userHome;

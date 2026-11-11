@@ -23,14 +23,14 @@ internal class FramedMuxSession<R>(
     data class Reply<R>(val id: Long, val value: R)
     private val lock = Any()
     private val writer = ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, ArrayBlockingQueue<Runnable>(3),
-        { job -> Thread(job, "dsh-mux-writer").apply { isDaemon = true } })
+        { job -> Thread(job, "xrk-mux-writer").apply { isDaemon = true } })
     private val deadlines = deadlineMs?.let { ScheduledThreadPoolExecutor(1, { job ->
-        Thread(job, "dsh-mux-deadline").apply { isDaemon = true }
+        Thread(job, "xrk-mux-deadline").apply { isDaemon = true }
     }).apply { removeOnCancelPolicy = true } }
     private val pending = mutableMapOf<Long, CompletableFuture<R>>()
     private var nextId = 1L
     private var closed = false
-    private val reader = Thread({ readReplies() }, "dsh-mux-reader").apply { isDaemon = true }
+    private val reader = Thread({ readReplies() }, "xrk-mux-reader").apply { isDaemon = true }
 
     fun start() { reader.start() }
     fun alive(): Boolean = synchronized(lock) { !closed }

@@ -12,7 +12,7 @@ import android.content.Context
 internal object PhoneDisclosure {
     const val KEY = "phone_disclosure_v1"
 
-    private const val NATIVE_PREFS = "dsh_phone"
+    private const val NATIVE_PREFS = "xrk_phone"
     private const val NATIVE_KEY = "disclosureAccepted"
     private const val FLUTTER_PREFS = "FlutterSharedPreferences"
     private const val FLUTTER_KEY = "flutter.$KEY"

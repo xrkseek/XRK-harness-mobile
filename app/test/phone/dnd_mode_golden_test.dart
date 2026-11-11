@@ -128,7 +128,7 @@ void main() {
   dndGolden('dnd_sui_in_use', suiInUse, narrow: true);
   dndGolden('dnd_sui_in_use', suiInUse, narrow: true, english: true);
 
-  // Sui runs, XRK Go isn't let in yet: suggested, unfolded by a tap.
+  // Sui runs, XRK Harness isn't let in yet: suggested, unfolded by a tap.
   dndGolden('dnd_sui_grant', suiToGrant, before: tapText('Sui'));
   dndGolden('dnd_sui_grant', suiToGrant, narrow: true, before: tapText('Sui'));
 

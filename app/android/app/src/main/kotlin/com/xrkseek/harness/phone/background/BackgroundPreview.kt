@@ -104,7 +104,7 @@ class BackgroundPreview(
     }
 
     private fun io(): ExecutorService = worker ?: Executors.newSingleThreadExecutor { job ->
-        Thread(job, "dsh-preview-client").apply { isDaemon = true }
+        Thread(job, "xrk-preview-client").apply { isDaemon = true }
     }.also { worker = it }
 
     private fun disable(old: BackgroundPreviewTarget) {

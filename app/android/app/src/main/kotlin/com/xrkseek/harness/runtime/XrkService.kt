@@ -167,7 +167,7 @@ class XrkService : Service() {
     private fun acquireWakeLock() {
         if (wakeLock?.isHeld == true) return
         val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "dsh-app:runtime").apply {
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "xrk-app:runtime").apply {
             setReferenceCounted(false)
             acquire()
         }
@@ -184,7 +184,7 @@ class XrkService : Service() {
         const val ACTION_START = "com.xrkseek.harness.START"
         const val ACTION_STOP = "com.xrkseek.harness.STOP"
         const val ACTION_PHONE_STOP = "com.xrkseek.harness.PHONE_STOP"
-        private const val PHONE_TASK_SCHEME = "dsh-phone-task"
+        private const val PHONE_TASK_SCHEME = "xrk-phone-task"
         private const val EXTRA_STOP_GENERATION = "stopGeneration"
 
         /** 停止操作 for exactly [taskId]. The id is the intent's data, so every task gets its own
@@ -200,7 +200,11 @@ class XrkService : Service() {
         private const val ALERT_CHANNEL = "xrk-host-alert"
         private const val INSTALL_ALERT_ID = 3082
         private const val INSTALL_CHANNEL = "xrk-host-ready"
-        private val LEGACY_CHANNELS = arrayOf("dsh-runtime", "dsh-runtime-alert", "dsh-runtime-ready")
+        // Delete old DSH channel ids on upgrade; current channels use xrk-* names.
+        private val LEGACY_CHANNELS = arrayOf(
+            "dsh-runtime", "dsh-runtime-alert", "dsh-runtime-ready",
+            "xrk-runtime", "xrk-runtime-alert", "xrk-runtime-ready",
+        )
 
         private fun openApp(context: Context, id: Int): PendingIntent = PendingIntent.getActivity(
             context, id, Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),

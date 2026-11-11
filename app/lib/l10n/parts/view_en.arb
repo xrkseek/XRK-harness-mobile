@@ -182,7 +182,6 @@
   "viewTipShareSelect": "When sharing a chat, long-press and slide to pick several messages at once",
   "viewTipChartDrag": "Drag across a chart in a reply to read each point",
   "viewTipCopyPath": "Long-press a file in a changes card to copy its path",
-  "viewTipCompanion": "The Companion Room lives in the Switch Host sheet",
   "viewTipAnswerInline": "When the AI asks you something, just type the answer in the composer",
   "viewTipWallpaper": "Wallpapers can be dragged, zoomed, blurred and dimmed",
   "viewTipModelHere": "Pick the model, preset and permissions right here — for this chat only",

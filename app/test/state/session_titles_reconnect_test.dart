@@ -12,7 +12,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:xrk_app/state/bots_state.dart';
 import 'package:xrk_app/state/connection_state.dart';
 import 'package:xrk_app/state/hosts_state.dart';
 import 'package:xrk_app/state/read_list_identity.dart';
@@ -256,7 +255,6 @@ void main() {
         readListIdentityProvider.overrideWithValue(ReadListIdentity.of(['ssh-loopback'])),
         workspacesProvider.overrideWith(_Workspaces.new),
         workspacePrefsProvider.overrideWith(_WorkspacePrefs.new),
-        dsBotOwnedSessionsProvider.overrideWithValue(const {}),
       ],
     );
     watched = c.listen(sessionsProvider, (_, _) {}, fireImmediately: true);

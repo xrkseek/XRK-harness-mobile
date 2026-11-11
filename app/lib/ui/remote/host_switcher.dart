@@ -11,7 +11,6 @@ import '../../state/hosts_state.dart';
 import '../common/app_sheet.dart';
 import '../common/sheet_title_bar.dart';
 import '../common/status_chip.dart';
-import '../companion/companion_page.dart';
 import '../onboarding/local_install.dart';
 import '../settings/settings_widgets.dart';
 import '../theme/app_icons.dart';
@@ -158,17 +157,6 @@ class HostSheet extends ConsumerWidget {
               SheetGroup(
                 margin: const EdgeInsets.fromLTRB(SheetTitleBar.inset, 0, SheetTitleBar.inset, 12),
                 children: [
-                  SettingsTile(
-                    icon: AppIcons.pet,
-                    tinted: false,
-                    title: l10n.companionTitle,
-                    subtitle: l10n.companionEntrySubtitle,
-                    onTap: () {
-                      final navigator = Navigator.of(context);
-                      navigator.pop();
-                      unawaited(navigator.push(MaterialPageRoute<void>(builder: (_) => const CompanionPage())));
-                    },
-                  ),
                   SettingsTile(
                     icon: ssh.isEmpty && relayHosts.isEmpty ? AppIcons.add : AppIcons.configure,
                     tinted: false,

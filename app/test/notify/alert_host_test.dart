@@ -2,7 +2,6 @@
 // and the "is the chat on screen" signal (lib/ui/notify/chat_alert_host.dart).
 
 import 'package:xrk_app/runtime/runtime_state.dart';
-import 'package:xrk_app/state/bots_state.dart';
 import 'package:xrk_app/state/connection_state.dart';
 import 'package:xrk_app/state/hosts_state.dart';
 import 'package:xrk_app/state/notify_state.dart';
@@ -93,7 +92,6 @@ void main() {
           settingsProvider.overrideWith(() => shell.FakeSettings(const AppSettings(loaded: true))),
           sessionsProvider.overrideWith(_Sessions.new),
           workspacesProvider.overrideWith(_Workspaces.new),
-          dsBotApiFactoryProvider.overrideWithValue((_) => null),
           notifyChannelProvider.overrideWithValue(channel),
           alertSourceFactoryProvider.overrideWithValue((_) => source),
           alertTimingProvider.overrideWithValue((announce: Duration.zero, reconcile: const Duration(seconds: 1))),

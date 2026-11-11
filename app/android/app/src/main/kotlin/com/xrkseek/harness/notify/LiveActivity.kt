@@ -45,13 +45,13 @@ import com.xrkseek.harness.theme.ThemeAccent
  * here ([PhoneControl.liveTask]) whenever it changes ([refresh]).
  */
 object LiveActivity {
-    const val CHANNEL = "dsh-live"
+    const val CHANNEL = "xrk-live"
     const val ID = 3083
 
     /** `Notification.EXTRA_REQUEST_PROMOTED_ONGOING` (SDK 36.1). */
     const val EXTRA_REQUEST_PROMOTED_ONGOING = "android.requestPromotedOngoing"
 
-    private const val PREFS = "dsh_live"
+    private const val PREFS = "xrk_live"
     private const val K_ENABLED = "enabled"
     private const val MIN_GAP_MS = 600L
     private const val REFRESH_MS = 4 * 60_000L
@@ -59,7 +59,7 @@ object LiveActivity {
     private const val ENDING_TIMEOUT_MS = 15_000L
     private const val PORTRAIT_DP = 64
 
-    private val handler: Handler by lazy { Handler(HandlerThread("dsh-live").apply { start() }.looper) }
+    private val handler: Handler by lazy { Handler(HandlerThread("xrk-live").apply { start() }.looper) }
 
     @Volatile private var app: Context? = null
     @Volatile private var agent: LiveContent? = null

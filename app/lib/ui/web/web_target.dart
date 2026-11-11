@@ -117,9 +117,8 @@ class DshWebTarget {
   String toString() => 'DshWebTarget(${jsonEncode(toJson())})';
 }
 
-/// Global panels of the XRK Web sidebar (`ctx.layout.selectPanel` keys),
-/// and [cordis]: the Cordis plugin panel behind the sidebar's bottom badge
-/// (`dsh-client-ui-cordis`; it only renders while the Host has a plugin).
+/// Global panels of the XRK Web sidebar (`ctx.layout.selectPanel` keys).
+/// [cordis] remains a wire key for older Host pages; the app no longer opens it.
 enum DshWebPanel {
   plugins('plugins'),
   schedules('schedules'),

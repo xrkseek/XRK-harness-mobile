@@ -9,7 +9,7 @@ class PhoneCallerGuestTest {
     @Test fun onlyInstalledCallerPatchEnablesManagedStdioOptIn() {
         val root = Files.createTempDirectory("phone-caller-guest").toFile()
         try {
-            val info = File(root, "etc/dsh-app/runtime.json")
+            val info = File(root, "etc/xrk-app/runtime.json")
             assertEquals(PhoneGuest.PATCH_YAML, PhoneGuest.patchYaml(root))
             info.parentFile.mkdirs()
             for (text in listOf("not json", "{}", "{\"enginePatches\":[\"unrelated.diff\"]}")) {

@@ -7,7 +7,7 @@ import org.junit.Test
 
 class RuntimeResetCarriedHomeTest {
     private val skill = "root/.xrk/skills/mine/SKILL.md"
-    private val profile = "root/.xrk/profiles/web/package.json"
+    private val profile = "root/.xrk/settings.yaml"
     private fun write(base: File, path: String, text: String) {
         File(base, path).apply { parentFile!!.mkdirs() }.writeText(text)
     }
@@ -18,7 +18,7 @@ class RuntimeResetCarriedHomeTest {
             try {
                 val base = File(files, "runtime")
                 write(base, "home.carry/${skill.removePrefix("root/")}", "user skill")
-                write(base, "home.carry/${profile.removePrefix("root/")}", "user profile")
+                write(base, "home.carry/${profile.removePrefix("root/")}", "user settings")
                 write(base, "home.carry/workspace/private", "delete this")
                 when (stage) {
                     0 -> write(base, "rootfs/bin/old", "old")
@@ -26,14 +26,14 @@ class RuntimeResetCarriedHomeTest {
                     2 -> {
                         write(base, "rootfs.old/bin/old", "old")
                         write(base, "rootfs/$skill", "fresh skill")
-                        write(base, "rootfs/$profile", "fresh profile")
+                        write(base, "rootfs/$profile", "fresh settings")
                     }
                 }
                 val retired = File(files, "runtime.reset")
                 val keep = File(files, "runtime-keep")
                 retireRuntime(base, retired, keep, ResetKeep.ALL)
                 assertEquals("stage $stage", "user skill", File(keep, skill).readText())
-                assertEquals("stage $stage", "user profile", File(keep, profile).readText())
+                assertEquals("stage $stage", "user settings", File(keep, profile).readText())
                 assertFalse(File(keep, "root/workspace/private").exists())
                 assertFalse(retired.exists())
                 assertFalse(base.exists())
@@ -49,11 +49,11 @@ class RuntimeResetCarriedHomeTest {
             write(retired, "reset.keep", ResetKeep.ALL.joinToString("\n"))
             write(keep, skill, "earlier kept skill")
             write(retired, "home.carry/${skill.removePrefix("root/")}", "do not replace kept")
-            write(retired, "home.carry/${profile.removePrefix("root/")}", "user profile")
-            write(retired, "rootfs/$profile", "fresh profile")
+            write(retired, "home.carry/${profile.removePrefix("root/")}", "user settings")
+            write(retired, "rootfs/$profile", "fresh settings")
             settleReset(retired, keep)
             assertEquals("earlier kept skill", File(keep, skill).readText())
-            assertEquals("user profile", File(keep, profile).readText())
+            assertEquals("user settings", File(keep, profile).readText())
             assertFalse(retired.exists())
         } finally { files.deleteRecursively() }
     }

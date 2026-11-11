@@ -177,20 +177,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
-  dsh_client:
-    dependency: "direct main"
-    description:
-      path: "../packages/dsh_client"
-      relative: true
-    source: path
-    version: "0.1.0"
-  dsh_remote:
-    dependency: "direct main"
-    description:
-      path: "../packages/dsh_remote"
-      relative: true
-    source: path
-    version: "0.1.0"
   equatable:
     dependency: transitive
     description:
@@ -1232,6 +1218,20 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
+  xrk_client:
+    dependency: "direct main"
+    description:
+      path: "../packages/xrk_client"
+      relative: true
+    source: path
+    version: "0.1.0"
+  xrk_remote:
+    dependency: "direct main"
+    description:
+      path: "../packages/xrk_remote"
+      relative: true
+    source: path
+    version: "0.1.0"
   xterm:
     dependency: "direct main"
     description:

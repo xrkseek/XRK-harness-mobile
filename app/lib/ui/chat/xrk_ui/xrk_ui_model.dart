@@ -1329,22 +1329,22 @@ String formatXrkUiCompact(double value) {
 
 // ───────────────────────── 复制 / 导出 ─────────────────────────
 
-/// 把 Markdown 里的 ```` ```dsh-ui ```` 块换成一行摘要（复制、分享、导出用）。
+/// 把 Markdown 里的 ```` ```xrk-ui ```` / legacy ```` ```dsh-ui ```` 块换成一行摘要。
 /// 没闭合的块（被中断）也换掉；忘了写围栏的裸 JSON 先补上围栏再换。
 /// 其他代码块原样保留。
 String xrkUiPlainText(String markdown) {
   final repaired = fenceBareXrkUiViews(markdown);
-  if (!repaired.contains('dsh-ui')) return repaired;
+  if (!repaired.contains('xrk-ui') && !repaired.contains('dsh-ui')) return repaired;
   final lines = repaired.split('\n');
   final out = <String>[];
   var i = 0;
-  final open = RegExp(r'^(\s{0,3})(`{3,}|~{3,})\s*dsh-ui\s*$');
+  final open = RegExp(r'^(\s{0,3})(`{3,}|~{3,})\s*(?:xrk-ui|dsh-ui)\s*$');
   final anyOpen = RegExp(r'^\s{0,3}(`{3,}|~{3,})');
   while (i < lines.length) {
     final line = lines[i];
     final match = open.firstMatch(line);
     if (match == null) {
-      // 别的围栏：整块照抄，里面的 dsh-ui 字样不当作开头。
+      // 别的围栏：整块照抄，里面的 xrk-ui / dsh-ui 字样不当作开头。
       final other = anyOpen.firstMatch(line);
       out.add(line);
       i++;
@@ -1381,9 +1381,8 @@ bool _closes(String line, String fence) {
   return t.split('').every((c) => c == ch);
 }
 
-/// 模型偶尔不写围栏:把视图 JSON 直接当正文发出来(AGENTS.md 早先的示例就是
-/// 这种写法,模型照着学会)。渲染前把这些裸 JSON 补成 ```` ```dsh-ui ```` 围栏,
-/// 后面的围栏链路就能照常画成卡片。
+/// 模型偶尔不写围栏:把视图 JSON 直接当正文发出来。渲染前把这些裸 JSON 补成
+/// ```` ```xrk-ui ```` 围栏,后面的围栏链路就能照常画成卡片。
 ///
 /// 只认「单独成段、能完整解析成视图」的 JSON 对象:行内提到的 JSON、已有围栏
 /// 里的内容、还没写完的流式半截都原样保留。
@@ -1409,7 +1408,7 @@ String fenceBareXrkUiViews(String markdown) {
     if (lines[i].trimLeft().startsWith('{')) {
       final block = _jsonBlockAt(lines, i);
       if (block != null && parseXrkUi(block.source) is XrkUiParsed) {
-        out.add('```dsh-ui');
+        out.add('```xrk-ui');
         out.add(block.source);
         out.add('```');
         i = block.end;

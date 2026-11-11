@@ -55,9 +55,9 @@ class SafePolicyTest {
 
     @Test fun safeEnvironmentSeparatesRuntimeHomeFromTheOriginalRepairTarget() {
         assertEquals(mapOf(
-            "XRK_HOME" to "/var/lib/dsh-app/safe-mode/home",
+            "XRK_HOME" to "/var/lib/xrk-app/safe-mode/home",
             "XRK_APP_ORIGINAL_HOME" to "/root/.xrk",
-            "XRK_AGENTS_HOME" to "/var/lib/dsh-app/safe-mode/agents",
+            "XRK_AGENTS_HOME" to "/var/lib/xrk-app/safe-mode/agents",
             "XRK_APP_SAFE_MODE" to "1",
         ), SafeMode.GUEST_ENV)
     }
@@ -66,7 +66,7 @@ class SafePolicyTest {
         val root = kotlin.io.path.createTempDirectory("safe-home-prepare").toFile()
         try {
             SafeMode.prepare(root, briefing())
-            val home = File(root, "var/lib/dsh-app/safe-mode/home")
+            val home = File(root, "var/lib/xrk-app/safe-mode/home")
             assertTrue(home.isDirectory)
             assertFalse(Files.isSymbolicLink(home.toPath()))
             assertFalse(File(root, "root/.dsh").exists())
@@ -89,15 +89,15 @@ class SafePolicyTest {
             original.writeBytes(bytes)
             SafeMode.prepare(root, briefing())
             assertArrayEquals(bytes, original.readBytes())
-            assertTrue(File(root, "var/lib/dsh-app/safe-mode/home").isDirectory)
-            assertTrue(File(root, "var/lib/dsh-app/safe-mode/agents/AGENTS.md").isFile)
+            assertTrue(File(root, "var/lib/xrk-app/safe-mode/home").isDirectory)
+            assertTrue(File(root, "var/lib/xrk-app/safe-mode/agents/AGENTS.md").isFile)
         } finally { root.deleteRecursively() }
     }
 
     @Test fun prepareRejectsAFileAtRescueHomeWithoutReplacingIt() {
         val root = kotlin.io.path.createTempDirectory("safe-home-file").toFile()
         try {
-            val home = File(root, "var/lib/dsh-app/safe-mode/home")
+            val home = File(root, "var/lib/xrk-app/safe-mode/home")
             home.parentFile!!.mkdirs()
             val bytes = "do not overwrite this rescue home path\n".toByteArray()
             home.writeBytes(bytes)
@@ -113,7 +113,7 @@ class SafePolicyTest {
 
     @Test fun prepareRejectsALinkToTheOriginalHomeWithoutChangingTheLinkOrTarget() {
         val root = kotlin.io.path.createTempDirectory("safe-home-link").toFile()
-        val home = File(root, "var/lib/dsh-app/safe-mode/home")
+        val home = File(root, "var/lib/xrk-app/safe-mode/home")
         try {
             val original = File(root, "root/.dsh")
             original.mkdirs()

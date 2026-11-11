@@ -26,6 +26,7 @@ import '../state/host_settings_opener.dart';
 import '../state/hosts_state.dart';
 import '../state/phone_state.dart';
 import '../state/sessions_state.dart';
+import '../state/settings_state.dart';
 import '../ui/notify/chat_alert_host.dart';
 import '../ui/phone/phone_control_screen.dart';
 import '../ui/phone/phone_stop_watcher.dart';
@@ -215,11 +216,24 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     _syncSafePadding();
 
     ref.listen(localRuntimeProvider.select((s) => s.status.phase), (prev, next) {
+      // User stop / intentional teardown: running|stopping → installed.
+      // Do NOT treat crash→error the same way — and never auto-start from error
+      // (that + native SafePolicy auto-restart = 启动失败循环).
       if (next == RuntimePhase.installed &&
           (prev == RuntimePhase.running || prev == RuntimePhase.stopping)) {
         _userStopped = true;
+        return;
       }
-      unawaited(_ensureBoot());
+      if (next == RuntimePhase.error) {
+        final err = ref.read(localRuntimeProvider).status.error;
+        if (mounted && err != null && err.isNotEmpty) {
+          setState(() => _bootError = err);
+        }
+        return;
+      }
+      if (next == RuntimePhase.installed && !_userStopped) {
+        unawaited(_ensureBoot());
+      }
     });
 
     // 手机操控已开、无障碍未就绪：toast 引导去开系统无障碍（文案与 PhoneControl 一致）。
@@ -353,12 +367,27 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   }
 
   Future<void> _ensureBoot({bool force = false}) async {
-    if (force) _userStopped = false;
+    if (force) {
+      _userStopped = false;
+      _bootError = null;
+    }
     final runtime = ref.read(localRuntimeProvider.notifier);
     final status = ref.read(localRuntimeProvider).status;
     if (!force && status.isRunning) return;
     if (status.phase.isBusy) return;
     if (!force && _userStopped) return;
+    // Crash / start failure stays on the boot scaffold until the user taps 重试.
+    // Auto-calling start() from error raced native SafePolicy and looped.
+    if (!force && status.phase == RuntimePhase.error) return;
+    // Settings › 引擎 › 打开 App 时自动启动 — Retry / forced path still starts.
+    if (!force && !ref.read(settingsProvider).autoStartLocal) {
+      if (status.phase == RuntimePhase.installed) {
+        _userStopped = true;
+      }
+      return;
+    }
+    // Two strikes + auto-safe off: wait for the failure / Retry UI (same as RootGate).
+    if (!force && !EngineControl.shouldAutoStart(status)) return;
 
     try {
       if (status.phase == RuntimePhase.notInstalled || status.runtimeMissing) {
@@ -370,9 +399,11 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
         if (mounted) setState(() => _bootError = after.error ?? 'runtime install failed');
         return;
       }
-      if (after.phase == RuntimePhase.installed ||
-          after.phase == RuntimePhase.error ||
-          after.phase == RuntimePhase.notInstalled) {
+      if (!force && !EngineControl.shouldAutoStart(after)) return;
+      final canStart = after.phase == RuntimePhase.installed ||
+          after.phase == RuntimePhase.notInstalled ||
+          (force && after.phase == RuntimePhase.error);
+      if (canStart) {
         await runtime.start();
       }
     } catch (e) {

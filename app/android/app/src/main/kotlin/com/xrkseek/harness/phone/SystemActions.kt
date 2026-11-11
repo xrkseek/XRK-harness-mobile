@@ -400,8 +400,8 @@ class SystemActions(private val app: Context) : SystemApi {
     }
 
     companion object {
-        private const val TAG = "dsh-phone-sys"
-        const val CHANNEL_NOTIFY = "dsh-phone-notify"
-        const val CHANNEL_OPEN = "dsh-phone-open"
+        private const val TAG = "xrk-phone-sys"
+        const val CHANNEL_NOTIFY = "xrk-phone-notify"
+        const val CHANNEL_OPEN = "xrk-phone-open"
     }
 }

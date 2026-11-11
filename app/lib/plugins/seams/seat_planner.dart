@@ -5,7 +5,6 @@
 import 'package:xrk_client/xrk_client.dart' show ClientInventoryTier;
 import 'package:flutter/widgets.dart';
 
-import 'adapters/cordis_adapter.dart';
 import 'adapters/xrk_ui_panel_adapter.dart';
 import 'adapters/pet_adapter.dart';
 import 'adapters/schema_config_adapter.dart';
@@ -102,9 +101,9 @@ class SlotAdapterRegistry {
     adapters.forEach(register);
   }
 
-  /// The first batch (§4.2): schema forms, Cordis, declarative panels, pets.
+  /// The first batch (§4.2): schema forms, declarative panels, pets.
   factory SlotAdapterRegistry.standard() =>
-      SlotAdapterRegistry(const [SchemaConfigAdapter(), CordisAdapter(), XrkUiPanelAdapter(), PetAdapter()]);
+      SlotAdapterRegistry(const [SchemaConfigAdapter(), XrkUiPanelAdapter(), PetAdapter()]);
 
   final List<NativeSlotAdapter> _adapters = [];
 

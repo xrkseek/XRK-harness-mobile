@@ -18,7 +18,7 @@
 
 ## 0.2.0 — 2026-10-31
 
-- Prepare public package `@xrkseek/xrk-media`; keep settings namespace `xrk-media` and frozen media metadata v1. Add XRK Go compatibility manifest for app 1.0.2.
+- Prepare public package `@xrkseek/xrk-media`; keep settings namespace `xrk-media` and frozen media metadata v1. Add XRK Harness compatibility manifest for app 1.0.2.
 - Add verified native Ark, Alibaba and SiliconFlow image/video adapters; preserve OpenAI and Gemini-compatible image generation. Enable one-reference edits where supported.
 - Run video producers through XRK rc.4 jobs with completion delivery, bounded MP4 downloads, actual file metadata and provider-confirmed cancellation where available.
 - Persist paid task identity and explicit session-bound `resume_media` recovery without another create request, including settlement-before-output crash recovery.

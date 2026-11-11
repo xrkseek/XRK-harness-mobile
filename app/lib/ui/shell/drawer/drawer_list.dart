@@ -1,5 +1,5 @@
 // The drawer's conversation list once it has loaded:
-// DS Bot's row, 置顶, the folders (opening and closing in place), then the
+// Pins, the folders (opening and closing in place), then the
 // rest by day; or, under a status filter, just the matches. Loading, error
 // and empty-host states stay with the drawer (sessions_drawer.dart).
 

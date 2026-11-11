@@ -1,6 +1,6 @@
 // Goldens of the regrouped settings (docs/design/settings-ia.md §4.2–4.3):
 // the whole hub on a tall phone, with values in its rows, and the pages it
-// gained — 个性化, 界面, 隐私与分享, 关于 XRK Go — light and dark.
+// gained — 个性化, 界面, 隐私与分享, 关于 XRK Harness — light and dark.
 //
 //   flutter test --update-goldens test/settings/settings_ia_golden_test.dart
 
@@ -14,9 +14,7 @@ import 'package:xrk_app/state/hosts_state.dart';
 import 'package:xrk_app/state/settings_state.dart';
 import 'package:xrk_app/ui/settings/about_page.dart';
 import 'package:xrk_app/ui/settings/interface_page.dart';
-import 'package:xrk_app/ui/settings/personalization_page.dart';
 import 'package:xrk_app/ui/settings/privacy_page.dart';
-import 'package:xrk_app/ui/settings/reply_prefs_page.dart';
 import 'package:xrk_app/ui/settings/settings_screen.dart';
 import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter/material.dart';
@@ -74,17 +72,6 @@ void main() {
       await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/settings_hub_full_$mode.png'));
     });
   }
-
-  final fs = tempGuestFs();
-  goldenBoth(
-    'personalization',
-    () => const PersonalizationPage(),
-    overrides: () => [
-      ..._local(),
-      guestFsProvider.overrideWith((ref) async => fs),
-      replyPrefsProvider.overrideWith((ref) async => '回答简洁，先给结论。\n用中文。'),
-    ],
-  );
 
   goldenBoth('about', () => const AboutPage(), overrides: _local);
 

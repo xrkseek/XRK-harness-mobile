@@ -13,7 +13,7 @@ object DirectLaunch {
     const val PRELOAD = "opt/xrk-mobile/direct/preload.mjs"
     /** PRoot's Node gets Direct's per-family DNS resolver through this import (runtime/direct/proot-dns.mjs). */
     const val PROOT_DNS = "/opt/xrk-mobile/direct/proot-dns.mjs"
-    private const val OWNED = "opt/dsh-app/direct"
+    private const val OWNED = "opt/xrk-app/direct"
 
     /** Fallback reason: Direct already failed to launch here with this runtime. */
     const val FAILED = "directFailed"
@@ -96,8 +96,8 @@ object DirectLaunch {
         val triplet = if (abi == "x86_64") "x86_64-linux-gnu" else "aarch64-linux-gnu"
         val arch = if (abi == "x86_64") "x64" else "arm64"
         return listOf("usr/lib/$triplet", "lib/$triplet", "usr/lib", "lib",
-            "opt/dsh/node_modules/@img/sharp-libvips-linux-$arch/lib",
-            "opt/dsh/node_modules/sherpa-onnx-linux-$arch")
+            "opt/xrk/node_modules/@img/sharp-libvips-linux-$arch/lib",
+            "opt/xrk/node_modules/sherpa-onnx-linux-$arch")
     }
 
     /**
@@ -125,7 +125,7 @@ object DirectLaunch {
     private const val ALIAS_MARKER = ".xrk-mobile-direct-path-alias"
 
     private fun hasGeneratedConfig(rootfs: File): Boolean =
-        listOf("opt", "opt/dsh-app", OWNED).all {
+        listOf("opt", "opt/xrk-app", OWNED).all {
             Files.isDirectory(File(rootfs, it).toPath(), LinkOption.NOFOLLOW_LINKS)
         } && Files.isRegularFile(File(rootfs, "$OWNED/config.json").toPath(), LinkOption.NOFOLLOW_LINKS)
 
@@ -181,20 +181,27 @@ object DirectLaunch {
 
     /** Reject an unknown future shell template rather than interpreting shell syntax ourselves. */
     fun webArguments(command: String): List<String> {
-        val prefix = "echo \$\$ > /tmp/dsh-web.pid; exec /usr/local/bin/dsh "
+        val prefix = "echo \$\$ > /tmp/xrk-web.pid; exec /usr/local/bin/xrkh "
         require(command.startsWith(prefix)) { "direct engine: unsupported launch template" }
         val text = command.removePrefix(prefix)
-        require(Regex("[A-Za-z0-9_./ :\\-]+").matches(text)) { "direct engine: unsupported launch syntax" }
-        val args = text.trim().split(Regex(" +"))
-        require(args.firstOrNull() == "web") { "direct engine: only the web profile can run directly" }
+        // Allow shell ${VAR:-default}/path for --workspace; reject other metacharacters.
+        require(Regex("[A-Za-z0-9_./ :\\\$\\{\\}\\-]+").matches(text)) { "direct engine: unsupported launch syntax" }
+        val args = text.trim().split(Regex(" +")).toMutableList()
+        // CLI accepts `web` as an alias of `serve`; Direct always invokes the serve entry.
+        if (args.firstOrNull() == "web") args[0] = "serve"
+        require(args.firstOrNull() == "serve") { "direct engine: only the web/serve profile can run directly" }
         var i = 1
         var port = false
         var host = false
         while (i < args.size) {
             when (args[i]) {
-                "--no-open" -> i++
                 "--patch" -> {
-                    require(i + 1 < args.size && args[i + 1].startsWith('/')) { "direct engine: invalid patch argument" }
+                    // Host `--patch` is JSON config only (path or inline); never Cordis YAML.
+                    require(i + 1 < args.size) { "direct engine: invalid patch argument" }
+                    i += 2
+                }
+                "--workspace" -> {
+                    require(i + 1 < args.size && args[i + 1].isNotEmpty()) { "direct engine: invalid workspace argument" }
                     i += 2
                 }
                 "--host" -> {
@@ -246,7 +253,7 @@ object DirectLaunch {
         val preload = File(root, PRELOAD).path
         val owned = File(root, OWNED)
         // These are App-owned generated files, never a user profile or configuration.
-        for (relative in listOf("opt", "opt/dsh-app", OWNED, "$OWNED/bin")) {
+        for (relative in listOf("opt", "opt/xrk-app", OWNED, "$OWNED/bin")) {
             val dir = File(root, relative)
             require(!Files.isSymbolicLink(dir.toPath())) { "direct engine: generated directory is a symlink" }
             check(dir.isDirectory || dir.mkdir()) { "direct engine: cannot create $relative" }
@@ -283,7 +290,7 @@ object DirectLaunch {
             "#!$hostShell\nexport pnpm_config_package_import_method=copy npm_config_package_import_method=copy\nexec ${quote("$bin/node")} ${quote("$rootPath/usr/local/lib/node_modules/pnpm/bin/$name.mjs")} \"\$@\"\n", true)
 
         val rgArch = if (abi == "x86_64") "x64" else "arm64"
-        val rg = File(root, "opt/dsh/node_modules/@vscode/ripgrep-linux-$rgArch/bin/rg")
+        val rg = File(root, "opt/xrk/node_modules/@vscode/ripgrep-linux-$rgArch/bin/rg")
         require(rg.isFile) { "direct engine: packaged ripgrep missing" }
         // The manifest records this per ABI; the current pinned binaries are
         // static PIE. The host test audits PT_INTERP, rather than guessing by name.
@@ -304,15 +311,12 @@ object DirectLaunch {
             val mount = mounts.firstOrNull { path == it.guest || path.startsWith("${it.guest}/") }
             return if (mount == null) rootPath + path else mount.host + path.removePrefix(mount.guest)
         }
-        for (key in listOf("HOME", "XRK_HOME", "XRK_HOME", "XRK_AGENTS_HOME", "TMPDIR", "NODE_EXTRA_CA_CERTS", "SSL_CERT_FILE")) {
+        for (key in listOf("HOME", "XRK_HOME", "XRK_AGENTS_HOME", "TMPDIR", "NODE_EXTRA_CA_CERTS", "SSL_CERT_FILE")) {
             directEnv[key]?.let { directEnv[key] = hostPath(it) }
         }
         directEnv["SSL_CERT_DIR"]?.let { directEnv["SSL_CERT_DIR"] = it.split(':').joinToString(":", transform = ::hostPath) }
         directEnv["HOME"] = directEnv["HOME"] ?: "$rootPath/root"
-        val xrkHome = directEnv["XRK_HOME"] ?: "$rootPath/root/.xrk"
-        directEnv["XRK_HOME"] = xrkHome
-        // Launch templates may still export XRK_HOME; pin it to the same tree as XRK_HOME.
-        directEnv["XRK_HOME"] = directEnv["XRK_HOME"] ?: xrkHome
+        directEnv["XRK_HOME"] = directEnv["XRK_HOME"] ?: "$rootPath/root/.xrk"
         directEnv["TMPDIR"] = directEnv["TMPDIR"] ?: "$rootPath/tmp"
         directEnv["SHELL"] = "$bin/bash"
         directEnv["PATH"] = bin + ":" + guestPath.split(':').joinToString(":", transform = ::hostPath)
@@ -320,7 +324,7 @@ object DirectLaunch {
         directEnv["XRK_GO_RUNTIME_ROOT"] = rootPath
         directEnv["XRK_GO_DIRECT_ROOTFS"] = rootPath
         directEnv["XRK_GO_DIRECT_MAIN"] = "1"
-        val launch = listOf(loader, "--library-path", libraries, node, "--import=$preload", "$rootPath/opt/dsh/node_modules/@xrkseek/harness-cli/lib/bin.js") + web
+        val launch = listOf(loader, "--library-path", libraries, node, "--import=$preload", "$rootPath/opt/xrk/node_modules/@xrkseek/harness-cli/dist/bin.js") + web
         return Plan(launch, directEnv, File(root, "root"))
     }
 

@@ -15,7 +15,7 @@ import 'package:xrk_app/state/ui_mode_state.dart';
 import 'package:xrk_app/ui/common/side_insets.dart';
 import 'package:xrk_app/ui/pets/pet_settings_page.dart';
 import 'package:xrk_app/ui/shell/page_frame.dart';
-import 'package:xrk_app/ui/web/dsh_web_launcher.dart';
+import 'package:xrk_app/ui/web/xrk_web_launcher.dart';
 import 'package:xrk_app/ui/web/mode_home.dart';
 import 'package:xrk_app/ui/web/web_back.dart';
 import 'package:xrk_app/ui/web/web_handle.dart';

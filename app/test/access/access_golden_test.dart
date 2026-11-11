@@ -1,4 +1,4 @@
-// Goldens for first run's 「想让 XRK Go 帮你做哪些事」 beside the unpack (the
+// Goldens for first run's 「想让 XRK Harness 帮你做哪些事」 beside the unpack (the
 // pick, a step, a step after a denial, a maker's switch after the trip, the
 // restricted-settings steps, the summary) and 设置 › 系统权限, on a vivo.
 //

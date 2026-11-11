@@ -63,7 +63,7 @@ void main() {
 
     test('a remote host that takes files: the matching guide page rides along', () async {
       final request = await askAiRequest(AskAiTopic.phoneControl, route: GuideRoute.attachment, read: _pages);
-      expect(request.text, '关于 XRK Go App：手机操控是怎么工作的？有什么风险？\n请按附件里的使用说明回答。');
+      expect(request.text, '关于 XRK Harness App：手机操控是怎么工作的？有什么风险？\n请按附件里的使用说明回答。');
       final file = request.attachments.single;
       expect(file.name, 'xrk-guide-phone-control.md');
       expect(file.isImage, isFalse);
@@ -86,9 +86,9 @@ void main() {
         await askAiRequest(AskAiTopic.remote, route: GuideRoute.none, read: _pages),
         await askAiRequest(AskAiTopic.plugins, route: GuideRoute.attachment, read: _pages),
       ]) {
-        expect(request.text, startsWith('关于 XRK Go App：'));
+        expect(request.text, startsWith('关于 XRK Harness App：'));
         expect(request.attachments, isEmpty);
-        expect(request.note, '这台主机没有 XRK Go 使用说明，回答可能不准确');
+        expect(request.note, '这台主机没有 XRK Harness 使用说明，回答可能不准确');
       }
     });
 
@@ -166,7 +166,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AppPage), findsNothing, reason: 'back at the chat');
       final request = _container(tester).read(composeInboxProvider).single;
-      expect(request.text, startsWith('关于 XRK Go App：怎么连接自己的电脑或服务器？'));
+      expect(request.text, startsWith('关于 XRK Harness App：怎么连接自己的电脑或服务器？'));
       expect(request.attachments.single.name, 'xrk-guide-engine-hosts.md');
     });
 
@@ -220,7 +220,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(row);
       await tester.pumpAndSettle();
-      expect(_container(tester).read(composeInboxProvider).single.text, '/xrk-guide XRK Go 能做什么？我该从哪里开始？');
+      expect(_container(tester).read(composeInboxProvider).single.text, '/xrk-guide XRK Harness 能做什么？我该从哪里开始？');
     });
 
     testWidgets('使用帮助 is not there in 网页模式', (tester) async {

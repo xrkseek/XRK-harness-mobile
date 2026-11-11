@@ -21,7 +21,7 @@ internal class ParallelXZInputStream private constructor(
     private val onProgress: (Long) -> Unit,
 ) : InputStream() {
     private val workers = Array(2) { i ->
-        Executors.newSingleThreadExecutor { Thread(it, "dsh-xz-$i") }
+        Executors.newSingleThreadExecutor { Thread(it, "xrk-xz-$i") }
     }
     private val pending = ArrayDeque<Future<ByteArray>>()
     private var nextBlock = 0

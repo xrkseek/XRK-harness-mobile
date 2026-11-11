@@ -32,13 +32,13 @@ import kotlin.concurrent.thread
  * Images from chats into the phone's gallery (「保存到相册」): MethodChannel `xrk/media`.
  *
  * - `saveImage {bytes, name, mime}` → where it landed, as the gallery shows it
- *   (`Pictures/XRK Go/x.png`). Android 10+: MediaStore Images under `Pictures/XRK Go`,
+ *   (`Pictures/XRK Harness/x.png`). Android 10+: MediaStore Images under `Pictures/XRK Harness`,
  *   which needs no permission for the app's own pictures. Android 8–9: the public
  *   Pictures directory plus a media scan, after asking for the storage permission
  *   (this app targets SDK 28, so it is a runtime grant). On 10+ the permission is
  *   asked for only if MediaStore turns the app away; asked once per save.
  * - `saveVideoFile {path, name}` streams a local file into MediaStore Video
- *   under Movies/XRK Go, sharing the image permission queue and retry flow.
+ *   under Movies/XRK Harness, sharing the image permission queue and retry flow.
  * - `openSettings` → the app's system settings page (to grant storage after a
  *   "don't ask again").
  *

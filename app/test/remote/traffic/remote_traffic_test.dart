@@ -1,4 +1,4 @@
-// What XRK Go sends and pulls over XRK Remote, flow by flow: the real home
+// What XRK Harness sends and pulls over XRK Remote, flow by flow: the real home
 // shell and chat screen on a relay Host, with a metered fake tunnel under
 // the client (fake_host.dart) and fake time. Each test prints its traffic
 // (`TRAFFIC <flow>`) and pins what must not come back:

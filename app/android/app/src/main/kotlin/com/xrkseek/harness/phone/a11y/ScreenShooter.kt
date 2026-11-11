@@ -39,7 +39,7 @@ internal class ScreenShooter(private val service: AccessibilityService, private 
         localOcr.unavailableReason ?: LocalOcrResult.Reason.NO_FRAME)
     private val captureLock = Any()
     private var closed = false
-    private val executor = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-a11y-shot") }
+    private val executor = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-a11y-shot") }
     private val callbackExecutor = Executor { callback ->
         try {
             executor.execute(callback)

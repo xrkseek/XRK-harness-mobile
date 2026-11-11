@@ -52,7 +52,7 @@ data class PhoneUnlocks(
     val systemPages: Boolean = false,
     /** Password, verification-code and payment-code inputs. Typed values never reach a log. */
     val secretFields: Boolean = false,
-    /** XRK Go's own screens (not its overlay, which the screen reader never sees). */
+    /** XRK Harness's own screens (not its overlay, which the screen reader never sees). */
     val ownApp: Boolean = false,
 ) {
     val any: Boolean get() = systemPages || secretFields || ownApp

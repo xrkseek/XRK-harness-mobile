@@ -111,7 +111,7 @@ class LinksPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
 
     /** Copies [source] into `cache/links/` off the main thread, then delivers it. */
     private fun copyThenDeliver(source: Uri) {
-        thread(name = "dsh-links", isDaemon = true) {
+        thread(name = "xrk-links", isDaemon = true) {
             val event = try {
                 copy(source)
             } catch (_: Throwable) {

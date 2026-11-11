@@ -7,8 +7,8 @@ import org.junit.Test
 
 class GuestSetupTest {
     private fun mainFile(root: File, safe: Boolean) = File(root,
-        if (safe) "var/lib/dsh-app/safe-mode/home/dsh-app/diagnostics.md"
-        else "root/.xrk/dsh-app/diagnostics.md",
+        if (safe) "var/lib/xrk-app/safe-mode/home/diagnostics.md"
+        else "root/.xrk/diagnostics.md",
     )
 
     @Test fun defaultAndExplicitAutomaticCallsOnlyWriteTheMainSnapshot() {
@@ -91,7 +91,7 @@ class GuestSetupTest {
                 val manual = GuestSetup.writeDiagnostics(root, "# retained manual\n", safe = safe, manual = true)
                 val previousMain = main.readBytes()
                 val previousManual = manual.readBytes()
-                val blockedTemp = File(main.parentFile, ".diagnostics-manual.md.dsh-tmp")
+                val blockedTemp = File(main.parentFile, ".diagnostics-manual.md.xrk-tmp")
                 assertTrue(blockedTemp.mkdir())
                 File(blockedTemp, "block").writeText("keep non-empty")
                 try {
@@ -119,7 +119,7 @@ class GuestSetupTest {
             } catch (_: IOException) {
                 assertArrayEquals(previousMain, main.readBytes())
                 assertEquals("untouched", existing.readText())
-                assertFalse(File(main.parentFile, ".diagnostics-manual.md.dsh-tmp").exists())
+                assertFalse(File(main.parentFile, ".diagnostics-manual.md.xrk-tmp").exists())
             }
         } finally { root.deleteRecursively() }
     }
@@ -130,8 +130,8 @@ class GuestSetupTest {
             for (direct in listOf(false, true)) {
                 GuestSetup.writeAgentsMd(root, phoneStorage = false, directEngine = direct)
                 val text = File(root, "root/.xrk/AGENTS.md").readText()
-                val path = if (direct) "${root.canonicalPath}/root/.xrk/dsh-app/diagnostics.md"
-                    else "\$XRK_HOME/dsh-app/diagnostics.md"
+                val path = if (direct) "${root.canonicalPath}/root/.xrk/diagnostics.md"
+                    else "\$XRK_HOME/diagnostics.md"
                 assertTrue(text.contains("`$path`"))
                 assertTrue(text.contains("同目录的 `diagnostics-manual.md`"))
                 assertTrue(text.contains("后续自动快照不会覆盖它"))

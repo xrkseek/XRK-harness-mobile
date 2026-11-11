@@ -188,7 +188,7 @@ class ShortcutsPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHa
          * one at a time (a new 桌面图标 and a new recents list must not interleave).
          */
         internal val worker: ExecutorService =
-            Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-shortcuts").apply { isDaemon = true } }
+            Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-shortcuts").apply { isDaemon = true } }
 
         private fun chat(
             context: Context,

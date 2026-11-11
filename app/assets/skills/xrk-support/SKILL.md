@@ -1,7 +1,7 @@
 ---
 # xrk-mobile:managed — the xrk-mobile app keeps this skill up to date; delete this line to keep your own edits.
-name: xrk-mobile-support
-description: xrk-mobile 手机 App 的排障与反馈：读 App 写好的本机诊断（路径见 AGENTS.md 的「本机诊断」一节，通常是 `$XRK_HOME/dsh-app/diagnostics.md`）、按症状清单定位、生成脱敏的环境摘要和 issue 草稿。用户说卡顿、发热、耗电、连不上、闪退、更新装不上、插件不生效、手机操控失败，或要反馈 bug 时，先加载它。Diagnose and report xrk-mobile problems from the on-device diagnostics snapshot.
+name: xrk-support
+description: xrk-mobile 手机 App 的排障与反馈：读 App 写好的本机诊断（路径见 AGENTS.md 的「本机诊断」一节，通常是 `$XRK_HOME/diagnostics.md`）、按症状清单定位、生成脱敏的环境摘要和 issue 草稿。用户说卡顿、发热、耗电、连不上、闪退、更新装不上、插件不生效、手机操控失败，或要反馈 bug 时，先加载它。Diagnose and report xrk-mobile problems from the on-device diagnostics snapshot.
 whenToUse: The person reports a problem with XRK Go (lag, heat, battery, connection, crash, update, plugin, phone control) or asks to file an issue. Not for changing the app's UI (xrk-ui) or writing a plugin (xrk-plugin).
 ---
 

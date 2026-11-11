@@ -1,5 +1,4 @@
 import 'package:xrk_app/plugins/seams/seams.dart';
-import 'package:xrk_app/state/cordis_state.dart';
 import 'package:xrk_app/state/engine_settings_state.dart';
 import 'package:xrk_app/state/hosts_state.dart';
 import 'package:xrk_app/state/plugins_state.dart';
@@ -100,60 +99,6 @@ void main() {
       await tester.pump();
       expect(find.text('设置'), findsNothing);
       expect(tester.getSize(find.byType(SchemaConfigSeat)), Size.zero);
-    });
-  });
-
-  group('cordis', () {
-    const adapter = CordisAdapter();
-    final plugin = CordisPlugin.fromJson({
-      'pluginId': 'weather',
-      'agentId': 'session-1',
-      'packages': [
-        {'packageId': 'weather@2', 'name': '天气', 'purpose': '看天气', 'hasClientHalf': true},
-      ],
-    })!;
-
-    test('always drawable, list part only', () {
-      const o = SlotOccupant(slot: Slots.cordisView, package: 'weather@2', cell: 'k');
-      expect(adapter.canRender(o, const PluginClientInfo.assumed('weather@2')), isTrue);
-      expect(adapter.coverage(o), NativeCoverage.partial);
-    });
-
-    test('matches the plugin by plugin id or package id, as package or cell', () {
-      bool m(String package, String cell) =>
-          CordisAdapter.matches(plugin, SlotOccupant(slot: Slots.cordisView, package: package, cell: cell));
-      expect(m('x', 'weather'), isTrue);
-      expect(m('weather', 'x'), isTrue);
-      expect(m('weather@2', 'x'), isTrue);
-      expect(m('x', 'weather@2'), isTrue);
-      expect(m('x', 'y'), isFalse);
-    });
-
-    testWidgets('draws the matching Cordis row, nothing otherwise', (tester) async {
-      Future<void> pump(String package) => tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            cordisInventoryProvider.overrideWith((ref) async => [plugin]),
-          ],
-          child: MaterialApp(
-            theme: buildLightTheme(),
-            home: Scaffold(
-              body: Builder(
-                builder: (context) =>
-                    adapter.build(context, _seat, SlotOccupant(slot: Slots.cordisView, package: package, cell: '')),
-              ),
-            ),
-          ),
-        ),
-      );
-      await pump('weather@2');
-      await tester.pump();
-      expect(find.text('天气'), findsOneWidget);
-      expect(find.text('看天气'), findsOneWidget);
-      expect(find.text('未运行'), findsOneWidget);
-      await pump('someone-else');
-      await tester.pump();
-      expect(find.text('天气'), findsNothing);
     });
   });
 

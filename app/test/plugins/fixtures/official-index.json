@@ -1,7 +1,7 @@
 {
   "format": 1,
-  "title": { "en": "XRK Go plugin market", "zh": "XRK Go 插件市场" },
-  "description": { "en": "Plugins checked for XRK Go", "zh": "为 XRK Go 检查过的插件" },
+  "title": { "en": "XRK Harness plugin market", "zh": "XRK Harness 插件市场" },
+  "description": { "en": "Plugins checked for XRK Harness", "zh": "为 XRK Harness 检查过的插件" },
   "metadata": {
     "categories": {
       "media": { "title": { "en": "Media", "zh": "媒体" } },
@@ -13,7 +13,7 @@
       "name": "@xrk-mobile/media",
       "title": { "en": "Images & video", "zh": "生图生视频" },
       "description": { "en": "Generate images and video in chat", "zh": "在对话里生成图片和视频" },
-      "author": "XRK Go",
+      "author": "XRK Harness",
       "homepage": "https://xrkseek.com/p/%40xrk-mobile%2Fmedia",
       "repository": { "url": "https://github.com/xrkseek/xrk-media" },
       "metadata": { "category": "media", "keywords": ["生图", "视频", "image", "video"] },
@@ -25,7 +25,7 @@
       "name": "@xrk-mobile/translate",
       "title": { "en": "Live translate", "zh": "同声翻译" },
       "description": { "en": "Translate replies as they stream", "zh": "回复一边生成一边翻译" },
-      "author": "XRK Go",
+      "author": "XRK Harness",
       "metadata": { "category": "tools" },
       "versions": [
         { "version": "1.0.0", "publishTimestamp": 1793350000, "source": { "type": "npm" } }

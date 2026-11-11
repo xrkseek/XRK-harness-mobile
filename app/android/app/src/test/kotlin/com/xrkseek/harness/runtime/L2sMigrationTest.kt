@@ -475,8 +475,8 @@ class L2sMigrationTest {
     @Test fun bindTargetsAreTheGuestSidesOfTheLaunchBinds() {
         val argv = listOf("{NATIVE_LIB_DIR}/libproot.so", "--kill-on-exit", "--link2symlink", "--sysvipc", "-L", "-0",
             "--rootfs={ROOTFS}", "--cwd=/root", "-b", "/dev", "-b", "/dev/urandom:/dev/random", "-b", "/proc",
-            "-b", "/proc/self/fd:/dev/fd", "-b", "/sys", "-b", "{ROOTFS}/var/lib/dsh-app/empty:/sys/fs/selinux",
-            "-b", "{ROOTFS}/var/lib/dsh-app/shm:/dev/shm", "-b", "/system", "-b", "/apex",
+            "-b", "/proc/self/fd:/dev/fd", "-b", "/sys", "-b", "{ROOTFS}/var/lib/xrk-app/empty:/sys/fs/selinux",
+            "-b", "{ROOTFS}/var/lib/xrk-app/shm:/dev/shm", "-b", "/system", "-b", "/apex",
             "/usr/bin/env", "-i", "HOME=/root", "-b", "/not-a-bind", "/bin/sh", "-c", "exec xrkh serve")
         assertEquals(
             listOf("/dev", "/dev/random", "/proc", "/dev/fd", "/sys", "/sys/fs/selinux", "/dev/shm", "/system", "/apex",

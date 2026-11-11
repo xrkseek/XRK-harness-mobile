@@ -139,10 +139,10 @@ void main() {
   });
 
   test('XRK home from the skill path', () {
-    expect(dshHomeFromSkillPath('/srv/dsh/skills/xrk-ui/SKILL.md'), '/srv/dsh');
-    expect(dshHomeFromSkillPath('/srv/dsh/skills/xrk-ui/'), '/srv/dsh');
-    expect(dshHomeFromSkillPath('/srv/dsh/skills/other/SKILL.md'), isNull);
-    expect(dshHomeFromSkillPath('skills/xrk-ui/SKILL.md'), isNull);
+    expect(xrkHomeFromSkillPath('/srv/dsh/skills/xrk-ui/SKILL.md'), '/srv/dsh');
+    expect(xrkHomeFromSkillPath('/srv/dsh/skills/xrk-ui/'), '/srv/dsh');
+    expect(xrkHomeFromSkillPath('/srv/dsh/skills/other/SKILL.md'), isNull);
+    expect(xrkHomeFromSkillPath('skills/xrk-ui/SKILL.md'), isNull);
   });
 
   test('reads the file under the skill\'s XRK home and follows its changes', () async {
@@ -297,7 +297,7 @@ void main() {
     expect(await remote.recentSessionId(), 'new');
     final skill = await remote.skillFile('new');
     expect(skill, '/srv/dsh/skills/xrk-ui/SKILL.md');
-    expect(dshHomeFromSkillPath(skill!), '/srv/dsh');
+    expect(xrkHomeFromSkillPath(skill!), '/srv/dsh');
     final page = await remote.read('new', '/srv/dsh/xrk-mobile/ui.json');
     expect(page.text, '{"version": 1}');
     expect(page.version, 'v1');

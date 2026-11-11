@@ -1,14 +1,13 @@
 {
   "name": "xrk-bridge",
   "version": "0.4.0",
-  "description": "xrk-mobile host bridge: plugin inventory for the xrk-mobile app, the native plugin protocol v1 (xrkGo service, contributions, views, stream, invoke; v1.2 capabilities: media, micro, capability events), and a route guard on hosts whose webserver is not patched.",
+  "description": "xrk-mobile host bridge: plugin inventory and native plugin protocol. No Cordis companion shell.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
     "./client": "./lib/client.js",
-    "./package.json": "./package.json",
-    "./companion/full-context": "./lib/companion/full-context.js"
+    "./package.json": "./package.json"
   },
   "files": [
     "lib/index.js",
@@ -16,20 +15,8 @@
     "lib/session-deletion.js",
     "lib/config-source.js",
     "lib/client.js",
-    "lib/companion/*.js",
-    "lib/native/*.js",
-    "cordis.patch.yml",
-    "PRESET-NOTICE.txt"
+    "lib/native/*.js"
   ],
-  "dsh": {
-    "bundle": {
-      "patch": "./cordis.patch.yml"
-    },
-    "client": {
-      "platform": "web",
-      "immediately": true
-    }
-  },
   "engines": {
     "node": ">=20"
   },

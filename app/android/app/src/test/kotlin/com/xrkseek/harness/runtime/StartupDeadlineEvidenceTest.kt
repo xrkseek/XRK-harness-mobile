@@ -43,7 +43,7 @@ class StartupDeadlineEvidenceTest {
     }
 
     @Test fun knownDirectLaunchFailureStillUsesCompatibleLaunch() {
-        val f = classified(listOf("[dsh-app-direct] launch failed: loader unavailable"), direct = true)
+        val f = classified(listOf("[xrk-app-direct] launch failed: loader unavailable"), direct = true)
         assertTrue(CrashClassifier.classifyAfterTokenTimeout(true, f))
         assertTrue(SafePolicy.directLaunchFailed(f, true))
         assertFalse(f.kind.counts)

@@ -48,7 +48,7 @@ class PhoneBridge(
     private var local: LocalServerSocket? = null
     private var tcp: ServerSocket? = null
     private val open = Collections.synchronizedSet(HashSet<Closeable>())
-    private val calls = Executors.newCachedThreadPool { r -> Thread(r, "dsh-phone-call").apply { isDaemon = true } }
+    private val calls = Executors.newCachedThreadPool { r -> Thread(r, "xrk-phone-call").apply { isDaemon = true } }
     private val slots = Semaphore(MAX_CONNECTIONS)
     private val authed = AtomicInteger()
 
@@ -67,7 +67,7 @@ class PhoneBridge(
         var name: String? = null
         var lastError: Exception? = null
         for (attempt in 0 until 3) {
-            val candidate = "dsh-app.phone." + hex(8)
+            val candidate = "xrk-app.phone." + hex(8)
             try {
                 local = LocalServerSocket(candidate)
                 name = candidate
@@ -85,8 +85,8 @@ class PhoneBridge(
         authed.set(0)
         val ep = PhoneGuest.Endpoint(name, port, token)
         endpoint = ep
-        local?.let { s -> thread(name = "dsh-phone-accept", isDaemon = true) { acceptLocal(s, token) } }
-        tcp?.let { s -> thread(name = "dsh-phone-accept-tcp", isDaemon = true) { acceptTcp(s, token) } }
+        local?.let { s -> thread(name = "xrk-phone-accept", isDaemon = true) { acceptLocal(s, token) } }
+        tcp?.let { s -> thread(name = "xrk-phone-accept-tcp", isDaemon = true) { acceptTcp(s, token) } }
         log("[xrkh-app] phone bridge listening" + (name?.let { " on @$it" } ?: "") + (port?.let { " and 127.0.0.1:$it" } ?: ""))
         return ep
     }
@@ -101,7 +101,7 @@ class PhoneBridge(
         tcp = s
         val next = ep.copy(tcpPort = s.localPort)
         endpoint = next
-        thread(name = "dsh-phone-accept-tcp", isDaemon = true) { acceptTcp(s, ep.token) }
+        thread(name = "xrk-phone-accept-tcp", isDaemon = true) { acceptTcp(s, ep.token) }
         log("[xrkh-app] phone bridge: added loopback fallback on 127.0.0.1:${s.localPort}")
         return next
     }
@@ -186,7 +186,7 @@ class PhoneBridge(
             runCatching { sock.close() }
             return
         }
-        thread(name = "dsh-phone-conn", isDaemon = true) {
+        thread(name = "xrk-phone-conn", isDaemon = true) {
             try {
                 timeout(HELLO_TIMEOUT_MS)
                 val hello = readLine(input, MAX_HELLO) ?: return@thread
@@ -253,13 +253,14 @@ class PhoneBridge(
             return b.joinToString("") { "%02x".format(it) }
         }
 
-        /** `{"dshPhone":1,"token":"…"}` with this launch's token (constant-time compare). */
+        /** `{"xrkPhone":1,"token":"…"}` with this launch's token (constant-time compare). */
         fun helloOk(line: String, token: String): Boolean {
             val m = try {
                 Json.parse(line) as? Map<*, *>
             } catch (_: Exception) {
                 null
             } ?: return false
+            if (m["xrkPhone"] == null) return false
             val got = m["token"] as? String ?: return false
             return MessageDigest.isEqual(got.toByteArray(Charsets.UTF_8), token.toByteArray(Charsets.UTF_8))
         }

@@ -4,9 +4,9 @@ package com.xrkseek.harness.phone
  * The FIXED tool set the Android bridge serves. The XRK plugin exposes `phone_<name>`.
  *
  * Never make this depend on permission state: names, descriptions and schemas enter every
- * request, and any change invalidates DeepSeek's KV cache from the first changed token.
+ * request, and any change invalidates the model KV cache from the first changed token.
  * A call that can't run right now returns an actionable explanation instead. Tests cover the
- * fixed schema served through MCP and its actual Core parsing; change it only on purpose.
+ * fixed schema on the process plugin (`phone_*`) path; change it only on purpose.
  */
 object PhoneToolCatalog {
     const val APPS = "apps"

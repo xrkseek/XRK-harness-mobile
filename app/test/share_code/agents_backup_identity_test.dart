@@ -50,7 +50,7 @@ void main() {
   }
 
   List<File> backups() {
-    final root = fs.dir('${GuestFs.dshHome}/backups');
+    final root = fs.dir('${GuestFs.xrkHome}/backups');
     if (!root.existsSync()) return [];
     return root
         .listSync(recursive: true, followLinks: false)
@@ -79,7 +79,7 @@ void main() {
   });
 
   test('an existing legacy backup with the same timestamp is never overwritten', () async {
-    const legacy = '${GuestFs.dshHome}/backups/share-import-20261103-120000/AGENTS.md';
+    const legacy = '${GuestFs.xrkHome}/backups/share-import-20261103-120000/AGENTS.md';
     writeGuest(fs, legacy, 'earlier retained backup');
     writeGuest(fs, GuestFs.importedAgentsMd, 'current file');
 
@@ -99,18 +99,18 @@ void main() {
 
     expect(result.statuses['agents-md']?.state, ImportStepState.done);
     expect(fs.file(GuestFs.importedAgentsMd).readAsStringSync(), 'first file');
-    expect(fs.dir('${GuestFs.dshHome}/backups').existsSync(), isFalse);
+    expect(fs.dir('${GuestFs.xrkHome}/backups').existsSync(), isFalse);
   });
 
   test('an actual backup parent creation failure keeps the original file', () async {
     writeGuest(fs, GuestFs.importedAgentsMd, 'keep this original');
-    writeGuest(fs, '${GuestFs.dshHome}/backups', 'a regular file blocks the directory');
+    writeGuest(fs, '${GuestFs.xrkHome}/backups', 'a regular file blocks the directory');
 
     final result = await applyText('must not be written', DateTime.utc(2026, 11, 3, 12));
 
     expect(result.statuses['agents-md']?.state, ImportStepState.failed);
     expect(fs.file(GuestFs.importedAgentsMd).readAsStringSync(), 'keep this original');
-    expect(fs.file('${GuestFs.dshHome}/backups').readAsStringSync(), 'a regular file blocks the directory');
+    expect(fs.file('${GuestFs.xrkHome}/backups').readAsStringSync(), 'a regular file blocks the directory');
   });
 
   test('cancelling before the file step creates no backup and leaves the old file', () async {

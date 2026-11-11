@@ -83,7 +83,7 @@ object PrivilegedDisplayMain {
         val core = PrivilegedDisplayHost(context)
         System.err.println("XRK_VDISPLAY_READY uid=${Process.myUid()} rev=${Proto.REVISION}")
         System.err.flush()
-        val worker = Thread({ serve(core) }, "dsh-vdisplay")
+        val worker = Thread({ serve(core) }, "xrk-vdisplay")
         worker.isDaemon = true
         worker.start()
         runCatching { Looper.loop() }

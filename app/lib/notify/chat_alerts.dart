@@ -21,7 +21,6 @@ import 'dart:convert';
 
 import 'package:xrk_client/xrk_client.dart';
 
-import '../companion/companion_signals.dart';
 import '../l10n/host_text.dart';
 import '../l10n/l10n.dart';
 import '../state/hosts_state.dart';
@@ -444,9 +443,6 @@ class HostAlertTracker {
     this.skipApproval,
     this.onReannounce,
     this.onRequestEpochChanged,
-    this.onCompanionSignal,
-    this.companionConnection,
-    this.isCompanionAttached,
     this.announceDelay = const Duration(milliseconds: 800),
     this.reconcileDelay = const Duration(seconds: 3),
   });
@@ -467,9 +463,6 @@ class HostAlertTracker {
   /// native card identity, without duplicating ordinary chat alerts.
   final void Function(ChatAlert alert)? onReannounce;
   final void Function(HostRef host)? onRequestEpochChanged;
-  final void Function(CompanionAlertDelivery delivery)? onCompanionSignal;
-  final Object? companionConnection;
-  final bool Function()? isCompanionAttached;
 
   /// Requests wait this long before alerting, so one that is answered at once
   /// (auto-approve on this or another device) never pops up.
@@ -485,7 +478,8 @@ class HostAlertTracker {
 
   final Map<String, SessionSummary> _sessions = {};
   final Map<String, bool> _running = {};
-  final Map<String, MuxGeneration> _companionRunning = {};
+  /// Mux generation that last saw this session as running (live vs reconciled idle).
+  final Map<String, MuxGeneration> _liveRunning = {};
   MuxEventProvenance? _readyProvenance;
   final Map<String, int> _statusRevision = {};
   final Set<String> _pendingIdle = {};
@@ -562,7 +556,7 @@ class HostAlertTracker {
     switch (event) {
       case HostReadyEvent():
         _generation++;
-        _companionRunning.clear();
+        _liveRunning.clear();
         _readyProvenance = provenance;
         _requestScopes.clear();
         _phoneApprovals.clear();
@@ -595,13 +589,7 @@ class HostAlertTracker {
           provenance: provenance,
         );
       case HostRequestCancelledEvent(:final eventId):
-        final oldScope = _requestScopes[eventId];
-        final oldSession = _requests[eventId];
-        // An unknown raw cancel has no trustworthy request kind/source. Known
-        // scopes clear metadata before any legacy notification withdrawal.
-        if (oldScope != null && oldSession != null && provenance != null) {
-          _publishRequest(eventId, oldScope.sourceSessionId, oldSession, oldScope.kind, provenance, cleared: true);
-        }
+        // An unknown raw cancel has no trustworthy request kind/source.
         _approvals.remove(eventId);
         _requestScopes.remove(eventId);
         _phoneApprovals.remove(eventId);
@@ -612,9 +600,9 @@ class HostAlertTracker {
         if (session != null) onWithdraw(host, session, eventId);
       case SessionStatusEvent(:final sessionId, :final running):
         final was = _running[sessionId];
-        final wasLive = provenance != null && identical(_companionRunning[sessionId], provenance.generation);
-        if (running && provenance != null) _companionRunning[sessionId] = provenance.generation;
-        if (!running) _companionRunning.remove(sessionId);
+        final wasLive = provenance != null && identical(_liveRunning[sessionId], provenance.generation);
+        if (running && provenance != null) _liveRunning[sessionId] = provenance.generation;
+        if (!running) _liveRunning.remove(sessionId);
         _running[sessionId] = running;
         if (running || was != false) _statusRevision[sessionId] = ++_revision;
         if (running) _pendingIdle.remove(sessionId);
@@ -627,7 +615,7 @@ class HostAlertTracker {
       case SessionRemovedEvent(:final sessionId):
         _sessions.remove(sessionId);
         _running.remove(sessionId);
-        _companionRunning.remove(sessionId);
+        _liveRunning.remove(sessionId);
         _statusRevision[sessionId] = ++_revision;
         _pendingIdle.remove(sessionId);
         _requests.removeWhere((_, s) => s == sessionId);
@@ -726,7 +714,6 @@ class HostAlertTracker {
         signalFreshness: 'live',
       );
       _requestAlerts[eventId] = alert;
-      if (provenance != null) _publishRequest(eventId, agentId, root, kind, provenance, stillPending: current);
       (reannounce ? onReannounce : onAlert)?.call(alert);
     }());
   }
@@ -775,7 +762,6 @@ class HostAlertTracker {
       signalProvenance: provenance,
       signalFreshness: freshness,
     );
-    if (provenance != null) _publishTerminal(alert, provenance);
     onAlert(alert);
   }
 
@@ -829,83 +815,6 @@ class HostAlertTracker {
     return _sessions[sessionId];
   }
 
-  void _publishTerminal(ChatAlert alert, MuxEventProvenance provenance) {
-    final session = alert.sourceSessionId, seq = alert.endSeq, reason = alert.turnEndKind;
-    if (session == null || seq == null || reason == null) return;
-    _publishMetadata({
-      'v': 1,
-      'id': '$session:$seq',
-      'kind': 'task.terminal',
-      'source': {
-        'type': 'dsh',
-        'hostKey': companionHostKey(host),
-        'sessionId': session,
-        'seq': seq,
-        'turn': alert.turn,
-      },
-      'observedAt': provenance.observedAt.toIso8601String(),
-      'freshness': alert.signalFreshness,
-      'payload': {'phase': terminalPhase(reason), 'endKind': reason, 'endSeq': seq, 'turn': alert.turn},
-    }, provenance);
-  }
-
-  void _publishRequest(
-    String requestId,
-    String sourceSession,
-    String openSession,
-    AlertKind kind,
-    MuxEventProvenance provenance, {
-    bool cleared = false,
-    bool Function()? stillPending,
-  }) {
-    _publishMetadata(
-      {
-        'v': 1,
-        'id': '${cleared ? 'clear' : 'waiting'}:$requestId',
-        'kind': cleared ? 'task.approval_cleared' : 'task.approval_waiting',
-        'source': {
-          'type': 'dsh',
-          'hostKey': companionHostKey(host),
-          'sessionId': sourceSession,
-          'requestId': requestId,
-        },
-        'observedAt': provenance.observedAt.toIso8601String(),
-        'freshness': 'live',
-        'payload': {
-          'requestId': requestId,
-          'openSessionId': openSession,
-          'requestKind': kind == AlertKind.approval ? 'approval' : 'question',
-        },
-      },
-      provenance,
-      stillPending: stillPending,
-    );
-  }
-
-  void _publishMetadata(Map<String, Object?> json, MuxEventProvenance provenance, {bool Function()? stillPending}) {
-    final actual = source, connection = companionConnection, attached = isCompanionAttached;
-    if (_disposed ||
-        actual is! DshAlertSource ||
-        connection == null ||
-        attached == null ||
-        !provenance.current ||
-        !identical(actual.client.mux, provenance.mux)) {
-      return;
-    }
-    CompanionSignalV1 signal;
-    try {
-      signal = CompanionSignalV1.fromJson(json);
-    } on FormatException {
-      return;
-    }
-    final delivery = CompanionAlertDelivery._(signal, provenance, actual.client, connection, () {
-      if (_disposed) return false;
-      final current = attached();
-      return current && !_disposed;
-    }, stillPending);
-    if (delivery.current) onCompanionSignal?.call(delivery);
-  }
-
   /// The top-level conversation a (sub)agent belongs to.
   Future<String> _rootOf(String sessionId) async {
     var id = sessionId;
@@ -916,41 +825,5 @@ class HostAlertTracker {
       id = parent;
     }
     return id;
-  }
-}
-
-/// Stable local Host identity, with no address, token, display name or path.
-String companionHostKey(HostRef host) => '${host.kind.name}:${host.id}';
-
-/// A metadata-only projection sealed by the actual tracker. Capture the gate
-/// ingress when installing a listener; do not mint an ingress in an old callback.
-final class CompanionAlertDelivery {
-  CompanionAlertDelivery._(this.signal, this.provenance, this.client, this.connection, this._attached, this._pending);
-  final CompanionSignalV1 signal;
-  final MuxEventProvenance provenance;
-  final XrkClient client;
-  final Object connection;
-  final bool Function() _attached;
-  final bool Function()? _pending;
-  bool get current {
-    if (!provenance.current || !identical(client.mux, provenance.mux)) return false;
-    bool attached;
-    try {
-      attached = _attached();
-    } catch (_) {
-      attached = false;
-    }
-    return attached && provenance.current && identical(client.mux, provenance.mux);
-  }
-
-  CompanionSignalAdmission receive(CompanionSignalGate gate, CompanionSignalIngress ingress) {
-    if (!identical(ingress.source.client, client) ||
-        !identical(ingress.source.connection, connection) ||
-        !identical(ingress.source.generation, provenance.generation) ||
-        !current ||
-        !gate.ingressCurrent(ingress)) {
-      return CompanionSignalAdmission.stale;
-    }
-    return gate.receive(ingress, signal, provenance: provenance, stillPending: _pending);
   }
 }

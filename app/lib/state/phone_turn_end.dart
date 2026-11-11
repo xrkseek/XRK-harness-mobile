@@ -13,7 +13,6 @@ import '../notify/chat_alerts.dart';
 import '../notify/notify_channel.dart';
 import '../l10n/l10n.dart';
 import 'app_info.dart';
-import 'bots_state.dart';
 import 'chat_reveal.dart';
 import 'connection_state.dart';
 import 'hosts_state.dart';
@@ -276,7 +275,7 @@ class PhoneTurnEndController extends Notifier<void> {
     final client = ref.read(localConnectionProvider).value?.client;
     final generation = client?.mux.generation;
     final reopen = ref.read(phoneReturnPrefProvider) && !ref.read(appForegroundProvider);
-    final bot = ref.read(dsBotSessionFilterProvider)(HostRef.local, session);
+    const bot = false; // native DS Bot shell removed
     final result = await ref.read(phoneChannelProvider).finishTask(
       taskId: id, sessionId: session, host: HostRef.local.encode(), reopen: reopen,
       runId: task.endedRunId, generation: task.endedGeneration, appOnly: bot,
@@ -422,8 +421,8 @@ class PhoneTurnEndController extends Notifier<void> {
     }
     final taskId = link.taskId!;
     final reopen = ref.read(phoneReturnPrefProvider) && !ref.read(appForegroundProvider);
-    // DS Bot's conversations live in their room, not the chat: just the app.
-    final bot = ref.read(dsBotSessionFilterProvider)(alert.host, alert.sessionId);
+    // Native DS Bot shell removed — every local turn end can reopen chat.
+    const bot = false;
     final channel = ref.read(phoneChannelProvider);
     return () async {
       final result = await channel.finishTask(

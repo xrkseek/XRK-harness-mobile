@@ -20,7 +20,6 @@ import 'package:xrk_app/ui/chat/chat_screen.dart';
 import 'package:xrk_app/ui/chat/model_sheet.dart' show ModelChip;
 import 'package:xrk_app/ui/chat/usage_sheet.dart' show ContextRing;
 import 'package:xrk_app/ui/chat/widgets/whale_tail.dart' show WhaleSprites;
-import 'package:xrk_app/ui/cordis/cordis_page.dart';
 import 'package:xrk_app/ui/engine/engine_screen.dart';
 import 'package:xrk_app/ui/features/all_features_page.dart';
 import 'package:xrk_app/ui/files/files_page.dart';
@@ -36,7 +35,6 @@ import 'package:xrk_app/ui/remote/remote_screen.dart';
 import 'package:xrk_app/state/session_search.dart';
 import 'package:xrk_app/state/update_state.dart';
 import 'package:xrk_app/state/sessions_state.dart';
-import 'package:xrk_app/ui/bots/bot_sheets.dart' show confirmDelete;
 import 'package:xrk_app/ui/replay/replay_page.dart';
 import 'package:xrk_app/ui/share/share_panel.dart';
 import 'package:xrk_app/ui/shell/session_search_page.dart';
@@ -47,11 +45,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:xrk_app/ui/common/confirm_delete.dart' show confirmDelete;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../chat/support/harness.dart' hide fakeConnection;
 import '../../chat/support/sample_chat.dart';
-import '../../cordis/support.dart';
 import '../../files/support/files_harness.dart';
 import '../../phone/harness.dart';
 import '../../phone/support.dart' show FakePhoneNative, PhoneTestRuntime, runningRuntime;
@@ -227,10 +225,6 @@ void main() {
       overrides: terminalOverrides(FakeTerminalBackend()..createdScreen = sampleScreen),
     ),
     before: (tester, _) => settleTerminal(tester),
-  );
-  capture(
-    'cordis',
-    (_) => goldenApp(home: const CordisPage(), brightness: Brightness.light, overrides: cordisOverrides()),
   );
 
   // ── Sheets, dialogs, replay ──────────────────────────────────────────────

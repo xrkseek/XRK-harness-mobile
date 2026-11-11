@@ -23,12 +23,9 @@ import tarfile
 EM_NAMES = {3: "i386", 40: "arm", 62: "x86-64", 183: "aarch64"}
 NPMMIRROR = "https://registry.npmmirror.com/"
 NPMJS = "https://registry.npmjs.org/"
-# `xrkh serve` overlay (passed with --patch by the launch command): plugin-install registries and
-# the xrk-bridge plugin row.
-DSH_WEB_PATCH = "/etc/dsh-app/dsh-web.patch.yml"
-# Where runtime/bridge/xrk-bridge lands in the rootfs (loaded by absolute path from the overlay).
-DSH_GO_BRIDGE = "/opt/xrk-mobile/xrk-bridge"
-# runtime/boot/boot-cache.mjs: path cache for `xrkh serve` while it boots, preloaded by the dsh shim.
+# Where runtime/bridge/xrk-bridge lands in the rootfs (optional Host inventory helper).
+XRK_GO_BRIDGE = "/opt/xrk-mobile/xrk-bridge"
+# runtime/boot/boot-cache.mjs: path cache for `xrkh serve` while it boots.
 BOOT_CACHE = "/opt/xrk-mobile/boot-cache.mjs"
 BOOT_CACHE_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "boot", "boot-cache.mjs")
 DIRECT_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "direct")
@@ -325,7 +322,7 @@ def apply_hunks(data, hunks, label):
     return data
 
 
-def cmd_patch_dsh(args):
+def cmd_patch_engine(args):
     """Apply runtime/patches/*.diff to a XRK npm prefix, refusing anything not pinned for this XRK version.
 
     pins.json maps patch -> XRK version -> file -> {before, after} sha256. Without --record the
@@ -343,18 +340,18 @@ def cmd_patch_dsh(args):
     terminal = {}
     if not args.record:
         for name in names:
-            for rel, pin in pins["patches"].get(name, {}).get(args.dsh_version, {}).items():
+            for rel, pin in pins["patches"].get(name, {}).get(args.engine_version, {}).items():
                 if rel in terminal and terminal[rel] != pin["before"]:
                     sys.exit("%s: broken patch hash chain for %s" % (name, rel))
                 terminal[rel] = pin["after"]
     applied = []
     for name in names:
         diff = parse_unified_diff(open(os.path.join(args.patches, name)).read())
-        want = pins["patches"].get(name, {}).get(args.dsh_version)
+        want = pins["patches"].get(name, {}).get(args.engine_version)
         if want is None and not args.record:
             sys.exit("patch %s has no pin for XRK %s: review the upstream files it touches, then run\n"
                      "  python3 -I runtime/lib/rtbuild.py patch-engine --prefix <engine-prefix> --engine-version %s --record"
-                     % (name, args.dsh_version, args.dsh_version))
+                     % (name, args.engine_version, args.engine_version))
         observed = {}
         for rel, hunks in diff:
             path = os.path.join(args.prefix, rel)
@@ -370,13 +367,13 @@ def cmd_patch_dsh(args):
                     continue
                 if before != pin["before"]:
                     sys.exit("%s: %s sha256 %s differs from the vetted XRK %s original %s"
-                             % (name, rel, before, args.dsh_version, pin["before"]))
+                             % (name, rel, before, args.engine_version, pin["before"]))
             out = apply_hunks(raw.decode("utf-8"), hunks, "%s %s" % (name, rel)).encode("utf-8")
             after = hashlib.sha256(out).hexdigest()
             if not args.record and after != pin["after"]:
                 sys.exit("%s: %s patched sha256 %s != pinned %s" % (name, rel, after, pin["after"]))
             mode = os.stat(path).st_mode & 0o777
-            tmp = path + ".dsh-app-patch"
+            tmp = path + ".xrk-app-patch"
             with open(tmp, "wb") as f:
                 f.write(out)
             os.chmod(tmp, mode)
@@ -384,18 +381,18 @@ def cmd_patch_dsh(args):
             observed[rel] = {"before": before, "after": after}
             print("%s: patched %s (%s -> %s)" % (name, rel, before[:12], after[:12]))
         if args.record:
-            pins["patches"].setdefault(name, {})[args.dsh_version] = observed
+            pins["patches"].setdefault(name, {})[args.engine_version] = observed
         applied.append(name)
     if args.record:
         with open(pins_path, "w") as f:
             json.dump(pins, f, indent=2, sort_keys=True)
             f.write("\n")
-        print("recorded pins for XRK %s in %s" % (args.dsh_version, pins_path))
+        print("recorded pins for XRK %s in %s" % (args.engine_version, pins_path))
     if "zzzzzz-session-deletion.diff" in applied:
         # Source-owned companion module, installed only alongside the vetted rc4 seam.
         source = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "session-deletion", "core.mjs")
-        target = os.path.join(args.prefix, "node_modules", "@deepseek-ai", "dsh-session-persistence-jsonl", "lib", "xrk-mobile-deletion.mjs")
-        tmp = target + ".dsh-app-patch"
+        target = os.path.join(args.prefix, "node_modules", "@xrkseek", "harness-cli-session-persistence-jsonl", "lib", "xrk-mobile-deletion.mjs")
+        tmp = target + ".xrk-app-patch"
         with open(source, "rb") as src, open(tmp, "wb") as dst:
             dst.write(src.read())
         os.chmod(tmp, 0o644)
@@ -685,7 +682,7 @@ def direct_native_inventory(entries):
     """Snapshot the post-pruning bundled addons once for both hash and archive."""
     files = {}
     for path, entry in sorted(entries.items()):
-        if path.startswith("opt/dsh/node_modules/") and path.endswith(".node") and entry.kind == "file":
+        if path.startswith("opt/xrk/node_modules/") and path.endswith(".node") and entry.kind == "file":
             entry.data = entry.read()
             files["/" + path] = hashlib.sha256(entry.data).hexdigest()
     return {"schema": 1, "files": files}
@@ -724,7 +721,7 @@ def base_drop(path):
     return False
 
 
-def dsh_drop_reason(rel, abi, prune_dev):
+def engine_drop_reason(rel, abi, prune_dev):
     parts = rel.split("/")
     if "prebuilds" in parts:
         i = parts.index("prebuilds")
@@ -751,7 +748,7 @@ def pnpm_drop_reason(rel, abi, prune_dev):
     for i in range(len(parts) - 1):
         if parts[i] == "@reflink" and parts[i + 1].startswith("reflink-") and not parts[i + 1].startswith("reflink-linux-"):
             return "foreign-binary"
-    return dsh_drop_reason(rel, abi, prune_dev)
+    return engine_drop_reason(rel, abi, prune_dev)
 
 
 PY_DROP_DIRS = ("test", "idlelib", "tkinter", "turtledemo", "lib2to3/tests")
@@ -780,7 +777,7 @@ def install_ca_bundle(entries, report):
     prefix = "usr/share/ca-certificates/"
     certs = sorted(p for p, e in entries.items()
                    if p.startswith(prefix) and p.endswith(".crt") and e.kind == "file")
-    conf = ("# Generated by dsh-app's build (equivalent of update-ca-certificates).\n"
+    conf = ("# Generated by xrk-app's build (equivalent of update-ca-certificates).\n"
             "# Lines starting with ! are deselected; run update-ca-certificates after editing.\n"
             + "".join(p[len(prefix):] + "\n" for p in certs))
     entries["etc/ca-certificates.conf"] = Entry("file", 0o644, data=conf.encode(), origin="deb")
@@ -806,18 +803,8 @@ def install_ca_bundle(entries, report):
                                 "bundleBytes": len(bundle)}
 
 
-def bridge_shared_rows():
-    """The rows of the bridge bundle's cordis.patch.yml that the local overlay also carries."""
-    source = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bridge", "xrk-bridge", "cordis.patch.yml")
-    with open(source, encoding="utf-8") as patch:
-        rows = patch.read().split("    # --- shared rows ---\n", 1)[1]
-    # Local runtimes load the bridge by path; it is not a profile dependency.
-    return rows.replace("name: xrk-bridge/companion/full-context",
-                        "name: %s/lib/companion/full-context.js" % XRK_GO_BRIDGE)
-
-
 def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridge=False):
-    """Files dsh-app adds to the rootfs. Kept here so the recipe lives in one place."""
+    """Files xrk-app adds to the rootfs. Kept here so the recipe lives in one place."""
     E = {}
 
     def f(path, text, mode=0o644):
@@ -830,7 +817,7 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
         E[path] = Entry("symlink", 0o777, link=target, origin="overlay")
 
     f("etc/resolv.conf",
-      "# dsh-app default resolvers. The app should rewrite this file at each launch with the\n"
+      "# xrk-app default resolvers. The app should rewrite this file at each launch with the\n"
       "# device's current DNS servers (ConnectivityManager LinkProperties.getDnsServers()).\n"
       "nameserver 223.5.5.5\nnameserver 119.29.29.29\nnameserver 8.8.8.8\n"
       "options timeout:2 attempts:2\n")
@@ -839,25 +826,24 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
     # what tzdata's postinst would do non-interactively; the app passes TZ=<IANA id> for local time
     f("etc/timezone", "Etc/UTC\n")
     s("etc/localtime", "../usr/share/zoneinfo/Etc/UTC")
-    f("etc/profile.d/dsh-app.sh",
-      "# dsh-app guest defaults (login shells). The launcher passes the same values via env -i.\n"
+    f("etc/profile.d/xrk-app.sh",
+      "# xrk-app guest defaults (login shells). The launcher passes the same values via env -i.\n"
       "export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n"
       "export HOME=\"${HOME:-/root}\"\n"
       "export LANG=\"${LANG:-C.UTF-8}\"\n"
       "export TERM=\"${TERM:-xterm-256color}\"\n"
       "export TMPDIR=\"${TMPDIR:-/tmp}\"\n"
       "export XRK_HOME=\"${XRK_HOME:-/root/.xrk}\"\n"
-      "export XRK_HOME=\"${XRK_HOME:-/root/.xrk}\"\n"
       "export XDG_DATA_DIRS=\"${XDG_DATA_DIRS-/usr/local/share:/usr/share:/system}\"\n"
       + ("export pnpm_config_registry=\"${pnpm_config_registry:-%s}\"\n" % NPMMIRROR if with_pnpm else ""))
-    f("etc/apt/apt.conf.d/99dsh-app-proot",
+    f("etc/apt/apt.conf.d/99xrk-app-proot",
       "// proot fakes root; apt's privilege drop to _apt only causes setgroups/permission noise.\n"
       "APT::Sandbox::User \"root\";\n"
       "Acquire::Retries \"3\";\n")
     f("opt/node/etc/npmrc",
-      "# Global npm config for the dsh-app runtime (npm reads <node prefix>/etc/npmrc).\n"
+      "# Global npm config for the xrk-app runtime (npm reads <node prefix>/etc/npmrc).\n"
       "# pnpm 11 never reads this file: its registry comes from pnpm_config_registry, which the\n"
-      "# launch environment and /etc/profile.d/dsh-app.sh set.\n"
+      "# launch environment and /etc/profile.d/xrk-app.sh set.\n"
       "prefix=/usr/local\n"
       "registry=https://registry.npmmirror.com\n"
       "update-notifier=false\nfund=false\naudit=false\n")
@@ -870,7 +856,7 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
     with open(BOOT_CACHE_SRC, "rb") as src:
         E[BOOT_CACHE.lstrip("/")] = Entry("file", 0o644, data=src.read(), origin="overlay")
     # Immutable direct-engine input; Android's per-install path config and
-    # wrappers live separately under opt/dsh-app/direct.
+    # wrappers live separately under opt/xrk-app/direct.
     for name in sorted(os.listdir(DIRECT_SRC)):
         if name.endswith(".mjs"):
             with open(os.path.join(DIRECT_SRC, name), "rb") as src:
@@ -879,64 +865,31 @@ def overlay_entries(runtime_info, with_python=False, with_pnpm=False, with_bridg
     f("usr/local/bin/xrkh",
       "#!/bin/sh\n"
       "# XRK Harness CLI shim: bundled Node + @xrkseek/harness-cli.\n"
-      "exec /opt/node/bin/node /opt/dsh/node_modules/@xrkseek/harness-cli/dist/bin.js \"$@\"\n", 0o755)
+      "exec /opt/node/bin/node /opt/xrk/node_modules/@xrkseek/harness-cli/dist/bin.js \"$@\"\n", 0o755)
     f("usr/local/bin/xrk-harness",
       "#!/bin/sh\n"
-      "exec /usr/local/bin/xrkh \"$@\"\n", 0o755)
-    f("usr/local/bin/dsh",
-      "#!/bin/sh\n"
-      "# Compatibility alias: map legacy `xrkh serve` to `xrkh serve`.\n"
-      "if [ \"$1\" = web ]; then\n"
-      "  shift\n"
-      "  exec /usr/local/bin/xrkh serve \"$@\"\n"
-      "fi\n"
       "exec /usr/local/bin/xrkh \"$@\"\n", 0o755)
     d("root/.xrk", 0o700)
     if with_pnpm:
         # what `npm i -g pnpm` creates under npm's global prefix (/usr/local)
         for name, target in PNPM_BINS.items():
             s("usr/local/bin/" + name, "../lib/node_modules/pnpm/bin/" + target)
-    if with_pnpm or with_bridge:
-        patch = ("# dsh-app: overlay for `xrkh serve`, passed with --patch by the app's launch command and\n"
-                 "# replaced on every runtime upgrade (edits here do not survive one).\n")
-        if with_pnpm:
-            patch += ("#\n"
-                      "# Plugin installs (pluginManager) ask pnpm's own registry first; the launch environment\n"
-                      "# points it at npmmirror (pnpm_config_registry). Listing npmmirror here keeps it in the\n"
-                      "# public set, so npm's own registry is asked next when the mirror is unreachable, times out\n"
-                      "# or has not synced a version yet. A private registry pnpm is pointed at is still asked\n"
-                      "# alone. This row replaces plugin-manager's whole config: a plugin-manager config in the\n"
-                      "# profile's cordis.patch.yml does not apply while XRK runs with this overlay.\n"
-                      "- id: plugin-manager\n"
-                      "  config:\n"
-                      "    fallbackRegistries:\n"
-                      "      - %s\n"
-                      "      - %s\n" % (NPMMIRROR, NPMJS))
-        if with_bridge:
-            patch += ("#\n"
-                      "# xrk-bridge: plugin inventory for the app (GET /xrk-mobile/v1/inventory), loaded by path.\n"
-                      "# Do not also install xrk-bridge into a profile: two sources of one browser package\n"
-                      "# fail the client composition.\n"
-                      "- insert:\n"
-                      "    - id: xrk-bridge\n"
-                      "      name: %s/lib/index.js\n" % XRK_GO_BRIDGE)
-            patch += bridge_shared_rows()
-        f(DSH_WEB_PATCH.lstrip("/"), patch)
-    d("root/.dsh", 0o700)
+    # Host CLI `--patch` is JSON config only — do not ship Cordis YAML overlays here.
+    # Registries come from launch env (`pnpm_config_registry`); bridge lives under XRK_GO_BRIDGE.
     d("root/.l2s", 0o700)          # PROOT_L2S_DIR: hard-link backing files (kept with /root on upgrade)
     # Do not seed root/workspace — first boot keeps only 向阳空间 (Face skip).
-    d("var/lib/dsh-app", 0o755)
-    d("var/lib/dsh-app/shm", 0o1777)    # bound to /dev/shm
-    d("var/lib/dsh-app/empty", 0o755)   # bound over /sys/fs/selinux so dpkg/libselinux see no SELinux
+    d("var/lib/xrk-app", 0o755)
+    d("var/lib/xrk-app/shm", 0o1777)    # bound to /dev/shm
+    d("var/lib/xrk-app/empty", 0o755)   # bound over /sys/fs/selinux so dpkg/libselinux see no SELinux
     d("tmp", 0o1777)
-    f("etc/dsh-app/runtime.json", json.dumps(runtime_info, indent=2, sort_keys=True) + "\n")
+    f("etc/xrk-app/runtime.json", json.dumps(runtime_info, indent=2, sort_keys=True) + "\n")
     if with_python:
         s("usr/local/bin/python3", "../../../opt/python/bin/python3")
         s("usr/local/bin/python", "../../../opt/python/bin/python3")
         s("usr/local/bin/pip3", "../../../opt/python/bin/pip3")
         s("usr/local/bin/pip", "../../../opt/python/bin/pip3")
         f("etc/pip.conf",
-          "# dsh-app: PyPI mirror for users in China (change or delete to use pypi.org).\n"
+          "# xrk-app: PyPI mirror for users in China (change or delete to use pypi.org).\n"
           "[global]\nindex-url = https://pypi.tuna.tsinghua.edu.cn/simple\n"
           "disable-pip-version-check = true\n")
     return E
@@ -1155,14 +1108,14 @@ def cmd_assemble(args):
                 mode = 0o755 if st.st_mode & 0o111 else 0o644
                 entries[dest] = Entry("file", mode, path=full, origin=origin)
 
-    add_tree(args.engine_prefix, "opt/dsh", "engine", dsh_drop_reason)
+    add_tree(args.engine_prefix, "opt/xrk", "engine", engine_drop_reason)
     if args.pnpm_prefix:
         add_tree(os.path.join(args.pnpm_prefix, "node_modules", "pnpm"), "usr/local/lib/node_modules/pnpm",
                  "pnpm", pnpm_drop_reason)
     if args.bridge:
         add_tree(args.bridge, XRK_GO_BRIDGE.lstrip("/"), "bridge", lambda rel, abi, prune: None)
 
-    # 4. dsh-app overlay (wins over everything above)
+    # 4. xrk-app overlay (wins over everything above)
     runtime_info = json.loads(args.runtime_info)
     for p, e in overlay_entries(runtime_info, with_python=bool(args.python), with_pnpm=bool(args.pnpm_prefix),
                                 with_bridge=bool(args.bridge)).items():
@@ -1183,7 +1136,7 @@ def cmd_assemble(args):
             report["warnings"].append("unparsable ELF %s: %s" % (p, exc))
             continue
         if info["e_machine"] != machine:
-            if e.origin in ("dsh", "pnpm"):
+            if e.origin in ("engine", "pnpm"):
                 # unusable on this ABI; keep the build going but make it visible
                 drop("foreign-arch-elf", p, len(data))
                 report["warnings"].append("pruned %s ELF from npm tree (package lacks a %s build?): %s"
@@ -1192,7 +1145,7 @@ def cmd_assemble(args):
                 continue
             raise SystemExit("ELF %s is %s, expected %s" % (p, info["machine"], EM_NAMES[machine]))
         if info["musl"]:
-            if e.origin in ("dsh", "pnpm"):
+            if e.origin in ("engine", "pnpm"):
                 drop("musl-elf", p, len(data))
                 del entries[p]
                 continue
@@ -1314,7 +1267,7 @@ def cmd_assemble(args):
         "uncompressedBytes": file_bytes,
         "counts": counts,
         "origins": {o: sum(1 for e in entries.values() if e.origin == o)
-                    for o in ("ubuntu", "deb", "python", "node", "dsh", "pnpm", "bridge", "overlay", "implicit")},
+                    for o in ("ubuntu", "deb", "python", "node", "engine", "pnpm", "bridge", "overlay", "implicit")},
     })
     report["droppedBytes"] = sum(report["dropped"].values())
     with open(args.report, "w") as f:
@@ -1337,7 +1290,6 @@ def launch_template():
         "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         "LANG=C.UTF-8", "TERM=xterm-256color", "TMPDIR=/tmp",
         "XRK_HOME=/root/.xrk",
-        "XRK_HOME=/root/.xrk",
         # Linux font discovery appends /fonts; Android's fonts are in the bound /system.
         "XDG_DATA_DIRS=/usr/local/share:/usr/share:/system",
         # pnpm 11 reads its registry from here (not from any npmrc outside $HOME)
@@ -1358,8 +1310,8 @@ def launch_template():
         "-b", "/proc/self/fd/1:/dev/stdout",
         "-b", "/proc/self/fd/2:/dev/stderr",
         "-b", "/sys",
-        "-b", "{ROOTFS}/var/lib/dsh-app/empty:/sys/fs/selinux",
-        "-b", "{ROOTFS}/var/lib/dsh-app/shm:/dev/shm",
+        "-b", "{ROOTFS}/var/lib/xrk-app/empty:/sys/fs/selinux",
+        "-b", "{ROOTFS}/var/lib/xrk-app/shm:/dev/shm",
         "-b", "/system",
         "-b", "/apex",
         "/usr/bin/env", "-i",
@@ -1367,7 +1319,7 @@ def launch_template():
         "{GUEST_ENV}",
         "/bin/sh", "-c",
         # Pin --workspace to 向阳空间 so Face does not register /root (cwd) as a coding workspace.
-        "echo $$ > /tmp/dsh-web.pid; exec /usr/local/bin/xrkh serve --host 127.0.0.1 --port {PORT} "
+        "echo $$ > /tmp/xrk-web.pid; exec /usr/local/bin/xrkh serve --host 127.0.0.1 --port {PORT} "
         '--workspace "${XRK_HOME:-/root/.xrk}/xiangyang-workspace"',
     ]
     env = {
@@ -1398,7 +1350,7 @@ def launch_template():
             "http": "GET / -> 200 (loopback; no cookie)",
         },
         "stop": {
-            "pidFile": "{ROOTFS}/tmp/dsh-web.pid",
+            "pidFile": "{ROOTFS}/tmp/xrk-web.pid",
             "graceful": "Os.kill(pid from pidFile, SIGTERM): xrkh exits; "
                         "--kill-on-exit then reaps the rest and proot exits",
             "fallback": "Os.kill(prootPid, SIGQUIT) kills every tracee; proot IGNORES SIGTERM/SIGINT/SIGHUP, "
@@ -1407,7 +1359,6 @@ def launch_template():
         "files": {
             "resolvConf": "{ROOTFS}/etc/resolv.conf",
             "xrkHome": "{ROOTFS}/root/.xrk",
-            "dshHome": "{ROOTFS}/root/.xrk",
             "credentials": "{ROOTFS}/root/.xrk/.credentials.yaml",
             "l2sDir": "{ROOTFS}/root/.l2s (must exist; created by the archive)",
         },
@@ -1447,8 +1398,7 @@ def cmd_manifest(args):
         "pnpmRegistry": NPMMIRROR,
         "pluginRegistries": {
             "order": [NPMMIRROR, NPMJS],
-            "note": "pluginManager asks pnpm's own registry (pnpm_config_registry in launch.argv) and then "
-                    "the fallbackRegistries set by " + XRK_WEB_PATCH + " (passed with --patch)",
+            "note": "plugin installs use pnpm_config_registry from launch env (npmmirror), then npmjs",
         },
         "nativeMinSdk": 24,
         "jniLibs": jni,
@@ -1490,12 +1440,12 @@ def main():
     p.set_defaults(fn=cmd_patch_dynstr)
 
     p = sub.add_parser("patch-engine")
-    p.add_argument("--prefix", required=True, help="npm --prefix tree holding node_modules/@deepseek-ai/...")
+    p.add_argument("--prefix", required=True, help="npm --prefix tree holding node_modules/@xrkseek/harness-cli...")
     p.add_argument("--engine-version", required=True)
     p.add_argument("--patches", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "patches"))
     p.add_argument("--record", action="store_true", help="write the observed hashes as this version's pins")
     p.add_argument("--out", help="write the applied patch names (JSON list) here")
-    p.set_defaults(fn=cmd_patch_dsh)
+    p.set_defaults(fn=cmd_patch_engine)
 
     p = sub.add_parser("resolve-debs")
     p.add_argument("--base", required=True)

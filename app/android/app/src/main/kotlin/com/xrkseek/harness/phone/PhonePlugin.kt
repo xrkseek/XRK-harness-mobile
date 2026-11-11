@@ -52,8 +52,8 @@ class PhonePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
     private var activity: ActivityPluginBinding? = null
     private var sink: ((Map<String, Any?>) -> Unit)? = null
     private val main = Handler(Looper.getMainLooper())
-    private val io = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-phone-plugin").apply { isDaemon = true } }
-    private val controlIo = Executors.newSingleThreadExecutor { r -> Thread(r, "dsh-phone-control").apply { isDaemon = true } }
+    private val io = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-phone-plugin").apply { isDaemon = true } }
+    private val controlIo = Executors.newSingleThreadExecutor { r -> Thread(r, "xrk-phone-control").apply { isDaemon = true } }
     @Volatile private var promptOwner = Any()
     @Volatile private var attached = false
     @Volatile private var skillClient: PhoneSkillDrafts.Client? = null

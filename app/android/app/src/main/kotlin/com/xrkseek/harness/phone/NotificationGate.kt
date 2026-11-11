@@ -168,7 +168,7 @@ class NotificationGate(
             AppStrings.get(app, R.string.phone_prompt_result_channel), NotificationManager.IMPORTANCE_HIGH))
         if (!channelAvailable(CHANNEL_RESULT, NotificationManager.IMPORTANCE_MIN)) return false
         val intent = if (sessionId != null) EntryActivity.openChat(app, sessionId, host) else EntryActivity.openApp(app)
-        intent.data = Uri.parse("dsh-phone-result://task/$taskId")
+        intent.data = Uri.parse("xrk-phone-result://task/$taskId")
         val pi = PendingIntent.getActivity(app, RESULT_ID, intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         nm.notify(RESULT_TAG, RESULT_ID, builder(CHANNEL_RESULT).setSmallIcon(R.drawable.ic_stat_dsh)
@@ -257,10 +257,10 @@ class NotificationGate(
     }
 
     companion object {
-        private const val TAG = "dsh-phone-gate"
-        const val CHANNEL_CONFIRM = "dsh-phone-confirm"
-        const val CHANNEL_RESULT = "dsh-phone-result"
-        private const val RESULT_TAG = "dsh-phone-result"
+        private const val TAG = "xrk-phone-gate"
+        const val CHANNEL_CONFIRM = "xrk-phone-confirm"
+        const val CHANNEL_RESULT = "xrk-phone-result"
+        private const val RESULT_TAG = "xrk-phone-result"
         private const val RESULT_ID = 4300
         private const val EXTRA_CHOICE = "choice"
     }

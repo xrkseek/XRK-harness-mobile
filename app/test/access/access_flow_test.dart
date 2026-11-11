@@ -1,4 +1,4 @@
-// First run's 「想让 XRK Go 帮你做哪些事」 end to end with a fake phone: the
+// First run's 「想让 XRK Harness 帮你做哪些事」 end to end with a fake phone: the
 // pick (and what picking asks first), the walk (dialogs answer at once,
 // pages on coming back, a maker's switch on the person's word, the
 // restricted-settings steps), the summary, a walk resumed after the app was
@@ -68,7 +68,7 @@ void main() {
     testWidgets('nothing picked to begin with; 跳过 goes on and writes nothing', (tester) async {
       var done = 0;
       await _pump(tester, AccessStepPage(onDone: () => done++), FakeAccessDriver(offPhone));
-      expect(find.text('想让 XRK Go 帮你做哪些事'), findsOneWidget);
+      expect(find.text('想让 XRK Harness 帮你做哪些事'), findsOneWidget);
       for (final name in ['读写手机里的文件', '桌宠与悬浮窗', '手机操控', '后台持续运行']) {
         expect(find.text(name), findsOneWidget);
         expect(tester.getSemantics(find.text(name)), isSemantics(isChecked: false, hasCheckedState: true));
@@ -160,7 +160,7 @@ void main() {
 
       // 3 / 4: vivo's own switch, with where it lives; the person's word for it.
       expect(find.text('允许后台高耗电'), findsOneWidget);
-      expect(find.text('位置：电池 › 后台耗电管理 › XRK Go'), findsOneWidget);
+      expect(find.text('位置：电池 › 后台耗电管理 › XRK Harness'), findsOneWidget);
       expect(_primaryLabel(tester), '去设置');
       await _tapPrimary(tester);
       await awayAndBack(tester);

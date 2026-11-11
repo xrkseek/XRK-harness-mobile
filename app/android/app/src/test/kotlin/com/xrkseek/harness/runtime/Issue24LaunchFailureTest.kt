@@ -4,7 +4,7 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class Issue24LaunchFailureTest {
-    private val execError = "/bin/sh: 1: exec: /usr/local/bin/dsh: Bad address"
+    private val execError = "/bin/sh: 1: exec: /usr/local/bin/xrkh: Bad address"
     private val reported = listOf(
         "sh: 0: getcwd() failed: Function not implemented",
         execError,
@@ -32,14 +32,14 @@ class Issue24LaunchFailureTest {
             "Bad address", "Exec format error", "Permission denied", "not found",
             "Function not implemented", "Operation not permitted",
         )) {
-            assertEquals(reason, "launchFailed", classify(listOf("sh: exec: /usr/local/bin/dsh: $reason")).kind.wire)
+            assertEquals(reason, "launchFailed", classify(listOf("sh: exec: /usr/local/bin/xrkh: $reason")).kind.wire)
         }
         for (tail in listOf(
             listOf("sh: 0: getcwd() failed: Function not implemented"),
             listOf("Error: Bad address"),
             listOf("/bin/sh: 1: exec: /tmp/plugin-script: Bad address"),
             listOf("plugin says: $execError"),
-            listOf("/bin/sh: 1: exec: /usr/local/bin/dsh: unexpected plugin output"),
+            listOf("/bin/sh: 1: exec: /usr/local/bin/xrkh: unexpected plugin output"),
         )) assertEquals(FailureKind.KILLED, classify(tail).kind)
         assertEquals(FailureKind.KILLED, classify(readyAt = 0L).kind)
         assertEquals(FailureKind.KILLED, classify(exitCode = 0).kind)

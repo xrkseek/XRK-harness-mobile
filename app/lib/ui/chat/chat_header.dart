@@ -10,7 +10,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../state/header_schedule_state.dart';
 import '../agents/header_agents.dart';
 import '../common/fluid_bits.dart';
 import '../common/smooth_size.dart';
@@ -19,7 +18,6 @@ import '../shell/adaptive/adaptive_scaffold.dart' show AdaptiveChrome;
 import '../shell/adaptive/detail_panel_keys.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import 'header_schedule.dart';
 import 'model_sheet.dart' show ModelChip;
 
 /// 顶栏状态行的内容:状态点 + 一句人话。颜色从不单独表达状态。
@@ -36,8 +34,8 @@ class HeaderStatus {
 
 /// 聊天顶栏:**没有整条色带**(Claude 式),只有几枚浮动玻璃件;
 /// 内容滚到下面时才浮现一层页面色渐隐,与二级页面同一套做法。
-/// 打开着对话时最右是「新对话」圆键,与 ≡ 镜像。对话有进行中的自动化任务时,
-/// 标题胶囊的尾端是一颗与它同心的时钟键([HeaderScheduleCap])。
+/// 打开着对话时最右是「新对话」圆键,与 ≡ 镜像。
+/// 自动化时钟键已移除（guest Web 管 schedules）。
 ///
 /// ```
 /// (≡) ( 修复登录重复提交 )   ( ✦ V4 Pro · 高 ⌄ ) (+)
@@ -131,8 +129,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
     final titleFloor = _titleFloor(context, statusStyle);
     // The schedule clock widens the pill by this much over its plain right
     // padding, while the bar can afford it (see [_HeaderRow]).
-    final scheduled = ref.watch(headerSchedulesProvider.select((s) => s.shown));
-    final clockExtra = scheduled ? HeaderScheduleCap.extraFor(pillHeight) : 0.0;
+    final clockExtra = 0.0; // native schedule header removed — guest Web owns automation
     // Wide windows: next to the rail (it has its own ≡) the key goes, and ≡
     // says what it does there (fold or unfold the list).
     final chrome = AdaptiveChrome.maybeOf(context);
@@ -249,7 +246,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
                                   ],
                                 ),
                               ),
-                              end: HeaderScheduleCap(pillHeight: pillHeight),
+                              end: SizedBox(width: _pillPadding),
                             ),
                           ),
                         ),
@@ -304,9 +301,8 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
     );
   }
 
-  /// The pill's text inset, both sides ([HeaderScheduleCap.padding] on the
-  /// right, where the clock goes).
-  static const _pillPadding = HeaderScheduleCap.padding;
+  /// The pill's text inset, both sides (schedule clock used to own the right).
+  static const _pillPadding = 16.0;
   static const _dot = 6.0;
   static const _dotGap = 5.0;
 

@@ -118,7 +118,7 @@ internal class LauncherIconProbe private constructor(
             .put("enabled", enabled).put("states", states).put("tasks", tasks)
             .put("foreground", MainActivity.inForeground).put("activity", System.identityHashCode(activity))
             .put("destroyed", activity?.isDestroyed).put("task", activity?.taskId)
-            .put("engine", System.identityHashCode(FlutterEngineCache.getInstance().get("dsh-main")))
+            .put("engine", System.identityHashCode(FlutterEngineCache.getInstance().get("xrk-main")))
             .toString())
     }
 

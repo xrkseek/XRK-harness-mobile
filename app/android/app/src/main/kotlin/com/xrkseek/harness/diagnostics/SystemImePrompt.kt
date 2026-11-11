@@ -84,7 +84,7 @@ internal class SystemImePrompt : Application.ActivityLifecycleCallbacks {
     private fun start(call: Pending, activity: Activity) {
         if (!running.compareAndSet(false, true)) { finish(call, SystemImeEvidence.result("busy")); return }
         call.timeout = Runnable { finish(call, SystemImeEvidence.result("timeout")) }.also { main.postDelayed(it, 4000) }
-        thread(name = "dsh-system-ime", isDaemon = true) {
+        thread(name = "xrk-system-ime", isDaemon = true) {
             val value = try {
                 BackgroundControl.get(activity.applicationContext).collectSystemIme { call.consent.allowed() }
             } catch (_: Exception) { SystemImeEvidence.result("failed") }

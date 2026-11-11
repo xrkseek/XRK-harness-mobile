@@ -209,7 +209,7 @@ ctx.xrkGoPanels.register({
 
 ### 5.2 Tier B：本机引擎，带宿主侧桥接插件 `xrk-bridge`
 
-`xrk-bridge` 是 App 运行时自带的一个 XRK 包，有宿主和浏览器两半，经 `/etc/dsh-app/dsh-web.patch.yml`（`runtime/lib/rtbuild.py:26`）加载。远程主机可选从 npm 安装，要用户确认。
+`xrk-bridge` 是 App 运行时自带的一个 XRK 包，有宿主和浏览器两半，经 `/etc/xrk-app/xrk-web.patch.yml`（`runtime/lib/rtbuild.py:26`）加载。远程主机可选从 npm 安装，要用户确认。
 
 - **浏览器半侧**：`inject: ['slots']`。每次页面启动读 `slots` 的实时组合（`SlotCore.snapshot()` / `entries(key)`，签名见 `dsh-cordis-client-runner/lib/client.js:2226`），按 slot 汇总占用者（包名、cell、order、label），`POST /xrk-mobile/v1/occupancy` 报给宿主，带 `__DSH_BOOT__.rev`。
 - **宿主半侧**：
@@ -433,7 +433,7 @@ class FromUiJsonBadge extends StatelessWidget { … }     // 「来自 ui.json�
 
 | 操作 | 代码 | 结果 |
 |---|---|---|
-| **运行时升级** | `RuntimeInstaller.install` → `activateRootfs`（`app/android/.../runtime/RuntimeInstaller.kt:32-58、106-126`） | **保留**。用户的 `/root` 先移到 `home.carry`，新 rootfs 换上后再移回，`/root/.xrk` 里的插件（`profiles/web`）、`cordis.patch.yml`、`skills/`、`xrk-mobile/ui.json` 都在。被替换的只有运行时自有文件，如 `/etc/dsh-app/dsh-web.patch.yml`（每次升级重写，`rtbuild.py:696-705`） |
+| **运行时升级** | `RuntimeInstaller.install` → `activateRootfs`（`app/android/.../runtime/RuntimeInstaller.kt:32-58、106-126`） | **保留**。用户的 `/root` 先移到 `home.carry`，新 rootfs 换上后再移回，`/root/.xrk` 里的插件（`profiles/web`）、`cordis.patch.yml`、`skills/`、`xrk-mobile/ui.json` 都在。被替换的只有运行时自有文件，如 `/etc/xrk-app/xrk-web.patch.yml`（每次升级重写，`rtbuild.py:696-705`） |
 | **「重置运行环境」** | `RuntimeController.reset` → `RuntimeInstaller.reset()` = `baseDir.deleteRecursivelySafely()`（`RuntimeController.kt:296-325`、`RuntimeInstaller.kt:71-73`） | **全部删除**：整个 `filesDir/runtime`，包括 `/root/.xrk` 下的插件、补丁、技能、ui.json、对话记录。对话框文案只提到「对话记录和工作区文件」（`app/lib/ui/engine/engine_screen.dart:365-368`） |
 
 建议：

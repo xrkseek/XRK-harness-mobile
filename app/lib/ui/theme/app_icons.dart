@@ -364,12 +364,6 @@ abstract final class AppIcons {
   static const tool = XrkGlyphs.wrench;
   static const tip = XrkGlyphs.lightbulb;
 
-  /// 伙伴小屋: she now and then asks you to rest with her (companion_page.dart).
-  static const companionInvite = XrkGlyphs.chatTeardropText;
-
-  /// 伙伴小屋: her words read aloud (companion_voice.dart). Not the microphone: that is the person's voice.
-  static const companionVoice = XrkGlyphs.musicNote;
-
   /// 「问 AI」: a question about the app for the agent (ui/common/ask_ai.dart).
   static const askAi = XrkGlyphs.sparkle;
 

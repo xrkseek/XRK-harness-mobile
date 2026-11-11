@@ -18,7 +18,7 @@ internal class FramedMuxServer<Q, R>(
     private val gate = PrivilegedCalls(3)
     private val failed = AtomicBoolean(false)
     private val workers = ThreadPoolExecutor(3, 3, 0, TimeUnit.MILLISECONDS, ArrayBlockingQueue<Runnable>(3),
-        { job -> Thread(job, "dsh-mux-body").apply { isDaemon = true } })
+        { job -> Thread(job, "xrk-mux-body").apply { isDaemon = true } })
 
     fun run() {
         try {

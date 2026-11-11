@@ -7,7 +7,6 @@ import 'package:xrk_app/runtime/runtime_state.dart';
 import 'package:xrk_app/state/adaptive_layout_state.dart';
 import 'package:xrk_app/state/attachments.dart';
 import 'package:xrk_app/state/balance_state.dart';
-import 'package:xrk_app/state/bots_state.dart' show dsBotApiFactoryProvider;
 import 'package:xrk_app/state/chat_state.dart';
 import 'package:xrk_app/state/commands_state.dart';
 import 'package:xrk_app/state/connection_state.dart';
@@ -153,7 +152,6 @@ List<Override> homeOverrides({
   layoutPrefsProvider.overrideWith(() => FixedLayoutPrefs(prefs)),
   // The shell's hosts: no sockets, no native side.
   workspacesProvider.overrideWith(_Workspaces.new),
-  dsBotApiFactoryProvider.overrideWithValue((_) => null),
   notifyChannelProvider.overrideWithValue(FakeNotifyChannel()),
   alertSourceFactoryProvider.overrideWithValue((_) => FakeAlertSource()),
 ];
