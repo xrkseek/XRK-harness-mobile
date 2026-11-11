@@ -77,7 +77,7 @@ List<String> _touched(_Rig rig, [int from = 0]) => [
 
 List<String> _credentialCalls(_Rig rig, [int from = 0]) => [
   for (final (_, path, _) in rig.host.requests.skip(from))
-    if (path == '/api/credentials/set' || path == '/api/credentials/unset') path,
+    if (path == '/api/credentials.set' || path == '/api/credentials.unset') path,
 ];
 
 Future<void> _refreshPlugins(_Rig rig) => rig.c.read(installedPluginsProvider.notifier).refresh();
@@ -259,7 +259,7 @@ void main() {
       expect(described.keys, ['SENSEVOICE_KEY']);
       final asked = [
         for (final (_, path, body) in rig.host.requests.skip(before))
-          if (path == '/api/credentials/describe') ((body! as Map)['payload'] as Map)['args'],
+          if (path == '/api/credentials.describe') ((body! as Map)['payload'] as Map)['args'],
       ];
       expect(asked, [
         {

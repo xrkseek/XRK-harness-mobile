@@ -45,7 +45,7 @@ class DelayedDescribeHost extends FakeSettingsHost {
   @override
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
     final response = await super.call(endpoint, args, timeout: timeout);
-    if (endpoint == 'settings/describe') await describeGate.future;
+    if (endpoint == 'settings.describe') await describeGate.future;
     return response;
   }
 }
@@ -101,7 +101,7 @@ void main() {
     final subscription = container.listen(engineSettingsProvider, (_, _) {});
     addTearDown(subscription.close);
     await Future<void>.delayed(const Duration(milliseconds: 10));
-    expect(a.calls.where((call) => call.$1 == 'settings/describe'), hasLength(1));
+    expect(a.calls.where((call) => call.$1 == 'settings.describe'), hasLength(1));
     container.read(testHostProvider.notifier).state = fakeConnection(bClient, local: false);
     await container.read(engineSettingsProvider.future);
     a.describeGate.complete();

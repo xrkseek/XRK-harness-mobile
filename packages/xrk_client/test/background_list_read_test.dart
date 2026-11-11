@@ -79,7 +79,7 @@ void main() {
       test('captured settings and inventory DTOs survive the isolate boundary', () async {
         final server = await wire.host((request, body) async {
           expect(body['payload'], {'args': <String, Object?>{}});
-          final data = body['method'] == 'settings/describe'
+          final data = body['method'] == 'settings.describe'
               ? fixture('settings_describe')
               : fixture('plugin_inventory');
           await wire.answer(request, wire.envelope(body, data));
@@ -191,13 +191,13 @@ void main() {
 
       test('credential metadata uses a snapshot of refs and never returns secret values', () async {
         final server = await wire.host((request, body) async {
-          expect(body['method'], 'credentials/describe');
+          expect(body['method'], 'credentials.describe');
           expect(body['payload'], {
             'args': {
               'refs': ['DEEPSEEK_API_KEY', 'DSH_APP_PROBE_DUMMY'],
             },
           });
-          await wire.answer(request, wire.envelope(body, captured('credentials/describe')));
+          await wire.answer(request, wire.envelope(body, captured('credentials.describe')));
         });
         final refs = ['DEEPSEEK_API_KEY', 'DSH_APP_PROBE_DUMMY'];
         final read = connect(server, background: background).describeCredentials(refs);
@@ -269,7 +269,7 @@ void main() {
       reached.add(endpoint);
       if (endpoint == 'session/modelCatalog') await releaseModels.future;
       final value = switch (endpoint) {
-        'settings/describe' => {
+        'settings.describe' => {
           'namespaces': [
             {
               'ns': piAiSettingsNs,
@@ -301,7 +301,7 @@ void main() {
         client.listConfigurableProviders(),
       ]);
       expect(metadata.every((value) => value != null), isTrue);
-      expect(reached, containsAll(['credentials/describe', 'llm/listProviders', 'llm/listConfigurableProviders']));
+      expect(reached, containsAll(['credentials.describe', 'llm/listProviders', 'llm/listConfigurableProviders']));
     } finally {
       releaseModels.complete();
       await otherReads;
@@ -319,7 +319,7 @@ void main() {
     await expectLater(client.pluginInventory(), throwsA(isA<DshCarrierRefusedException>()));
     expect(carrier.called, [
       'session/modelCatalog',
-      'settings/describe',
+      'settings.describe',
       'pluginManager/listBundles',
       'pluginInventory/list',
     ]);

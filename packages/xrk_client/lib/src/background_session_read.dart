@@ -27,12 +27,12 @@ enum BackgroundListKind {
   models('session/modelCatalog'),
   providers('llm/listProviders'),
   configurableProviders('llm/listConfigurableProviders'),
-  providerSettings('settings/describe'),
+  providerSettings('settings.describe'),
   bundles('pluginManager/listBundles'),
   plugins('pluginManager/listPlugins'),
   inventory('pluginInventory/list'),
-  settings('settings/describe'),
-  credentials('credentials/describe');
+  settings('settings.describe'),
+  credentials('credentials.describe');
 
   const BackgroundListKind(this.endpoint);
   final String endpoint;

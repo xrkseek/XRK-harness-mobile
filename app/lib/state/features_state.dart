@@ -135,23 +135,10 @@ class PermissionState {
 final permissionStateProvider = FutureProvider.autoDispose.family<PermissionState?, String?>((ref, sessionId) async {
   final client = _client(ref);
   if (client == null) return null;
-  _refreshOn(ref, client, const {'permission-presets/catalog-changed', 'settings/document-updated'});
+  _refreshOn(ref, client, const {'settings/document-updated'});
   final section = await client.settingsSection('permission').catchError((Object _) => null);
   final stored = section?.value['defaultPreset'];
-  final catalog = await client.permissionPresets().catchError((Object error) {
-    // Previous app versions offered the session-only Auto preset as a default.
-    // Keep the explicit reset available when that makes the catalog fail.
-    if (stored == 'auto' &&
-        error is XrkRemoteException &&
-        error.message.contains('permission: unknown default preset')) {
-      return (
-        options: <({String value, String name, String? description})>[],
-        defaultOptions: <({String value, String name, String? description})>[],
-        defaultPreset: 'auto',
-      );
-    }
-    throw error;
-  });
+  final catalog = await client.permissionPresets();
   final projections = sessionId == null ? null : await client.projections(sessionId).catchError((Object _) => null);
   return PermissionState(
     options: [for (final o in catalog.options) PermissionOption(o.value, o.name, o.description)],
@@ -159,6 +146,6 @@ final permissionStateProvider = FutureProvider.autoDispose.family<PermissionStat
     hostDefault: stored is String ? stored : catalog.defaultPreset,
     current: projections?.permissionPreset,
     defaultRevision: section?.writable == true ? section?.revision : null,
-    invalidDefault: stored == 'auto' && catalog.options.isEmpty,
+    invalidDefault: false,
   );
 });

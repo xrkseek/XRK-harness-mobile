@@ -163,6 +163,37 @@ final class SessionControlProjection extends SessionControlUpdate {
 /// await client.prompt(created.sessionId, 'hello');
 /// ```
 ///
+/// Face schemastery envelope → `defaultPreset` const choices (Host permission ns).
+List<({String value, String name, String? description})> _permissionOptionsFromSchema(Object? raw) {
+  final schema = asMapOrEmpty(raw);
+  final refs = asMapOrEmpty(schema['refs']);
+  Map<String, Object?>? refAt(Object? id) {
+    if (id == null) return null;
+    return asMap(refs[id.toString()]);
+  }
+
+  final root = refAt(schema['uid']);
+  if (root == null || root['type'] != 'object') return const [];
+  final dict = asMap(root['dict']);
+  final presetNode = refAt(dict?['defaultPreset']);
+  if (presetNode == null) return const [];
+  final memberIds = switch (presetNode['type']) {
+    'union' => asListOrEmpty(presetNode['list']),
+    'const' => <Object?>[dict?['defaultPreset']],
+    _ => const <Object?>[],
+  };
+  final out = <({String value, String name, String? description})>[];
+  for (final id in memberIds) {
+    final node = refAt(id);
+    if (node == null || node['type'] != 'const') continue;
+    final value = asString(node['value']);
+    if (value == null || value.isEmpty) continue;
+    final description = asString(asMap(node['meta'])?['description']);
+    out.add((value: value, name: description ?? value, description: description));
+  }
+  return out;
+}
+
 /// The same API runs over any [DshCarrier]: [XrkClient.new] and [connect]
 /// use the local HTTP/WebSocket carrier, [XrkClient.withCarrier] /
 /// [connectCarrier] accept others (for example the encrypted tunnel from
@@ -190,10 +221,9 @@ class XrkClient {
   }) : rpc = DshRpc(carrier),
        mux = DshMux(carrier, options: muxOptions);
 
-  /// Builds a connection, logs in when a token is given (otherwise uses
-  /// [cookie]) and waits for the first ready mux generation.
-  ///
-  /// [launchUrl] accepts the `xrkh serve: http://...?token=...` line.
+  /// Builds a connection to XRK Host. Empty/absent token = open loopback (no
+  /// cookie exchange). Non-empty [token] still does launch-token login.
+  /// [startMux] waits for the first ready mux generation when true.
   static Future<XrkClient> connect({
     Uri? baseUri,
     String? token,
@@ -224,11 +254,9 @@ class XrkClient {
       backgroundLists: backgroundLists,
     );
     try {
-      if (launchToken != null) {
-        await connection.login(launchToken);
-      } else if (cookie == null) {
-        throw ArgumentError('token, launchUrl or cookie is required');
-      }
+      // XRK Host loopback is open — no launch-token cookie exchange.
+      final token = launchToken?.trim() ?? '';
+      if (token.isNotEmpty) await connection.login(token);
       if (startMux) await client.mux.ready(timeout: readyTimeout);
       return client;
     } on Object {
@@ -789,30 +817,28 @@ class XrkClient {
         .toList(growable: false);
   }
 
-  /// `credentials/describe` — configured/source/writable, never values.
+  /// Face `credentials.describe` — configured/source/writable, never values.
   Future<Map<String, CredentialStatus>> describeCredentials(List<String> refs) async {
     final read = tryBackgroundListRead(BackgroundListKind.credentials, credentialRefs: refs);
     if (read != null) return (await read) as Map<String, CredentialStatus>;
-    final value = asMapOrEmpty(await rpc.call('credentials/describe', {'refs': refs}));
+    final value = asMapOrEmpty(await rpc.call('credentials.describe', {'refs': refs}));
     return value.map((key, v) => MapEntry(key, CredentialStatus.fromJson(v)));
   }
 
-  /// Stores the DeepSeek API key in `$XRK_HOME/.credentials.yaml`
-  /// (`credentials/set`). Takes effect on the next model request; no
-  /// restart. Fails with `credential/rejected` when the launch environment
-  /// already supplies [ref] (start `xrkh serve` without `DEEPSEEK_API_KEY`).
+  /// Face `credentials.set` — store [apiKey] under [ref] in Host credentials.
   Future<void> setProviderKey(String apiKey, {String ref = 'DEEPSEEK_API_KEY'}) async {
     _checkRef(ref);
     if (apiKey.trim().isEmpty) throw ArgumentError.value('<empty>', 'apiKey', 'must not be empty');
-    await rpc.call('credentials/set', {'ref': ref, 'value': apiKey});
+    await rpc.call('credentials.set', {'ref': ref, 'value': apiKey});
   }
 
   Future<void> clearProviderKey({String ref = 'DEEPSEEK_API_KEY'}) async {
     _checkRef(ref);
-    await rpc.call('credentials/unset', {'ref': ref});
+    await rpc.call('credentials.unset', {'ref': ref});
   }
 
-  /// `permissionPresets/catalog`: selectable presets and the default.
+  /// Permission presets from Face `settings.describe` → `permission` namespace
+  /// (`defaultPreset` schemastery enum). No separate catalog RPC on XRK Host.
   Future<
     ({
       List<({String value, String name, String? description})> options,
@@ -821,29 +847,38 @@ class XrkClient {
     })
   >
   permissionPresets() async {
-    final value = asMapOrEmpty(await rpc.call('permissionPresets/catalog'));
-    List<({String value, String name, String? description})> parseOptions(Object? raw) => asListOrEmpty(raw)
-        .map((o) {
-          final map = asMapOrEmpty(o);
-          return (
-            value: asString(map['value']) ?? '',
-            name: asString(map['name']) ?? '',
-            description: asString(map['description']),
-          );
-        })
-        .toList(growable: false);
-    final options = parseOptions(value['options']);
+    final described = asMapOrEmpty(await rpc.call('settings.describe'));
+    Map<String, Object?>? permission;
+    for (final n in asListOrEmpty(described['namespaces'])) {
+      final map = asMap(n);
+      if (map != null && map['ns'] == 'permission') {
+        permission = map;
+        break;
+      }
+    }
+    if (permission == null) {
+      throw const XrkRemoteException(
+        'permission/unavailable',
+        'Host settings.describe has no permission namespace',
+      );
+    }
+    final value = asMapOrEmpty(permission['value']);
+    final defaultPreset = asString(value['defaultPreset']) ?? '';
+    final options = _permissionOptionsFromSchema(permission['schema']);
+    if (options.isEmpty) {
+      throw const XrkRemoteException(
+        'permission/unavailable',
+        'permission.defaultPreset schema has no const choices',
+      );
+    }
     return (
       options: options,
-      // Older catalogs omit defaultOptions. Auto is a session-only preset.
-      defaultOptions: value['defaultOptions'] is List
-          ? parseOptions(value['defaultOptions'])
-          : options.where((option) => option.value != 'auto').toList(growable: false),
-      defaultPreset: asString(value['defaultPreset']) ?? '',
+      defaultOptions: options.where((o) => o.value != 'auto').toList(growable: false),
+      defaultPreset: defaultPreset,
     );
   }
 
-  /// Switches a session's permission preset through the `/permission` command.
+  /// Switches a session's permission preset through `/permission` (Face commands/execute).
   Future<CommandResult> setPermissionPreset(String sessionId, String preset) =>
       executeCommand(sessionId, '/permission $preset');
 

@@ -29,6 +29,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../features/face_permission_fixture.dart';
 import '../phone/support.dart' show FixedActiveHost;
 import '../plugins/support/fake_plugin_host.dart';
 import '../shell/golden_harness.dart';
@@ -239,25 +240,7 @@ void main() {
     setUp(() {
       carrier = FakePluginCarrier();
       client = XrkClient.withCarrier(carrier);
-      const options = [
-        {'value': 'workspace-write', 'name': 'workspace-write'},
-        {'value': 'danger-full-access', 'name': 'danger-full-access'},
-      ];
-      carrier.handlers['settings/describe'] = (_) => {
-        'writable': true,
-        'namespaces': [
-          {
-            'ns': 'permission',
-            'value': {'defaultPreset': 'workspace-write'},
-            'revision': 7,
-          },
-        ],
-      };
-      carrier.handlers['permissionPresets/catalog'] = (_) => {
-        'options': options,
-        'defaultOptions': options,
-        'defaultPreset': 'workspace-write',
-      };
+      carrier.handlers['settings.describe'] = (_) => facePermissionDescribe();
     });
     tearDown(() => client.close());
 

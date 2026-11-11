@@ -145,7 +145,7 @@ void main() {
       entered.complete();
       await release.future;
     };
-    host.handlers['credentials/set'] = (_) => {'ok': true};
+    host.handlers['credentials.set'] = (_) => {'ok': true};
     host.handlers['session/list'] = (_) => {
       'ok': true,
       'value': {'items': []},
@@ -159,7 +159,7 @@ void main() {
       expect(release.isCompleted, isFalse);
       expect(client.mux.generation, isNull);
       expect(await client.listSessions(), isEmpty);
-      expect(host.rpcCalls.where((r) => r['method'] == 'credentials/set'), hasLength(1));
+      expect(host.rpcCalls.where((r) => r['method'] == 'credentials.set'), hasLength(1));
       release.complete();
       await client.mux.ready();
       expect(client.mux.generation, isNotNull);
@@ -177,9 +177,9 @@ void main() {
       host.rejectWebSocket = true;
       host.rejectedWebSocketStatus = status;
       final entered = Completer<void>(), release = Completer<void>();
-      host.handlers['credentials/set'] = (_) => {'ok': true};
+      host.handlers['credentials.set'] = (_) => {'ok': true};
       host.beforeRpc = (name, args) async {
-        if (name == 'credentials/set') {
+        if (name == 'credentials.set') {
           entered.complete();
           await release.future;
         }
@@ -209,7 +209,7 @@ void main() {
         expect(await failed(c), isA<DshHttpException>().having((e) => e.statusCode, 'status', status));
         expect(seen.whereType<AsyncData<HostConnection?>>(), isEmpty);
         await expectLater(client.mux.ready(), throwsA(isA<DshClosedException>()));
-        expect(host.rpcCalls.where((r) => r['method'] != 'credentials/set'), isEmpty);
+        expect(host.rpcCalls.where((r) => r['method'] != 'credentials.set'), isEmpty);
       } finally {
         if (!release.isCompleted) release.complete();
         sub.close();

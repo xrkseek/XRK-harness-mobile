@@ -10,7 +10,7 @@ const fastMux = MuxOptions(readyTimeout: Duration(seconds: 2), retryCaps: [Durat
 
 Map<String, Object?> ok(Object? value) => {'ok': true, 'value': value};
 
-/// `settings/describe` of a throwaway XRK 0.2.1-rc.2 (`xrkh serve`, fresh HOME,
+/// `settings.describe` of a throwaway XRK 0.2.1-rc.2 (`xrkh serve`, fresh HOME,
 /// the thinking-translation and plugin-market bundles switched on).
 Map<String, Object?> describeFixture() =>
     jsonDecode(File('test/fixtures/settings_describe.json').readAsStringSync()) as Map<String, Object?>;
@@ -134,7 +134,7 @@ void main() {
       });
       expect(node.fields!['language']!.meta.volatile, isTrue);
       expect(node.fields!['threads']!.meta.volatile, isFalse);
-      // settings/describe strips it: what it serves is live already.
+      // settings.describe strips it: what it serves is live already.
       final described = SettingsDescription.fromJson(describeFixture());
       expect(described.namespaces['subagent']!.schema.fields!['maxDepth']!.meta.volatile, isFalse);
     });
@@ -192,11 +192,11 @@ void main() {
 
     test('describe passes the writable flag down; mutate sends ns, ops and revision', () async {
       final fixture = describeFixture()..['writable'] = false;
-      host.handlers['settings/describe'] = (_) => ok(fixture);
+      host.handlers['settings.describe'] = (_) => ok(fixture);
       final subagent = (fixture['namespaces']! as List).cast<Map<String, Object?>>().firstWhere(
         (n) => n['ns'] == 'subagent',
       );
-      host.handlers['settings/mutate'] = (args) => ok({
+      host.handlers['settings.mutate'] = (args) => ok({
         ...subagent,
         'value': {'maxDepth': 3, 'maxActiveSubagents': 8},
         'user': {'maxDepth': 3},
@@ -233,7 +233,7 @@ void main() {
     });
 
     test('a stale revision surfaces as settings/conflict', () async {
-      host.handlers['settings/mutate'] = (_) => {
+      host.handlers['settings.mutate'] = (_) => {
         'ok': false,
         'error': {
           'code': 'settings/conflict',

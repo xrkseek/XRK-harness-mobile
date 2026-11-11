@@ -107,7 +107,7 @@ PluginConfigFailure _failure(_Rig rig) => _state(rig).jobOf(_ns)!.failure!;
 
 void main() {
   group('capability', () {
-    test('no plugin-config routes (404): the live fields settings/describe serves, as before', () async {
+    test('no plugin-config routes (404): the live fields settings.describe serves, as before', () async {
       final rig = await _rig(routes: false);
       final state = _state(rig);
       expect(state.complete, isFalse);
@@ -115,7 +115,7 @@ void main() {
       expect(state['cot-translation']!.allLive, isTrue);
       expect(state[_ns], isNull, reason: 'XRK 0.2.1 lists no ordinary-only plugin');
       expect((rig.c.read(pluginConfigApiProvider)! as BridgePluginConfigApi).supported, isFalse);
-      expect(rig.host.requests.where((r) => r.$2 == '/api/settings/describe'), isNotEmpty);
+      expect(rig.host.requests.where((r) => r.$2 == '/api/settings.describe'), isNotEmpty);
       // Asked once; a refresh does not knock again.
       final asked = rig.host.requests.where((r) => r.$2 == xrkGoPluginConfigPath).length;
       await rig.controller.refresh();
@@ -446,7 +446,7 @@ void main() {
       final rig = await _rig(routes: false);
       final state = _state(rig);
       expect(state['cot-translation'], isNotNull, reason: 'an official optional bundle\'s row');
-      expect(state.forms.containsKey('agent-loop'), isTrue, reason: 'settings/describe serves the core too');
+      expect(state.forms.containsKey('agent-loop'), isTrue, reason: 'settings.describe serves the core too');
       expect(state['agent-loop'], isNull);
       await expectLater(
         _api(rig).apply('agent-loop', const [
@@ -455,7 +455,7 @@ void main() {
         throwsA(isA<PluginConfigFailure>()),
       );
       expect(await rig.controller.set(const FieldRef('agent-loop', ['maxParallelToolCalls']), 64), isFalse);
-      expect(rig.host.requests.where((r) => r.$2 == '/api/settings/mutate'), isEmpty);
+      expect(rig.host.requests.where((r) => r.$2 == '/api/settings.mutate'), isEmpty);
     });
   });
 }

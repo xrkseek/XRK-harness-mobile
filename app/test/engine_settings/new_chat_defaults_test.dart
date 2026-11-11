@@ -232,7 +232,7 @@ void main() {
       },
     ]);
     expect(host.calls.where((call) => call.$1 == 'session/selectModel'), isEmpty);
-    expect(host.calls.where((call) => call.$1 == 'settings/describe').length, greaterThan(1));
+    expect(host.calls.where((call) => call.$1 == 'settings.describe').length, greaterThan(1));
     expect(find.text(appL10n.engineNewChatDefaultsFixed), findsOneWidget);
   });
 

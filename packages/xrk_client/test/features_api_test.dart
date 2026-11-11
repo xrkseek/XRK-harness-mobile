@@ -273,7 +273,7 @@ void main() {
         expect(args, {'agentPreset': 'standard'});
         return ok({'agentPreset': 'standard', 'content': 'tools: []\n'});
       };
-      host.handlers['settings/describe'] = (_) => ok({
+      host.handlers['settings.describe'] = (_) => ok({
         'writable': true,
         'hasDocument': true,
         'namespaces': [
@@ -287,12 +287,12 @@ void main() {
         ],
       });
       Map<String, Object?>? update;
-      host.handlers['settings/update'] = (args) {
+      host.handlers['settings.update'] = (args) {
         update = args;
         return ok({'ns': 'agent-preset-registry', 'value': args['patch'], 'revision': 4});
       };
       Map<String, Object?>? mutate;
-      host.handlers['settings/mutate'] = (args) {
+      host.handlers['settings.mutate'] = (args) {
         mutate = args;
         return ok({
           'ns': 'permission',

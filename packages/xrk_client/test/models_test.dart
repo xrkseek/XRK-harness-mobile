@@ -248,13 +248,13 @@ void main() {
     });
 
     test('credentials and typed errors', () {
-      final described = (value('credentials/describe') as Map).map(
+      final described = (value('credentials.describe') as Map).map(
         (k, v) => MapEntry(k as String, CredentialStatus.fromJson(v)),
       );
       expect(described['DEEPSEEK_API_KEY']!.source, 'env');
       expect(described['DEEPSEEK_API_KEY']!.writable, isFalse);
-      expect((result('credentials/set')['result'] as Map).containsKey('value'), isFalse);
-      final rejected = XrkRemoteException.fromJson((result('credentials/set', 1)['result'] as Map)['error']);
+      expect((result('credentials.set')['result'] as Map).containsKey('value'), isFalse);
+      final rejected = XrkRemoteException.fromJson((result('credentials.set', 1)['result'] as Map)['error']);
       expect(rejected.code, 'credential/rejected');
       expect(rejected.details['ref'], 'DEEPSEEK_API_KEY');
       final unavailable = XrkRemoteException.fromJson((result('session/selectModel', 1)['result'] as Map)['error']);

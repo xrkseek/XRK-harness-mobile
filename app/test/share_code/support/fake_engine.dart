@@ -94,13 +94,13 @@ class FakeEngine extends DshCarrier {
     calls.add((endpoint, args));
     if (!allowsEndpoint(endpoint)) return RpcError(XrkRemoteException('METHOD_NOT_ALLOWED', 'blocked'));
     switch (endpoint) {
-      case 'settings/describe':
+      case 'settings.describe':
         if (describeFails) return RpcError(XrkRemoteException('INTERNAL', 'describe failed'));
         return RpcOk({
           'writable': true,
           'namespaces': [for (final ns in settings.keys) _view(ns)],
         });
-      case 'settings/mutate':
+      case 'settings.mutate':
         final ns = args['ns'] as String;
         final s = settings[ns];
         if (s == null) return RpcError(XrkRemoteException('settings/rejected', 'No configurable plugin entry "$ns"'));

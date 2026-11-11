@@ -647,10 +647,10 @@ extension EngineSettingsApi on XrkClient {
   Future<SettingsDescription> describeSettings() async {
     final read = tryBackgroundListRead(BackgroundListKind.settings);
     if (read != null) return (await read) as SettingsDescription;
-    return SettingsDescription.fromJson(await rpc.call('settings/describe'));
+    return SettingsDescription.fromJson(await rpc.call('settings.describe'));
   }
 
-  /// `settings/mutate` with the namespace's new view (schema included). A
+  /// Face `settings.mutate` with the namespace's new view (schema included). A
   /// stale [expectedRevision] fails with `settings/conflict`; validation, a
   /// read-only profile or a home-patch override with `settings/rejected`.
   Future<SettingsNamespaceView> mutateSettingsView(
@@ -659,7 +659,7 @@ extension EngineSettingsApi on XrkClient {
     int? expectedRevision,
     bool writable = true,
   }) async {
-    final result = await rpc.call('settings/mutate', {
+    final result = await rpc.call('settings.mutate', {
       'ns': ns,
       'ops': [for (final op in ops) op.toJson()],
       'expectedRevision': ?expectedRevision,

@@ -28,12 +28,12 @@ class HeldDescribeHost extends FakeSettingsHost {
         },
       );
   Completer<void>? holdNext;
-  String heldEndpoint = 'settings/describe';
+  String heldEndpoint = 'settings.describe';
   bool failNext = false;
   final captured = <Completer<void>>[];
   @override
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
-    if (endpoint == 'settings/describe' && failNext) {
+    if (endpoint == 'settings.describe' && failNext) {
       failNext = false;
       return RpcError(XrkRemoteException('test/failure', 'description unavailable'));
     }
@@ -123,7 +123,7 @@ void main() {
     expect(state.writable, isFalse);
     expect(state['new-plugin']!.revision, 5);
     expect(
-      host.calls.where((c) => c.$1 == 'settings/describe'),
+      host.calls.where((c) => c.$1 == 'settings.describe'),
       hasLength(3),
       reason: 'initial, invalidated read, fresh retry',
     );
@@ -251,7 +251,7 @@ void main() {
     final container = await start(host);
     final controller = container.read(engineSettingsProvider.notifier);
     host.externalSet(field.ns, field.path, 'external', notify: false);
-    host.heldEndpoint = 'credentials/describe';
+    host.heldEndpoint = 'credentials.describe';
     final gate = host.holdNext = Completer<void>();
     final read = controller.refresh();
     await waitCaptured(host);
@@ -301,10 +301,10 @@ void main() {
     expect(await controller.set(field, 'ack two'), isTrue);
     second.complete();
     await refresh;
-    expect(host.calls.where((c) => c.$1 == 'settings/describe'), hasLength(3));
+    expect(host.calls.where((c) => c.$1 == 'settings.describe'), hasLength(3));
     expect(container.read(engineSettingsProvider).value!.valueOf(field), 'ack two');
     await Future<void>.delayed(const Duration(milliseconds: 300));
-    expect(host.calls.where((c) => c.$1 == 'settings/describe'), hasLength(4));
+    expect(host.calls.where((c) => c.$1 == 'settings.describe'), hasLength(4));
     expect(container.read(engineSettingsProvider).value![field.ns]!.revision, 3);
   });
 

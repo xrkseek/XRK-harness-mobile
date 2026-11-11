@@ -51,7 +51,7 @@ FakeSettingsHost targetHost({String? ref = 'TARGET_A'}) {
 
 List<String> mutations(FakeSettingsHost host) => [
   for (final call in host.calls)
-    if (const {'credentials/set', 'credentials/unset', 'settings/mutate'}.contains(call.$1)) call.$1,
+    if (const {'credentials.set', 'credentials.unset', 'settings.mutate'}.contains(call.$1)) call.$1,
 ];
 
 void main() {

@@ -2,7 +2,7 @@
 // (PLUGIN-CONFIG-CONTRACT R1 §4–§5) over real HTTP: login, the entry list,
 // one entry's complete form with an opaque revision, `{revision, ops}`
 // writes, every refusal the contract names, and the RPCs the page also uses
-// (`settings/describe` for a Host without the routes, `credentials/*`,
+// (`settings.describe` for a Host without the routes, `credentials/*`,
 // `pluginManager/listBundles` for which entries are plugins).
 
 import 'dart:async';
@@ -263,7 +263,7 @@ class FakeBridgeHost {
     final args = ((envelope['payload'] as Map?)?['args'] as Map?)?.cast<String, Object?>() ?? const {};
     Map<String, Object?> ok([Object? value]) => {'ok': true, 'value': ?value};
     switch (method) {
-      case 'settings/describe':
+      case 'settings.describe':
         return ok(recordedDescribe());
       case 'pluginManager/listBundles':
         if (failListBundles) {
@@ -287,15 +287,15 @@ class FakeBridgeHost {
           'application': 'applied',
           'warnings': <Object?>[],
         });
-      case 'credentials/describe':
+      case 'credentials.describe':
         return ok({
           for (final ref in (args['refs']! as List).cast<String>())
             ref: {'configured': credentials.containsKey(ref), 'writable': true},
         });
-      case 'credentials/set':
+      case 'credentials.set':
         credentials[args['ref']! as String] = args['value']! as String;
         return ok();
-      case 'credentials/unset':
+      case 'credentials.unset':
         credentials.remove(args['ref']);
         return ok();
     }
@@ -309,7 +309,7 @@ class FakeBridgeHost {
 /// The official optional bundles the fake Host has switched on, as an r13
 /// Host lists them (fixtures/plugin_bundles_r13.json, trimmed): voice input
 /// (its SenseVoice provider is [sensevoiceEntry]) and thinking translation
-/// (`cot-translation` in the recorded `settings/describe`).
+/// (`cot-translation` in the recorded `settings.describe`).
 List<Object?> bridgeBundles() => [
   {
     'name': '@xrkseek/harness-cli-experimental-voice-input-bundle',

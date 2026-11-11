@@ -191,7 +191,7 @@ Map<String, Object?> _schema(Map<String, Object?>? catalog, {bool kindDefaults =
   },
 };
 
-/// `settings/describe` with the media plugin's one namespace.
+/// `settings.describe` with the media plugin's one namespace.
 Map<String, Object?> _describe({
   required List<Map<String, Object?>> services,
   Map<String, Object?> defaults = const {},
@@ -359,7 +359,7 @@ void main() {
     expect(find.text('DSH_MEDIA_ARK_API_KEY'), findsWidgets);
   });
 
-  testWidgets('the service page writes its key through credentials/set', (tester) async {
+  testWidgets('the service page writes its key through credentials.set', (tester) async {
     await open(tester, describe: _describe(services: [_service()]));
     await tester.tap(find.text('火山方舟'));
     await flush(tester);
@@ -375,7 +375,7 @@ void main() {
 
     final calls = [
       for (final (endpoint, args) in host.calls)
-        if (endpoint == 'credentials/set') args,
+        if (endpoint == 'credentials.set') args,
     ];
     expect(calls, hasLength(1));
     expect(calls.single, {'ref': 'DSH_MEDIA_ARK_API_KEY', 'value': 'sk-ark-1'});
@@ -556,7 +556,7 @@ void main() {
     expect((rows.first as Map)['keyRef'], 'DSH_MEDIA_ARK_VIDEO_API_KEY');
   });
 
-  testWidgets('clearing the key calls credentials/unset for that reference', (tester) async {
+  testWidgets('clearing the key calls credentials.unset for that reference', (tester) async {
     await open(
       tester,
       describe: _describe(services: [_service()]),
@@ -570,7 +570,7 @@ void main() {
     await flush(tester);
     final calls = [
       for (final (endpoint, args) in host.calls)
-        if (endpoint == 'credentials/unset') args,
+        if (endpoint == 'credentials.unset') args,
     ];
     expect(calls, [
       {'ref': 'DSH_MEDIA_ARK_API_KEY'},

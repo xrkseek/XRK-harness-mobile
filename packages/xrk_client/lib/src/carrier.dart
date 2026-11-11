@@ -121,20 +121,17 @@ class DshHttpCarrier extends DshCarrier {
   @override
   DshTracer? get tracer => connection.tracer;
 
-  /// Unary call:
+  /// Unary Face call (XRK Host):
   /// ```text
-  /// POST /api/session/list            content-type: application/json
-  /// {"type":"client-request","rpcId":"<uuid>","method":"session/list",
-  ///  "payload":{"args":{"_request":{}}}}
+  /// POST /api/settings.describe       content-type: application/json
+  /// {"type":"client-request","rpcId":"<uuid>","method":"settings.describe",
+  ///  "payload":{…}}
   ///
   /// 200 {"type":"server-response","rpcId":"<uuid>",
-  ///      "result":{"ok":true,"value":{...}}}            // value absent for void
-  /// 200 {"type":"server-response","rpcId":"<uuid>",
-  ///      "result":{"ok":false,"error":{"code","message","details"}}}
+  ///      "result":{"ok":true,"value":{…}}}
   /// ```
-  /// Business and gateway failures are HTTP 200 with `ok: false`; only
-  /// carrier refusals use HTTP status codes (401 cookie, 403 fence, 404
-  /// unclaimed, 415 content type).
+  /// Path is the Face method as-is (`settings.describe`, `commands/execute`).
+  /// Payload is flat (Host `remoteArgs` also accepts `{args}`; we send Host shape).
   @override
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
     final rpcId = uuidV4();
@@ -142,7 +139,7 @@ class DshHttpCarrier extends DshCarrier {
       'type': 'client-request',
       'rpcId': rpcId,
       'method': endpoint,
-      'payload': {'args': args},
+      'payload': args,
     };
     tracer?.call(DshTraceEntry('out', 'rpc', envelope));
     final response = await connection.postJson('/api/$endpoint', envelope, timeout: timeout);

@@ -309,7 +309,7 @@ void main() {
       // Only the one read while both agreed reached the Host.
       expect(host.requests.where((r) => r.$2.startsWith('$xrkGoPluginConfigPath/')), hasLength(1));
       expect(host.writes(), isEmpty);
-      expect(host.requests.where((r) => r.$2 == '/api/credentials/set'), isEmpty);
+      expect(host.requests.where((r) => r.$2 == '/api/credentials.set'), isEmpty);
       expect(host.credentials, isEmpty);
     });
   });

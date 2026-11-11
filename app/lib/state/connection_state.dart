@@ -71,8 +71,7 @@ class LocalConnectionController extends AsyncNotifier<HostConnection?> {
       if (r.mounted && state.hasError && !state.isLoading) r.invalidateSelf();
     });
     r.onDispose(() => unawaited(kicks.cancel()));
-    // Match [RuntimeStatus.isRunning]: loopback may use an empty token string;
-    // gating Face on `token != null` left native settings offline while Host ran.
+    // XRK loopback: baseUrl only (token is empty; Host does not mint one).
     final endpoint = r.watch(
       localRuntimeProvider.select((s) {
         final st = s.status;
@@ -92,18 +91,6 @@ class LocalConnectionController extends AsyncNotifier<HostConnection?> {
       return null;
     }
     r.onDispose(() => unawaited(client.close()));
-
-    // Permission / settings APIs are unary HTTP (`POST /api/…`). Mux is only
-    // for live host events. Requiring mux.ready used to tear down a working
-    // HTTP Face while Host was up → Settings › 权限 showed「没能连上引擎」.
-    unawaited(
-      client.mux.ready(timeout: const Duration(seconds: 20)).then<void>(
-        (_) {},
-        onError: (Object error, StackTrace stack) {
-          // Best-effort; leave the HTTP client up.
-        },
-      ),
-    );
 
     // Keep XRK's own credential store in sync with the key saved in the app.
     r.listen(settingsProvider.select((s) => s.apiKey), (prev, next) {

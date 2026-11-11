@@ -22,7 +22,7 @@ Map<String, Object?> fail(String code, String message) => {
   'error': {'code': code, 'message': message, 'details': <String, Object?>{}},
 };
 
-/// `settings/describe` → `llm-pi-ai` as a 0.2.1-rc.2 Host answers it: the
+/// `settings.describe` → `llm-pi-ai` as a 0.2.1-rc.2 Host answers it: the
 /// resolved value carries schema defaults, the user layer only what was set.
 Map<String, Object?> _piAiView({int revision = 4}) => {
   'ns': 'llm-pi-ai',
@@ -119,7 +119,7 @@ void main() {
 
   group('read', () {
     test('providerSettings reads profiles, layers and writability', () async {
-      host.handlers['settings/describe'] = (_) => ok({
+      host.handlers['settings.describe'] = (_) => ok({
         'writable': true,
         'namespaces': [
           {'ns': 'permission', 'value': <String, Object?>{}, 'revision': 1},
@@ -174,7 +174,7 @@ void main() {
     });
 
     test('null when the Host does not mount the adapter', () async {
-      host.handlers['settings/describe'] = (_) => ok({'writable': true, 'namespaces': <Object?>[]});
+      host.handlers['settings.describe'] = (_) => ok({'writable': true, 'namespaces': <Object?>[]});
       expect(await (await connect()).providerSettings(), isNull);
     });
   });
@@ -184,7 +184,7 @@ void main() {
 
     setUp(() {
       mutations = [];
-      host.handlers['settings/mutate'] = (args) {
+      host.handlers['settings.mutate'] = (args) {
         mutations.add(args);
         return ok(_piAiView(revision: 5));
       };
@@ -355,7 +355,7 @@ void main() {
     });
 
     test('a refused write surfaces the Host code', () async {
-      host.handlers['settings/mutate'] = (_) => fail('settings/conflict', 'stale revision');
+      host.handlers['settings.mutate'] = (_) => fail('settings/conflict', 'stale revision');
       final client = await connect();
       await expectLater(
         client.removeProvider('custom-mygw', expectedRevision: 1),
@@ -363,9 +363,9 @@ void main() {
       );
     });
 
-    test('the key goes to credentials/set under the profile reference', () async {
+    test('the key goes to credentials.set under the profile reference', () async {
       Map<String, Object?>? stored;
-      host.handlers['credentials/set'] = (args) {
+      host.handlers['credentials.set'] = (args) {
         stored = args;
         return ok(null);
       };

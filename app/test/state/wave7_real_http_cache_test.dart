@@ -133,7 +133,7 @@ class _HttpLists {
     'pluginManager/listBundles' => [
       for (var i = 0; i < 45; i++) bundleJson('plugin-$i', title: '$revision Plugin $i', description: 'Description'),
     ],
-    'settings/describe' => {
+    'settings.describe' => {
       'writable': true,
       'namespaces': [
         {
@@ -162,7 +162,7 @@ class _HttpLists {
     'llm/listConfigurableProviders' => [
       {'provider': 'custom-p-0', 'settingsNs': piAiSettingsNs, 'error': 'fixture configuration diagnostic'},
     ],
-    'credentials/describe' => {
+    'credentials.describe' => {
       for (var i = 0; i < 45; i++) 'CUSTOM_P_${i}_API_KEY': {'configured': true, 'writable': true},
     },
     'session/list' => {
@@ -337,7 +337,7 @@ void main() {
       final endpoint = switch (kind) {
         'models' => 'session/modelCatalog',
         'plugins' => 'pluginManager/listBundles',
-        'providers' => 'settings/describe',
+        'providers' => 'settings.describe',
         _ => 'session/list',
       };
       host.slowEndpoints.add(endpoint);

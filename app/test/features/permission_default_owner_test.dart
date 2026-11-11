@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../chat/support/harness.dart';
 import '../plugins/support/fake_plugin_host.dart';
 import '../shell/golden_harness.dart' show FakeRuntime, runningStatus;
+import 'face_permission_fixture.dart';
 
 void main() {
   for (final surface in ['settings', 'session']) {
@@ -31,19 +32,7 @@ void main() {
         addTearDown(remote.close);
         addTearDown(local.close);
         for (final carrier in [remoteCarrier, localCarrier]) {
-          carrier.handlers['settings/describe'] = (_) => {
-            'writable': true,
-            'namespaces': [
-              {'ns': 'permission', 'value': <String, Object?>{}, 'revision': 4},
-            ],
-          };
-          carrier.handlers['permissionPresets/catalog'] = (_) => {
-            'options': [
-              {'value': 'workspace-write', 'name': 'workspace-write'},
-              {'value': 'danger-full-access', 'name': 'danger-full-access'},
-            ],
-            'defaultPreset': 'workspace-write',
-          };
+          carrier.handlers['settings.describe'] = (_) => facePermissionDescribe(revision: 4);
           carrier.handlers['session/projections'] = (_) => {
             'kind': 'sequenced',
             'asOfSeq': 1,
@@ -51,7 +40,7 @@ void main() {
               'permissions': {'currentValue': 'danger-full-access'},
             },
           };
-          carrier.handlers['settings/mutate'] = (_) => {
+          carrier.handlers['settings.mutate'] = (_) => {
             'ns': 'permission',
             'value': {'defaultPreset': 'danger-full-access'},
             'revision': 5,
@@ -112,8 +101,8 @@ void main() {
           [container.read(settingsProvider).autoApproveCommands, prefs.getBool('auto_approve_commands') ?? false],
           [scenario == 'same local', scenario == 'same local'],
         );
-        expect(remoteCarrier.argsOf('settings/mutate').length, scenario == 'same remote' ? 1 : 0);
-        expect(localCarrier.argsOf('settings/mutate'), isEmpty);
+        expect(remoteCarrier.argsOf('settings.mutate').length, scenario == 'same remote' ? 1 : 0);
+        expect(localCarrier.argsOf('settings.mutate'), isEmpty);
         expect(tester.takeException(), isNull);
       });
     }

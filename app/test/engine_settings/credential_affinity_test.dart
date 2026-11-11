@@ -58,7 +58,7 @@ void main() {
     expect(
       [
         for (final (endpoint, _) in b.calls)
-          if (endpoint == 'credentials/set') endpoint,
+          if (endpoint == 'credentials.set') endpoint,
       ],
       isEmpty,
       reason: 'nothing is written to the new host',
@@ -67,7 +67,7 @@ void main() {
     expect(
       [
         for (final (endpoint, _) in a.calls)
-          if (endpoint == 'credentials/set') endpoint,
+          if (endpoint == 'credentials.set') endpoint,
       ],
       isEmpty,
       reason: 'the stale draft does not reach the old host either',
@@ -76,7 +76,7 @@ void main() {
     expect(
       [
         for (final (endpoint, _) in b.calls)
-          if (endpoint == 'credentials/unset') endpoint,
+          if (endpoint == 'credentials.unset') endpoint,
       ],
       isEmpty,
       reason: 'a stale clear does not reach the new host either',

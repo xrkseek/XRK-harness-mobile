@@ -89,7 +89,7 @@ void main() {
           'details': {'provider': 'p', 'model': 'm'},
         },
       };
-      host.handlers['credentials/set'] = (args) {
+      host.handlers['credentials.set'] = (args) {
         expect(args, {'ref': 'DEEPSEEK_API_KEY', 'value': 'sk-test'});
         return {'ok': true};
       };

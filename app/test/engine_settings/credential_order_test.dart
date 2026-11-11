@@ -40,11 +40,11 @@ class HeldCredentialHost extends FakeSettingsHost {
   Completer<void>? captured;
   @override
   Future<RpcResult> call(String endpoint, Map<String, Object?> args, {Duration? timeout}) async {
-    if (endpoint == 'credentials/describe' && failNextCredential) {
+    if (endpoint == 'credentials.describe' && failNextCredential) {
       failNextCredential = false;
       return RpcError(XrkRemoteException('test/failure', 'credential status unavailable'));
     }
-    final gate = endpoint == 'credentials/describe' ? nextCredential : null;
+    final gate = endpoint == 'credentials.describe' ? nextCredential : null;
     if (gate != null) nextCredential = null;
     final response = await super.call(endpoint, args, timeout: timeout);
     if (gate != null) {
@@ -185,7 +185,7 @@ void main() {
     expect(state.secretConfigured(key), isTrue);
     expect(state.secretWritable(key), isFalse);
     expect(
-      host.calls.where((c) => c.$1 == 'credentials/set').length,
+      host.calls.where((c) => c.$1 == 'credentials.set').length,
       1,
       reason: 'following a status request never repeats the secret mutation',
     );

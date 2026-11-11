@@ -188,7 +188,8 @@ class FakeDsh {
         await response.close();
         return;
       }
-      final args = ((envelope['payload'] as Map)['args'] as Map).cast<String, Object?>();
+      // Face wire: flat payload (same as XRK Host product-shell faceRpc).
+      final args = (envelope['payload'] as Map? ?? const {}).cast<String, Object?>();
       if (beforeRpc != null) await beforeRpc!(endpoint, args);
       result = handler(args);
     }

@@ -77,8 +77,8 @@ Future<void> _probe() async {
       _log('120 KiB request reassembled; expected host validation returned');
     }
     // Host → phone: the settings schema is tens of KiB.
-    final schema = jsonEncode(await client.rpc.call('settings/describe'));
-    _log('settings/describe ${schema.length} bytes');
+    final schema = jsonEncode(await client.rpc.call('settings.describe'));
+    _log('settings.describe ${schema.length} bytes');
     for (var i = 0; i < 20; i++) {
       await client.listSessions();
     }

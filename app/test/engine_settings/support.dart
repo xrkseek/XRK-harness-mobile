@@ -1,9 +1,9 @@
-// A fake `xrkh serve` for the engine settings tests: `settings/describe` and
-// `settings/mutate` with the Host's layering (base, the profile's user layer,
+// A fake `xrkh serve` for the engine settings tests: `settings.describe` and
+// `settings.mutate` with the Host's layering (base, the profile's user layer,
 // an optional home-patch overlay that locks the namespace), schema checks on
 // writes, revisions and stale-revision conflicts, the credential store, the
 // model catalog, the plugin inventory and the bundle list. The namespaces
-// start from a recorded XRK 0.2.1-rc.2 `settings/describe`.
+// start from a recorded XRK 0.2.1-rc.2 `settings.describe`.
 
 import 'dart:async';
 import 'dart:convert';
@@ -25,7 +25,7 @@ import '../shell/golden_harness.dart' show FakeSettings, goldenApp, loadGoldenFo
 
 Object? _fixture(String name) => jsonDecode(File('../packages/xrk_client/test/fixtures/$name').readAsStringSync());
 
-/// `settings/describe` of a throwaway XRK 0.2.1-rc.2 (fresh HOME; the
+/// `settings.describe` of a throwaway XRK 0.2.1-rc.2 (fresh HOME; the
 /// thinking-translation and plugin-market bundles on).
 Map<String, Object?> recordedDescribe() => _fixture('settings_describe.json')! as Map<String, Object?>;
 
@@ -214,18 +214,18 @@ class FakeSettingsHost extends DshCarrier {
   /// Calls in order (endpoint, args).
   final List<(String, Map<String, Object?>)> calls = [];
 
-  /// Runs before a `settings/mutate` is answered (to move the revision under
+  /// Runs before a `settings.mutate` is answered (to move the revision under
   /// the client, say).
   FutureOr<void> Function(String ns)? beforeMutate;
 
-  /// Holds `settings/mutate` answers until completed.
+  /// Holds `settings.mutate` answers until completed.
   Completer<void>? gate;
 
   FakeMuxLink? link;
 
   List<Map<String, Object?>> mutates() => [
     for (final (e, args) in calls)
-      if (e == 'settings/mutate') args,
+      if (e == 'settings.mutate') args,
   ];
 
   /// Changes a namespace behind the client's back (another device).
@@ -256,13 +256,13 @@ class FakeSettingsHost extends DshCarrier {
 
   Future<Object?> _answer(String endpoint, Map<String, Object?> args) async {
     switch (endpoint) {
-      case 'settings/describe':
+      case 'settings.describe':
         return {
           'writable': writable,
           'hasDocument': true,
           'namespaces': [for (final n in namespaces.values) n.view()],
         };
-      case 'settings/mutate':
+      case 'settings.mutate':
         final ns = args['ns']! as String;
         await beforeMutate?.call(ns);
         await gate?.future;
@@ -306,7 +306,7 @@ class FakeSettingsHost extends DshCarrier {
         }
         scheduleMicrotask(() => emit('settings/document-updated', [ns, n.revision]));
         return n.view();
-      case 'credentials/describe':
+      case 'credentials.describe':
         return {
           for (final ref in (args['refs']! as List).cast<String>())
             ref: {
@@ -316,7 +316,7 @@ class FakeSettingsHost extends DshCarrier {
                 'source': envCredentials.contains(ref) ? 'env' : 'file',
             },
         };
-      case 'credentials/set':
+      case 'credentials.set':
         final ref = args['ref']! as String;
         if (envCredentials.contains(ref)) {
           throw XrkRemoteException('credential/rejected', 'supplied by the launch environment', {'ref': ref});
@@ -324,7 +324,7 @@ class FakeSettingsHost extends DshCarrier {
         credentials[ref] = args['value']! as String;
         scheduleMicrotask(() => emit('credentials/reference-updated', [ref]));
         return null;
-      case 'credentials/unset':
+      case 'credentials.unset':
         final ref = args['ref']! as String;
         credentials.remove(ref);
         scheduleMicrotask(() => emit('credentials/reference-updated', [ref]));

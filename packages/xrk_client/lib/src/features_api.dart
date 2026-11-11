@@ -613,23 +613,21 @@ extension FeaturesApi on XrkClient {
     );
   }
 
-  /// Makes [id] the default for new sessions, as the official settings page
-  /// does (`settings/update agent-preset-registry {selectedDefault}`).
+  /// Makes [id] the default for new sessions via Face `settings.update`.
   Future<void> setDefaultAgentPreset(String id) async {
     final section = await settingsSection('agent-preset-registry');
-    await rpc.call('settings/update', {
+    await rpc.call('settings.update', {
       'ns': 'agent-preset-registry',
       'patch': {'selectedDefault': id},
       'expectedRevision': ?section?.revision,
     });
   }
 
-  // ── settings ─────────────────────────────────────────────────────────────
+  // ── settings (Face: settings.describe / settings.mutate) ─────────────────
 
-  /// One namespace of `settings/describe`; null when the Host doesn't have it
-  /// (its plugin is off).
+  /// One namespace of Face `settings.describe`; null when the Host omits it.
   Future<SettingsSection?> settingsSection(String ns) async {
-    final value = asMapOrEmpty(await rpc.call('settings/describe'));
+    final value = asMapOrEmpty(await rpc.call('settings.describe'));
     final writable = value['writable'] != false;
     for (final n in asListOrEmpty(value['namespaces'])) {
       final map = asMap(n);
@@ -639,16 +637,13 @@ extension FeaturesApi on XrkClient {
     return null;
   }
 
-  /// `settings/mutate` with one `set` at [path]; returns the new section.
+  /// Face `settings.mutate` with one `set` at [path]; returns the new section.
   Future<SettingsSection> setSetting(String ns, List<String> path, Object? value, {int? expectedRevision}) =>
       mutateSettings(ns, [SettingsOp.set(path, value)], expectedRevision: expectedRevision);
 
-  /// `settings/mutate`: [ops] apply together or not at all. The Host validates
-  /// the whole section against its schema and refuses a write a home patch or
-  /// command-line overlay would override; a stale [expectedRevision] fails with
-  /// `settings/conflict`. Returns the new section.
+  /// Face `settings.mutate`: [ops] apply together or not at all.
   Future<SettingsSection> mutateSettings(String ns, List<SettingsOp> ops, {int? expectedRevision}) async {
-    final result = await rpc.call('settings/mutate', {
+    final result = await rpc.call('settings.mutate', {
       'ns': ns,
       'ops': [for (final op in ops) op.toJson()],
       'expectedRevision': ?expectedRevision,

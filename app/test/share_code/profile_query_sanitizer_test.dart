@@ -27,7 +27,7 @@ void main() {
       final client = XrkClient.withCarrier(engine);
       try {
         final source = await loadProfileExport(client, hostLabel: '测试Host', isLocal: false);
-        expect(engine.argsOf('settings/describe'), hasLength(1));
+        expect(engine.argsOf('settings.describe'), hasLength(1));
         expect(source.settings, {
           'web-search-deepseek': {'title': '保留此名称', 'enabled': true},
           'subagent': {'maxDepth': 3},

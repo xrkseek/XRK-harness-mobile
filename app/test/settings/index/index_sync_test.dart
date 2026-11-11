@@ -41,6 +41,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../account/support.dart' show FixedAccount, sampleBalance, sampleProfile;
 import '../../engine_settings/support.dart' as engine;
+import '../../features/face_permission_fixture.dart';
 import '../../phone/harness.dart';
 import '../../plugins/support/fake_plugin_host.dart';
 import '../../providers/support.dart' as providers;
@@ -256,32 +257,13 @@ void main() {
     final carrier = FakePluginCarrier();
     final client = XrkClient.withCarrier(carrier);
     addTearDown(client.close);
-    carrier.handlers['settings/describe'] = (_) => {
-      'writable': true,
-      'namespaces': [
-        {
-          'ns': 'permission',
-          'value': {'defaultPreset': 'workspace-write'},
-          'revision': 7,
-        },
-      ],
-    };
+    carrier.handlers['settings.describe'] = (_) => facePermissionDescribe();
     carrier.handlers['session/projections'] = (_) => {
       'kind': 'sequenced',
       'asOfSeq': 1,
       'values': {
         'permissions': {'currentValue': 'workspace-write'},
       },
-    };
-    const options = [
-      {'value': 'read-only', 'name': 'read-only'},
-      {'value': 'workspace-write', 'name': 'workspace-write'},
-      {'value': 'danger-full-access', 'name': 'danger-full-access'},
-    ];
-    carrier.handlers['permissionPresets/catalog'] = (_) => {
-      'options': options,
-      'defaultOptions': options,
-      'defaultPreset': 'workspace-write',
     };
     await _check(tester, SettingsPageId.permission, () async {
       await _app(tester, const PermissionPage(sessionId: 's1'), [

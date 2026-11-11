@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../features/face_permission_fixture.dart';
 import 'support/composer_fakes.dart' show FakeRpcCarrier;
 import 'support/harness.dart';
 
@@ -36,15 +37,7 @@ class _Host {
   var failPermission = false;
   late final carrier = FakeRpcCarrier({
     'agentPresets/list': (_) => {'presets': presets},
-    'permissionPresets/catalog': (_) => {
-      'options': [
-        {'value': 'read-only', 'name': 'Read only'},
-        {'value': 'workspace-write', 'name': 'Workspace write'},
-        {'value': 'danger-full-access', 'name': 'Full access'},
-      ],
-      'defaultPreset': 'workspace-write',
-    },
-    'settings/describe': (_) => {'namespaces': <Object?>[]},
+    'settings.describe': (_) => facePermissionDescribe(),
     'agentPresets/select': (args) => args['agentPreset'],
     'commands/execute': (args) => {
       'commandId': 'c1',
