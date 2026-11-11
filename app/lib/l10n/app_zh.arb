@@ -4629,6 +4629,8 @@
   "hubSettingsAutoCommands": "自动执行命令",
   "hubSettingsPhoneFiles": "访问手机文件",
   "hubSettingsPhoneFilesHint": "AI 可读写手机存储",
+  "hubSettingsPhoneFilesActive": "已挂载到 /sdcard，文件管理器可见「手机存储」",
+  "hubSettingsPhoneFilesNeedGrant": "需要存储权限，点此重新授权",
   "hubSettingsVisualReplies": "可视化回复",
   "hubSettingsVisualRepliesHint": "图表、对比卡和可点的选项",
   "hubSettingsPhoneControl": "手机操控",

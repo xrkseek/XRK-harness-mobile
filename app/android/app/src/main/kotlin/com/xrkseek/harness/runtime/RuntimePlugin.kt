@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
+import com.xrkseek.harness.files.XrkDocumentsProvider
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -178,6 +179,10 @@ class RuntimePlugin :
             )
             "networkMetered" -> result.success(networkMetered())
             "storageStatus" -> result.success(PhoneStorage.status(appContext))
+            "refreshDocumentRoots" -> {
+                XrkDocumentsProvider.notifyRootsChanged(appContext)
+                result.success(null)
+            }
             "requestStorage" -> requestStorage(result)
             "openAllFilesAccess" -> {
                 val intent = PhoneStorage.allFilesAccessIntent(appContext)
@@ -284,6 +289,7 @@ class RuntimePlugin :
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
         if (requestCode != STORAGE_REQUEST) return false
+        XrkDocumentsProvider.notifyRootsChanged(appContext)
         pendingStorageResult?.success(PhoneStorage.status(appContext))
         pendingStorageResult = null
         return true

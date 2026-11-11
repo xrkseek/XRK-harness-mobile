@@ -316,6 +316,8 @@ final _pages = <SettingsPageMeta>[
     links: const ['models'],
     shell: false,
   ),
+  // Native: defaults +「访问手机文件」+ phone confirm entry. Host YAML presets
+  // still sync through Face; the phone-files cascade is App-owned.
   SettingsPageMeta(
     SettingsPageId.permission,
     title: (l) => l.featuresPermissions,
@@ -323,15 +325,15 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwPermission,
     freq: Freq.medium,
     links: const ['permission'],
-    shell: false,
   ),
+  // Native home for「可视化回复」(engine AGENTS.md). Reply prefs / agent
+  // presets stay Web-owned child pages (shell: false below).
   SettingsPageMeta(
     SettingsPageId.personalization,
     title: (l) => l.hubPersonalization,
     group: _ai,
     keywords: (l) => l.searchKwPersonalization,
     links: const ['personalization'],
-    shell: false,
   ),
   SettingsPageMeta(
     SettingsPageId.replyPrefs,

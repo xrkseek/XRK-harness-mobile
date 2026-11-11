@@ -136,9 +136,10 @@ void main() {
 
   test('what wasn\'t picked is left alone', () async {
     final c = await container();
+    // Only files: phone control and the pet stay off; files turn on when granted.
     await c.read(accessSetupProvider.notifier).choose({AccessFeature.files});
     await c.read(accessSetupProvider.notifier).apply(readingsWith(offPhone, storage: true, overlay: true));
-    expect(c.read(settingsProvider).phoneStorage, isFalse);
+    expect(c.read(settingsProvider).phoneStorage, isTrue);
     expect(phone.methods, isNot(contains('setEnabled')));
     expect(pet.methods, isNot(contains('setEnabled')));
   });

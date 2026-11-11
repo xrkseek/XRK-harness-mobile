@@ -12,22 +12,23 @@ import android.provider.DocumentsProvider
 import android.webkit.MimeTypeMap
 import com.xrkseek.harness.R
 import com.xrkseek.harness.phone.PhoneGuest
+import com.xrkseek.harness.runtime.PhoneStorage
 import java.io.File
 import java.io.FileNotFoundException
 
 /**
- * Surfaces guest `$XRK_HOME` (and its `inbox/`) in the system document picker —
- * the same place Termux appears — so people can open / save files without ADB.
+ * System document picker roots for MT Manager / Files (Termux-style).
  *
- * Host path: `filesDir/runtime/rootfs/root/.xrk`. Absent until the runtime is
- * installed; the root still lists so the entry is discoverable.
+ * | Picker root | Host path | Guest path for the AI |
+ * |---|---|---|
+ * | XRK Harness | `filesDir/runtime/rootfs/root` | `/root` (Linux home, not Android su) |
+ * | XRK · 手机存储 | shared storage | `/sdcard` — **same** tree the engine binds when「访问手机文件」is on |
+ *
+ * Path math lives in [XrkDocumentTree]. This class only talks to Android SAF.
  */
 class XrkDocumentsProvider : DocumentsProvider() {
     companion object {
         const val AUTHORITY_SUFFIX = ".documents"
-        private const val ROOT_ID = "xrk"
-        private const val DOC_HOME = "home"
-        private const val DOC_INBOX = "inbox"
 
         private val DEFAULT_ROOT_PROJECTION = arrayOf(
             Root.COLUMN_ROOT_ID,
@@ -47,6 +48,12 @@ class XrkDocumentsProvider : DocumentsProvider() {
             Document.COLUMN_SIZE,
             Document.COLUMN_LAST_MODIFIED,
         )
+
+        /** Re-query roots after storage permission /「访问手机文件」changes. */
+        fun notifyRootsChanged(context: Context) {
+            val authority = context.packageName + AUTHORITY_SUFFIX
+            context.contentResolver.notifyChange(DocumentsContract.buildRootsUri(authority), null)
+        }
     }
 
     private lateinit var app: Context
@@ -56,50 +63,54 @@ class XrkDocumentsProvider : DocumentsProvider() {
         return true
     }
 
-    private fun xrkHome(): File = File(app.filesDir, "runtime/rootfs/${PhoneGuest.XRK_HOME_REL}")
-
-    private fun resolve(docId: String): File = when (docId) {
-        ROOT_ID, DOC_HOME -> xrkHome()
-        DOC_INBOX -> File(xrkHome(), "inbox")
-        else -> {
-            val rel = docId.removePrefix("$DOC_HOME/").removePrefix("$DOC_INBOX/")
-            val base = if (docId.startsWith("$DOC_INBOX/") || docId == DOC_INBOX) {
-                File(xrkHome(), "inbox")
-            } else {
-                xrkHome()
-            }
-            val target = File(base, rel).canonicalFile
-            if (!target.path.startsWith(xrkHome().canonicalFile.path)) {
-                throw FileNotFoundException("outside XRK home")
-            }
-            target
-        }
-    }
-
-    private fun docIdFor(file: File): String {
-        val home = xrkHome().canonicalFile
-        val path = file.canonicalFile.path
-        if (path == home.path) return DOC_HOME
-        val inbox = File(home, "inbox").canonicalFile
-        if (path == inbox.path) return DOC_INBOX
-        if (path.startsWith(inbox.path + File.separator)) {
-            return "$DOC_INBOX/${path.removePrefix(inbox.path + File.separator).replace(File.separatorChar, '/')}"
-        }
-        if (path.startsWith(home.path + File.separator)) {
-            return "$DOC_HOME/${path.removePrefix(home.path + File.separator).replace(File.separatorChar, '/')}"
-        }
-        throw FileNotFoundException(path)
+    private fun tree(): XrkDocumentTree {
+        val guest = File(app.filesDir, "runtime/rootfs/root")
+        val xrk = File(app.filesDir, "runtime/rootfs/${PhoneGuest.XRK_HOME_REL}")
+        // Same gate as the engine bind: setting + grant + readable host root.
+        // MT's second root then means the AI can also see /sdcard after restart.
+        val phone = PhoneStorage.boundHostRoot(app)
+        return XrkDocumentTree(guest, xrk, phone)
     }
 
     override fun queryRoots(projection: Array<out String>?): Cursor {
         val cols = projection ?: DEFAULT_ROOT_PROJECTION
         val result = MatrixCursor(cols)
-        val home = xrkHome()
-        if (!home.isDirectory) home.mkdirs()
+        val guest = File(app.filesDir, "runtime/rootfs/root")
+        if (!guest.isDirectory) guest.mkdirs()
+        addRoot(
+            result, cols,
+            rootId = XrkDocumentTree.ROOT_GUEST,
+            documentId = XrkDocumentTree.DOC_GUEST,
+            title = "XRK Harness",
+            summary = "机内 /root · 含 .xrk",
+            bytes = guest.usableSpace,
+        )
+        PhoneStorage.boundHostRoot(app)?.let { phone ->
+            addRoot(
+                result, cols,
+                rootId = XrkDocumentTree.ROOT_PHONE,
+                documentId = XrkDocumentTree.DOC_PHONE,
+                title = "XRK · 手机存储",
+                summary = PhoneStorage.GUEST_PATH,
+                bytes = phone.usableSpace,
+            )
+        }
+        return result
+    }
+
+    private fun addRoot(
+        result: MatrixCursor,
+        cols: Array<out String>,
+        rootId: String,
+        documentId: String,
+        title: String,
+        summary: String,
+        bytes: Long,
+    ) {
         val row = result.newRow()
         for (col in cols) {
             when (col) {
-                Root.COLUMN_ROOT_ID -> row.add(ROOT_ID)
+                Root.COLUMN_ROOT_ID -> row.add(rootId)
                 Root.COLUMN_MIME_TYPES -> row.add("*/*")
                 Root.COLUMN_FLAGS -> row.add(
                     Root.FLAG_SUPPORTS_CREATE or
@@ -107,20 +118,20 @@ class XrkDocumentsProvider : DocumentsProvider() {
                         Root.FLAG_LOCAL_ONLY,
                 )
                 Root.COLUMN_ICON -> row.add(R.mipmap.ic_launcher)
-                Root.COLUMN_TITLE -> row.add("XRK Harness")
-                Root.COLUMN_SUMMARY -> row.add("机内工作区 · inbox")
-                Root.COLUMN_DOCUMENT_ID -> row.add(DOC_HOME)
-                Root.COLUMN_AVAILABLE_BYTES -> row.add(home.usableSpace)
+                Root.COLUMN_TITLE -> row.add(title)
+                Root.COLUMN_SUMMARY -> row.add(summary)
+                Root.COLUMN_DOCUMENT_ID -> row.add(documentId)
+                Root.COLUMN_AVAILABLE_BYTES -> row.add(bytes)
                 else -> row.add(null)
             }
         }
-        return result
     }
 
     override fun queryDocument(documentId: String, projection: Array<out String>?): Cursor {
         val cols = projection ?: DEFAULT_DOC_PROJECTION
         val result = MatrixCursor(cols)
-        includeFile(result, cols, resolve(documentId), documentId)
+        val t = tree()
+        includeFile(result, cols, t.resolve(documentId), documentId)
         return result
     }
 
@@ -131,17 +142,16 @@ class XrkDocumentsProvider : DocumentsProvider() {
     ): Cursor {
         val cols = projection ?: DEFAULT_DOC_PROJECTION
         val result = MatrixCursor(cols)
-        val parent = resolve(parentDocumentId)
+        val t = tree()
+        val parent = t.resolve(parentDocumentId)
         if (!parent.isDirectory) return result
-        // Ensure inbox exists so the first open is useful.
-        if (parentDocumentId == DOC_HOME) {
-            File(parent, "inbox").mkdirs()
+        if (parentDocumentId == XrkDocumentTree.DOC_HOME ||
+            parentDocumentId == XrkDocumentTree.DOC_GUEST
+        ) {
+            t.ensureInbox()
         }
-        val children = parent.listFiles()?.sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() }))
-            ?: emptyList()
-        for (child in children) {
-            if (child.name.startsWith('.')) continue
-            includeFile(result, cols, child, docIdFor(child))
+        for (child in t.listChildren(parent)) {
+            includeFile(result, cols, child, t.docIdFor(child))
         }
         return result
     }
@@ -151,13 +161,13 @@ class XrkDocumentsProvider : DocumentsProvider() {
         mode: String,
         signal: CancellationSignal?,
     ): ParcelFileDescriptor {
-        val file = resolve(documentId)
-        val access = ParcelFileDescriptor.parseMode(mode)
-        return ParcelFileDescriptor.open(file, access)
+        val file = tree().resolve(documentId)
+        return ParcelFileDescriptor.open(file, ParcelFileDescriptor.parseMode(mode))
     }
 
     override fun createDocument(parentDocumentId: String, mimeType: String, displayName: String): String {
-        val parent = resolve(parentDocumentId)
+        val t = tree()
+        val parent = t.resolve(parentDocumentId)
         if (!parent.isDirectory) throw FileNotFoundException("not a directory")
         val safe = displayName.replace(Regex("[\\\\/]+"), "_").trim().ifEmpty { "file" }
         val dest = File(parent, safe)
@@ -166,22 +176,20 @@ class XrkDocumentsProvider : DocumentsProvider() {
         } else {
             if (!dest.createNewFile() && !dest.isFile) throw FileNotFoundException("create failed")
         }
-        return docIdFor(dest)
+        return t.docIdFor(dest)
     }
 
     override fun deleteDocument(documentId: String) {
-        val file = resolve(documentId)
-        if (documentId == DOC_HOME || documentId == DOC_INBOX) {
+        val t = tree()
+        if (t.isProtectedRoot(documentId)) {
             throw UnsupportedOperationException("cannot delete root folders")
         }
+        val file = t.resolve(documentId)
         if (!file.deleteRecursively()) throw FileNotFoundException("delete failed")
     }
 
-    override fun isChildDocument(parentDocumentId: String, documentId: String): Boolean {
-        return documentId == parentDocumentId ||
-            documentId.startsWith("$parentDocumentId/") ||
-            (parentDocumentId == DOC_HOME && (documentId == DOC_INBOX || documentId.startsWith("$DOC_INBOX/")))
-    }
+    override fun isChildDocument(parentDocumentId: String, documentId: String): Boolean =
+        tree().isChildDocument(parentDocumentId, documentId)
 
     private fun includeFile(result: MatrixCursor, cols: Array<out String>, file: File, docId: String) {
         val row = result.newRow()
@@ -195,8 +203,10 @@ class XrkDocumentsProvider : DocumentsProvider() {
                 Document.COLUMN_DOCUMENT_ID -> row.add(docId)
                 Document.COLUMN_DISPLAY_NAME -> row.add(
                     when (docId) {
-                        DOC_HOME -> "XRK Home"
-                        DOC_INBOX -> "inbox"
+                        XrkDocumentTree.DOC_GUEST -> "机内 /root"
+                        XrkDocumentTree.DOC_HOME -> ".xrk"
+                        XrkDocumentTree.DOC_INBOX -> "inbox"
+                        XrkDocumentTree.DOC_PHONE -> "手机存储"
                         else -> file.name
                     },
                 )

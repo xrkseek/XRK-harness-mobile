@@ -17,8 +17,8 @@ import '../../state/engine_settings_state.dart' show describeSettingsError;
 import '../../state/features_state.dart';
 import '../../state/settings_state.dart';
 import '../../runtime/runtime_bridge.dart';
-import '../../state/engine_control.dart';
 import '../../state/hosts_state.dart';
+import '../../state/phone_files.dart';
 import '../../state/phone_state.dart';
 import '../common/list_page_row.dart';
 import '../common/risk_notice.dart';
@@ -72,8 +72,37 @@ class PermissionPage extends ConsumerStatefulWidget {
   ConsumerState<PermissionPage> createState() => _PermissionPageState();
 }
 
-class _PermissionPageState extends ConsumerState<PermissionPage> {
+class _PermissionPageState extends ConsumerState<PermissionPage> with WidgetsBindingObserver {
   bool _busy = false;
+  StorageAccess? _storage;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_refreshStorage()));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) unawaited(_refreshStorage());
+  }
+
+  Future<void> _refreshStorage() async {
+    if (!ref.read(activeHostProvider).isLocal) return;
+    try {
+      final access = await PhoneFilesControl.refreshStatus(ProviderScope.containerOf(context, listen: false));
+      if (mounted) setState(() => _storage = access);
+    } catch (_) {
+      // Bridge unavailable offline / mid-restart.
+    }
+  }
 
   void _toast(String text) => ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(text)));
 
@@ -115,31 +144,35 @@ class _PermissionPageState extends ConsumerState<PermissionPage> {
     }
   }
 
-  /// 访问手机文件: what AI may touch first, then the system's own grant; the
-  /// engine restarts so its mounts follow.
+  /// 访问手机文件: preference → OS grant → SAF「手机存储」root → engine `/sdcard` bind.
   Future<void> _onPhoneFiles(bool next) async {
+    if (_busy) return;
+    setState(() => _busy = true);
     final l10n = context.l10n;
-    final notifier = ref.read(settingsProvider.notifier);
-    if (next) {
-      final ok = await confirmRisk(context, RiskNotices.phoneFiles);
-      if (!ok || !mounted) return;
-      final bridge = ref.read(runtimeBridgeProvider);
-      var access = await bridge.requestStorage();
-      if (!access.granted && access.permission && !access.legacy) {
-        // Device ignores legacy storage: fall back to the "All files access" page.
-        await bridge.openAllFilesAccess();
-        access = await bridge.storageStatus();
-      }
-      if (!access.granted) {
-        if (mounted) _toast(l10n.hubSettingsStorageDenied);
-        return;
-      }
+    final container = ProviderScope.containerOf(context, listen: false);
+    // Preference already on + OS grant lost: only re-request permission (no risk dialog).
+    final alreadyOn = ref.read(settingsProvider).phoneStorage;
+    try {
+      final ok = await PhoneFilesControl.setEnabled(
+        container,
+        enabled: next,
+        confirmEnable: next && !alreadyOn ? () => confirmRisk(context, RiskNotices.phoneFiles) : null,
+      );
+      if (!ok && next && mounted) _toast(l10n.hubSettingsStorageDenied);
+      await _refreshStorage();
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
-    await notifier.setPhoneStorage(next);
-    // Binds are fixed at launch: restart a running engine so the change applies.
-    if (ref.read(localRuntimeProvider).status.phase == RuntimePhase.running && mounted) {
-      unawaited(EngineControl.restart(ProviderScope.containerOf(context, listen: false)));
-    }
+  }
+
+  String _phoneFilesSubtitle(L10n l10n, bool phoneFiles) {
+    final access = _storage;
+    if (!phoneFiles) return l10n.hubSettingsPhoneFilesHint;
+    if (access == null) return l10n.hubSettingsPhoneFilesHint;
+    if (!access.granted) return l10n.hubSettingsPhoneFilesNeedGrant;
+    if (access.bound) return l10n.hubSettingsPhoneFilesActive;
+    // Setting + grant, bind pending (engine stopped or host root unreadable).
+    return l10n.hubSettingsRestartRequired;
   }
 
   Future<void> _resetDefault(int revision) async {
@@ -182,6 +215,7 @@ class _PermissionPageState extends ConsumerState<PermissionPage> {
     ];
 
     final phoneFiles = ref.watch(settingsProvider.select((s) => s.phoneStorage));
+    final needGrant = phoneFiles && _storage != null && !_storage!.granted;
     final confirm = ref.watch(phoneProvider.select((s) => s.policies?.confirmMode));
     final phone = ListPageCard(
       title: l10n.hubPermissionPhone,
@@ -191,9 +225,15 @@ class _PermissionPageState extends ConsumerState<PermissionPage> {
           MergeSemantics(
             child: ListPageRow(
               spot: Spots.phoneFiles,
-              subtitle: l10n.hubSettingsPhoneFilesHint,
-              onTap: () => unawaited(_onPhoneFiles(!phoneFiles)),
-              trailing: Switch(value: phoneFiles, onChanged: (v) => unawaited(_onPhoneFiles(v))),
+              subtitle: _phoneFilesSubtitle(l10n, phoneFiles),
+              // Setting on but OS grant lost: tap re-runs the enable cascade.
+              onTap: _busy
+                  ? null
+                  : () => unawaited(_onPhoneFiles(needGrant ? true : !phoneFiles)),
+              trailing: Switch(
+                value: phoneFiles,
+                onChanged: _busy ? null : (v) => unawaited(_onPhoneFiles(v)),
+              ),
             ),
           ),
         // The control itself stays on 手机操控: this opens it at that row.

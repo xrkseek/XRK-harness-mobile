@@ -31,6 +31,7 @@ import '../theme/app_icons.dart';
 import '../web/web_target.dart';
 import 'feature_widgets.dart' show openSessionInChat;
 import 'jobs_page.dart';
+import 'permission_page.dart';
 import 'session_export_page.dart';
 import 'skills_page.dart';
 
@@ -257,8 +258,9 @@ final featureSections = <FeatureSection>[
     ),
   ]),
   // Phone-shell settings only (same homes as the Settings hub). Models /
-  // permission / remote / plugins live in in-guest Web Settings — do not
-  // surface native Host dead pages from 全部功能.
+  // remote / plugins live in in-guest Web Settings — do not surface native
+  // Host dead pages from 全部功能. Permission + personalization are App-owned
+  // (phone files / visual replies cascades).
   FeatureSection.localized((l10n) => l10n.commonSettings, [
     FeatureItem.localized(
       id: 'phone',
@@ -270,6 +272,13 @@ final featureSections = <FeatureSection>[
       // + Settings hub route via hostSettingsOpener; native is unlock/a11y fallback.
       native: (_) => const PhoneControlScreen(),
       web: const DshWebTarget(settings: DshWebSettings.phone),
+    ),
+    FeatureItem.localized(
+      id: 'permission',
+      title: (l10n) => SettingsIndex.page(SettingsPageId.permission).title(l10n),
+      summary: (l10n) => l10n.searchKwPermission,
+      icon: AppIcons.permissions,
+      native: (sessionId) => PermissionPage(sessionId: sessionId),
     ),
     FeatureItem.localized(
       id: 'appearance',

@@ -5,7 +5,7 @@ import 'package:xrk_app/links/app_links.dart';
 import 'package:xrk_app/links/page_links.dart';
 import 'package:xrk_app/state/sessions_state.dart';
 import 'package:xrk_app/ui/features/feature_catalog.dart';
-import 'package:xrk_app/ui/phone/phone_control_screen.dart';
+import 'package:xrk_app/ui/phone/phone_settings_gateway.dart';
 import 'package:xrk_app/ui/settings/index/settings_pages.dart';
 import 'package:xrk_app/ui/settings/index/spot_anchor.dart';
 import 'package:flutter/material.dart';
@@ -70,11 +70,12 @@ void main() {
   });
 
   test('every id the guide or a reply may already use still opens', () {
-    // The ids before the settings index (0.9.6): none may stop working.
+    // Stable open ids since the settings index; retired surfaces (schedules /
+    // forum / community / ds-bot / workspaces / general) are intentionally gone.
     const before = {
-      'schedules', 'permission', 'agent-presets', 'models', 'subagent-settings', 'agent-loop', //
-      'shell-settings', 'web-search', 'plugins', 'plugin-inventory', 'agent-team', 'forum', //
-      'community', 'ds-bot', 'notifications', 'workspaces', 'general', 'account', 'remote', 'phone', //
+      'permission', 'personalization', 'agent-presets', 'models', 'subagent-settings', 'agent-loop', //
+      'shell-settings', 'web-search', 'plugins', 'plugin-inventory', //
+      'notifications', 'account', 'remote', 'phone', //
       'engine', 'diagnostics', 'settings', 'appearance', 'pets', 'shared-links', 'engine-settings', //
       'all-features', 'background',
     };
@@ -89,7 +90,8 @@ void main() {
       expect(page.target, spot.id);
       expect(page.child.runtimeType, settingsPage(spot.page).runtimeType, reason: spot.link);
     }
-    expect((pageForId('phone-confirm', null)! as SpotFocus).child, isA<PhoneControlScreen>());
+    // Phone settings go through the Host-aware gateway (native unlock/a11y fallback).
+    expect((pageForId('phone-confirm', null)! as SpotFocus).child, isA<PhoneSettingsGateway>());
   });
 
   group('routing', () {

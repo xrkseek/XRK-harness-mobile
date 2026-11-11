@@ -10,13 +10,12 @@
 
 <p>
 A local-first Android client: run <code>xrkh</code> on-device, or connect to a Host on your computer.<br/>
-<strong>First / current App release: <code>0.7.16</code></strong>
-(application id <code>com.xrkseek.harness</code>; same number as main-repo harness-cli)
+<strong>Current App release: <code>0.7.17</code></strong>
+(first App release <code>0.7.16</code>; application id <code>com.xrkseek.harness</code>; same number as main-repo harness-cli)
 </p>
 
 <p>
-  <a href="https://github.com/xrkseek/XRK-harness-mobile/releases/tag/v0.7.16"><img alt="version" src="https://img.shields.io/badge/version-0.7.16-4B67B4?style=flat-square&labelColor=2B3245"></a>
-  <a href="https://github.com/xrkseek/XRK-harness-mobile/releases/tag/v0.7.16"><img alt="first release" src="https://img.shields.io/badge/App-first%20release-0E8A16?style=flat-square&labelColor=2B3245"></a>
+  <a href="https://github.com/xrkseek/XRK-harness-mobile/releases/tag/v0.7.17"><img alt="version" src="https://img.shields.io/badge/version-0.7.17-4B67B4?style=flat-square&labelColor=2B3245"></a>
   <img alt="Android 8+" src="https://img.shields.io/badge/Android-8%2B-4B67B4?style=flat-square&logo=android&logoColor=white&labelColor=2B3245">
   <img alt="arm64" src="https://img.shields.io/badge/ABI-arm64--v8a-4B67B4?style=flat-square&labelColor=2B3245">
   <a href="LICENSE"><img alt="AGPL-3.0" src="https://img.shields.io/badge/License-AGPL--3.0-4B67B4?style=flat-square&labelColor=2B3245"></a>
@@ -51,8 +50,8 @@ Application id <code>com.xrkseek.harness</code> · on a phone use the <strong>ar
 
 | Item | Convention | Example |
 | --- | --- | --- |
-| tag | `v` + version | `v0.7.16` |
-| APK | `xrk-harness-<version>-arm64.apk` | `xrk-harness-0.7.16-arm64.apk` |
+| tag | `v` + version | `v0.7.17` |
+| APK | `xrk-harness-<version>-arm64.apk` | `xrk-harness-0.7.17-arm64.apk` |
 | Manifest | `update.json` on the same Release | `…/latest/download/update.json` |
 
 </div>

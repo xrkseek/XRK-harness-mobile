@@ -13196,6 +13196,18 @@ abstract class L10n {
   /// **'AI 可读写手机存储'**
   String get hubSettingsPhoneFilesHint;
 
+  /// No description provided for @hubSettingsPhoneFilesActive.
+  ///
+  /// In zh, this message translates to:
+  /// **'已挂载到 /sdcard，文件管理器可见「手机存储」'**
+  String get hubSettingsPhoneFilesActive;
+
+  /// No description provided for @hubSettingsPhoneFilesNeedGrant.
+  ///
+  /// In zh, this message translates to:
+  /// **'需要存储权限，点此重新授权'**
+  String get hubSettingsPhoneFilesNeedGrant;
+
   /// No description provided for @hubSettingsVisualReplies.
   ///
   /// In zh, this message translates to:

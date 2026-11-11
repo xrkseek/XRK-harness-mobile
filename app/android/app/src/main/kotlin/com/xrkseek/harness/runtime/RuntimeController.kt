@@ -10,6 +10,8 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import com.xrkseek.harness.files.XrkDocumentsProvider
+import com.xrkseek.harness.update.ApkInstaller
 import com.xrkseek.harness.phone.PhoneControl
 import org.json.JSONArray
 import org.json.JSONObject
@@ -111,6 +113,7 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
 
     init {
         phase = try {
+            applyOverlayUpgrade()
             if (installer.isCurrent()) Phase.INSTALLED else Phase.NOT_INSTALLED
         } catch (e: Exception) {
             error = "manifest: ${e.message}"
@@ -206,6 +209,7 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
     /** [dropKept]: give up what a reset kept but cannot be put back (see [KeepFailed]). */
     fun install(dropKept: Boolean = false, onDone: (Throwable?) -> Unit) {
         if (phase == Phase.INSTALLING) return onDone(null)
+        applyOverlayUpgrade()
         if (installer.isCurrent() && phase != Phase.ERROR) {
             if (phase == Phase.NOT_INSTALLED) setPhase(Phase.INSTALLED)
             return onDone(null)
@@ -224,7 +228,8 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
                 // A new runtime may well fix what failed before.
                 strikes = 0
                 failure = null
-                prefs.edit().putInt(K_STRIKES, 0).remove(K_FAILURE).apply()
+                mainFailure = null
+                stampOverlayAfterInstall()
                 setPhase(Phase.INSTALLED)
                 main.post { onDone(null) }
             } catch (e: Throwable) {
@@ -430,8 +435,17 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
             var launched: XrkProcess? = null
             try {
                 noteDns(GuestSetup.writeResolvConf(app, installer.rootfs), DnsConfigSource.START)
-                val storage = pendingPhoneStorage && PhoneStorage.isGranted(app) && PhoneStorage.binds().isNotEmpty()
+                // Shell-only APK bumps land here with the same runtimeVersion; heal volatiles.
+                applyOverlayUpgrade()
+                // Prefs are the single SoT (same gate as SAF / listOutputs). Flutter start()
+                // args only seed pending*; crash → restartNow may skip Flutter entirely.
+                pendingPhoneStorage = PhoneStorage.settingEnabled(app)
+                pendingVisualReplies = PhoneStorage.visualRepliesEnabled(app)
+                val storage = PhoneStorage.boundHostRoot(app) != null
+                val visual = pendingVisualReplies
                 PhoneStorage.syncShortcut(installer.rootfs, storage)
+                // Keep MT Manager's「手机存储」root in sync with the engine bind.
+                XrkDocumentsProvider.notifyRootsChanged(app)
                 // Phone control: bridge up and guest files written before XRK starts; off in safe mode.
                 val phone = PhoneControl.get(app).prepareLaunch(installer.rootfs, safe) { log(it, "system") }
                 val searchOverlay = !safe && SessionSearchGuest.writeFiles(installer.rootfs)
@@ -442,7 +456,9 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
                 if (!safe && !authOverlay) {
                     log("[xrkh-app] subscription sign-in overlay not written; ChatGPT / Claude sign-in is unavailable", "system")
                 }
-                if (pendingPhoneStorage && !storage) log("[xrkh-app] phone storage requested but permission not granted", "system")
+                if (pendingPhoneStorage && !storage) {
+                    log("[xrkh-app] phone storage on but not bound (grant missing or host root unreadable)", "system")
+                }
                 val env = LinkedHashMap<String, String>()
                 env["TZ"] = java.util.TimeZone.getDefault().id
                 env.putAll(pendingEnv)
@@ -478,7 +494,7 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
                 val direct = directEngine()
                 p.start(env, if (storage) PhoneStorage.binds() else emptyList(), safe, phone, direct.requested, direct.failed, searchOverlay, authOverlay) { actualDirect ->
                     // SafeMode.prepare writes its own briefing; leave the original home untouched.
-                    if (!safe) GuestSetup.writeAgentsMd(installer.rootfs, storage, phone, pendingVisualReplies, actualDirect)
+                    if (!safe) GuestSetup.writeAgentsMd(installer.rootfs, storage, phone, visual, actualDirect)
                 }
                 if (phone) PhoneControl.get(app).launched(p.phoneMounted)
             } catch (e: Throwable) {
@@ -1029,7 +1045,7 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
             } else {
                 phase = Phase.INSTALLED
                 try {
-                    start(pendingEnv, pendingPhoneStorage)
+                    start(pendingEnv, pendingPhoneStorage, visualReplies = pendingVisualReplies)
                 } catch (e: Exception) {
                     log("[xrkh-app] could not restart $how: ${e.message}", "system")
                     setPhase(Phase.ERROR)
@@ -1053,6 +1069,84 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
         val targets = synchronized(sinks) { sinks.toList() }
         if (targets.isEmpty()) return
         main.post { targets.forEach { it.emit(event) } }
+    }
+
+
+    /** Detect APK overlay vs last stamp; preserve `/root`, force install only when needed. */
+    private fun applyOverlayUpgrade() {
+        val plan = RuntimeUpgrade.plan(overlaySnapshot())
+        plan.note?.let { log("[xrkh-app] $it", "system") }
+        if (plan.clearStaging) File(installer.baseDir, "staging").deleteRecursivelySafely()
+        if (plan.clearRetired) File(installer.baseDir, "rootfs.old").deleteRecursivelySafely()
+        if (plan.prepareCarry) {
+            if (!RuntimeUpgrade.prepareCarry(installer.baseDir)) {
+                log("[xrkh-app] overlay: could not park /root into home.carry before reinstall", "system")
+            }
+        }
+        if (plan.clearVersionMarker) RuntimeUpgrade.clearVersionMarker(installer.baseDir)
+        if (plan.softHeal) {
+            RuntimeUpgrade.softHealGuest(installer.rootfs).forEach { log("[xrkh-app] overlay heal: $it", "system") }
+        }
+        if (plan.clearHostFailureCard) {
+            strikes = 0
+            failure = null
+            mainFailure = null
+            prefs.edit()
+                .putInt(K_STRIKES, 0)
+                .remove(K_FAILURE)
+                .remove(K_MAIN_FAILURE)
+                .remove(K_DIRECT_FAILED)
+                .apply()
+        }
+        // Stamp only when we are not about to reinstall; install success stamps in
+        // [stampOverlayAfterInstall] so a failed extract cannot claim a new app epoch.
+        if (!plan.needInstall && (plan.stampAppCode || plan.stampSha)) {
+            val edit = prefs.edit()
+            if (plan.stampAppCode) edit.putLong(RuntimeUpgrade.K_APP_VERSION_CODE, currentAppVersionCode())
+            if (plan.stampSha) {
+                val sha = manifest.rootfsSha256
+                if (sha.isNullOrEmpty()) edit.remove(RuntimeUpgrade.K_INSTALLED_ROOTFS_SHA)
+                else edit.putString(RuntimeUpgrade.K_INSTALLED_ROOTFS_SHA, sha)
+            }
+            edit.apply()
+        }
+    }
+
+    private fun stampOverlayAfterInstall() {
+        val edit = prefs.edit()
+            .putInt(K_STRIKES, 0)
+            .remove(K_FAILURE)
+            .remove(K_MAIN_FAILURE)
+            .putLong(RuntimeUpgrade.K_APP_VERSION_CODE, currentAppVersionCode())
+        val sha = runCatching { manifest.rootfsSha256 }.getOrNull()
+        if (sha.isNullOrEmpty()) edit.remove(RuntimeUpgrade.K_INSTALLED_ROOTFS_SHA)
+        else edit.putString(RuntimeUpgrade.K_INSTALLED_ROOTFS_SHA, sha)
+        edit.apply()
+    }
+
+    private fun overlaySnapshot(): RuntimeUpgrade.Snapshot {
+        val base = installer.baseDir
+        return RuntimeUpgrade.Snapshot(
+            installedVersion = installer.installedVersion(),
+            bundledVersion = manifest.runtimeVersion,
+            bundledSha = manifest.rootfsSha256,
+            stampedAppCode = if (prefs.contains(RuntimeUpgrade.K_APP_VERSION_CODE)) {
+                prefs.getLong(RuntimeUpgrade.K_APP_VERSION_CODE, -1L)
+            } else -1L,
+            currentAppCode = currentAppVersionCode(),
+            stampedSha = prefs.getString(RuntimeUpgrade.K_INSTALLED_ROOTFS_SHA, null),
+            carryExists = File(base, "home.carry").exists(),
+            stagingExists = File(base, "staging").exists(),
+            retiredExists = File(base, "rootfs.old").exists(),
+            essentialsOk = RuntimeUpgrade.essentialsPresent(installer.rootfs),
+            homeExists = File(base, "rootfs/root").isDirectory,
+        )
+    }
+
+    private fun currentAppVersionCode(): Long = try {
+        ApkInstaller.versionCodeOf(app.packageManager.getPackageInfo(app.packageName, 0))
+    } catch (_: Exception) {
+        -1L
     }
 
     companion object {
@@ -1115,7 +1209,6 @@ internal data class StartupFailureState(val error: String, val phase: RuntimeCon
         }
     }
 }
-
 internal class WorkspaceRecoverySaveException(cause: Throwable? = null) :
     IllegalStateException("could not save workspace recovery mode; retry before starting", cause)
 

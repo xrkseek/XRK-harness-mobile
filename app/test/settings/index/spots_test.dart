@@ -78,7 +78,7 @@ void main() {
   test('全部功能\'s 设置 cards are shell settings pages, by the same names', () {
     final section = featureSections.singleWhere((s) => s.id == settingsFeatureSection);
     expect(featureSections.last, section, reason: 'the last group');
-    expect([for (final i in section.items) i.id], ['phone', 'appearance', 'notifications', 'engine']);
+    expect([for (final i in section.items) i.id], ['phone', 'permission', 'appearance', 'notifications', 'engine']);
     for (final item in section.items) {
       final page = SettingsIndex.pageForLink(item.id);
       expect(page, isNotNull, reason: item.id);
@@ -111,10 +111,15 @@ void main() {
     final ids = {for (final s in SettingsIndex.spots) s.id};
     expect(ids.contains('page:phone'), isTrue);
     expect(ids.contains('page:appearance'), isTrue);
-    expect(ids.contains('page:interface'), isTrue);
+    expect(ids.contains('page:permission'), isTrue);
+    expect(ids.contains('page:personalization'), isTrue);
     expect(ids.contains('page:background'), isTrue);
     expect(ids.contains('language'), isTrue);
-    expect(SettingsIndex.isShellPage(SettingsPageId.interface), isTrue);
+    expect(SettingsIndex.isShellPage(SettingsPageId.permission), isTrue);
+    expect(SettingsIndex.isShellPage(SettingsPageId.personalization), isTrue);
+    // Retired dual-home「界面」is not a shell surface (redirects to hub only).
+    expect(SettingsIndex.isShellPage(SettingsPageId.interface), isFalse);
+    expect(ids.contains('page:interface'), isFalse);
     // Host-owned pages must stay shell:false and out of search.
     expect(SettingsIndex.isShellPage(SettingsPageId.models), isFalse);
     expect(SettingsIndex.isShellPage(SettingsPageId.plugins), isFalse);

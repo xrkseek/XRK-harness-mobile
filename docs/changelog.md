@@ -3,6 +3,20 @@
 > **读者**：终端用户 · 维护者  
 > 产品名：**XRK Harness 手机版**。版本号与主仓 `@xrkseek/harness-cli` 同号。
 
+## 0.7.17 · 2026-11-11
+
+### 中文
+
+- 机内 `@xrkseek/harness-cli@0.7.17`
+- 覆盖安装：runtime 变更时重装并抬回 `/root`；同 runtime 壳 bump 只软愈合、不重解 rootfs
+- 手机文件 / 权限与设置个性化入口完善
+
+### English
+
+- On-device `@xrkseek/harness-cli@0.7.17`
+- Overlay install: reinstall + `/root` carry when runtime changes; shell-only bumps soft-heal without rootfs re-extract
+- Phone files / permissions and Settings personalization polish
+
 ## 0.7.16 · 2026-11-11（App 首发）
 
 ### 中文

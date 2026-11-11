@@ -55,8 +55,17 @@ import 'plugin_links.dart' show registerPluginLinks;
 
 import '../l10n/l10n.dart';
 
-/// Scheme of the app's own links.
-const appLinkScheme = 'dshgo';
+/// Scheme of the app's own links (guide + in-app Markdown use this).
+const appLinkScheme = 'xrkharness';
+
+/// Pre-rename scheme; still accepted so old bookmarks / intents keep working.
+const appLinkSchemeLegacy = 'dshgo';
+
+/// True for [appLinkScheme] or [appLinkSchemeLegacy].
+bool isAppLinkScheme(String scheme) {
+  final s = scheme.toLowerCase();
+  return s == appLinkScheme || s == appLinkSchemeLegacy;
+}
 
 /// The native bridge: a broadcast stream of incoming links.
 class AppLinks {
@@ -273,26 +282,26 @@ class LinkRouter {
   bool get _settled => _graceOver || (_since?.elapsed ?? Duration.zero) >= grace;
 
   LinkHandler? _handlerFor(Uri uri) {
-    switch (uri.scheme.toLowerCase()) {
-      case appLinkScheme || 'https' || 'http':
-        for (final route in _routes) {
-          if (route.matches(uri)) return route.handle;
-        }
-        return null;
-      case 'file':
-        final name = uri.pathSegments.isEmpty ? '' : uri.pathSegments.last;
-        final dot = name.lastIndexOf('.');
-        final byExtension = dot < 0 ? null : _files[name.substring(dot + 1).toLowerCase()];
-        return byExtension ?? _fileFallback;
-      default:
-        return null;
+    final scheme = uri.scheme.toLowerCase();
+    if (isAppLinkScheme(scheme) || scheme == 'https' || scheme == 'http') {
+      for (final route in _routes) {
+        if (route.matches(uri)) return route.handle;
+      }
+      return null;
     }
+    if (scheme == 'file') {
+      final name = uri.pathSegments.isEmpty ? '' : uri.pathSegments.last;
+      final dot = name.lastIndexOf('.');
+      final byExtension = dot < 0 ? null : _files[name.substring(dot + 1).toLowerCase()];
+      return byExtension ?? _fileFallback;
+    }
+    return null;
   }
 
-  static bool _canWait(Uri uri) => switch (uri.scheme.toLowerCase()) {
-    appLinkScheme || 'https' || 'http' || 'file' => true,
-    _ => false,
-  };
+  static bool _canWait(Uri uri) {
+    final scheme = uri.scheme.toLowerCase();
+    return isAppLinkScheme(scheme) || scheme == 'https' || scheme == 'http' || scheme == 'file';
+  }
 
   Future<bool> _run(Uri uri, LinkHandler handler) async {
     var handled = false;

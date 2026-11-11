@@ -408,14 +408,20 @@ class StorageAccess {
     required this.granted,
     required this.permission,
     required this.legacy,
+    this.setting = false,
+    this.bound = false,
     this.guestPath = '/sdcard',
+    this.hostPath,
   });
 
   factory StorageAccess.fromMap(Map<Object?, Object?> map) => StorageAccess(
     granted: map['granted'] == true,
     permission: map['permission'] == true,
     legacy: map['legacy'] == true,
+    setting: map['setting'] == true,
+    bound: map['bound'] == true,
     guestPath: map['guestPath'] as String? ?? '/sdcard',
+    hostPath: map['hostPath'] as String?,
   );
 
   final bool granted;
@@ -423,7 +429,14 @@ class StorageAccess {
   /// The runtime permission is granted (may still need "All files access" when not [legacy]).
   final bool permission;
   final bool legacy;
+
+  /// Settings →「访问手机文件」preference (Flutter SharedPreferences).
+  final bool setting;
+
+  /// Preference + grant + readable host root — AI `/sdcard` and SAF「手机存储」agree.
+  final bool bound;
   final String guestPath;
+  final String? hostPath;
 }
 
 sealed class RuntimeEvent {
@@ -649,6 +662,15 @@ class RuntimeBridge {
 
   /// Opens Android's "All files access" page for this app (fallback when legacy access is off).
   Future<bool> openAllFilesAccess() async => await _methods.invokeMethod<bool>('openAllFilesAccess') ?? false;
+
+  /// Ask the DocumentsProvider to re-publish roots (guest `/root` + optional `/sdcard`).
+  Future<void> refreshDocumentRoots() async {
+    try {
+      await _methods.invokeMethod<void>('refreshDocumentRoots');
+    } on MissingPluginException {
+      // Tests / older shells: no DocumentsProvider channel.
+    }
+  }
 
   /// Stream-copy a host cache file into guest `$XRK_HOME/inbox/`. Returns guest path
   /// (`/root/.xrk/inbox/…`) so the agent can read by path without base64.

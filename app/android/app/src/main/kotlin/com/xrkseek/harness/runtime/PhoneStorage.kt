@@ -10,7 +10,13 @@ import android.os.Environment
 import android.provider.Settings
 
 /**
- * Optional access to the phone's shared storage from the Linux environment.
+ * Optional access to the phone's **shared storage** from the Linux guest.
+ *
+ * This is **not** Android su/root. Turning on「访问手机文件」grants ordinary
+ * storage permission and, on engine start, bind-mounts the same host tree at
+ * guest [/GUEST_PATH] (`/sdcard`). The AI then reads/writes that path; MT
+ * Manager sees the same tree as the DocumentsProvider「手机存储」root when
+ * [boundHostRoot] is non-null (setting + grant + readable).
  *
  * With targetSdk 28 the app keeps legacy external storage, so the classic
  * READ/WRITE_EXTERNAL_STORAGE grant is enough; "All files access" is the fallback
@@ -19,6 +25,11 @@ import android.provider.Settings
 object PhoneStorage {
     /** Guest path the phone's internal storage appears at. */
     const val GUEST_PATH = "/sdcard"
+
+    /** Flutter SharedPreferences keys for Settings toggles (see LaunchStart / settings_state). */
+    const val PREFS_NAME = "FlutterSharedPreferences"
+    const val PREFS_ENABLED_KEY = "flutter.phone_storage"
+    const val PREFS_VISUAL_REPLIES_KEY = "flutter.visual_replies"
 
     fun hostRoot(): String = Environment.getExternalStorageDirectory().absolutePath // /storage/emulated/0
 
@@ -30,10 +41,33 @@ object PhoneStorage {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || Environment.isExternalStorageLegacy()
     }
 
+    /** Settings →「访问手机文件」persisted by Flutter. */
+    fun settingEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(PREFS_ENABLED_KEY, false)
+
+    /** Settings →「可视化回复」; default on (matches Flutter AppSettings). */
+    fun visualRepliesEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(PREFS_VISUAL_REPLIES_KEY, true)
+
+    /**
+     * Host directory the engine would bind at [/GUEST_PATH], or null when the
+     * AI would not see phone storage (setting off, no grant, or unreadable).
+     * Single gate for SAF「手机存储」, listOutputs, and proot `/sdcard` binds.
+     */
+    fun boundHostRoot(context: Context): java.io.File? {
+        if (!settingEnabled(context) || !isGranted(context)) return null
+        val root = java.io.File(hostRoot())
+        return if (root.canRead()) root else null
+    }
+
     fun status(context: Context): Map<String, Any?> = mapOf(
         "granted" to isGranted(context),
         "permission" to (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED),
         "legacy" to (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || Environment.isExternalStorageLegacy()),
+        "setting" to settingEnabled(context),
+        "bound" to (boundHostRoot(context) != null),
         "guestPath" to GUEST_PATH,
         "hostPath" to hostRoot(),
     )

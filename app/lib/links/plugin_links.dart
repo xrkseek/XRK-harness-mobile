@@ -27,7 +27,7 @@ String? marketPluginLinkName(Uri uri) {
   final host = Uri.tryParse(shareHostOrigin)?.host;
   if (host == null || host.isEmpty) return null;
   final scheme = uri.scheme.toLowerCase();
-  if (scheme != 'https' && scheme != appLinkScheme) return null;
+  if (scheme != 'https' && !isAppLinkScheme(scheme)) return null;
   if (uri.host.toLowerCase() != host || uri.userInfo.isNotEmpty || uri.hasPort) {
     return null;
   }

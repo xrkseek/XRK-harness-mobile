@@ -13,15 +13,18 @@ import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import '../update/update_tiles.dart' show UpdateBadge;
+import '../features/permission_page.dart';
 import 'about_page.dart';
 import 'appearance/appearance_page.dart';
 import 'background_guide_page.dart';
 import 'diagnostics_page.dart';
 import 'language_tile.dart';
 import 'notification_settings.dart';
+import 'personalization_page.dart';
 import 'search/settings_search_page.dart';
 import 'settings_widgets.dart';
 import 'system_access_page.dart';
+import 'index/spots.dart';
 
 /// One hue per group on the hub: rows of a group share it.
 abstract final class SettingsHues {
@@ -80,6 +83,25 @@ class SettingsScreen extends ConsumerWidget {
             footer: OverviewFooter(tone: engine.tone, text: engine.label),
             onFooterTap: () => _push(context, const EngineScreen()),
           ),
+        ),
+        // App-owned AI surfaces (phone files / visual replies). Models & Host
+        // YAML stay in the in-guest Web Settings via the shell ball.
+        SettingsSection(
+          title: l10n.hubGroupAi,
+          children: [
+            SettingsTile(
+              icon: AppIcons.permissions,
+              tint: SettingsHues.ai,
+              spot: SettingsIndex.entry(SettingsPageId.permission),
+              onTap: () => _push(context, const PermissionPage()),
+            ),
+            SettingsTile(
+              icon: AppIcons.profile,
+              tint: SettingsHues.ai,
+              spot: SettingsIndex.entry(SettingsPageId.personalization),
+              onTap: () => _push(context, const PersonalizationPage()),
+            ),
+          ],
         ),
         // 手机操控只从悬浮球进；深链 / 搜索仍可打开 PhoneControlScreen。
         SettingsSection(

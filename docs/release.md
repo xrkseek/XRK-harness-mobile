@@ -2,7 +2,7 @@
 
 > **读者**：维护者
 
-产品名 **XRK Harness 手机版**。**App 首发与现行版本：`0.7.16`**（与主仓 `@xrkseek/harness-cli` 同号）。更早的 XRK Go / DSH Go 版本号不属本产品线，见 [changelog-legacy.md](./changelog-legacy.md)。
+产品名 **XRK Harness 手机版**。**App 现行版本：`0.7.17`**（首发 `0.7.16`；与主仓 `@xrkseek/harness-cli` 同号）。更早的 XRK Go / DSH Go 版本号不属本产品线，见 [changelog-legacy.md](./changelog-legacy.md)。
 
 App 以 APK 分发。应用内更新读取 **GitHub Releases**（`xrkseek/XRK-harness-mobile`），校验后调系统安装器。实现：`app/lib/update/`。仓库须对客户端可读（公开，或自托管 `XRK_UPDATE_FEED`），否则检查更新只会「暂时检查不了」。
 
@@ -15,10 +15,10 @@ App 以 APK 分发。应用内更新读取 **GitHub Releases**（`xrkseek/XRK-ha
 | 项 | 约定 | 例子 |
 |---|---|---|
 | 包名 | `com.xrkseek.harness` | — |
-| 版本名 | `app/pubspec.yaml` 的 `version: X.Y.Z`；常与 guest `@xrkseek/harness-cli` 同号；**首发 `0.7.16`** | `0.7.16` |
+| 版本名 | `app/pubspec.yaml` 的 `version: X.Y.Z`；常与 guest `@xrkseek/harness-cli` 同号；**现行 `0.7.17`**（首发 `0.7.16`） | `0.7.17` |
 | 构建号 | `tooling/build-apk.sh` 按构建分钟写入 versionCode | `11102145` |
-| tag | `v` + 版本名 | `v0.7.16` |
-| APK | `xrk-harness-<版本>-arm64.apk` | `xrk-harness-0.7.16-arm64.apk` |
+| tag | `v` + 版本名 | `v0.7.17` |
+| APK | `xrk-harness-<版本>-arm64.apk` | `xrk-harness-0.7.17-arm64.apk` |
 | 校验和 | `SHA256SUMS` | — |
 | 清单 | `update.json`（schema 1） | `…/latest/download/update.json` |
 | 引擎发行说明 | 主仓 `docs/releases/vX.Y.Z.md` | 契约 / Host |

@@ -7196,6 +7196,12 @@ class L10nZh extends L10n {
   String get hubSettingsPhoneFilesHint => 'AI 可读写手机存储';
 
   @override
+  String get hubSettingsPhoneFilesActive => '已挂载到 /sdcard，文件管理器可见「手机存储」';
+
+  @override
+  String get hubSettingsPhoneFilesNeedGrant => '需要存储权限，点此重新授权';
+
+  @override
   String get hubSettingsVisualReplies => '可视化回复';
 
   @override

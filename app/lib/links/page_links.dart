@@ -25,8 +25,9 @@ const pageLinkHost = 'open';
 /// 全部功能 pages a link may open that aren't settings, by their
 /// [FeatureItem.id]: each is a native page that needs no open conversation.
 /// Settings pages and rows answer through the settings index
-/// ([SettingsIndex.linkIds]).
-const catalogPageLinks = <String>{'agent-team'};
+/// ([SettingsIndex.linkIds]). Empty while 全部功能 extras are web-only /
+/// session-bound (no standalone native page link).
+const catalogPageLinks = <String>{};
 
 /// Every page a link may name.
 Set<String> get pageLinkIds => {...SettingsIndex.linkIds, ...catalogPageLinks};
@@ -34,7 +35,7 @@ Set<String> get pageLinkIds => {...SettingsIndex.linkIds, ...catalogPageLinks};
 /// The page id [uri] names: exactly `xrkharness://open/<id>` (a trailing slash is
 /// fine) with an id from [pageLinkIds]; null otherwise.
 String? pageLinkId(Uri uri) {
-  if (uri.scheme.toLowerCase() != appLinkScheme || uri.host.toLowerCase() != pageLinkHost) return null;
+  if (!isAppLinkScheme(uri.scheme) || uri.host.toLowerCase() != pageLinkHost) return null;
   if (uri.userInfo.isNotEmpty || uri.hasPort || uri.hasQuery || uri.hasFragment) return null;
   final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
   if (segments.length != 1) return null;
@@ -79,7 +80,7 @@ VoidCallback registerPageLinks(LinkRouter router, {String? Function()? session, 
 /// it doesn't know — and returns true. False for every other link.
 bool openReplyPageLink(BuildContext context, String url) {
   final uri = Uri.tryParse(url.trim());
-  if (uri == null || uri.scheme.toLowerCase() != appLinkScheme || uri.host.toLowerCase() != pageLinkHost) {
+  if (uri == null || !isAppLinkScheme(uri.scheme) || uri.host.toLowerCase() != pageLinkHost) {
     return false;
   }
   try {

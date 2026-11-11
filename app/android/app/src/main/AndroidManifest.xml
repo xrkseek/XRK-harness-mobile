@@ -178,9 +178,9 @@
             <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
         </activity-alias>
 
-        <!-- 分享码: dshgo:// links and .dshgo files, handed to MainActivity's own task
-             (links/LinkTrampolineActivity.kt → links/LinksPlugin.kt). https App Links need an
-             assetlinks.json on the landing domain first (docs/design/share-codes.md §6). -->
+        <!-- 分享码: xrkharness:// (+ legacy dshgo://) and .dshgo files, handed to MainActivity's
+             own task (links/LinkTrampolineActivity.kt → links/LinksPlugin.kt). https App Links
+             need an assetlinks.json on the landing domain first (docs/design/share-codes.md §6). -->
         <activity
             android:name=".links.LinkTrampolineActivity"
             android:exported="true"
@@ -188,6 +188,12 @@
             android:noHistory="true"
             android:taskAffinity=""
             android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="xrkharness" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -336,7 +342,7 @@
                 android:resource="@xml/xrk_file_paths" />
         </provider>
 
-        <!-- System document picker root (like Termux): browse guest $XRK_HOME / inbox. -->
+        <!-- System document picker (like Termux): guest /root (+ /sdcard when storage granted). -->
         <provider
             android:name=".files.XrkDocumentsProvider"
             android:authorities="${applicationId}.documents"

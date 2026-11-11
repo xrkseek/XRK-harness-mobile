@@ -3,8 +3,8 @@ import 'dart:collection';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../state/settings_state.dart';
 import '../state/read_list_epoch.dart';
+import '../state/settings_state.dart';
 import 'runtime_bridge.dart';
 
 final runtimeBridgeProvider = Provider<RuntimeBridge>((ref) => RuntimeBridge());

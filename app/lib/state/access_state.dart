@@ -30,6 +30,7 @@ import '../runtime/runtime_state.dart';
 import '../ui/chat/voice/voice_bridge.dart' show VoicePermission;
 import 'engine_control.dart';
 import 'notify_state.dart';
+import 'phone_files.dart';
 import 'phone_state.dart';
 import 'settings_state.dart';
 import 'voice_state.dart';
@@ -527,8 +528,17 @@ class AccessSetupController extends Notifier<AccessSetup> {
 
     var restart = false;
     if (features.contains(AccessFeature.files) && readings.storage == true && !ref.read(settingsProvider).phoneStorage) {
-      await attempt(() => ref.read(settingsProvider.notifier).setPhoneStorage(true));
-      restart = true;
+      // Grant already proven by the walk; skip the system prompt. Restart is
+      // coordinated below so files + 手机操控 share one engine bounce.
+      final applied = await attempt(
+        () => PhoneFilesControl.setEnabled(
+          ref.container,
+          enabled: true,
+          alreadyGranted: true,
+          restartEngine: false,
+        ),
+      );
+      restart = applied == true;
     }
     var restarting = false;
     if (features.contains(AccessFeature.phone) && !ref.read(phoneProvider).status.enabled) {

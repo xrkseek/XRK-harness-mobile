@@ -35,7 +35,7 @@ import kotlin.concurrent.thread
  *
  * - `resolveGuest {path}` → host path of a local-engine file, or null.
  * - `listOutputs {depth}` → `[{path, bytes, modified}]` under `/sdcard/Download/XRK-Harness`, then
- *   the old `/sdcard/Download/DSH` (guest paths; empty without phone storage).
+ *   the old `/sdcard/Download/DSH` (guest paths; empty unless setting+grant via PhoneStorage.boundHostRoot).
  * - `open {path, mime, name, chooser}` → ACTION_VIEW through this app's FileProvider.
  * - `saveToDownloads {path, name, mime}` → shown location (`Download/XRK-Harness/x.pdf`):
  *   MediaStore Downloads on API 29+, the public Downloads directory before
@@ -275,8 +275,9 @@ class FilesPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
     // The phone's output folder
 
     private fun listOutputs(depth: Int): List<Map<String, Any>> {
-        if (!PhoneStorage.isGranted(context)) return emptyList()
-        val hostRoot = PhoneStorage.hostRoot()
+        // Same gate as SAF「手机存储」and the engine `/sdcard` bind: setting + grant.
+        val bound = PhoneStorage.boundHostRoot(context) ?: return emptyList()
+        val hostRoot = bound.absolutePath
         val out = ArrayList<Map<String, Any>>()
         fun walk(dir: File, level: Int) {
             val children = dir.listFiles() ?: return
@@ -296,7 +297,7 @@ class FilesPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
         }
         // The old folder too: earlier chats' files, and a user's own AGENTS.md that still names it.
         for (folder in listOf(SUBDIR, LEGACY_SUBDIR, LEGACY_SUBDIR_OLD)) {
-            walk(File(hostRoot, "${Environment.DIRECTORY_DOWNLOADS}/$folder"), 1)
+            walk(File(bound, "${Environment.DIRECTORY_DOWNLOADS}/$folder"), 1)
         }
         return out
     }

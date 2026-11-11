@@ -17,9 +17,9 @@ import kotlin.concurrent.thread
  */
 object LaunchStart {
     /** Flutter's shared_preferences store and its keys (app/lib/state/settings_state.dart). */
-    private const val FLUTTER_PREFS = "FlutterSharedPreferences"
-    private const val K_PHONE_STORAGE = "flutter.phone_storage"
-    private const val K_VISUAL_REPLIES = "flutter.visual_replies"
+    private const val FLUTTER_PREFS = PhoneStorage.PREFS_NAME
+    private const val K_PHONE_STORAGE = PhoneStorage.PREFS_ENABLED_KEY
+    private const val K_VISUAL_REPLIES = PhoneStorage.PREFS_VISUAL_REPLIES_KEY
 
     @Volatile private var tried = false
 

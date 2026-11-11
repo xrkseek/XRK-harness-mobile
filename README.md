@@ -10,13 +10,12 @@
 
 <p>
 本地优先的 Android 客户端：本机跑 <code>xrkh</code>，也能连电脑上的 Host。<br/>
-<strong>App 首发 / 现行版本：<code>0.7.16</code></strong>
-（包名 <code>com.xrkseek.harness</code>；与主仓 harness-cli 同号）
+<strong>App 现行版本：<code>0.7.17</code></strong>
+（首发 <code>0.7.16</code>；包名 <code>com.xrkseek.harness</code>；与主仓 harness-cli 同号）
 </p>
 
 <p>
-  <a href="https://github.com/xrkseek/XRK-harness-mobile/releases/tag/v0.7.16"><img alt="version" src="https://img.shields.io/badge/version-0.7.16-4B67B4?style=flat-square&labelColor=2B3245"></a>
-  <a href="https://github.com/xrkseek/XRK-harness-mobile/releases/tag/v0.7.16"><img alt="first release" src="https://img.shields.io/badge/App-first%20release-0E8A16?style=flat-square&labelColor=2B3245"></a>
+  <a href="https://github.com/xrkseek/XRK-harness-mobile/releases/tag/v0.7.17"><img alt="version" src="https://img.shields.io/badge/version-0.7.17-4B67B4?style=flat-square&labelColor=2B3245"></a>
   <img alt="Android 8+" src="https://img.shields.io/badge/Android-8%2B-4B67B4?style=flat-square&logo=android&logoColor=white&labelColor=2B3245">
   <img alt="arm64" src="https://img.shields.io/badge/ABI-arm64--v8a-4B67B4?style=flat-square&labelColor=2B3245">
   <a href="LICENSE"><img alt="AGPL-3.0" src="https://img.shields.io/badge/License-AGPL--3.0-4B67B4?style=flat-square&labelColor=2B3245"></a>
@@ -51,8 +50,8 @@
 
 | 项 | 约定 | 例子 |
 | --- | --- | --- |
-| tag | `v` + 版本名 | `v0.7.16` |
-| APK | `xrk-harness-<版本>-arm64.apk` | `xrk-harness-0.7.16-arm64.apk` |
+| tag | `v` + 版本名 | `v0.7.17` |
+| APK | `xrk-harness-<版本>-arm64.apk` | `xrk-harness-0.7.17-arm64.apk` |
 | 清单 | 同 Release 的 `update.json` | `…/latest/download/update.json` |
 
 </div>

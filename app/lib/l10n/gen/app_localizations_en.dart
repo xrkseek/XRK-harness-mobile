@@ -7596,6 +7596,12 @@ class L10nEn extends L10n {
   String get hubSettingsPhoneFilesHint => 'AI can read and write phone storage';
 
   @override
+  String get hubSettingsPhoneFilesActive => 'Mounted at /sdcard; Files shows “Phone storage”';
+
+  @override
+  String get hubSettingsPhoneFilesNeedGrant => 'Storage permission needed — tap to grant again';
+
+  @override
   String get hubSettingsVisualReplies => 'Visual replies';
 
   @override

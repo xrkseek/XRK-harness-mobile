@@ -42,7 +42,15 @@ class RuntimeInstaller(
     fun installedVersion(): String? =
         if (rootfs.isDirectory && versionFile.isFile) versionFile.readText().trim().ifEmpty { null } else null
 
-    fun isCurrent(): Boolean = installedVersion() == manifest.runtimeVersion
+    /**
+     * Ready for launch: version marker matches the APK bundle and essentials exist.
+     * Interrupted leftovers (`home.carry`) are never "current" — see [RuntimeUpgrade].
+     */
+    fun isCurrent(): Boolean {
+        if (File(baseDir, "home.carry").exists()) return false
+        if (installedVersion() != manifest.runtimeVersion) return false
+        return RuntimeUpgrade.essentialsPresent(rootfs)
+    }
 
     /**
      * Extracts the bundled rootfs; [onProgress] gets (compressedBytesRead, totalCompressedBytes).
