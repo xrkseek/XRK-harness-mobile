@@ -27,6 +27,7 @@ import '../state/hosts_state.dart';
 import '../state/phone_state.dart';
 import '../state/sessions_state.dart';
 import '../state/settings_state.dart';
+import '../ui/engine/engine_screen.dart';
 import '../ui/notify/chat_alert_host.dart';
 import '../ui/phone/phone_control_screen.dart';
 import '../ui/phone/phone_stop_watcher.dart';
@@ -37,7 +38,10 @@ import '../pets/overlay_channel.dart';
 import '../ui/web/web_file_chooser.dart';
 import '../ui/web/web_keyboard.dart';
 import '../ui/web/web_target.dart';
+import 'shell_ball.dart';
+import 'shell_ball_visibility.dart';
 import 'shell_host_download.dart';
+import 'shell_quick_panel.dart';
 import 'shell_toast.dart';
 
 /// Flutter→JS compose bridge base64 ceiling (WebView string OOM below Face's
@@ -49,7 +53,10 @@ const _composeBase64BudgetBytes = 3 * 1024 * 1024;
 const _webAttachBudgetBytes = 20 * 1024 * 1024;
 
 /// Thin product shell: full-bleed WebView of xrkh UI after first-run setup.
-/// No Flutter chat chrome, drawer, or Remote entry.
+///
+/// No Flutter chat chrome, drawer, or Remote entry. The **settings ball** is
+/// the native escape hatch (引擎 / 保活 / 更新 / 手机操控); visibility rules
+/// live in [shellBallVisible] — keep it on boot and Host-failure screens.
 class LocalHostShell extends ConsumerStatefulWidget {
   const LocalHostShell({super.key});
 
@@ -158,15 +165,16 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     final width = MediaQuery.sizeOf(context).width;
     final chromeChanged = _webKeyboard.report(raw, width);
     final next = _webKeyboard.height;
-    final ballBefore = _keyboard >= 48;
+    final ballBefore = shellBallKeyboardOpen(_keyboard);
     _keyboard = next;
-    final ballAfter = _keyboard >= 48;
+    final ballAfter = shellBallKeyboardOpen(_keyboard);
     _keyboardRest?.cancel();
     _keyboardRest = Timer(WebKeyboard.rest, () {
       if (!mounted) return;
       if (_webKeyboard.settle(_keyboardRaw, width)) {
         final settled = _webKeyboard.height;
-        final showBallChanged = (_keyboard >= 48) != (settled >= 48);
+        final showBallChanged =
+            shellBallKeyboardOpen(_keyboard) != shellBallKeyboardOpen(settled);
         _keyboard = settled;
         // Only rebuild Flutter chrome when the ball must show/hide.
         if (showBallChanged) setState(() {});
@@ -280,46 +288,37 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       _appliedInsetKey = null;
     }
 
-    final Widget body;
+    // Settings ball = native escape hatch (see shell_ball_visibility.dart).
+    // One Stack for boot + Host so visibility rules stay in one place.
+    final showBall = shellBallVisible(keyboardOpen: shellBallKeyboardOpen(_keyboard));
+    final Widget surface;
     if (status.isRunning && status.baseUrl != null) {
       final url = localWebUri(status.baseUrl!, status.token ?? '').toString();
       _ensureWebView(url);
       final interruption = ref.watch(phoneProvider.select((s) => s.status.taskInterruption));
       // Full-bleed WebView. Soft keyboard: pin #root bottom to WebKeyboard
-      // snap (DSH); CSS inset stays 0. Ball hides while typing.
-      body = Scaffold(
-        backgroundColor: const Color(0xFF0B0B0C),
-        resizeToAvoidBottomInset: false,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            ColoredBox(
-              color: const Color(0xFF0B0B0C),
-              child: WebViewWidget(controller: _controller!),
+      // snap (DSH); CSS inset stays 0.
+      surface = Stack(
+        fit: StackFit.expand,
+        children: [
+          const ColoredBox(color: Color(0xFF0B0B0C)),
+          WebViewWidget(controller: _controller!),
+          if (interruption.visible)
+            Positioned(
+              top: mq.padding.top + 8,
+              left: 12,
+              right: 12,
+              child: _InterruptBanner(
+                interruption: interruption,
+                busy: _ackBusy,
+                onAck: () => unawaited(_ackInterruption(interruption.batchToken)),
+                onOpenSettings: () => unawaited(_openNativePhoneSettings()),
+              ),
             ),
-            if (interruption.visible)
-              Positioned(
-                top: mq.padding.top + 8,
-                left: 12,
-                right: 12,
-                child: _InterruptBanner(
-                  interruption: interruption,
-                  busy: _ackBusy,
-                  onAck: () => unawaited(_ackInterruption(interruption.batchToken)),
-                  onOpenSettings: () => unawaited(_openNativePhoneSettings()),
-                ),
-              ),
-            if (_pageReady && _keyboard < 48)
-              _ShellBall(
-                safeBottom: mq.padding.bottom,
-                safeTop: mq.padding.top,
-                onTap: () => unawaited(_openShellMenu()),
-              ),
-          ],
-        ),
+        ],
       );
     } else {
-      body = _BootScaffold(
+      surface = _BootScaffold(
         status: status,
         progress: runtime.progress,
         loaded: runtime.loaded,
@@ -335,6 +334,23 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
         },
       );
     }
+
+    final body = Scaffold(
+      backgroundColor: const Color(0xFF0B0B0C),
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          surface,
+          if (showBall)
+            ShellBall(
+              safeBottom: mq.padding.bottom,
+              safeTop: mq.padding.top,
+              onTap: () => unawaited(_openShellMenu()),
+            ),
+        ],
+      ),
+    );
 
     // Keep phone turn-end / stop / confirm watchers + chat alerts alive under
     // the product shell (they used to live only under retired HomeShell).
@@ -633,8 +649,8 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
 })();''');
     // Session log / `<a download>` → XrkShell (Android WebView otherwise no-ops).
     await controller.runJavaScript(hostDownloadBridgeJs);
-    // Must rebuild — otherwise the settings ball stays out of the tree until
-    // the next MediaQuery change (opening/closing the soft keyboard).
+    // Page finished: host settings / insets need [_pageReady]. The settings
+    // ball itself does not wait on this (see shell_ball_visibility.dart).
     if (mounted) setState(() => _pageReady = true);
     await _applyInsets(force: true);
     final pending = _pendingCompose;
@@ -675,7 +691,7 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     final gesture = math.max(_padding.bottom, 12.0);
     // Snap height only ([WebKeyboard]) — never mid-slide raw.
     final kb = _keyboard;
-    final open = kb >= 48;
+    final open = shellBallKeyboardOpen(kb);
     // While the IME covers the gesture bar, zero safe-bottom so InputBar /
     // AppFrame do not stack a second band above the keys.
     final safeBottom = open ? 0.0 : gesture;
@@ -786,92 +802,26 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
 
   Future<void> _openShellMenu() async {
     if (!mounted) return;
-    final l10n = context.l10n;
-    final choice = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: const Color(0xFF161618),
-      // Material 3 draws its own drag handle; we paint one — keep a single bar.
-      showDragHandle: false,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (ctx) {
-        final bottom = MediaQuery.paddingOf(ctx).bottom;
-        Widget tile({
-          required IconData icon,
-          required String title,
-          required String subtitle,
-          required String value,
-        }) {
-          return ListTile(
-            leading: Icon(icon, color: const Color(0xFFE8E8E6)),
-            title: Text(title, style: const TextStyle(color: Color(0xFFE8E8E6), fontWeight: FontWeight.w600)),
-            subtitle: Text(subtitle, style: const TextStyle(color: Color(0xFFB8B8B4), fontSize: 12)),
-            onTap: () => Navigator.pop(ctx, value),
+    // Host conversation settings need a finished WebView; otherwise engine status.
+    final hostReady = ref.read(localRuntimeProvider).status.isRunning && _pageReady;
+    final choice = await showShellQuickPanel(context, hostReady: hostReady);
+    if (!mounted || choice == null) return;
+    switch (choice) {
+      case ShellQuickAction.phoneControl:
+        await _openNativePhoneSettings();
+      case ShellQuickAction.appSettings:
+        await _openNativeAppSettings();
+      case ShellQuickAction.engineStatus:
+        await Navigator.of(context).push<void>(
+          MaterialPageRoute<void>(builder: (_) => const EngineScreen()),
+        );
+      case ShellQuickAction.hostSettings:
+        final ok = await _openWebSettings(sectionId: 'general');
+        if (!ok && mounted) {
+          await Navigator.of(context).push<void>(
+            MaterialPageRoute<void>(builder: (_) => const EngineScreen()),
           );
         }
-
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: bottom > 0 ? 0 : 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 10),
-                Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3A3A3E),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 4),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      l10n.shellQuickPanel,
-                      style: const TextStyle(color: Color(0xFFE8E8E6), fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ),
-                tile(
-                  icon: Icons.accessibility_new,
-                  title: l10n.phoneControlTitle,
-                  subtitle: '开关 · 无障碍 · Root · 自检',
-                  value: 'phone-settings',
-                ),
-                tile(
-                  icon: Icons.settings_outlined,
-                  title: l10n.commonSettings,
-                  subtitle: '引擎 · 保活 · 外观 · 关于 · 更新',
-                  value: 'app-settings',
-                ),
-                tile(
-                  icon: Icons.tune_outlined,
-                  title: '对话设置',
-                  subtitle: '模型 · 权限 · 插件 · Host 面板',
-                  value: 'host-settings',
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-    if (!mounted || choice == null) return;
-    if (choice == 'phone-settings') {
-      await _openNativePhoneSettings();
-      return;
-    }
-    if (choice == 'app-settings') {
-      await _openNativeAppSettings();
-      return;
-    }
-    if (choice == 'host-settings') {
-      await _openWebSettings(sectionId: 'general');
     }
   }
 
@@ -1292,155 +1242,3 @@ class _BootScaffold extends StatelessWidget {
   }
 }
 
-/// Draggable / collapsible shell ball — opens Go settings + phone control.
-class _ShellBall extends StatefulWidget {
-  const _ShellBall({
-    required this.safeBottom,
-    required this.safeTop,
-    required this.onTap,
-  });
-
-  final double safeBottom;
-  final double safeTop;
-  final VoidCallback onTap;
-
-  static const _kDx = 'shell.ball.dx';
-  static const _kDy = 'shell.ball.dy';
-  static const _kCollapsed = 'shell.ball.collapsed';
-  static const size = 48.0;
-  static const collapsed = 28.0;
-
-  @override
-  State<_ShellBall> createState() => _ShellBallState();
-}
-
-class _ShellBallState extends State<_ShellBall> {
-  double? _dx;
-  double? _dy;
-  var _collapsed = false;
-  var _loaded = false;
-  Offset? _dragOrigin;
-  Offset? _startPos;
-
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_restore());
-  }
-
-  Future<void> _restore() async {
-    try {
-      final p = await SharedPreferences.getInstance();
-      if (!mounted) return;
-      setState(() {
-        _dx = p.getDouble(_ShellBall._kDx);
-        _dy = p.getDouble(_ShellBall._kDy);
-        _collapsed = p.getBool(_ShellBall._kCollapsed) ?? false;
-        _loaded = true;
-      });
-    } catch (_) {
-      if (mounted) setState(() => _loaded = true);
-    }
-  }
-
-  Future<void> _persist() async {
-    try {
-      final p = await SharedPreferences.getInstance();
-      if (_dx != null) await p.setDouble(_ShellBall._kDx, _dx!);
-      if (_dy != null) await p.setDouble(_ShellBall._kDy, _dy!);
-      await p.setBool(_ShellBall._kCollapsed, _collapsed);
-    } catch (_) {}
-  }
-
-  void _clamp(Size size) {
-    final w = _collapsed ? _ShellBall.collapsed : _ShellBall.size;
-    final h = _collapsed ? _ShellBall.collapsed * 2.2 : _ShellBall.size;
-    final maxX = (size.width - w).clamp(0.0, size.width);
-    final maxY = (size.height - h - widget.safeBottom).clamp(0.0, size.height);
-    final minY = widget.safeTop + 8;
-    _dx = (_dx ?? (size.width - w - 14)).clamp(0.0, maxX);
-    _dy = (_dy ?? (size.height - h - widget.safeBottom - 18)).clamp(minY, maxY);
-  }
-
-  void _snapToEdge(Size size) {
-    final w = _collapsed ? _ShellBall.collapsed : _ShellBall.size;
-    final mid = size.width / 2;
-    _dx = ((_dx ?? 0) + w / 2) < mid ? 0.0 : size.width - w;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_loaded) return const SizedBox.shrink();
-    final size = MediaQuery.sizeOf(context);
-    _clamp(size);
-    final w = _collapsed ? _ShellBall.collapsed : _ShellBall.size;
-    final h = _collapsed ? _ShellBall.collapsed * 2.2 : _ShellBall.size;
-    return Positioned(
-      left: _dx,
-      top: _dy,
-      child: GestureDetector(
-        onPanStart: (d) {
-          _dragOrigin = d.globalPosition;
-          _startPos = Offset(_dx!, _dy!);
-        },
-        onPanUpdate: (d) {
-          if (_dragOrigin == null || _startPos == null) return;
-          setState(() {
-            _dx = _startPos!.dx + (d.globalPosition.dx - _dragOrigin!.dx);
-            _dy = _startPos!.dy + (d.globalPosition.dy - _dragOrigin!.dy);
-            _clamp(size);
-          });
-        },
-        onPanEnd: (_) {
-          setState(() {
-            if (_collapsed) {
-              _snapToEdge(size);
-            }
-          });
-          unawaited(_persist());
-          _dragOrigin = null;
-          _startPos = null;
-        },
-        onTap: () {
-          if (_collapsed) {
-            setState(() => _collapsed = false);
-            unawaited(_persist());
-            return;
-          }
-          widget.onTap();
-        },
-        onLongPress: () {
-          setState(() {
-            _collapsed = !_collapsed;
-            if (_collapsed) _snapToEdge(size);
-            _clamp(size);
-          });
-          unawaited(_persist());
-        },
-        child: RepaintBoundary(
-          child: Material(
-            color: const Color(0xE6161618),
-            elevation: 0,
-            shape: _collapsed
-                ? RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    side: const BorderSide(color: Color(0xFF3A3A3E)),
-                  )
-                : const CircleBorder(side: BorderSide(color: Color(0xFF3A3A3E))),
-            child: SizedBox(
-              width: w,
-              height: h,
-              child: Icon(
-                _collapsed
-                    ? ((_dx ?? 0) < size.width / 2 ? Icons.chevron_right : Icons.chevron_left)
-                    : Icons.apps,
-                color: const Color(0xFFE8E8E6),
-                size: _collapsed ? 18 : 22,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

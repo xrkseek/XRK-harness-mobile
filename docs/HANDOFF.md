@@ -5,7 +5,7 @@
 
 与主仓 xrkh 对齐的**手机专属**面；发版 / 打 APK / 改 phone_* 前读。
 
-**App 现行版本：`0.7.17`**（首发 `0.7.16`；包名 `com.xrkseek.harness`）。勿再把前身 XRK Go `1.0.x` / `0.9.x` 当成当前产品版本号。
+**App 现行版本：`0.7.18`**（首发 `0.7.16`；包名 `com.xrkseek.harness`）。勿再把前身 XRK Go `1.0.x` / `0.9.x` 当成当前产品版本号。
 
 ## 三层（不要混）
 
@@ -14,6 +14,8 @@
 | Flutter 壳 | `app/` | 只重打壳即可 |
 | guest `xrkh` | 主仓 `apps/cli` + `packages/*` → ENGINE_TGZ → `runtime/out` | 须重编 runtime |
 | 手机独属工具 / 技能 | 见下表 | 随壳或随 runtime |
+
+**设置球**：壳层逃生口（Host 挂了仍可进引擎状态）。显隐与菜单真源见 [architecture.md](./architecture.md)「产品壳 · 设置球」· `app/lib/shell/shell_ball_visibility.dart`。
 
 ## 手机独属上下文 / 工具面
 
@@ -31,11 +33,11 @@
 
 | 项 | 约定 |
 |----|------|
-| App 版本名 | `app/pubspec.yaml` → `X.Y.Z`（常与 guest `harness-cli` 同号，如 `0.7.17`） |
+| App 版本名 | `app/pubspec.yaml` → `X.Y.Z`（常与 guest `harness-cli` 同号，如 `0.7.18`） |
 | Git tag | `vX.Y.Z` |
 | APK 文件 | `xrk-harness-X.Y.Z-arm64.apk`（构建脚本 stage 名可带 `-release`） |
 | 发行说明 | 主仓 `docs/releases/vX.Y.Z.md`（引擎/壳契约）；手机仓 `docs/changelog.md`（App 面）或发版 notes |
-| runtime 版本串 | `manifest.runtimeVersion`（含 `xrk0.7.17` 等） |
+| runtime 版本串 | `manifest.runtimeVersion`（含 `xrk0.7.18` 等） |
 
 细节：`docs/release.md` · 主仓 skill `xrk-mobile-apk` · `xrk-dev-surfaces` 面 C。
 

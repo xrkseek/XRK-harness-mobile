@@ -3,6 +3,20 @@
 > **读者**：终端用户 · 维护者  
 > 产品名：**XRK Harness 手机版**。版本号与主仓 `@xrkseek/harness-cli` 同号。
 
+## 0.7.18 · 2026-11-12
+
+### 中文
+
+- 机内 `@xrkseek/harness-cli@0.7.18`
+- 设置球：壳层逃生口；Host 启动失败仍可进引擎状态 / App 设置；仅软键盘打开时隐藏
+- 应用内更新：开启「安装未知应用」返回后自动继续；权限已开不再反复进设置
+
+### English
+
+- On-device `@xrkseek/harness-cli@0.7.18`
+- Settings ball: native escape hatch; stays on Host start failure for engine status / App settings; hides only while the soft keyboard is open
+- In-app update: continues after enabling “install unknown apps”; no Settings bounce when already allowed
+
 ## 0.7.17 · 2026-11-11
 
 ### 中文

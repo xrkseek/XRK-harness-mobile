@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #
 # Only the version name is kept here. `+1` is a placeholder: versionCode is
 # the build minute from tooling/build-apk.sh (docs/release.md).
-version: 0.7.17+1
+version: 0.7.18+1
 
 environment:
   sdk: ^3.13.5

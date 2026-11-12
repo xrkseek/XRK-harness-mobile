@@ -107,9 +107,14 @@ class FakeInstaller implements UpdateInstaller {
   @override
   Future<InstalledApp> installedApp() async => app;
 
+  /// When non-empty, each [canRequestInstalls] call takes the next value
+  /// (OEM lag / resume polling). Falls back to [canInstall].
+  final List<bool> canInstallAnswers = [];
+
   @override
   Future<bool> canRequestInstalls() async {
     calls.add('canRequestInstalls');
+    if (canInstallAnswers.isNotEmpty) return canInstallAnswers.removeAt(0);
     return canInstall;
   }
 

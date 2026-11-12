@@ -140,9 +140,34 @@ abstract interface class UpdateInstaller {
 }
 
 class ChannelUpdateInstaller implements UpdateInstaller {
-  const ChannelUpdateInstaller();
+  ChannelUpdateInstaller() {
+    bindPermissionClosedHandler();
+  }
 
   static const _channel = MethodChannel('xrk/update');
+
+  /// Native Settings activity closed (`installPermissionClosed`). Wired once;
+  /// [AppUpdateController] sets the listener while the provider is alive.
+  static void Function(bool? allowed)? onPermissionSettingsClosed;
+
+  static bool _handlerBound = false;
+
+  /// Native → Dart: Settings for "install unknown apps" finished.
+  static void bindPermissionClosedHandler() {
+    if (_handlerBound) return;
+    try {
+      _channel.setMethodCallHandler((call) async {
+        if (call.method != 'installPermissionClosed') return null;
+        final raw = call.arguments;
+        final allowed = raw is bool ? raw : null;
+        onPermissionSettingsClosed?.call(allowed);
+        return null;
+      });
+      _handlerBound = true;
+    } catch (_) {
+      // Widget tests / no Services binding: resume polling still works.
+    }
+  }
 
   Future<Map<Object?, Object?>> _map(String method, [Object? args]) async =>
       await _channel.invokeMethod<Map<Object?, Object?>>(method, args) ?? const {};

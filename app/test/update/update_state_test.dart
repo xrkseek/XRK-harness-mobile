@@ -230,12 +230,70 @@ void main() {
       expect(installer.calls, contains('openInstallPermission'));
 
       // Came back without granting it: still waiting.
-      await controller.onAppResumed();
+      await controller.onAppResumed(
+        confirmGrace: Duration.zero,
+        permissionPollGaps: const [Duration.zero],
+      );
       expect(c.read(appUpdateProvider).task, UpdateTaskPhase.needsPermission);
 
       installer.canInstall = true;
-      await controller.onAppResumed();
+      await controller.onAppResumed(
+        confirmGrace: Duration.zero,
+        permissionPollGaps: const [Duration.zero],
+      );
       expect(installer.calls, containsAllInOrder(['inspect', 'install']));
+      expect(c.read(appUpdateProvider).task, UpdateTaskPhase.idle);
+    });
+
+    test('去开启 with permission already on installs without reopening Settings', () async {
+      http.routes[_manifest] = (_, _) => textResponse(jsonEncode(_release()));
+      http.routes[_apkUrl] = fileRoute(_apk);
+      installer.canInstall = false;
+      final c = container();
+      final controller = await ready(c);
+      await controller.check();
+      await controller.startDownload();
+      await controller.install();
+      expect(c.read(appUpdateProvider).task, UpdateTaskPhase.needsPermission);
+
+      installer.canInstall = true;
+      installer.calls.clear();
+      await controller.requestInstallPermission();
+      expect(installer.calls, isNot(contains('openInstallPermission')));
+      expect(installer.calls, containsAllInOrder(['canRequestInstalls', 'inspect', 'install']));
+      expect(c.read(appUpdateProvider).task, UpdateTaskPhase.idle);
+    });
+
+    test('Activity Result with allowed=true installs; resume polls past a stale false', () async {
+      http.routes[_manifest] = (_, _) => textResponse(jsonEncode(_release()));
+      http.routes[_apkUrl] = fileRoute(_apk);
+      installer.canInstall = false;
+      final c = container();
+      final controller = await ready(c);
+      await controller.check();
+      await controller.startDownload();
+      await controller.install();
+      expect(c.read(appUpdateProvider).task, UpdateTaskPhase.needsPermission);
+
+      // Native snapshot at Activity Result said granted (AppOps already on).
+      installer.canInstall = true;
+      installer.calls.clear();
+      await controller.onInstallPermissionClosed(allowed: true);
+      expect(installer.calls, containsAllInOrder(['inspect', 'install']));
+      expect(c.read(appUpdateProvider).task, UpdateTaskPhase.idle);
+
+      // Fresh attempt: AppOps lags — first resume ticks false, later true.
+      installer.result = const InstallResult(InstallStatus.success);
+      installer.canInstall = false;
+      await controller.install();
+      expect(c.read(appUpdateProvider).task, UpdateTaskPhase.needsPermission);
+      installer.canInstallAnswers.addAll([false, false, true]);
+      // install() re-queries after the poll succeeds; leave the steady flag on.
+      installer.canInstall = true;
+      await controller.onAppResumed(
+        confirmGrace: Duration.zero,
+        permissionPollGaps: const [Duration.zero, Duration.zero, Duration.zero],
+      );
       expect(c.read(appUpdateProvider).task, UpdateTaskPhase.idle);
     });
 

@@ -75,7 +75,11 @@ class FakeUpdate extends AppUpdateController {
   }
 
   @override
-  Future<void> onAppResumed({Duration confirmGrace = Duration.zero}) async => calls.add('resumed');
+  Future<void> onAppResumed({
+    Duration confirmGrace = Duration.zero,
+    List<Duration>? permissionPollGaps,
+  }) async =>
+      calls.add('resumed');
 
   /// What [installWithSystem] answers.
   bool systemInstallerOpens = true;

@@ -70,8 +70,24 @@ EventChannel（与 MethodChannel 同插件；事件 map）：
 2. Dart / WebView 经 Face 同源会话连 Host（实现以当前壳为准）。
 3. 手机操控：`phone_*` 经 App 回环 API（`XRK_MOBILE_API`），不是 MCP。
 
+## 产品壳 · 设置球（LocalHostShell）
+
+对话 UI 在 guest WebView（与 Desktop 同源）；Flutter 壳负责启停引擎与原生能力。全屏 WebView / 启动失败页上都没有 Host 侧栏，因此需要一颗**壳层逃生口**——设置球。
+
+| 项 | 约定 |
+|---|---|
+| 角色 | 原生快捷入口：不依赖 Host 是否存活 |
+| 常驻入口 | 手机操控 · App 设置（引擎 / 保活 / 外观 / 关于 / 更新） |
+| Host 就绪 | 第三项 → 对话设置（WebView Host 面板） |
+| Host 未就绪（启动中 / code 1 / 已停） | 第三项 → **引擎状态**（日志 · 启停 · 诊断） |
+| 何时隐藏 | **仅**软键盘打开时（避免挡输入）；**不**等 `onPageFinished` |
+| 代码 | `app/lib/shell/shell_ball*.dart` · `shell_quick_panel.dart` · 显隐真源 `shell_ball_visibility.dart` |
+
+反模式：Host 挂了只剩「重试」、设置球随 WebView 一起消失——人进不了引擎状态与更新。
+
 ## 细节
 
 - 运行时 / proot：`runtime/` · `app/android/.../runtime/`
 - 手机操控：`app/android/.../phone/` · [HANDOFF.md](./HANDOFF.md)
+- 设置球 / 壳逃生口：上文「产品壳 · 设置球」
 - 设计规范：`docs/design/`

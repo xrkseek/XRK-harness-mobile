@@ -23,7 +23,7 @@ import 'app_info.dart';
 // ── Seams (tests override these) ─────────────────────────────────────────────
 
 final updateHttpProvider = Provider<UpdateHttp>((ref) => IoUpdateHttp());
-final updateInstallerProvider = Provider<UpdateInstaller>((ref) => const ChannelUpdateInstaller());
+final updateInstallerProvider = Provider<UpdateInstaller>((ref) => ChannelUpdateInstaller());
 final updateSourcesProvider = Provider<UpdateSources>((ref) => defaultUpdateSources());
 final updateClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
 
@@ -282,8 +282,22 @@ class AppUpdateController extends Notifier<AppUpdateState> {
 
   @override
   AppUpdateState build() {
-    ref.onDispose(() => _cancel?.cancel());
+    // Assign before any channel bind: a MissingPluginException must not leave
+    // [ready] reading an uninitialized late field in widget-free tests.
     _loading = _load();
+    ChannelUpdateInstaller.bindPermissionClosedHandler();
+    void onClosed(bool? allowed) {
+      if (!ref.mounted) return;
+      unawaited(onInstallPermissionClosed(allowed: allowed));
+    }
+
+    ChannelUpdateInstaller.onPermissionSettingsClosed = onClosed;
+    ref.onDispose(() {
+      _cancel?.cancel();
+      if (identical(ChannelUpdateInstaller.onPermissionSettingsClosed, onClosed)) {
+        ChannelUpdateInstaller.onPermissionSettingsClosed = null;
+      }
+    });
     return AppUpdateState(current: AppVersion.tryParse(AppInfo.version) ?? const AppVersion(0, 0, 0));
   }
 
@@ -816,8 +830,18 @@ class AppUpdateController extends Notifier<AppUpdateState> {
     }
   }
 
-  /// Opens the system "install unknown apps" page; [onAppResumed] continues.
+  /// Opens the system "install unknown apps" page; [onAppResumed] /
+  /// [onInstallPermissionClosed] continue. If the switch is already on
+  /// (common after returning from Settings while the sheet still said 「去开启」),
+  /// install immediately instead of bouncing back into Settings.
   Future<void> requestInstallPermission() async {
+    if (!ref.mounted || state.task != UpdateTaskPhase.needsPermission) return;
+    try {
+      if (await _installer.canRequestInstalls()) {
+        if (ref.mounted && state.task == UpdateTaskPhase.needsPermission) await install();
+        return;
+      }
+    } catch (_) {}
     var opened = false;
     try {
       opened = await _installer.openInstallPermission();
@@ -825,15 +849,43 @@ class AppUpdateController extends Notifier<AppUpdateState> {
     if (!opened && ref.mounted) state = state.copyWith(problem: () => UpdateProblem.permissionUnavailable);
   }
 
+  /// Native finished the Settings activity (Activity Result). Prefer this over
+  /// lifecycle alone: some ROMs skip a second [onResume] after the toggle, and
+  /// [PackageManager.canRequestPackageInstalls] can lag for a beat.
+  Future<void> onInstallPermissionClosed({bool? allowed}) async {
+    if (!ref.mounted || state.task != UpdateTaskPhase.needsPermission) return;
+    if (allowed == true) {
+      await install();
+      return;
+    }
+    await _continueInstallIfPermitted(
+      gaps: const [
+        Duration.zero,
+        Duration(milliseconds: 250),
+        Duration(milliseconds: 700),
+        Duration(milliseconds: 1500),
+      ],
+    );
+  }
+
   /// The app is in front again: back from the permission page (install if it
   /// was granted), or from the system install dialog. Some ROM installers close
   /// without reporting; after [confirmGrace] the person can try again.
-  Future<void> onAppResumed({Duration confirmGrace = const Duration(seconds: 3)}) async {
+  Future<void> onAppResumed({
+    Duration confirmGrace = const Duration(seconds: 3),
+    List<Duration>? permissionPollGaps,
+  }) async {
     switch (state.task) {
       case UpdateTaskPhase.needsPermission:
-        try {
-          if (await _installer.canRequestInstalls()) await install();
-        } catch (_) {}
+        await _continueInstallIfPermitted(
+          gaps: permissionPollGaps ??
+              const [
+                Duration.zero,
+                Duration(milliseconds: 250),
+                Duration(milliseconds: 700),
+                Duration(milliseconds: 1500),
+              ],
+        );
       case UpdateTaskPhase.installing:
         final run = _run;
         await Future<void>.delayed(confirmGrace);
@@ -846,6 +898,22 @@ class AppUpdateController extends Notifier<AppUpdateState> {
           if (_apk case final apk? when !apk.isFor(state)) await _conflicted();
         }
       default:
+    }
+  }
+
+  /// Re-query install permission a few times: OEMs often report false on the
+  /// first tick after the Settings toggle until AppOps catches up.
+  Future<void> _continueInstallIfPermitted({required List<Duration> gaps}) async {
+    for (var i = 0; i < gaps.length; i++) {
+      final wait = gaps[i];
+      if (wait > Duration.zero) await Future<void>.delayed(wait);
+      if (!ref.mounted || state.task != UpdateTaskPhase.needsPermission) return;
+      try {
+        if (await _installer.canRequestInstalls()) {
+          if (ref.mounted && state.task == UpdateTaskPhase.needsPermission) await install();
+          return;
+        }
+      } catch (_) {}
     }
   }
 }
