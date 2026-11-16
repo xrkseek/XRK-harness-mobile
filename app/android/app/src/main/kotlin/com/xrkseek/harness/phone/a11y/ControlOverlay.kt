@@ -1208,14 +1208,24 @@ internal class ControlOverlay(private val service: AccessibilityService) : UserG
         }
         val side = b.dock.side
         b.move(ballOver(p, b, p.endCircle(side)))
+        // Ball starts transparent under the circle so the handoff is a fade, not a pop.
+        b.root.alpha = 0f
+        b.fadeMark(0f, animated = false)
+        showWindow(b.root)
         p.foldTo(side, animated = true) {
             ballShown = true
-            b.fadeMark(0f, animated = false)
-            showWindow(b.root)
-            b.fadeMark(1f, animated = true)
-            // The capsule goes (and gets its plain layout back) once the ball is surely drawn over it.
-            b.root.postDelayed({ if (pill === p && ballShown) { syncWindows(); p.settle(OverlayCapsule.Shape.CAPSULE) } }, SWAP_MS)
-            renderPill(animated = false)
+            b.root.animate().cancel()
+            b.root.animate().alpha(1f).setDuration(CROSSFADE_MS).setInterpolator(OverlayMotion.emphasized).start()
+            b.fadeMark(1f, animated = true, durationMs = CROSSFADE_MS)
+            // Capsule fades with the ball; settle only after it is gone (no layout flash).
+            p.root.animate().cancel()
+            p.root.animate().alpha(0f).setDuration(CROSSFADE_MS).setInterpolator(OverlayMotion.emphasized).withEndAction {
+                if (pill !== p || !ballShown) return@withEndAction
+                syncWindows()
+                p.root.alpha = 1f
+                p.settle(OverlayCapsule.Shape.CAPSULE)
+                renderPill(animated = false)
+            }.start()
             b.glideTo(b.dockPos(), animated = true)
         }
     }
@@ -1252,11 +1262,18 @@ internal class ControlOverlay(private val service: AccessibilityService) : UserG
             if (pill !== p || !ballShown) return@glideTo
             ballShown = false
             showWindow(p.root)
+            p.root.alpha = 0f
+            p.root.animate().cancel()
+            p.root.animate().alpha(1f).setDuration(CROSSFADE_MS).setInterpolator(OverlayMotion.emphasized).start()
             p.unfoldFrom(side, animated = true) {}
-            // The ball goes once the capsule is surely drawn over it, back to its dock for next time.
-            b.root.postDelayed({
-                if (pill === p && !ballShown) { syncWindows(); b.move(b.dockPos()); b.fadeMark(1f, animated = false) }
-            }, SWAP_MS)
+            b.root.animate().cancel()
+            b.root.animate().alpha(0f).setDuration(CROSSFADE_MS).setInterpolator(OverlayMotion.emphasized).withEndAction {
+                if (pill !== p || ballShown) return@withEndAction
+                syncWindows()
+                b.root.alpha = 1f
+                b.move(b.dockPos())
+                b.fadeMark(1f, animated = false)
+            }.start()
         }
     }
 
@@ -1441,7 +1458,9 @@ internal class ControlOverlay(private val service: AccessibilityService) : UserG
         private const val UNFOLD_GLIDE_MS = 220L
 
         /** Frames both windows show at a swap, so the one going is surely covered (≈ 3 frames). */
-        private const val SWAP_MS = 48L
+        /** Capsule ↔ ball handoff crossfade (was 48ms hard swap → visible flicker). */
+        private const val CROSSFADE_MS = 140L
+        private const val SWAP_MS = CROSSFADE_MS
 
         /** Going idle is slow and quiet; a touch brings it back at once. */
         private const val DIM_FADE_MS = 400L

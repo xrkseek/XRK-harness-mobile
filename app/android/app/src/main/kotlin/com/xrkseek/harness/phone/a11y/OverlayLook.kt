@@ -298,6 +298,9 @@ internal class RoundKey(context: Context, private val discDp: Int, private val g
     var glyph: Glyph = Glyph.PAUSE
         private set
 
+    /** In-canvas press scale (never View.scaleX — that escapes outline clip). */
+    private var press = 1f
+
     init {
         isClickable = true
         isFocusable = true
@@ -330,21 +333,25 @@ internal class RoundKey(context: Context, private val discDp: Int, private val g
 
     override fun setPressed(pressed: Boolean) {
         super.setPressed(pressed)
-        val s = if (pressed) 0.92f else 1f
-        if (OverlayMotion.on()) animate().scaleX(s).scaleY(s).setDuration(if (pressed) 90 else 200).setInterpolator(OverlayMotion.glide).start()
-        else { scaleX = s; scaleY = s }
+        // Scale only the painted disc/glyph via canvas in onDraw — view-level scaleX/Y
+        // escapes the capsule outline (clipToOutline) and leaves 执 / X hanging outside.
+        press = if (pressed) 0.92f else 1f
+        invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val cx = width / 2f
         val cy = height / 2f
+        val save = canvas.save()
+        if (press != 1f) canvas.scale(press, press, cx, cy)
         discPaint.color = disc
         canvas.drawCircle(cx, cy, context.dpf(discDp / 2f), discPaint)
         glyphPaint.color = ink
         glyphPaint.alpha = (Color.alpha(ink) * swapT).roundToInt()
         val size = context.dpf(glyphDp.toFloat()) * (0.7f + 0.3f * swapT)
         Glyph.draw(canvas, glyph, cx, cy, size, glyphPaint)
+        canvas.restoreToCount(save)
     }
 }
 

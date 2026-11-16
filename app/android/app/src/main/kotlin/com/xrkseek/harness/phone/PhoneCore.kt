@@ -605,10 +605,13 @@ class PhoneCore(
         val refused = shown !== snap
         if (!refused && shown.image != null) driver.acceptVisualObservation(shown.id)
         return Out(
+            // Refuse reason already lives in shown.text (own App / deny-list / secure).
+            // Prefer that as the tool body so Host agents see why, not a blank refusal.
             // l10n:keep agent tool result
-            if (refused) "没有读取这个屏幕的内容。" else "",
+            if (refused) shown.text.ifBlank { "没有读取这个屏幕的内容。" } else "",
             error = refused,
-            screen = shown,
+            // Avoid duplicating the same refusal block in output().
+            screen = if (refused) null else shown,
             app = snap.appLabel ?: snap.packageName,
             summary = "$summary ${snap.id}",
             decision = if (refused) "refused:read" else "ok",

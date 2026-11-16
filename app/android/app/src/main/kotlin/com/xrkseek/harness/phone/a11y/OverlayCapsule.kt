@@ -661,9 +661,10 @@ internal class OverlayCapsule(
         surface.pin(RectF(r.left, r.top, r.right, r.top + headerH))
         val left = BallGeometry.circleLeft(r.left.roundToInt(), r.right.roundToInt(), ball, side).toFloat()
         val bodyAlpha = body.alpha
+        // Fade glyphs out early so the shrinking outline never bisects a character (执 / X).
         animate(RectF(left, r.top, left + ball, r.top + headerH), OverlayMotion.MORPH_MS, OverlayMotion.emphasized, animated, frame = { t ->
-            header.alpha = (1f - t / 0.4f).coerceIn(0f, 1f)
-            body.alpha = bodyAlpha * (1f - t / 0.3f).coerceIn(0f, 1f)
+            header.alpha = (1f - t / 0.22f).coerceIn(0f, 1f)
+            body.alpha = bodyAlpha * (1f - t / 0.18f).coerceIn(0f, 1f)
         }) { then() }
     }
 
