@@ -221,7 +221,7 @@ class _HttpHostFormPageState extends ConsumerState<HttpHostFormPage> {
                           if (_addressError != null) setState(() => _addressError = null);
                         },
                         decoration: InputDecoration(
-                          hintText: 'http://192.168.1.20:8787',
+                          hintText: 'http://192.168.1.20:8787 或 https://…（樱花）',
                           error: _addressError == null ? null : const SizedBox.shrink(),
                         ),
                       ),
@@ -229,7 +229,7 @@ class _HttpHostFormPageState extends ConsumerState<HttpHostFormPage> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                       child: Text(
-                        '保存并连接后打开该地址；公网 / 局域网 PIN 由 Host 页面处理，无需在此填令牌。',
+                        '保存并连接后打开该地址；公网 / 局域网 PIN 由 Host 页面处理，无需在此填令牌。HTTPS 自签证书（樱花等）可直接连。',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: XrkColors.of(context).textTertiary,
                             ),

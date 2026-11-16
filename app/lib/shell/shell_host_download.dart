@@ -348,7 +348,7 @@ Future<Uint8List> _fetchWithWebViewCookies(Uri uri) async {
     );
   }
   final header = cookies.map((c) => '${c.name}=${c.value}').join('; ');
-  final client = HttpClient();
+  final client = HttpClient()..badCertificateCallback = (cert, host, port) => true;
   try {
     final req = await client.getUrl(uri);
     if (header.isNotEmpty) req.headers.set(HttpHeaders.cookieHeader, header);

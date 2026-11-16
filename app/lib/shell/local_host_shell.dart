@@ -756,9 +756,16 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       );
     // TTS / <audio> bars in Host UI must play on tap without the Android
     // WebView default "requires user gesture" gate swallowing play().
+    // HTTP Face over 樱花 / self-signed HTTPS: proceed on SSL auth errors
+    // (matches HttpHostLink's createHttpHostClient).
     final platform = controller.platform;
     if (platform is AndroidWebViewController) {
       unawaited(platform.setMediaPlaybackRequiresUserGesture(false));
+      unawaited(
+        platform.setOnSSlAuthError((error) async {
+          await error.proceed();
+        }),
+      );
     }
     unawaited(controller.loadRequest(Uri.parse(url)));
     _controller = controller;

@@ -1,12 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 
 import '../../l10n/l10n.dart';
 import '../link_status.dart';
 import '../secret_store.dart';
 import 'http_host_config.dart';
+
+/// HTTP Face hosts are user-entered (LAN / 樱花 FRP / self-signed HTTPS).
+/// Accept their TLS certs so probe/pair match what the WebView will load.
+http.Client createHttpHostClient({Duration connectTimeout = const Duration(seconds: 10)}) {
+  final io = HttpClient()
+    ..connectionTimeout = connectTimeout
+    ..badCertificateCallback = (cert, host, port) => true;
+  return IOClient(io);
+}
 
 /// Cookie jar the WebView needs after a successful native-pair / renew / PIN.
 class HttpHostSession {
@@ -96,7 +107,7 @@ class HttpHostLink {
     _config = _config.copyWith(name: next.name, origin: next.origin);
   }
 
-  http.Client get _http => httpClient ?? (_ownedClient ??= http.Client());
+  http.Client get _http => httpClient ?? (_ownedClient ??= createHttpHostClient());
 
   void _emit(HostLinkStatus next) {
     if (_closed && next.phase != HostLinkPhase.idle) return;
@@ -183,6 +194,13 @@ class HttpHostLink {
         HostLinkErrorKind.unreachable,
         appL10n.commonConnectionFailed,
         detail: 'health timeout',
+        retryable: true,
+      );
+    } on HandshakeException catch (e) {
+      throw HostLinkError(
+        HostLinkErrorKind.unreachable,
+        appL10n.commonConnectionFailed,
+        detail: 'TLS handshake failed (self-signed / untrusted cert): $e',
         retryable: true,
       );
     } catch (e) {

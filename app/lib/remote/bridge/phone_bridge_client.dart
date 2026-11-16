@@ -99,7 +99,8 @@ class PhoneBridgeClient {
 
   http.Client get _http {
     if (httpClient != null) return httpClient!;
-    return _ownedClient ??= http.Client();
+    // Same TLS policy as HttpHostLink (樱花 / self-signed HTTPS Face).
+    return _ownedClient ??= createHttpHostClient();
   }
 
   Map<String, String> get _cookieHeader {
