@@ -689,6 +689,10 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       ..setBackgroundColor(const Color(0xFF0B0B0C))
       ..setNavigationDelegate(
         NavigationDelegate(
+          // HTTP Face over FRP / self-signed HTTPS — proceed (matches HttpHostLink).
+          onSslAuthError: (error) async {
+            await error.proceed();
+          },
           // DownloadListener is forwarded as a main-frame navigation; without
           // this callback webview_flutter drops session.export ZIP saves.
           // blob:/data: main-frame hops become Chromium 「网页无法打开」.
@@ -756,16 +760,9 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       );
     // TTS / <audio> bars in Host UI must play on tap without the Android
     // WebView default "requires user gesture" gate swallowing play().
-    // HTTP Face over 樱花 / self-signed HTTPS: proceed on SSL auth errors
-    // (matches HttpHostLink's createHttpHostClient).
     final platform = controller.platform;
     if (platform is AndroidWebViewController) {
       unawaited(platform.setMediaPlaybackRequiresUserGesture(false));
-      unawaited(
-        platform.setOnSSlAuthError((error) async {
-          await error.proceed();
-        }),
-      );
     }
     unawaited(controller.loadRequest(Uri.parse(url)));
     _controller = controller;
