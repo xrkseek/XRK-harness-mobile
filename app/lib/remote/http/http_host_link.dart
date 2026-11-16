@@ -167,14 +167,49 @@ class HttpHostLink {
   }
 
   Future<void> _probe() async {
-    final uri = Uri.parse('${_config.origin}/mobile-access/health');
+    try {
+      await _probeHealth(_config.origin);
+      return;
+    } on HostLinkError catch (first) {
+      // Sakura HTTPS tunnels reject plain HTTP with 501 (Server: SakuraFrp).
+      // Bare paste `host:port` normalizes to http:// — upgrade once to https://.
+      final httpsOrigin = _httpsUpgradeOf(_config.origin);
+      if (httpsOrigin == null || !_looksLikeTlsOnlyTunnel(first)) rethrow;
+      try {
+        await _probeHealth(httpsOrigin);
+        _config = _config.copyWith(origin: httpsOrigin);
+        return;
+      } on HostLinkError {
+        rethrow;
+      }
+    }
+  }
+
+  /// True when http://origin can be rewritten to https://same-host.
+  static String? _httpsUpgradeOf(String origin) {
+    final uri = Uri.tryParse(origin);
+    if (uri == null || uri.scheme != 'http' || uri.host.isEmpty) return null;
+    return normalizeHttpOrigin(uri.replace(scheme: 'https').toString());
+  }
+
+  /// Sakura / similar HTTPS-only FRP: HTTP health returns 501 (or says so).
+  static bool _looksLikeTlsOnlyTunnel(HostLinkError error) {
+    final detail = (error.detail ?? '').toLowerCase();
+    return detail.contains('health 501') ||
+        detail.contains('sakurafrp') ||
+        detail.contains('not implemented');
+  }
+
+  Future<void> _probeHealth(String origin) async {
+    final uri = Uri.parse('$origin/mobile-access/health');
     try {
       final res = await _http.get(uri).timeout(const Duration(seconds: 8));
       if (res.statusCode < 200 || res.statusCode >= 300) {
+        final server = res.headers['server'] ?? '';
         throw HostLinkError(
           HostLinkErrorKind.unreachable,
           appL10n.commonConnectionFailed,
-          detail: 'health ${res.statusCode}',
+          detail: 'health ${res.statusCode}${server.isEmpty ? '' : ' server=$server'}',
           retryable: true,
         );
       }

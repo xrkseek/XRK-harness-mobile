@@ -103,4 +103,35 @@ void main() {
     expect(session.isReady, isFalse);
     expect(link.status.phase, HostLinkPhase.connected);
   });
+
+  test('TLS-only FRP HTTP 501 upgrades bare host:port to https', () async {
+    final client = MockClient((request) async {
+      if (request.url.scheme == 'http') {
+        return http.Response(
+          'Not Implemented',
+          501,
+          headers: {'server': 'SakuraFrp'},
+        );
+      }
+      if (request.url.path.endsWith('/mobile-access/health')) {
+        return http.Response(jsonEncode({'ok': true}), 200);
+      }
+      return http.Response('nope', 404);
+    });
+    final link = HttpHostLink(
+      config: const HttpHostConfig(
+        id: 'frp-https',
+        name: '穿透',
+        origin: 'http://tunnel.example:12345',
+      ),
+      secrets: secrets,
+      httpClient: client,
+      retryFirstOpen: false,
+    );
+    addTearDown(link.close);
+
+    await link.open();
+    expect(link.config.origin, 'https://tunnel.example:12345');
+    expect(link.status.phase, HostLinkPhase.connected);
+  });
 }

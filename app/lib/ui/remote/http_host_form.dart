@@ -121,6 +121,11 @@ class _HttpHostFormPageState extends ConsumerState<HttpHostFormPage> {
     });
     try {
       await link.open();
+      // Bare `host:port` may have been upgraded http→https (樱花 HTTPS tunnel).
+      if (mounted && link.config.origin != config.origin) {
+        _address.text = link.config.origin;
+        _clean = _signature();
+      }
     } catch (_) {
       // Shown in the progress card.
     } finally {
@@ -221,7 +226,7 @@ class _HttpHostFormPageState extends ConsumerState<HttpHostFormPage> {
                           if (_addressError != null) setState(() => _addressError = null);
                         },
                         decoration: InputDecoration(
-                          hintText: 'http://192.168.1.20:8787 或 https://…（樱花）',
+                          hintText: '192.168.1.20:8787 或 https://…',
                           error: _addressError == null ? null : const SizedBox.shrink(),
                         ),
                       ),
@@ -229,7 +234,7 @@ class _HttpHostFormPageState extends ConsumerState<HttpHostFormPage> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                       child: Text(
-                        '保存并连接后打开该地址；公网 / 局域网 PIN 由 Host 页面处理，无需在此填令牌。HTTPS 自签证书（樱花等）可直接连。',
+                        '可直接粘贴内网穿透给的 host:port；若对端只认 HTTPS，会自动改用 https 并接受自签证书。PIN 在打开后的 Host 页面填写。',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: XrkColors.of(context).textTertiary,
                             ),

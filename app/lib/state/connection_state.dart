@@ -206,7 +206,18 @@ final httpHostLinkProvider = Provider.autoDispose.family<HttpHostLink?, HostRef>
     if (next != null && next.connectionKey == link.config.connectionKey) link.updateConfig(next);
   });
   // Kick open when watched (shell / status). Failures stay on the link status.
-  unawaited(link.open().catchError((_) => const HttpHostSession(deviceToken: '', sessionToken: '')));
+  // Persist http→https upgrades (樱花 bare paste) so the next launch skips 501.
+  unawaited(
+    link.open().then((_) async {
+      final saved = ref.read(hostsProvider).httpById(host.id);
+      if (saved == null) return;
+      if (saved.origin == link.config.origin) return;
+      await ref.read(hostsProvider.notifier).saveHttp(
+            saved.copyWith(origin: link.config.origin),
+            mergeSameOrigin: false,
+          );
+    }).catchError((_) => const HttpHostSession(deviceToken: '', sessionToken: '')),
+  );
   ref.onDispose(() => unawaited(link.close()));
   return link;
 });
