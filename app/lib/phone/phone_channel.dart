@@ -1239,7 +1239,11 @@ class PhoneChannel {
   }
 
   /// Run a catalog tool by short name (`apps`, `screen`, …) — used by the remote Host bridge.
-  Future<({String content, bool isError})> invokeTool(String name, [Map<String, Object?> args = const {}]) async {
+  /// Optional [imageBase64]/[imageMime] carry `phone_screen(image:true)` screenshots.
+  Future<({String content, bool isError, String? imageBase64, String? imageMime})> invokeTool(
+    String name, [
+    Map<String, Object?> args = const {},
+  ]) async {
     try {
       final raw = await _methods.invokeMethod<Object?>('invokeTool', {
         'name': name,
@@ -1247,13 +1251,20 @@ class PhoneChannel {
       });
       if (raw is Map) {
         final m = raw.cast<Object?, Object?>();
-        return (content: '${m['content'] ?? ''}', isError: m['isError'] == true);
+        final b64 = m['imageBase64'];
+        final mime = m['imageMime'];
+        return (
+          content: '${m['content'] ?? ''}',
+          isError: m['isError'] == true,
+          imageBase64: b64 is String && b64.isNotEmpty ? b64 : null,
+          imageMime: mime is String && mime.isNotEmpty ? mime : null,
+        );
       }
-      return (content: phoneNotReadyReason, isError: true);
+      return (content: phoneNotReadyReason, isError: true, imageBase64: null, imageMime: null);
     } on MissingPluginException {
-      return (content: phoneNotReadyReason, isError: true);
+      return (content: phoneNotReadyReason, isError: true, imageBase64: null, imageMime: null);
     } on PlatformException catch (e) {
-      return (content: e.message ?? e.code, isError: true);
+      return (content: e.message ?? e.code, isError: true, imageBase64: null, imageMime: null);
     }
   }
 

@@ -188,7 +188,26 @@ class MobileApi private constructor(private val app: Context) {
             val raw = runCatching { Json.parse(if (body.isBlank()) "{}" else body) }.getOrNull()
             val args = (raw as? Map<*, *>)?.entries?.associate { it.key.toString() to it.value } ?: emptyMap()
             val out = PhoneControl.get(app).invokeTool(name, args, caller)
-            return Outcome(if (out.isError) 409 else 200, out.text)
+            // Always JSON so guest can admit optional screenshot bytes (plain text
+            // dropped image:true captures — model only saw the tree string).
+            val payload = linkedMapOf<String, Any?>(
+                "v" to 1,
+                "isError" to out.isError,
+                "text" to out.text,
+            )
+            val image = out.image
+            val mime = out.imageMime
+            if (image != null && mime != null && image.isNotEmpty()) {
+                payload["image"] = linkedMapOf(
+                    "mimeType" to mime,
+                    "data" to java.util.Base64.getEncoder().encodeToString(image),
+                )
+            }
+            return Outcome(
+                if (out.isError) 409 else 200,
+                Json.write(payload),
+                json = true,
+            )
         }
         return Outcome(404, "not found")
     }

@@ -929,6 +929,11 @@ class _WebViewPageState extends State<WebViewPage> {
   Future<void> _leave() async {
     if (!mounted) return;
     if (widget.root) {
+      // Host switch / first paint: a loading or failed root has no bridge, so
+      // back falls through here. Backgrounding the task (`SystemNavigator.pop`
+      // → Android moveTaskToBack) looks like a mysterious close — hold until
+      // the page is ready (or reopen after renderer death).
+      if (_loading || _gone || _error != null) return;
       await SystemNavigator.pop();
     } else {
       Navigator.of(context).pop();

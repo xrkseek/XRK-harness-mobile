@@ -43,6 +43,8 @@ import '../ui/remote/host_status.dart';
 import '../ui/remote/host_switcher.dart';
 import '../ui/remote/link_progress.dart';
 import '../ui/remote/remote_screen.dart';
+import '../ui/safe_mode/safe_mode_actions.dart';
+import '../ui/safe_mode/safe_mode_notice_listener.dart';
 import '../ui/settings/settings_screen.dart';
 import '../ui/shell/brand_mark.dart';
 import '../ui/web/local_web_screen.dart';
@@ -491,10 +493,13 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       ),
     );
 
-    // Keep phone turn-end / stop / confirm watchers + chat alerts alive under
-    // the product shell (they used to live only under retired HomeShell).
-    return PhoneStopWatcher(
-      child: ChatAlertHost(child: body),
+    // Safe-mode notices used to mount only under retired HomeShell — without
+    // this wrapper, auto-entry after update/crash never surfaced a toast.
+    // Keep phone turn-end / stop / confirm watchers + chat alerts alive too.
+    return SafeModeNoticeListener(
+      child: PhoneStopWatcher(
+        child: ChatAlertHost(child: body),
+      ),
     );
   }
 
@@ -1170,17 +1175,21 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     if (!mounted) return;
     // Host conversation settings need a finished WebView; otherwise engine status.
     final active = ref.read(activeHostProvider);
+    final runtimeStatus = ref.read(localRuntimeProvider).status;
     final hostReady = active.kind == HostKind.http
         ? _pageReady
-        : ref.read(localRuntimeProvider).status.isRunning && _pageReady;
+        : runtimeStatus.isRunning && _pageReady;
     final hostName = ref.read(hostNameProvider(active));
     final choice = await showShellQuickPanel(
       context,
       hostReady: hostReady,
       activeHostLabel: hostLabel(active.kind, hostName),
+      inSafeMode: runtimeStatus.inSafeMode,
     );
     if (!mounted || choice == null) return;
     switch (choice) {
+      case ShellQuickAction.leaveSafeMode:
+        await SafeModeActions.leave(context);
       case ShellQuickAction.switchHost:
         await showHostSheet(
           context,

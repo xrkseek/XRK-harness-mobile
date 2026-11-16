@@ -273,6 +273,23 @@ void main() {
       expect(leftApp(), isTrue);
     });
 
+    testWidgets('as the home: back while still loading does not leave the app', (tester) async {
+      usePhoneView(tester);
+      platformCalls = [];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        platformCalls.add(call);
+        return null;
+      });
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null));
+      await tester.pumpWidget(testApp(WebViewPage(url: _url, title: '网页版', dshWeb: true, root: true)));
+      // Loading bar is up; finish() not called — host-switch / first paint race.
+      for (var i = 0; i < 4; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await systemBack(tester);
+      expect(leftApp(), isFalse);
+    });
+
     testWidgets('as the home: Android\'s predictive back asks the page once per gesture', (tester) async {
       await pumpRoot(tester);
       answer(['layer']);

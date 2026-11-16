@@ -7,7 +7,10 @@ import '../l10n/l10n.dart';
 /// [hostSettings] requires a live Host WebView. [engineStatus] is the
 /// fallback when Host is down so the person can still open logs / start / stop.
 /// [switchHost] opens the device sheet (本机 / HTTP / SSH / relay).
+/// [leaveSafeMode] is offered only while the local engine is in safe mode so
+/// the person can leave without digging into Settings → 引擎.
 enum ShellQuickAction {
+  leaveSafeMode,
   phoneControl,
   appSettings,
   hostSettings,
@@ -24,6 +27,7 @@ Future<ShellQuickAction?> showShellQuickPanel(
   BuildContext context, {
   required bool hostReady,
   String? activeHostLabel,
+  bool inSafeMode = false,
 }) {
   final l10n = context.l10n;
   final third = shellQuickThirdAction(hostReady: hostReady);
@@ -42,9 +46,11 @@ Future<ShellQuickAction?> showShellQuickPanel(
         required String title,
         required String subtitle,
         required ShellQuickAction value,
+        Color? iconColor,
       }) {
+        final leading = iconColor ?? const Color(0xFFE8E8E6);
         return ListTile(
-          leading: Icon(icon, color: const Color(0xFFE8E8E6)),
+          leading: Icon(icon, color: leading),
           title: Text(title, style: const TextStyle(color: Color(0xFFE8E8E6), fontWeight: FontWeight.w600)),
           subtitle: Text(subtitle, style: const TextStyle(color: Color(0xFFB8B8B4), fontSize: 12)),
           onTap: () => Navigator.pop(ctx, value),
@@ -76,6 +82,14 @@ Future<ShellQuickAction?> showShellQuickPanel(
                   ),
                 ),
               ),
+              if (inSafeMode)
+                tile(
+                  icon: Icons.shield_outlined,
+                  iconColor: const Color(0xFFF0B429),
+                  title: l10n.phoneSafeLeave,
+                  subtitle: l10n.phoneSafeNormalSettingsHint,
+                  value: ShellQuickAction.leaveSafeMode,
+                ),
               tile(
                 icon: Icons.devices_other_outlined,
                 title: l10n.remoteSwitchHost,

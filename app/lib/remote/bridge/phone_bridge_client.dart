@@ -453,12 +453,17 @@ class PhoneBridgeClient {
           });
         }
         final result = await phone.invokeTool(name, args);
-        final submitted = await _json('POST', '$_prefix/result', body: {
+        final body = <String, Object?>{
           'ticket': _ticket,
           'id': id,
           'content': result.content,
           'isError': result.isError,
-        });
+        };
+        if (result.imageBase64 != null && result.imageMime != null) {
+          body['imageBase64'] = result.imageBase64;
+          body['imageMime'] = result.imageMime;
+        }
+        final submitted = await _json('POST', '$_prefix/result', body: body);
         if (_isInvalidTicket(submitted)) {
           // Ticket lost mid-batch: Host will time out this invoke; re-arm for next.
           await _reticket();

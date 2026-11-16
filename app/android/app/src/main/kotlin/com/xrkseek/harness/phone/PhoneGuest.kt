@@ -251,6 +251,28 @@ object PhoneGuest {
  */
 const CATALOG = $catalog;
 
+async function admitScreenshot(buf, mime) {
+  const home = process.env.XRK_HOME;
+  if (!home) {
+    return { ok: false, reason: "XRK_HOME missing; cannot store phone screenshot" };
+  }
+  try {
+    const { createLocalAttachmentStore } = await import("@xrkseek/attachment-local");
+    const store = createLocalAttachmentStore({ xrkHome: home });
+    const ref = await store.saveImage({
+      data: buf,
+      mediaType: mime,
+      name: "phone-screen",
+    });
+    return { ok: true, ref };
+  } catch (e) {
+    return {
+      ok: false,
+      reason: String(e && e.message ? e.message : e),
+    };
+  }
+}
+
 async function post(path, args, signal, extras) {
   const api = process.env.XRK_MOBILE_API;
   const token = process.env.XRK_MOBILE_TOKEN;
@@ -279,8 +301,48 @@ async function post(path, args, signal, extras) {
       body: JSON.stringify(args && typeof args === "object" ? args : {}),
       signal,
     });
-    const text = await r.text();
-    return { content: text || r.statusText, isError: !r.ok };
+    const raw = await r.text();
+    let isError = !r.ok;
+    let text = raw || r.statusText;
+    let image = null;
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object" && parsed.v === 1 && typeof parsed.text === "string") {
+        text = parsed.text;
+        if (parsed.isError === true) isError = true;
+        if (
+          parsed.image &&
+          typeof parsed.image.data === "string" &&
+          typeof parsed.image.mimeType === "string"
+        ) {
+          image = parsed.image;
+        }
+      }
+    } catch (_) {
+      // Legacy plain-text responses stay as-is.
+    }
+    if (!image) {
+      return { content: text, isError };
+    }
+    const buf = Buffer.from(image.data, "base64");
+    if (buf.length === 0) {
+      return { content: text, isError };
+    }
+    const admitted = await admitScreenshot(buf, image.mimeType);
+    if (!admitted.ok) {
+      return {
+        content: text + "\n[image unavailable: " + image.mimeType + "; " + admitted.reason + "]",
+        isError,
+      };
+    }
+    return {
+      content: [
+        { type: "text", text },
+        { type: "image", attachment: admitted.ref },
+      ],
+      isError,
+      meta: { attachmentId: admitted.ref.attachmentId },
+    };
   } catch (e) {
     return { content: String(e && e.message ? e.message : e), isError: true };
   }

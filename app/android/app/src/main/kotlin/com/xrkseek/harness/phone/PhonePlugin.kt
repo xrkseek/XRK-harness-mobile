@@ -305,7 +305,18 @@ class PhonePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
                     rawArgs?.forEach { (k, v) -> if (k is String) args[k] = v }
                     async(result) {
                         val out = control.invokeTool(name, args)
-                        mapOf("content" to out.text, "isError" to out.isError)
+                        val payload = linkedMapOf<String, Any?>(
+                            "content" to out.text,
+                            "isError" to out.isError,
+                        )
+                        val image = out.image
+                        val mime = out.imageMime
+                        if (image != null && mime != null && image.isNotEmpty()) {
+                            payload["imageMime"] = mime
+                            payload["imageBase64"] =
+                                java.util.Base64.getEncoder().encodeToString(image)
+                        }
+                        payload
                     }
                 }
             }

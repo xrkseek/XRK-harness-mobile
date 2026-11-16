@@ -22,4 +22,10 @@ void main() {
       expect(shellQuickThirdAction(hostReady: false), ShellQuickAction.engineStatus);
     });
   });
+
+  group('ShellQuickAction.leaveSafeMode', () {
+    test('enum stays first so panel can surface leave ahead of other tiles', () {
+      expect(ShellQuickAction.values.first, ShellQuickAction.leaveSafeMode);
+    });
+  });
 }
