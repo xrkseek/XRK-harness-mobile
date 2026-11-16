@@ -3,11 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../runtime/runtime_state.dart';
+import '../../state/connection_state.dart';
+import '../../state/hosts_state.dart';
 import '../../state/update_state.dart';
 import '../common/overview_card.dart';
 import '../common/search_capsule.dart';
 import '../engine/engine_screen.dart';
 import '../engine/engine_status.dart';
+import '../remote/host_status.dart';
+import '../remote/remote_screen.dart';
 import '../shell/brand_mark.dart';
 import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
@@ -55,6 +59,10 @@ class SettingsScreen extends ConsumerWidget {
     final exempt = ref.watch(batteryExemptProvider).value;
     final update = ref.watch(appUpdateProvider);
     final newVersion = update.hasUpdate && !update.isSkipped;
+    final active = ref.watch(activeHostProvider);
+    final hostName = ref.watch(hostNameProvider(active));
+    final hostView = watchHostStatus(ref, active);
+    final remoteFirst = active.kind != HostKind.local;
 
     return AppPage.list(
       title: l10n.commonSettings,
@@ -67,20 +75,33 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => Navigator.of(context).push(SettingsSearchPage.route()),
           ),
         ),
+        OverviewCard(
+          leading: OverviewGlyph(hostKindIcon(active.kind), tint: hostKindTint(active.kind)),
+          title: Text(hostLabel(active.kind, hostName)),
+          subtitle: Text(hostView.label),
+          onTap: () => _push(context, const RemoteScreen()),
+          footer: OverviewFooter(tone: hostView.tone, text: hostView.label),
+          onFooterTap: () => _push(context, const RemoteScreen()),
+        ),
+        const SizedBox(height: 12),
         SpotAnchor(
           spot: SettingsIndex.entry(SettingsPageId.engine),
           child: OverviewCard(
             leading: OverviewGlyph(AppIcons.engine, tint: SettingsHues.engine),
             title: Text(l10n.hubSettingsEngine),
             subtitle: Text(
-              [
-                engine.label,
-                if (runtime.status.engineVersionAlias case final v?) 'v$v',
-              ].join(' · '),
+              remoteFirst
+                  ? '本机引擎（当前连的是远程主机）'
+                  : [
+                      engine.label,
+                      if (runtime.status.engineVersionAlias case final v?) 'v$v',
+                    ].join(' · '),
             ),
             onTap: () => _push(context, const EngineScreen()),
-            footer: OverviewFooter(tone: engine.tone, text: engine.label),
-            onFooterTap: () => _push(context, const EngineScreen()),
+            footer: remoteFirst
+                ? null
+                : OverviewFooter(tone: engine.tone, text: engine.label),
+            onFooterTap: remoteFirst ? null : () => _push(context, const EngineScreen()),
           ),
         ),
         // 「访问手机文件」原在权限页；权限档位留给 Web / CLI。手机操控只从悬浮球进。

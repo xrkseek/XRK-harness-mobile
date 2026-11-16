@@ -1,9 +1,9 @@
-// Safe mode UI: the failure card's buttons, the banner, the repair draft, notices,
+// Safe mode UI: the failure card's buttons, the banner, the repair compose fill, notices,
 // and goldens of the engine page in both states.
 
 import 'package:xrk_app/runtime/runtime_bridge.dart';
 import 'package:xrk_app/runtime/runtime_state.dart';
-import 'package:xrk_app/state/safe_mode_state.dart';
+import 'package:xrk_app/state/compose_inbox.dart';
 import 'package:xrk_app/state/settings_state.dart';
 import 'package:xrk_app/ui/engine/engine_screen.dart';
 import 'package:xrk_app/ui/engine/log_view.dart';
@@ -145,16 +145,21 @@ void main() {
     expect(find.byType(FilledButton), findsNothing);
   });
 
-  testWidgets('banner: repair draft is queued, not sent; leaving safe mode restarts normally', (tester) async {
+  testWidgets('banner: repair prompt is queued in compose inbox, not sent; leaving safe mode restarts normally', (
+    tester,
+  ) async {
     final container = await pump(tester, page(const SafeModeBanner()), safeStatus());
     expect(find.text('安全模式 · 插件没有加载'), findsOneWidget);
 
     await tester.tap(find.text('帮我修复'));
     await tester.pump();
-    final draft = container.read(repairDraftProvider);
-    expect(draft, startsWith('我的 XRK 正常模式出了问题（启动失败，可疑插件：break-required）'));
-    expect(container.read(repairDraftProvider.notifier).take(), draft);
-    expect(container.read(repairDraftProvider), isNull);
+    final inbox = container.read(composeInboxProvider);
+    expect(inbox, hasLength(1));
+    expect(inbox.single.text, contains('已进入安全模式'));
+    expect(inbox.single.text, contains('启动失败，可疑插件：break-required'));
+    expect(inbox.single.note, isNotNull);
+    expect(container.read(composeInboxProvider.notifier).take()?.text, inbox.single.text);
+    expect(container.read(composeInboxProvider), isEmpty);
 
     await tester.tap(find.text('正常启动'));
     await tester.pumpAndSettle();

@@ -26,27 +26,6 @@ final safePreflightProvider = FutureProvider.autoDispose<List<SafeHazard>>((ref)
   }
 });
 
-/// A repair prompt waiting for the chat composer (「帮我修复」).
-///
-/// Safe-mode UI calls [request]; the chat screen listens, opens a new session, puts
-/// the text in the composer **without sending it** (it costs tokens; the user decides)
-/// and calls [take].
-class RepairDraftController extends Notifier<String?> {
-  @override
-  String? build() => null;
-
-  void request(String text) => state = text;
-
-  /// Returns the pending prompt once and clears it.
-  String? take() {
-    final text = state;
-    state = null;
-    return text;
-  }
-}
-
-final repairDraftProvider = NotifierProvider<RepairDraftController, String?>(RepairDraftController.new);
-
 /// One short Chinese clause for a failure, e.g. "启动失败，可疑插件：foo".
 String failureOneLiner(RuntimeFailure f) {
   final what = switch (f.kind) {
@@ -71,10 +50,22 @@ String failureOneLiner(RuntimeFailure f) {
   return what;
 }
 
-/// The text 「帮我修复」 pre-fills. The agent's briefing (written natively on every safe
-/// start) has the details; this only points it there.
+/// Truncates a failure line for the composer without cutting mid-codepoint.
+String _clipFailureDetail(String text, {int max = 280}) {
+  final trimmed = text.trim();
+  if (trimmed.length <= max) return trimmed;
+  return '${trimmed.substring(0, max - 1)}…';
+}
+
+/// The text 「帮我修复」 pre-fills into the composer (not sent). Includes the failure
+/// one-liner plus any raw summary so the agent sees the error without opening logs first.
+/// The native Safe mode briefing still has the full playbook.
 String repairPrompt(RuntimeStatus status) {
   final f = status.mainFailure ?? status.failure;
   final what = f == null ? appL10n.stateSafeManualEntry : failureOneLiner(f);
-  return appL10n.stateSafeRepairPrompt(what);
+  final summary = f?.summary?.trim();
+  final detail = (summary != null && summary.isNotEmpty && !what.contains(summary))
+      ? _clipFailureDetail(summary)
+      : null;
+  return detail == null ? appL10n.stateSafeRepairPrompt(what) : appL10n.stateSafeRepairPromptWithDetail(what, detail);
 }

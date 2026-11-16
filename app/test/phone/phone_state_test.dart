@@ -156,12 +156,12 @@ void main() {
     expect(runtime.starts, isEmpty);
   });
 
-  test('a remote host is a blocker; the local one is not', () async {
+  test('HTTP remote Host is not a phone-control blocker (bridge)', () async {
     FakePhoneNative().install();
-    final remote = make(host: const HostRef.ssh('lab'));
+    final remote = make(host: const HostRef.http('agt'));
     remote.read(phoneProvider);
     await settle();
-    expect(remote.read(phoneBlockerProvider), PhoneBlocker.remoteHost);
+    expect(remote.read(phoneBlockerProvider), isNull);
 
     final local = make();
     local.read(phoneProvider);

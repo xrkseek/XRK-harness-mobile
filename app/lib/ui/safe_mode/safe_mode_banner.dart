@@ -10,6 +10,7 @@ import '../engine/engine_status.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'safe_mode_actions.dart';
+import 'safe_mode_card.dart' show safeModeReasonText;
 
 /// Persistent strip for the chat and session list while the local engine is in safe
 /// mode (not dismissible), or on its two-minute trial back in normal mode.
@@ -17,12 +18,16 @@ import 'safe_mode_actions.dart';
 class SafeModeBanner extends ConsumerWidget {
   const SafeModeBanner({super.key, this.onRepair, this.onDetails, this.padding = EdgeInsets.zero});
 
-  /// 「帮我修复」. Default: queue the repair prompt in [repairDraftProvider] (not sent).
+  /// 「帮我修复」. Default: queue the repair prompt in the chat composer (not sent).
   final VoidCallback? onRepair;
 
   /// Tapping the banner itself, e.g. to open the engine page's safe-mode card.
   final VoidCallback? onDetails;
   final EdgeInsetsGeometry padding;
+
+  /// Chat list top inset reserve while [visibleFor] is true (header slot + outer pad).
+  /// Slightly generous so a two-line reason + action row never clips messages underneath.
+  static const slotHeight = 120.0;
 
   static bool visibleFor(RuntimeStatus status) {
     if (status.phase == RuntimePhase.notInstalled || status.phase == RuntimePhase.installing) {
@@ -43,7 +48,8 @@ class SafeModeBanner extends ConsumerWidget {
     final background = safe ? colors.warningContainer : colors.infoContainer;
     final foreground = safe ? colors.onWarningContainer : colors.onInfoContainer;
     final title = safe ? l10n.phoneSafeBannerTitle : l10n.phoneSafeBannerProbation;
-    final subtitle = switch (status.phase) {
+    final reason = safe ? safeModeReasonText(status) : null;
+    final phaseHint = switch (status.phase) {
       _ when !safe => l10n.phoneSafeBannerProbationHint,
       RuntimePhase.starting => l10n.phoneEngineStartingSafeEllipsis,
       RuntimePhase.running => l10n.phoneSafeBannerRunningHint,
@@ -52,6 +58,7 @@ class SafeModeBanner extends ConsumerWidget {
       RuntimePhase.error => l10n.phoneSafeBannerFailedHint,
       _ => l10n.phoneSafeBannerStoppedHint,
     };
+    final subtitle = reason == null || reason.isEmpty ? phaseHint : '$reason\n$phaseHint';
     final buttonStyle = TextButton.styleFrom(
       foregroundColor: foreground,
       visualDensity: VisualDensity.compact,

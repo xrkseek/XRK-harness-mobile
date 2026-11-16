@@ -35,6 +35,7 @@ import '../remote/host_status.dart';
 import '../remote/host_switcher.dart' show showHostSheet;
 import '../remote/network_details_sheet.dart' show showRemoteNetworkDetails;
 import '../safe_mode/engine_failure_card.dart';
+import '../safe_mode/safe_mode_actions.dart';
 import '../safe_mode/safe_mode_banner.dart';
 import '../share/share_entry.dart';
 import '../theme/app_icons.dart';
@@ -164,6 +165,11 @@ class SessionsDrawer extends ConsumerWidget {
       SafeModeBanner(
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
         onDetails: () => onOpen(DrawerDestination.engine),
+        // Close the drawer so the chat composer (and the prefilled repair text) is visible.
+        onRepair: () {
+          onClose();
+          SafeModeActions.requestRepair(context, popToRoot: true);
+        },
       ),
       SessionSearchBar(onClose: onClose),
       // The workspace switcher (once the host's workspace list has

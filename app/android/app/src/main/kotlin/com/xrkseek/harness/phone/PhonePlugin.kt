@@ -294,6 +294,21 @@ class PhonePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
             // 设置 → 手机操控 → 悬浮条: {idleOpacity 0.3–1, autoCollapse}; a showing overlay follows at once.
             "overlayPrefs" -> result.success(OverlayPrefs.read(appContext).toMap())
             "setOverlayPrefs" -> result.success(OverlayPrefs.write(appContext, call.arguments as? Map<*, *>).toMap())
+            // Remote Host phone-bridge: same path as guest MobileApi POST /v1/phone/<name>.
+            "invokeTool" -> {
+                val name = call.argument<String>("name")?.trim().orEmpty()
+                if (name.isEmpty()) {
+                    result.success(mapOf("content" to "missing tool name", "isError" to true))
+                } else {
+                    val rawArgs = call.argument<Map<*, *>>("args")
+                    val args = linkedMapOf<String, Any?>()
+                    rawArgs?.forEach { (k, v) -> if (k is String) args[k] = v }
+                    async(result) {
+                        val out = control.invokeTool(name, args)
+                        mapOf("content" to out.text, "isError" to out.isError)
+                    }
+                }
+            }
             else -> result.notImplemented()
         }
         if (call.method == "setBackgroundMode" || call.method == "adbConnect" || call.method == "requestShizukuPermission") {

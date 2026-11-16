@@ -293,8 +293,12 @@ class _RootGateState extends ConsumerState<RootGate> {
       // 启动画面: the first page is up. A warm start's launch screen goes now; a cold start of
       // this phone's engine finishes its motion first (or goes when the engine is up).
       _launchReady = true;
+      // LocalHostShell asks 本机 / 远程 after splash; remote skips the engine.
+      // Never hold the launch motion on a Host that may not start this launch.
       WidgetsBinding.instance.addPostFrameCallback(
-        (_) => LaunchController.active.value?.ready(waitsForEngine: ref.read(activeHostProvider).isLocal),
+        (_) => LaunchController.active.value?.ready(
+          waitsForEngine: widget.home is! LocalHostShell && ref.read(activeHostProvider).isLocal,
+        ),
       );
     }
     return AnimatedSwitcher(

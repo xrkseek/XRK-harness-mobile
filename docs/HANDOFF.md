@@ -3,31 +3,33 @@
 > **读者**：维护者 · Coding Agent  
 > **Audience**: Maintainers · Coding Agents
 
-与主仓 xrkh 对齐的**手机专属**面；发版 / 打 APK / 改 phone_* 前读。
+手机专属面（相对主仓 xrkh）；发版 / 打 APK / 改 `phone_*` 前读。
 
-**App 现行版本：`0.7.18`**（首发 `0.7.16`；包名 `com.xrkseek.harness`）。勿再把前身 XRK Go `1.0.x` / `0.9.x` 当成当前产品版本号。
+**App 现行：`0.7.19`**（首发 `0.7.16`；包名 `com.xrkseek.harness`）。勿把前身 XRK Go `1.0.x` / `0.9.x` 当现行号。
 
-## 三层（不要混）
+## 三层（勿混）
 
 | 层 | 落点 | 进 APK？ |
 |----|------|----------|
-| Flutter 壳 | `app/` | 只重打壳即可 |
+| Flutter 壳 | `app/` | 只重打壳 |
 | guest `xrkh` | 主仓 `apps/cli` + `packages/*` → ENGINE_TGZ → `runtime/out` | 须重编 runtime |
 | 手机独属工具 / 技能 | 见下表 | 随壳或随 runtime |
 
-**设置球**：壳层逃生口（Host 挂了仍可进引擎状态）。显隐与菜单真源见 [architecture.md](./architecture.md)「产品壳 · 设置球」· `app/lib/shell/shell_ball_visibility.dart`。
+**设置球**：壳层逃生口（Host 挂了仍可进引擎状态）。真源：[architecture.md](./architecture.md)「产品壳 · 设置球」· `app/lib/shell/shell_ball_visibility.dart`。
 
 ## 手机独属上下文 / 工具面
 
 | 面 | 真源 | 何时进 guest |
 |----|------|----------------|
 | `phone_*` 工具 | `PhoneToolCatalog.kt` → `PhoneGuest.generateToolsPlugin()` → `$XRK_HOME/plugins/xrk-mobile` | 每次引擎启动重写 |
-| 手机 prompt | `assets/xrk-mobile-prompt/plugin.mjs`（操控开） | 同上 |
-| AGENTS 追加节 | `PhoneGuest.AGENTS_SECTION` | 操控开时写 `$XRK_HOME/AGENTS.md` |
-| playbook 技能 `xrk-phone` | 主仓 `apps/cli/seeds/mobile/skills/xrk-phone` | **runtime 构建** merge → establish |
+| 手机 prompt（短） | `assets/xrk-mobile-prompt/plugin.mjs`（操控开） | 同上 |
+| AGENTS 追加节（短） | `PhoneGuest.AGENTS_SECTION` | 操控开时写 `$XRK_HOME/AGENTS.md` |
+| playbook **`xrk-phone`**（长） | 主仓 `apps/cli/seeds/mobile/skills/xrk-phone` | **runtime 构建** merge → establish |
 | App HOWTO | Flutter `assets/skills/xrk-guide` · `xrk-ui` · `xrk-support` | managed install |
 
-**禁止**：把 `xrk-phone` 写进通用 `seeds/skills/`；在 establish 加 `XRK_MOBILE_*`；提示词仍写 `mcp__phone__*`（已废，现为 `phone_*`）。
+**一事一处：** 清单 / 禁项 / 顺序在 **`xrk-phone`**；AGENTS 与 prompt 只指路 + 硬边界。
+
+**禁止：** `xrk-phone` 进通用 `seeds/skills/`；establish 加 `XRK_MOBILE_*`；提示词写已废的 `mcp__phone__*`。
 
 ## 发行命名（对齐主仓）
 
@@ -40,6 +42,10 @@
 | runtime 版本串 | `manifest.runtimeVersion`（含 `xrk0.7.18` 等） |
 
 细节：`docs/release.md` · 主仓 skill `xrk-mobile-apk` · `xrk-dev-surfaces` 面 C。
+
+## 会话写锁（单 Host）
+
+手机每次 guest 启动前、以及 `needInstall`/carry 还原 `/root` 后，只删 `sessions.write.lock`（不扫其它 `*.lock`，以免误伤 LastKnownGood / memory 旁路锁）。设置内 APK 安装前 best-effort `stop`（超时仍继续装；下次启动清锁）。guest 注入 `XRK_SESSIONS_LOCK_RECLAIM=1` 作双保险。Desktop/多 Host 勿开该 env。勿把「残留写锁」当成需进安全模式的数据损坏。
 
 ## 验收清单（改 phone / 技能后）
 

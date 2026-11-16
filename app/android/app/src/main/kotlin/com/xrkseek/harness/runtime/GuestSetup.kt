@@ -24,19 +24,19 @@ object GuestSetup {
         |<!-- xrkh-app:managed — 删除这一行后，App 不再覆盖本文件 -->
         |# 运行环境（XRK-Harness 手机版）
         |
-        |- 你运行在 Android 手机上的 Ubuntu 24.04 环境里（proot，免 Root）。这里没有可用的沙箱后端（bubblewrap / Landlock 都不可用），`workspace-write` 沙箱模式一定会被拒绝。
+        |- Android 上的 Ubuntu 24.04（proot，免 Root）。无 bubblewrap / Landlock → `workspace-write` 沙箱必拒。
 """ +
         // l10n:keep agent prompt
-        """        |- 需要执行 bash 命令时，直接用 `sandbox_permissions: "danger-full-access"` 申请运行，并用一句话写明理由；不要先试沙箱模式。
-        |- 默认工作区是向阳空间（`${'$'}XRK_HOME/xiangyang-workspace`）；不要把 `/root` 当成项目工作区。{STORAGE_LINE}
-        |- 家目录是 `${'$'}XRK_HOME`（`/root/.xrk`）。凭证、设置、会话、插件都在这里。
-        |- 已预装 node / npm / pnpm、python3 / pip、git；npm 和 pnpm 默认用国内镜像 registry.npmmirror.com。缺别的工具可以 `apt-get update && apt-get install -y <包名>`（需要联网）。
-        |- 手机屏幕小：回复尽量简洁，代码块不要太宽；用用户使用的语言回答。
+        """        |- bash：直接 `sandbox_permissions: "danger-full-access"` + 一句理由；别先试沙箱。
+        |- 默认工作区：向阳（`${'$'}XRK_HOME/xiangyang-workspace`）；别把 `/root` 当项目 cwd。{STORAGE_LINE}
+        |- 家目录 `${'$'}XRK_HOME`（`/root/.xrk`）：凭证、设置、会话、插件。
+        |- 预装 node / npm / pnpm、python3 / pip、git；npm / pnpm 默认 registry.npmmirror.com。缺包：`apt-get update && apt-get install -y <包名>`（需联网）。
+        |- 屏小：回复短、代码块别太宽；跟用户语言。
         |
         |## 界面与技能
         |
-        |- 会话跑在本机 `xrkh serve`（harness-cli Host）。进程插件落在 `${'$'}XRK_HOME/plugins`。
-        |- 用户报障、排查问题、写 bug 反馈时先读本机诊断快照（见下节），再动手。
+        |- 本机 `xrkh serve`（harness-cli Host）；进程插件在 `${'$'}XRK_HOME/plugins`。
+        |- 报障 / 排查 / 写 bug：先读本机诊断（下节），再动手。
         |""").trimMargin()
 
     // l10n:keep agent prompt
@@ -44,10 +44,10 @@ object GuestSetup {
         |
         |## 本机诊断
         |
-        |- 用户报障（卡顿、发热、连不上、更新失败、闪退、插件不生效、手机操控失败）时，先加载 `xrk-support` 技能，再读取可用诊断：用户刚主动发布时优先读同目录的 `diagnostics-manual.md`，否则先读自动快照 `{PATH}`。核对报告时间、版本和设备，再分析引擎状态、连接方式、性能与有限日志；有一份可用就不要因另一份缺失反复要求刷新，读取前不用另问。
-        |- 用户点过「让 AI 看诊断」后，同目录的 `diagnostics-manual.md` 保留最近一次手动报告（可能含本次同意采集的输入法证据）；存在时也读它并核对采集时间。后续自动快照不会覆盖它；下一次手动发布才替换，清除 App 内存证据不会撤回已发布文件。
-        |- 需要更多细节时，让用户在 设置 → 诊断 里导出诊断包（zip）；它仍受日志数量和大小限制。数据不足就直说，不要凭猜测下结论。
-        |- 报告会尝试脱敏，但不能保证没有遗漏。外发前人工检查凭据、路径和设备信息，不把完整报告或秘密原样贴到聊天或 issue 里。
+        |- 报障（卡顿、发热、连不上、更新失败、闪退、插件、手机操控）：先 `skill` **`xrk-support`**，再读诊断——有同目录 `diagnostics-manual.md`（用户刚「让 AI 看诊断」）优先，否则 `{PATH}`。核对时间 / 版本 / 设备；有一份可用就别因另一份缺失催刷新，读取前不必另问。
+        |- `diagnostics-manual.md` 只被下次手动发布替换；自动快照不覆盖；清 App 内存证据不撤回已发布文件。
+        |- 要更多细节：请用户 设置 → 诊断 导出 zip（仍有日志限额）。数据不够就直说，别猜。
+        |- 报告会脱敏但不保证全净。外发前人工查凭据 / 路径 / 设备；勿把完整报告或秘密贴进聊天 / issue。
         |""".trimMargin()
 
     /** Where the engine's agent finds that snapshot, inside the guest. */
@@ -85,19 +85,19 @@ object GuestSetup {
             val environment = if (directEngine) {
                 // l10n:keep agent prompt
                 AGENTS_MD.replace(
-                    "Ubuntu 24.04 环境里（proot，免 Root）",
-                    "Ubuntu 24.04 运行环境里（引擎直接启动，bash/git/python/apt 工具仍经 proot）",
+                    "Ubuntu 24.04（proot，免 Root）",
+                    "Ubuntu 24.04（引擎直启；bash/git/python/apt 仍经 proot）",
                 ) +
-                    "\n- 文件工具、会话目录、@ 引用、AGENTS 和 skills 使用同一个完整绝对路径；该路径在 shell 内也同名可见。旧的 `/root` 路径仍可用于文件工具。shell 的输出不改写，不要删除路径的前缀。\n"
+                    "\n- 文件工具、会话目录、@ 引用、AGENTS / skills 用同一绝对路径（shell 内同名可见）。旧 `/root` 仍可用于文件工具。shell 输出不改写，勿删路径前缀。\n"
             } else AGENTS_MD
             val text = environment.replace(
                 "{STORAGE_LINE}",
                 if (phoneStorage) {
                     // l10n:keep agent prompt
-                    "用户已授权访问手机存储：手机内部存储挂载在 `/sdcard`（`/root/手机存储` 是它的快捷方式；相册在 `/sdcard/DCIM`，下载在 `/sdcard/Download`）。改动或删除用户文件前先说明并确认；给用户的产出文件放到 `/sdcard/Download/XRK-Harness/`。"
+                    "已授权手机存储：`/sdcard`（快捷方式 `/root/手机存储`；相册 `/sdcard/DCIM`，下载 `/sdcard/Download`）。改删用户文件前先说明并确认；产出放到 `/sdcard/Download/XRK-Harness/`。"
                 } else {
                     // l10n:keep agent prompt
-                    "手机相册、下载等用户文件不在这个环境里，看不到；如需访问，请用户在 App 设置里打开「访问手机文件」。"
+                    "相册 / 下载等用户文件不可见；需要时请用户在 App 设置打开「访问手机文件」。"
                 },
             ) + (if (phoneControl) PhoneGuest.AGENTS_SECTION else "") +
                 DIAGNOSTICS_SECTION.replace(

@@ -212,6 +212,9 @@ final readListIdentityProvider = Provider<ReadListIdentity?>((ref) {
       if ((connection?.workingDirectory?.length ?? 0) > 4096) return null;
       final resolved = ref.watch(_resolvedDirectoriesProvider).observe(config.digest, connection);
       return ReadListIdentity.of([config.digest, resolved]);
+    case HostKind.http:
+      // HTTP Face has no XrkClient read-list; identity is unused while active.
+      return null;
     case HostKind.relay:
       final account = ref.watch(relayAccountProvider);
       if (account.isLoading || account.hasError) return null;

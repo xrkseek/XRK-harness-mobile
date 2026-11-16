@@ -164,6 +164,29 @@ internal object RuntimeUpgrade {
     }
 
     /**
+     * Drop the Host sessions writer lock under guest `root/.xrk` only.
+     * Phone is single-Host: a prior hard-kill / APK replace often leaves
+     * `sessions.write.lock`; [softHealGuest] used to clear these only on shell
+     * bumps, so runtime reinstalls that restore `/root` via carry could boot
+     * into SessionsDirInUseError → safe mode.
+     *
+     * Exact name only — do not wipe sibling `*.lock` (LastKnownGood plugin
+     * inventory, curated-memory file locks) that other writers may still need.
+     */
+    fun clearWriterLocks(rootfs: File): List<String> {
+        if (!rootfs.isDirectory) return emptyList()
+        val notes = ArrayList<String>()
+        val xrk = File(rootfs, "root/.xrk")
+        if (!xrk.isDirectory) return notes
+        xrk.walkTopDown().maxDepth(4).forEach { file ->
+            if (file.isFile && file.name == "sessions.write.lock" && file.delete()) {
+                notes += "removed ${file.relativeTo(rootfs).invariantSeparatorsPath}"
+            }
+        }
+        return notes
+    }
+
+    /**
      * Volatile / shell-owned cleanup only. Preserves sessions, settings, credentials,
      * plugins, skills and workspaces under `root/` (including `root/.xrk` data files).
      * Returns short log lines for anything moved/removed.
@@ -189,15 +212,7 @@ internal object RuntimeUpgrade {
             val moved = SafeMode.moveAside(rootfs, hazards.map { it.path }, stamp)
             moved.moved.forEach { (from, to) -> notes += "moved $from → $to" }
         }
-        // Writer locks left by a killed previous shell (never user content).
-        val xrk = File(rootfs, "root/.xrk")
-        if (xrk.isDirectory) {
-            xrk.walkTopDown().maxDepth(4).forEach { file ->
-                if (file.isFile && file.name.endsWith(".lock") && file.delete()) {
-                    notes += "removed ${file.relativeTo(rootfs).invariantSeparatorsPath}"
-                }
-            }
-        }
+        notes += clearWriterLocks(rootfs)
         return notes
     }
 

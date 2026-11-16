@@ -10,24 +10,26 @@ import '../remote/link_status.dart';
 import '../remote/relay/xrk_remote_backend.dart';
 import 'app_info.dart';
 import '../remote/relay/relay_backend.dart';
-import '../remote/relay/webrtc_peer.dart';
+import '../remote/http/http_host_config.dart';
 import '../remote/secret_store.dart';
 import '../remote/ssh/ssh_host_config.dart';
 import '../remote/ssh/ssh_transport.dart';
 import 'sessions_state.dart';
 import 'read_list_epoch.dart';
 
+export '../remote/http/http_host_config.dart';
 export '../remote/link_status.dart' show HostLinkStatus, HostLinkPhase, HostLinkStep, HostLinkError, HostLinkErrorKind;
 export '../remote/ssh/ssh_transport.dart' show PresentedHostKey;
 export '../remote/relay/relay_backend.dart' show RelayHost, RelayTrust, RelayUser;
 export '../remote/ssh/ssh_host_config.dart';
 
-/// The three kinds of XRK host the app can talk to.
-enum HostKind { local, ssh, relay }
+/// Kinds of XRK host the app can talk to.
+enum HostKind { local, ssh, relay, http }
 
-/// Identifies a host: the on-device engine, a saved SSH host, or a relay
-/// (xrk-remote) device. Equality is by kind + id; [name] is only a
-/// cached display name for relay hosts (their list lives on the server).
+/// Identifies a host: the on-device engine, a saved SSH host, a relay
+/// (xrk-remote) device, or an HTTP Face origin. Equality is by kind + id;
+/// [name] is only a cached display name for relay hosts (their list lives
+/// on the server).
 class HostRef {
   const HostRef._(this.kind, this.id, [this.name]);
 
@@ -36,6 +38,8 @@ class HostRef {
   const HostRef.ssh(String id) : this._(HostKind.ssh, id);
 
   const HostRef.relay(String id, {String? name}) : this._(HostKind.relay, id, name);
+
+  const HostRef.http(String id) : this._(HostKind.http, id);
 
   final HostKind kind;
   final String id;
@@ -56,6 +60,7 @@ class HostRef {
       return switch (map['kind']) {
         'ssh' => HostRef.ssh(id),
         'relay' => HostRef.relay(id, name: name is String ? name : null),
+        'http' => HostRef.http(id),
         _ => local,
       };
     } catch (_) {
@@ -78,6 +83,7 @@ String hostLabel(HostKind kind, String? name) => switch (kind) {
   HostKind.local => appL10n.commonThisPhone,
   HostKind.ssh => '${_short(name ?? appL10n.stateSshHost)} · SSH',
   HostKind.relay => appL10n.stateHostRemoteLabel(_short(name ?? appL10n.commonRemoteHost)),
+  HostKind.http => _short(name ?? appL10n.commonRemoteHost),
 };
 
 String _short(String name) {
@@ -93,9 +99,10 @@ final secretStoreProvider = Provider<SecretStore>((ref) => SecureSecretStore());
 // ── Saved SSH hosts ──────────────────────────────────────────────────────────
 
 class HostsState {
-  const HostsState({this.ssh = const [], this.loaded = false});
+  const HostsState({this.ssh = const [], this.http = const [], this.loaded = false});
 
   final List<SshHostConfig> ssh;
+  final List<HttpHostConfig> http;
   final bool loaded;
 
   SshHostConfig? sshById(String id) {
@@ -104,11 +111,27 @@ class HostsState {
     }
     return null;
   }
+
+  HttpHostConfig? httpById(String id) {
+    for (final h in http) {
+      if (h.id == id) return h;
+    }
+    return null;
+  }
+
+  /// First saved HTTP host with the same normalized origin, if any.
+  HttpHostConfig? httpByOrigin(String origin) {
+    for (final h in http) {
+      if (sameHttpOrigin(h.origin, origin)) return h;
+    }
+    return null;
+  }
 }
 
-/// Saved SSH hosts: configs in SharedPreferences, secrets in [SecretStore].
+/// Saved SSH / HTTP hosts: configs in SharedPreferences, secrets in [SecretStore].
 class HostsController extends Notifier<HostsState> {
   static const prefsKey = 'remote_ssh_hosts';
+  static const httpPrefsKey = 'remote_http_hosts';
 
   SecretStore get _secrets => ref.read(secretStoreProvider);
   late Future<void> _loaded;
@@ -125,6 +148,7 @@ class HostsController extends Notifier<HostsState> {
 
   Future<void> _load() async {
     var hosts = const <SshHostConfig>[];
+    var httpHosts = const <HttpHostConfig>[];
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(prefsKey);
@@ -132,17 +156,34 @@ class HostsController extends Notifier<HostsState> {
         final list = jsonDecode(raw);
         if (list is List) hosts = list.map(SshHostConfig.fromJson).whereType<SshHostConfig>().toList();
       }
+      final httpRaw = prefs.getString(httpPrefsKey);
+      if (httpRaw != null) {
+        final list = jsonDecode(httpRaw);
+        if (list is List) {
+          httpHosts = list.map(HttpHostConfig.fromJson).whereType<HttpHostConfig>().toList();
+        }
+      }
     } catch (_) {
       // No preferences backend (tests) or a corrupt entry: start empty.
     }
-    state = HostsState(ssh: hosts, loaded: true);
+    state = HostsState(ssh: hosts, http: httpHosts, loaded: true);
   }
 
   Future<bool> _persist(List<SshHostConfig> hosts) async {
-    state = HostsState(ssh: List.unmodifiable(hosts), loaded: true);
+    state = HostsState(ssh: List.unmodifiable(hosts), http: state.http, loaded: true);
     try {
       final prefs = await SharedPreferences.getInstance();
       return await prefs.setString(prefsKey, jsonEncode([for (final h in hosts) h.toJson()]));
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<bool> _persistHttp(List<HttpHostConfig> hosts) async {
+    state = HostsState(ssh: state.ssh, http: List.unmodifiable(hosts), loaded: true);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return await prefs.setString(httpPrefsKey, jsonEncode([for (final h in hosts) h.toJson()]));
     } catch (_) {
       return false;
     }
@@ -228,6 +269,48 @@ class HostsController extends Notifier<HostsState> {
     final host = state.sshById(id);
     if (host == null) return;
     await saveSsh(host.copyWith(hostKeyType: () => null, hostKeyFingerprint: () => null));
+  }
+
+  /// Adds or replaces an HTTP Face host. Same origin merges onto the existing id
+  /// when [mergeSameOrigin] is true (default for scan / typed URL saves).
+  Future<HttpHostConfig> saveHttp(
+    HttpHostConfig config, {
+    bool mergeSameOrigin = true,
+  }) async {
+    await _loaded;
+    ref.read(readListCredentialEpochProvider.notifier).advance();
+    final hosts = [...state.http];
+    var next = config;
+    if (mergeSameOrigin) {
+      final existing = state.httpByOrigin(config.origin);
+      if (existing != null && existing.id != config.id) {
+        next = existing.copyWith(name: config.name, origin: config.origin);
+      }
+    }
+    final index = hosts.indexWhere((h) => h.id == next.id);
+    if (index >= 0) {
+      hosts[index] = next;
+    } else {
+      hosts.add(next);
+    }
+    await _persistHttp(hosts);
+    return next;
+  }
+
+  /// Removes the HTTP host and its session secrets; switches to 本机 if active.
+  Future<void> removeHttp(String id) async {
+    await _loaded;
+    await _persistHttp([...state.http.where((h) => h.id != id)]);
+    for (final key in [
+      HttpHostSecrets.deviceTokenKey(id),
+      HttpHostSecrets.sessionTokenKey(id),
+      HttpHostSecrets.csrfTokenKey(id),
+    ]) {
+      try {
+        await _secrets.delete(key);
+      } catch (_) {}
+    }
+    unawaited(ref.read(activeHostProvider.notifier).forget((h) => h == HostRef.http(id)));
   }
 }
 
@@ -324,7 +407,12 @@ class ActiveHostController extends Notifier<HostRef> {
     final owner = ref;
     try {
       final prefs = await SharedPreferences.getInstance();
-      final restored = HostRef.decode(prefs.getString(prefsKey));
+      var restored = HostRef.decode(prefs.getString(prefsKey));
+      // Product surface is local + HTTP only; drop legacy SSH / XRK Remote.
+      if (restored.kind == HostKind.ssh || restored.kind == HostKind.relay) {
+        restored = HostRef.local;
+        await prefs.setString(prefsKey, restored.encode());
+      }
       final autoConnect = prefs.getBool(RemoteAutoConnectController.prefsKey) ?? true;
       if (!_touched && owner.mounted && autoConnect) state = restored;
     } catch (_) {
@@ -336,13 +424,15 @@ class ActiveHostController extends Notifier<HostRef> {
   /// chat goes back to "新对话".
   void select(HostRef host) {
     _touched = true;
-    if (host == state && host.name == state.name) return;
-    final changed = host != state;
-    state = host;
+    // SSH / XRK Remote are off the product surface — never make them active.
+    final next = (host.kind == HostKind.ssh || host.kind == HostKind.relay) ? HostRef.local : host;
+    if (next == state && next.name == state.name) return;
+    final changed = next != state;
+    state = next;
     if (changed) ref.read(currentSessionProvider.notifier).select(null);
     unawaited(
       SharedPreferences.getInstance()
-          .then((prefs) => prefs.setString(prefsKey, host.encode()))
+          .then((prefs) => prefs.setString(prefsKey, next.encode()))
           .catchError((_) => false),
     );
   }
@@ -463,31 +553,9 @@ const defaultRelayServer = 'https://dsh.r2049.cn';
 
 final relayServerProvider = NotifierProvider<RelayServerController, String?>(RelayServerController.new);
 
-/// The relay client (`packages/xrk_remote`) for the chosen server. Tests
-/// override with a fake; [UnavailableRelayBackend] turns the native relay off.
+/// Relay is off the product surface (pure HTTP + local). Tests may override.
 final relayBackendProvider = Provider<RelayBackend>((ref) {
-  final history = ref.read(remoteCompactHistoryProvider.notifier);
-  final backend = XrkRemoteRelayBackend(
-    secrets: ref.watch(secretStoreProvider),
-    serverUrl: ref.watch(relayServerProvider),
-    clientVersion: AppInfo.version.split('+').first,
-    peerConnector: flutterPeerConnector,
-    loadCompactHistory: () async {
-      await history.ready;
-      return ref.read(remoteCompactHistoryProvider);
-    },
-  );
-  ref.listen<bool>(
-    remoteCompactHistoryProvider,
-    (_, enabled) => backend.compactHistory = enabled,
-    fireImmediately: true,
-  );
-  // The old default-off preference no longer controls automatic transport selection.
-  unawaited(
-    SharedPreferences.getInstance().then((prefs) => prefs.remove('remote_direct_p2p')).catchError((_) => false),
-  );
-  ref.onDispose(() => unawaited(backend.close()));
-  return backend;
+  return const UnavailableRelayBackend();
 });
 
 /// Opens the login page: a Custom Tab on Android (Google sign-in refuses

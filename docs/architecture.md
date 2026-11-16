@@ -77,17 +77,31 @@ EventChannel（与 MethodChannel 同插件；事件 map）：
 | 项 | 约定 |
 |---|---|
 | 角色 | 原生快捷入口：不依赖 Host 是否存活 |
-| 常驻入口 | 手机操控 · App 设置（引擎 / 保活 / 外观 / 关于 / 更新） |
-| Host 就绪 | 第三项 → 对话设置（WebView Host 面板） |
-| Host 未就绪（启动中 / code 1 / 已停） | 第三项 → **引擎状态**（日志 · 启停 · 诊断） |
+| 常驻入口 | **切换主机** · 手机操控 · App 设置（引擎 / 保活 / 外观 / 关于 / 更新） |
+| Host 就绪 | 第四项 → 对话设置（WebView Host 面板） |
+| Host 未就绪（启动中 / code 1 / 已停） | 第四项 → **引擎状态**（日志 · 启停 · 诊断） |
 | 何时隐藏 | **仅**软键盘打开时（避免挡输入）；**不**等 `onPageFinished` |
 | 代码 | `app/lib/shell/shell_ball*.dart` · `shell_quick_panel.dart` · 显隐真源 `shell_ball_visibility.dart` |
 
 反模式：Host 挂了只剩「重试」、设置球随 WebView 一起消失——人进不了引擎状态与更新。
+
+## 主机种类（activeHost）
+
+产品面只暴露两种：
+
+| kind | 壳行为 | 连接 |
+|---|---|---|
+| `local` | 启停本机 `xrkh serve` → WebView 回环 | `localConnectionProvider` |
+| `http` | **不**自动启本机引擎；WebView 加载远端 Face origin | `HttpHostLink`（探活 → 开页面；PIN / 会话由 Host `mobile-access` 处理） |
+
+HTTP 主机：扫码或输入 URL 保存到 `HostsState.http`。无配对令牌时仍 `connected`，由 Face 的 wan-pin / lan-pin 写 cookie。可选 native-pair 仅在显式令牌或已存 jar 时走。从本机切到 HTTP 时已在跑的本机引擎保持运行；冷启动若 active 已是 HTTP 则跳过 `_ensureBoot`。
+
+枚举里仍保留 `ssh` / `relay`（遗留代码与测例），**产品 UI 不展示、不可选**；恢复到二者时回落 `local`；`relayBackendProvider` 固定 `UnavailableRelayBackend`。
 
 ## 细节
 
 - 运行时 / proot：`runtime/` · `app/android/.../runtime/`
 - 手机操控：`app/android/.../phone/` · [HANDOFF.md](./HANDOFF.md)
 - 设置球 / 壳逃生口：上文「产品壳 · 设置球」
+- HTTP Face：`app/lib/remote/http/` · `ui/remote/http_host_*.dart` · `ui/remote/remote_screen.dart`
 - 设计规范：`docs/design/`

@@ -14,6 +14,27 @@ void main() {
     expect(isHostSessionExportUrl('http://127.0.0.1:8787/api/session.list'), isFalse);
   });
 
+  test('workspace file download URLs are recognized', () {
+    expect(
+      isHostWorkspaceFileDownloadUrl('http://127.0.0.1:8787/sidebar/file?path=/a.md&download=1'),
+      isTrue,
+    );
+    expect(
+      isHostWorkspaceFileDownloadUrl('http://127.0.0.1:8787/sidebar/file?path=/a.md'),
+      isFalse,
+    );
+  });
+
+  test('blob/data and download routes are shell-intercepted', () {
+    expect(isObjectDownloadUrl('blob:http://host/uuid'), isTrue);
+    expect(isObjectDownloadUrl('data:text/plain,hi'), isTrue);
+    expect(isHostShellDownloadNavigation('blob:http://103.236.89.174:8787/abc'), isTrue);
+    expect(
+      isHostShellDownloadNavigation('http://h/sidebar/file?path=x&download=1'),
+      isTrue,
+    );
+  });
+
   test('filename prefers suggested, else sessionId', () {
     expect(hostDownloadFilename('http://x/api/session.export?sessionId=a/b', 'keep.zip'), 'keep.zip');
     expect(

@@ -83,8 +83,12 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   var _a11yGuideShown = false;
   /// Per-launch: after splash, pick 本机 Host vs remote before auto-start.
   var _entryResolved = false;
-  /// Entry chose 本机 this launch — switching to remote later keeps the engine.
+  /// Entry chose 本机 this launch — mid-session switch to remote keeps the engine.
   var _localChosenThisLaunch = false;
+  /// Entry pick is on screen — park leftover engine (invalidated on pick).
+  var _entryParkStarted = false;
+  var _entryParkGen = 0;
+  var _entryParking = false;
 
   /// Notification / stop left the Host idle — do not auto-start again.
   var _userStopped = false;
@@ -272,6 +276,15 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     final mq = MediaQuery.of(context);
     _syncSafePadding();
 
+    // Keep HTTP Face reachability warm while the product shell is up so the
+    // switcher green (可探测 / 已连接) survives switching to 本机.
+    if (_entryResolved) {
+      final httpHosts = ref.watch(hostsProvider.select((s) => s.http));
+      for (final h in httpHosts) {
+        ref.watch(hostLinkStatusProvider(HostRef.http(h.id)));
+      }
+    }
+
     ref.listen(activeHostProvider, (prev, next) {
       if (prev == next) return;
       // Tear down the WebView when switching hosts so cookies / URL cannot leak.
@@ -284,15 +297,10 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       _webError = null;
       _bridgeSession = null;
       unawaited(_phoneBridge.dispose());
-      // Mid-session 本机→远程 after a local entry pick keeps the engine.
-      // Remote-first launches already stopped it in [_finishEntryPick].
-      if (next.kind == HostKind.http && !_localChosenThisLaunch) {
-        final st = ref.read(localRuntimeProvider).status;
-        if (st.isRunning || st.phase == RuntimePhase.starting) {
-          _userStopped = true;
-          unawaited(ref.read(localRuntimeProvider.notifier).stop());
-        }
-      }
+      // Never auto-stop the on-device engine when switching to remote.
+      // Entry park / remote-first pick already left it idle; mid-session
+      // 本机→远程 keeps it running. Explicit stop: notification / ball /
+      // 引擎页 / 切换主机 sheet.
       if (mounted) setState(() {});
       unawaited(_syncPhoneBridge());
     });
@@ -304,9 +312,17 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     );
 
     ref.listen(localRuntimeProvider.select((s) => s.status.phase), (prev, next) {
-      // Wait for splash entry pick; remote HTTP must never auto-start.
-      if (!_entryResolved) return;
-      if (ref.read(activeHostProvider).kind == HostKind.http) return;
+      // Entry chooser: park leftover / late FGS — never boot until pick.
+      if (!_entryResolved) {
+        if (next == RuntimePhase.running || next == RuntimePhase.starting) {
+          unawaited(_parkLocalForEntry());
+        }
+        return;
+      }
+      // Remote-first launch never auto-starts Host.
+      if (ref.read(activeHostProvider).kind == HostKind.http && !_localChosenThisLaunch) {
+        return;
+      }
       // User stop / intentional teardown: running|stopping → installed.
       // Do NOT treat crash→error the same way — and never auto-start from error
       // (that + native SafePolicy auto-restart = 启动失败循环).
@@ -391,6 +407,12 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
         _entryResolved && shellBallVisible(keyboardOpen: shellBallKeyboardOpen(_keyboard));
     final Widget surface;
     if (!_entryResolved) {
+      // Entry pick: do not boot. Park any leftover FGS / prior-session engine
+      // so the chooser itself never starts Host — local starts only on pick.
+      if (!_entryParkStarted) {
+        _entryParkStarted = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_parkLocalForEntry()));
+      }
       surface = SessionEntryPage(
         onPicked: (choseLocal) {
           if (!mounted) return;
@@ -554,13 +576,36 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     _ensureWebView(url);
   }
 
-  /// Splash entry settled: boot 本机, or stop any leftover local Host for remote.
+  /// Entry chooser is visible: stop leftover engine; never auto-start here.
+  Future<void> _parkLocalForEntry() async {
+    if (_entryResolved || _entryParking) return;
+    _userStopped = true;
+    final status = ref.read(localRuntimeProvider).status;
+    if (!(status.isRunning || status.phase == RuntimePhase.starting)) return;
+    _entryParking = true;
+    final gen = _entryParkGen;
+    try {
+      await ref.read(localRuntimeProvider.notifier).stop();
+    } catch (_) {
+    } finally {
+      _entryParking = false;
+    }
+    // Local pick may have cleared [_userStopped] while stop was in flight.
+    if (!mounted || gen != _entryParkGen || _entryResolved) return;
+    _userStopped = true;
+  }
+
+  /// Splash entry settled: boot 本机 only when chosen; remote-first stays parked.
   Future<void> _finishEntryPick({required bool choseLocal}) async {
+    _entryParkGen++; // invalidate in-flight park
     _localChosenThisLaunch = choseLocal;
     _entryResolved = true;
     _bootStarted = false;
-    if (!choseLocal) {
-      // Remote-first: never keep a leftover engine from a prior launch / race.
+    if (choseLocal) {
+      // Allow [_ensureBoot] / autoStartLocal after an entry park stop.
+      _userStopped = false;
+    } else {
+      // Remote-first: Host must stay down. Mid-session 本机→远程 never lands here.
       _userStopped = true;
       final status = ref.read(localRuntimeProvider).status;
       if (status.isRunning || status.phase == RuntimePhase.starting) {
@@ -575,10 +620,14 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   Future<void> _ensureBoot({bool force = false}) async {
     // Pure remote / pre-entry: never start the on-device engine.
     // Mid-session switch 本机→远程 after a local pick keeps a running engine
-    // (see [_localChosenThisLaunch]); remote-first entry stops it in
-    // [_finishEntryPick].
+    // (see [_localChosenThisLaunch]); remote-first entry parks in
+    // [_parkLocalForEntry] / [_finishEntryPick].
     if (!_entryResolved && !force) return;
-    if (ref.read(activeHostProvider).kind == HostKind.http) return;
+    // Active Face may be remote while local engine still runs (coexist).
+    // Only skip boot when this launch never chose 本机.
+    if (ref.read(activeHostProvider).kind == HostKind.http && !_localChosenThisLaunch) {
+      return;
+    }
     if (force) {
       _userStopped = false;
       _bootError = null;

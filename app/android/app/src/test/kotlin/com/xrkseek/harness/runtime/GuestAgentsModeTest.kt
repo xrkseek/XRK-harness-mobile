@@ -12,9 +12,9 @@ class GuestAgentsModeTest {
             GuestSetup.writeAgentsMd(root, phoneStorage = false)
             val original = file.readBytes()
             assertTrue(file.readText().contains("xiangyang-workspace"))
-            assertTrue(file.readText().contains("不要把 `/root` 当成项目工作区"))
+            assertTrue(file.readText().contains("别把 `/root` 当项目 cwd"))
             GuestSetup.writeAgentsMd(root, phoneStorage = false, directEngine = true)
-            assertTrue(file.readText().contains("引擎直接启动"))
+            assertTrue(file.readText().contains("引擎直启"))
             assertFalse(original.contentEquals(file.readBytes()))
             GuestSetup.writeAgentsMd(root, phoneStorage = false, directEngine = false)
             assertArrayEquals(original, file.readBytes())
@@ -41,7 +41,7 @@ class GuestAgentsModeTest {
             GuestSetup.writeAgentsMd(root, phoneStorage = true)
             val text = File(root, "root/.xrk/AGENTS.md").readText()
             // The folder FilesPlugin saves into and lists, with no space to quote in shell commands.
-            assertTrue(text.contains("给用户的产出文件放到 `/sdcard/Download/XRK-Harness/`。"))
+            assertTrue(text.contains("产出放到 `/sdcard/Download/XRK-Harness/`。"))
             assertFalse(text.contains("/sdcard/Download/DSH/"))
         } finally { root.deleteRecursively() }
     }

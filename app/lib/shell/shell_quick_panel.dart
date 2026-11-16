@@ -6,11 +6,13 @@ import '../l10n/l10n.dart';
 ///
 /// [hostSettings] requires a live Host WebView. [engineStatus] is the
 /// fallback when Host is down so the person can still open logs / start / stop.
+/// [switchHost] opens the device sheet (本机 / HTTP / SSH / relay).
 enum ShellQuickAction {
   phoneControl,
   appSettings,
   hostSettings,
   engineStatus,
+  switchHost,
 }
 
 /// Which third tile the panel should offer for the current Host surface.
@@ -21,6 +23,7 @@ ShellQuickAction shellQuickThirdAction({required bool hostReady}) =>
 Future<ShellQuickAction?> showShellQuickPanel(
   BuildContext context, {
   required bool hostReady,
+  String? activeHostLabel,
 }) {
   final l10n = context.l10n;
   final third = shellQuickThirdAction(hostReady: hostReady);
@@ -72,6 +75,12 @@ Future<ShellQuickAction?> showShellQuickPanel(
                     style: const TextStyle(color: Color(0xFFE8E8E6), fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
+              ),
+              tile(
+                icon: Icons.devices_other_outlined,
+                title: l10n.remoteSwitchHost,
+                subtitle: activeHostLabel ?? l10n.commonThisPhone,
+                value: ShellQuickAction.switchHost,
               ),
               tile(
                 icon: Icons.accessibility_new,

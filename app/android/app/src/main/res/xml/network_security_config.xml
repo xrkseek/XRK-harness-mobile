@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Cleartext only for the local XRK server on loopback; everything else stays HTTPS-only. -->
+<!--
+  Product allows HTTP Face hosts (LAN IP / public http://host:port).
+  Prefer HTTPS on the public internet; cleartext is required for common self-hosted setups.
+-->
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">127.0.0.1</domain>
-        <domain includeSubdomains="false">localhost</domain>
-    </domain-config>
+    <base-config cleartextTrafficPermitted="true" />
 </network-security-config>

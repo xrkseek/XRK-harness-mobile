@@ -21,7 +21,7 @@ abstract final class EngineControl {
     final runtime = container.read(localRuntimeProvider.notifier);
     final phase = container.read(localRuntimeProvider).status.phase;
     if (phase == RuntimePhase.running || phase == RuntimePhase.starting || phase == RuntimePhase.stopping) {
-      if (!await _stopAndWait(container)) return false;
+      if (!await stopAndWait(container)) return false;
     }
     if (mode == null) {
       await runtime.start();
@@ -34,7 +34,7 @@ abstract final class EngineControl {
   /// Changes the local index mode only after stopping, then requests a start
   /// in the existing normal/safe profile. A rejected stop or write cannot start.
   static Future<void> setWorkspaceRecovery(ProviderContainer container, {required bool enabled}) async {
-    if (!await _stopAndWait(container)) throw PlatformException(code: 'runtime_not_stopped');
+    if (!await stopAndWait(container)) throw PlatformException(code: 'runtime_not_stopped');
     await container.read(runtimeBridgeProvider).setWorkspaceRecovery(enabled);
     if (!await _restart(container)) {
       throw PlatformException(code: 'runtime_not_stopped_after_recovery');
@@ -62,7 +62,7 @@ abstract final class EngineControl {
       if (!await _restart(container, mode: EngineMode.safe)) throw PlatformException(code: 'runtime_not_stopped');
       return;
     }
-    if (!await _stopAndWait(container)) throw PlatformException(code: 'runtime_not_stopped');
+    if (!await stopAndWait(container)) throw PlatformException(code: 'runtime_not_stopped');
     await container.read(runtimeBridgeProvider).moveAside(moveAside);
     if (!await _restart(container, mode: EngineMode.safe)) {
       throw PlatformException(code: 'runtime_not_stopped_after_recovery');
@@ -82,7 +82,7 @@ abstract final class EngineControl {
         status.phase == RuntimePhase.stopping;
     // Only a currently running safe profile may keep running during this write.
     final safeRunning = status.inSafeMode && status.phase == RuntimePhase.running;
-    if (busy && !safeRunning && !await _stopAndWait(container)) {
+    if (busy && !safeRunning && !await stopAndWait(container)) {
       throw PlatformException(code: 'runtime_not_stopped');
     }
     final changed = await container.read(runtimeBridgeProvider).restoreLastKnownGood();
@@ -92,7 +92,10 @@ abstract final class EngineControl {
     return changed;
   }
 
-  static Future<bool> _stopAndWait(ProviderContainer container) async {
+  /// Stops the local engine and waits until it is no longer starting/running/stopping.
+  /// Returns false when the wait times out (native cleanup may still be finishing).
+  /// Used before in-app APK install so Host can release `sessions.write.lock`.
+  static Future<bool> stopAndWait(ProviderContainer container) async {
     bool stoppedNow() {
       final phase = container.read(localRuntimeProvider).status.phase;
       return !phase.isBusy && phase != RuntimePhase.running;

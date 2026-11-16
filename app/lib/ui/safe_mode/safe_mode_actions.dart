@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/l10n.dart';
 import '../../runtime/runtime_bridge.dart';
 import '../../runtime/runtime_state.dart';
+import '../../state/compose_inbox.dart';
 import '../../state/engine_control.dart';
 import '../../state/safe_mode_state.dart';
 import '../common/app_dialog.dart';
@@ -201,12 +202,19 @@ abstract final class SafeModeActions {
   static Future<void> dismissFailure(BuildContext context) =>
       _container(context).read(runtimeBridgeProvider).clearFailure();
 
-  /// Queues the repair prompt for the chat composer (not sent) and goes back to the chat.
+  /// Queues the repair prompt for the new-chat composer (not sent) via [composeInboxProvider]
+  /// — same path as 「问 AI」 — then returns to the chat so the fill is visible.
   static void requestRepair(BuildContext context, {bool popToRoot = true}) {
     final container = _container(context);
     final status = container.read(localRuntimeProvider).status;
-    container.read(repairDraftProvider.notifier).request(repairPrompt(status));
-    if (popToRoot) Navigator.of(context).popUntil((route) => route.isFirst);
+    final prompt = repairPrompt(status);
+    // Chat first, then the fill: the composer takes focus on the route that is on top.
+    if (popToRoot) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+    }
+    container.read(composeInboxProvider.notifier).push(
+      ComposeRequest(text: prompt, note: appL10n.phoneSafeRepairComposerHint),
+    );
   }
 
   /// The output around the last failure (tokens masked), with copy / share.

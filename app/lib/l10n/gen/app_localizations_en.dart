@@ -9847,7 +9847,7 @@ class L10nEn extends L10n {
   String get phoneControlSafeModeNotLoaded => 'Not loaded in Safe mode';
 
   @override
-  String get phoneControlLocalOnly => 'Only available with this phone’s engine';
+  String get phoneControlLocalOnly => 'Works with this phone’s engine or the remote bridge';
 
   @override
   String get phoneControlAfterEngineStarts => 'Takes effect when the engine starts';
@@ -10293,10 +10293,14 @@ class L10nEn extends L10n {
       'If no errors occur within 2 minutes, recovery is complete. Otherwise, Safe mode returns automatically.';
 
   @override
-  String get phoneSafeBannerRunningHint => 'Your chats are safe. Fix the configuration, then return to normal mode.';
+  String get phoneSafeBannerRunningHint =>
+      'Your chats are safe. “Help me fix it” puts the error in the composer — review it, then send.';
 
   @override
   String get phoneSafeBannerFailedHint => 'Couldn’t start even in Safe mode. Check the engine page.';
+
+  @override
+  String get phoneSafeRepairComposerHint => 'Repair prompt ready — send when you’re ready';
 
   @override
   String get phoneSafeBannerStoppedHint => 'Engine stopped. Next start will still use Safe mode.';
@@ -10459,7 +10463,7 @@ class L10nEn extends L10n {
 
   @override
   String phoneControlRemoteHint(String host) {
-    return 'XRK on “$host” can’t control this phone. Switch to “This phone” to use it.';
+    return 'Connected to “$host”. Enable phone control + accessibility so that Host can drive this phone with phone_* via the remote bridge.';
   }
 
   @override
@@ -18001,7 +18005,12 @@ class L10nEn extends L10n {
 
   @override
   String stateSafeRepairPrompt(String what) {
-    return 'My XRK has a problem in normal mode ($what). Follow the Safe mode instructions to find the cause. Fix the web configuration using reversible changes, verify startup with xrkh plugins trial, then tell me what changed.';
+    return 'My XRK is in Safe mode. Problem: $what.\nFollow the Safe mode instructions: check Engine diagnostics and the failure log first, then fix the web configuration with reversible changes; verify with xrkh plugins trial, and tell me what you changed. Don’t run dangerous commands unprompted.';
+  }
+
+  @override
+  String stateSafeRepairPromptWithDetail(String what, String detail) {
+    return 'My XRK is in Safe mode. Problem: $what.\nFailure summary: $detail\nFollow the Safe mode instructions: check Engine diagnostics and the failure log first, then fix the web configuration with reversible changes; verify with xrkh plugins trial, and tell me what you changed. Don’t run dangerous commands unprompted.';
   }
 
   @override

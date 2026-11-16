@@ -20,7 +20,7 @@
 // landed goes to the `XrkAppCompose` channel as {text: bool, files: n}.
 //
 // Only clicks the official controls and writes the official stored selection
-// (`dsh.sessions.current`); never restyles, adds or removes official nodes.
+// (`xrk.sessions.current`); never restyles, adds or removes official nodes.
 // Controls are found by their accessible names (zh and en) or the official
 // data attributes, never by hashed class names alone. The outcome goes to
 // the app's `XrkAppOpen` channel.
@@ -110,7 +110,9 @@
   if (window.__dshAppOpen) return;
 
   var PENDING = 'dsh-app-open-pending';
-  var STORE = 'dsh.sessions.current';
+  // Face persist key (legacy `dsh.sessions.current` still read).
+  var STORE = 'xrk.sessions.current';
+  var STORE_LEGACY = 'dsh.sessions.current';
   // A hop's one-off query (see hop); gone from the address once it landed.
   var HOP_PARAM = 'xrk-mobile-hop';
   // How long an open may keep looking once the page has booted.
@@ -238,7 +240,8 @@
 
   function storedSession() {
     try {
-      return (JSON.parse(localStorage.getItem(STORE) || '{}') || {}).sessionId || null;
+      var raw = localStorage.getItem(STORE) || localStorage.getItem(STORE_LEGACY) || '{}';
+      return (JSON.parse(raw) || {}).sessionId || null;
     } catch (e) {
       return null;
     }
@@ -439,7 +442,9 @@
   function hop(target) {
     if (target.hopped) return report(false, 'session');
     try {
-      localStorage.setItem(STORE, JSON.stringify({ sessionId: target.session }));
+      var payload = JSON.stringify({ sessionId: target.session });
+      localStorage.setItem(STORE, payload);
+      try { localStorage.setItem(STORE_LEGACY, payload); } catch (e) {}
       sessionStorage.setItem(PENDING, JSON.stringify(Object.assign({}, target, { hopped: true })));
       var url = new URL(location.href);
       url.searchParams.set(HOP_PARAM, String(Date.now()));

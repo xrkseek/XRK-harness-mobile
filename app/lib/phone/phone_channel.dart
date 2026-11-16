@@ -1238,6 +1238,25 @@ class PhoneChannel {
     }
   }
 
+  /// Run a catalog tool by short name (`apps`, `screen`, …) — used by the remote Host bridge.
+  Future<({String content, bool isError})> invokeTool(String name, [Map<String, Object?> args = const {}]) async {
+    try {
+      final raw = await _methods.invokeMethod<Object?>('invokeTool', {
+        'name': name,
+        'args': args,
+      });
+      if (raw is Map) {
+        final m = raw.cast<Object?, Object?>();
+        return (content: '${m['content'] ?? ''}', isError: m['isError'] == true);
+      }
+      return (content: phoneNotReadyReason, isError: true);
+    } on MissingPluginException {
+      return (content: phoneNotReadyReason, isError: true);
+    } on PlatformException catch (e) {
+      return (content: e.message ?? e.code, isError: true);
+    }
+  }
+
   /// Flip phone control. Native hot-remounts guest plugins when possible;
   /// [PhoneEnableResult.needsRestart] is true only when a live engine must restart.
   Future<PhoneEnableResult> setEnabled(bool enabled) async {

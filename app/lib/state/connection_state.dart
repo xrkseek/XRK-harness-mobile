@@ -5,6 +5,7 @@ import 'package:xrk_client/xrk_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/l10n.dart';
+import '../remote/http/http_host_link.dart';
 import '../remote/link_status.dart';
 import '../remote/network_watch.dart';
 import '../remote/relay/relay_backend.dart';
@@ -16,6 +17,8 @@ import 'permission_default_repair.dart';
 import 'provider_backend.dart';
 import 'provider_keys.dart';
 import 'settings_state.dart';
+
+export '../remote/http/http_host_link.dart' show HttpHostLink, HttpHostSession;
 
 /// A connected XRK host: the on-device engine, an SSH host or a relay device.
 class HostConnection {
@@ -163,11 +166,57 @@ final sshLinkFactoryProvider = Provider<SshLinkFactory>(
   },
 );
 
-/// The live link to a remote host; null for 本机 or an unknown host. Kept while
-/// something watches it (the active connection, a status row); closed after.
+/// Optional pairing token for the next HTTP link open (scan / typed QR).
+class HttpPairingTokenController extends Notifier<String?> {
+  HttpPairingTokenController(this.hostId);
+
+  final String hostId;
+
+  @override
+  String? build() => null;
+
+  void set(String? token) => state = token;
+}
+
+final httpPairingTokenProvider =
+    NotifierProvider.autoDispose.family<HttpPairingTokenController, String?, String>(
+  HttpPairingTokenController.new,
+);
+
+typedef HttpLinkFactory = HttpHostLink Function(Ref ref, HttpHostConfig config, {String? pairingToken});
+
+final httpLinkFactoryProvider = Provider<HttpLinkFactory>(
+  (ref) => (ref, config, {pairingToken}) => HttpHostLink(
+        config: config,
+        secrets: ref.read(secretStoreProvider),
+        pairingToken: pairingToken ?? ref.read(httpPairingTokenProvider(config.id)),
+        kicks: ref.read(networkKicksProvider),
+      ),
+);
+
+/// HTTP Face link (no [XrkClient]). Null when the host id is unknown.
+final httpHostLinkProvider = Provider.autoDispose.family<HttpHostLink?, HostRef>((ref, host) {
+  if (host.kind != HostKind.http) return null;
+  final key = ref.watch(hostsProvider.select((s) => s.httpById(host.id)?.connectionKey));
+  if (key == null) return null;
+  final config = ref.read(hostsProvider).httpById(host.id)!;
+  final pairing = ref.watch(httpPairingTokenProvider(host.id));
+  final link = ref.read(httpLinkFactoryProvider)(ref, config, pairingToken: pairing);
+  ref.listen(hostsProvider.select((s) => s.httpById(host.id)), (_, next) {
+    if (next != null && next.connectionKey == link.config.connectionKey) link.updateConfig(next);
+  });
+  // Kick open when watched (shell / status). Failures stay on the link status.
+  unawaited(link.open().catchError((_) => const HttpHostSession(deviceToken: '', sessionToken: '')));
+  ref.onDispose(() => unawaited(link.close()));
+  return link;
+});
+
+/// The live link to a remote host; null for 本机, HTTP Face, or an unknown host.
+/// Kept while something watches it (the active connection, a status row); closed after.
 final hostLinkProvider = Provider.autoDispose.family<HostLink?, HostRef>((ref, host) {
   switch (host.kind) {
     case HostKind.local:
+    case HostKind.http:
       return null;
     case HostKind.ssh:
       // Reconnect only for changes that matter to the session (not a rename
@@ -213,6 +262,16 @@ final hostLinkProvider = Provider.autoDispose.family<HostLink?, HostRef>((ref, h
 
 /// Status of a host's link for the UI (idle for 本机).
 final hostLinkStatusProvider = StreamProvider.autoDispose.family<HostLinkStatus, HostRef>((ref, host) async* {
+  if (host.kind == HostKind.http) {
+    final link = ref.watch(httpHostLinkProvider(host));
+    if (link == null) {
+      yield HostLinkStatus.idle;
+      return;
+    }
+    yield link.status;
+    yield* link.statuses;
+    return;
+  }
   final link = ref.watch(hostLinkProvider(host));
   if (link == null) {
     yield HostLinkStatus.idle;
@@ -228,6 +287,7 @@ final hostNameProvider = Provider.autoDispose.family<String?, HostRef>((ref, hos
     HostKind.local => appL10n.commonThisPhone,
     HostKind.ssh => ref.watch(hostsProvider.select((s) => s.sshById(host.id)?.name)),
     HostKind.relay => ref.watch(relayAccountProvider.select((a) => a.value?.hostById(host.id)?.name)) ?? host.name,
+    HostKind.http => ref.watch(hostsProvider.select((s) => s.httpById(host.id)?.name)),
   };
 });
 
@@ -528,5 +588,19 @@ AsyncValue<HostConnection?> _connectionForHost(Ref ref, HostRef host) {
       return ref.watch(remoteConnectionProvider(host));
     case HostKind.relay:
       return ref.watch(remoteConnectionProvider(host));
+    case HostKind.http:
+      // HTTP Face has no XrkClient; the shell loads a WebView from [httpHostLinkProvider].
+      final known = ref.watch(hostsProvider.select((s) => !s.loaded || s.httpById(host.id) != null));
+      if (!known) return const AsyncData(null);
+      final link = ref.watch(httpHostLinkProvider(host));
+      if (link == null) return const AsyncData(null);
+      final status = ref.watch(hostLinkStatusProvider(host)).value ?? link.status;
+      if (status.phase == HostLinkPhase.connecting || status.phase == HostLinkPhase.reconnecting) {
+        return const AsyncLoading();
+      }
+      if (status.phase == HostLinkPhase.failed) {
+        return AsyncError(status.error ?? HostLinkError(HostLinkErrorKind.other, appL10n.commonConnectionFailed), StackTrace.current);
+      }
+      return const AsyncData(null);
   }
 }

@@ -176,7 +176,8 @@ void main() {
   group('repair prompt', () {
     test('names the failure and points at the briefing; never sent by itself', () {
       final prompt = repairPrompt(safeStatus());
-      expect(prompt, startsWith('我的 XRK 正常模式出了问题（启动失败，可疑插件：break-required）'));
+      expect(prompt, contains('已进入安全模式'));
+      expect(prompt, contains('启动失败，可疑插件：break-required'));
       expect(prompt, contains('「安全模式」说明'));
       expect(prompt, contains('trial'));
       expect(repairPrompt(const RuntimeStatus(phase: RuntimePhase.running)), contains('我手动进入了安全模式'));

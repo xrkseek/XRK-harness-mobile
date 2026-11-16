@@ -20,7 +20,7 @@ class SessionEntryPage extends ConsumerWidget {
     required this.onPicked,
   });
 
-  /// [choseLocal] true → boot on-device Host; false → remote-only (stop leftover).
+  /// [choseLocal] true → boot on-device Host; false → remote Face only (Host stays down).
   final void Function(bool choseLocal) onPicked;
 
   Future<void> _pickLocal(BuildContext context, WidgetRef ref) async {
@@ -75,7 +75,7 @@ class SessionEntryPage extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               const Text(
-                '选远程则不启动本机 Host，更省电；选本机后可再切到远程，本机 Host 会继续跑。',
+                '进此页不会启动本机 Host。选本机才启动；选远程只连对面，本机保持关闭。选本机后再切远程，本机可继续在后台跑。',
                 style: TextStyle(color: Color(0xFFB8B8B4), fontSize: 14, height: 1.45),
               ),
               const SizedBox(height: 28),
@@ -123,7 +123,7 @@ class SessionEntryPage extends ConsumerWidget {
               ],
               const Spacer(),
               const Text(
-                '之后可在设置球 → 切换主机随时改；从本机切到远程不会关掉已启动的 Host。',
+                '之后可在设置球 → 切换主机随时改。本机起来后再切远程不会关引擎；要停用通知栏长按、球内引擎页，或切换主机里的「停止本机引擎」。',
                 style: TextStyle(color: Color(0xFF8A8A86), fontSize: 12, height: 1.4),
               ),
             ],

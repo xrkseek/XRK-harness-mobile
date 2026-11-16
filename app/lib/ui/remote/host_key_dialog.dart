@@ -131,6 +131,10 @@ Future<bool> activateHost(BuildContext context, WidgetRef ref, HostRef host) asy
       await ref.read(hostsProvider.notifier).pinHostKey(host.id, key);
     }
   }
+  if (host.kind == HostKind.http) {
+    final config = ref.read(hostsProvider).httpById(host.id);
+    if (config == null) return false;
+  }
   if (host.kind == HostKind.relay) {
     var relay = ref.read(relayAccountProvider).value?.hostById(host.id);
     if (relay != null && relay.trust != RelayTrust.pinned) {

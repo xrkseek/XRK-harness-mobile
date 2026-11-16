@@ -200,7 +200,11 @@
   // xrk_web_open.js and xrk_web_state.js read too).
   function storedSession() {
     try {
-      return (JSON.parse(localStorage.getItem('dsh.sessions.current') || '{}') || {}).sessionId || null;
+      var raw =
+        localStorage.getItem('xrk.sessions.current') ||
+        localStorage.getItem('dsh.sessions.current') ||
+        '{}';
+      return (JSON.parse(raw) || {}).sessionId || null;
     } catch (e) {
       return null;
     }

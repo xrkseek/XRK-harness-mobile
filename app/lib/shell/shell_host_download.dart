@@ -36,6 +36,19 @@ bool isHostSessionExportUrl(String url) {
       path.endsWith('/session.export');
 }
 
+/// True when [url] is Host workspace file download (`/sidebar/file?download=1`).
+bool isHostWorkspaceFileDownloadUrl(String url) {
+  final uri = Uri.tryParse(url);
+  if (uri == null) return false;
+  if (uri.queryParameters['download'] != '1') return false;
+  final path = uri.path;
+  return path == '/sidebar/file' || path.endsWith('/sidebar/file');
+}
+
+/// DownloadListener / mistaken main-frame hops the shell must intercept.
+bool isHostShellDownloadNavigation(String url) =>
+    isHostSessionExportUrl(url) || isHostWorkspaceFileDownloadUrl(url) || isObjectDownloadUrl(url);
+
 /// True when [url] is a document-local object URL the shell cannot HTTP-GET.
 bool isObjectDownloadUrl(String url) {
   final t = url.trim().toLowerCase();
@@ -82,6 +95,8 @@ String hostDownloadFilename(String url, String? suggested) {
 
 /// Injected after every Host page load so detached `a[download].click()` still
 /// reaches the shell even before a rebuilt Host bundle lands in the guest.
+/// Also stops Android WebView from navigating the main frame to `blob:` /
+/// `data:` (that yields `net::ERR_FILE_NOT_FOUND` / 「网页无法打开」).
 const hostDownloadBridgeJs = r'''
 (function(){
   if (window.__xrkDownloadBridge) return;
@@ -107,20 +122,23 @@ const hostDownloadBridgeJs = r'''
     }));
     return true;
   }
+  function isObjectUrl(u) {
+    return u.indexOf('blob:') === 0 || u.indexOf('data:') === 0;
+  }
   function post(url, filename) {
     var s = shell();
     if (!s) return false;
     try {
       var u = String(url || '');
       var name = String(filename || '');
-      if (u.indexOf('blob:') === 0 || u.indexOf('data:') === 0) {
+      if (isObjectUrl(u)) {
         fetch(u).then(function(r) {
           if (!r.ok) throw new Error('HTTP ' + r.status);
           return r.blob();
         }).then(function(blob) {
           return blob.arrayBuffer().then(function(buf) {
             var mime = (blob.type || 'application/octet-stream').split(';')[0] || 'application/octet-stream';
-            postBytes(name, mime, new Uint8Array(buf));
+            postBytes(name || 'download.bin', mime, new Uint8Array(buf));
           });
         }).catch(function(err) {
           try {
@@ -138,13 +156,33 @@ const hostDownloadBridgeJs = r'''
     } catch (e) {}
     return false;
   }
+  function shouldShellAnchor(el) {
+    if (!el || !el.href) return false;
+    if (el.hasAttribute('download')) return true;
+    return isObjectUrl(String(el.href || ''));
+  }
   var proto = HTMLAnchorElement.prototype;
   var orig = proto.click;
   proto.click = function() {
-    if (this.hasAttribute('download') && this.href) {
+    if (shouldShellAnchor(this)) {
       if (post(this.href, this.getAttribute('download') || '')) return;
     }
     return orig.apply(this, arguments);
+  };
+  document.addEventListener('click', function(ev) {
+    var t = ev.target;
+    while (t && t.tagName !== 'A') t = t.parentElement;
+    if (!shouldShellAnchor(t)) return;
+    if (post(t.href, t.getAttribute('download') || '')) {
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
+  }, true);
+  var origOpen = window.open;
+  window.open = function(url) {
+    var u = String(url == null ? '' : url);
+    if (isObjectUrl(u) && post(u, '')) return null;
+    return origOpen.apply(window, arguments);
   };
 })();
 ''';

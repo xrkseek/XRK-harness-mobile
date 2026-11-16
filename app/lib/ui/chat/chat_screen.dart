@@ -36,7 +36,6 @@ import '../../state/mention_state.dart';
 import '../../state/models_state.dart';
 import '../../state/new_chat_modes.dart';
 import '../../state/session_search.dart' show folderLabel;
-import '../../state/safe_mode_state.dart';
 import '../../state/session_modes.dart';
 import '../../state/sessions_state.dart';
 import '../../state/settings_state.dart';
@@ -265,23 +264,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) ref.read(balanceProvider.notifier).refresh();
       // Asked for from another page before this one was built.
-      if (mounted && ref.read(repairDraftProvider) != null) _takeRepairDraft();
       if (mounted && ref.read(composerInsertProvider) != null) {
         _takeComposerInsert();
       }
       if (mounted && ref.read(readyComposeProvider) != null) _takeCompose();
     });
-  }
-
-  void _takeRepairDraft() {
-    final text = ref.read(repairDraftProvider.notifier).take();
-    if (text == null || !mounted) return;
-    ref.read(currentSessionProvider.notifier).select(null);
-    _input.value = TextEditingValue(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
-    );
-    _focus.requestFocus();
   }
 
   /// Skills handed over from 技能: `/name` alone is then a message, never a
@@ -1419,11 +1406,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final contextFraction = sessionId == null
         ? null
         : ref.watch(sessionUsageProvider(sessionId).select((u) => u.contextFraction));
-    // 「帮我修复」: a fresh chat with the repair prompt in the composer,
-    // not sent — the person reads it first.
-    ref.listen(repairDraftProvider, (_, next) {
-      if (next != null) _takeRepairDraft();
-    });
     ref.listen(composerInsertProvider, (_, next) {
       if (next != null) _takeComposerInsert();
     });
@@ -1538,7 +1520,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       generate: readOnly ? null : generate,
       risk: !pillsBesideStrip,
     );
-    final headerHeight = typing ? MediaQuery.paddingOf(context).top + AppSpace.sm : ChatHeader.heightOf(context);
+    final safeChrome =
+        local &&
+        ref.watch(localRuntimeProvider.select((s) => SafeModeBanner.visibleFor(s.status)));
+    final headerHeight = typing
+        ? MediaQuery.paddingOf(context).top + AppSpace.sm
+        : ChatHeader.heightOf(context) + (safeChrome ? SafeModeBanner.slotHeight : 0);
 
     Widget backdrop(Widget child) => widget.backdrop ? AppBackdrop(child: child) : child;
     final screen = AnnotatedRegion<SystemUiOverlayStyle>(
@@ -1648,43 +1635,57 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                     id: _Slot.header,
                     child: _HeaderAside(
                       aside: typing,
-                      child: ChatHeader(
-                        scrolledUnder: sessionId == null ? null : _scrolledUnder,
-                        title: title,
-                        status: status,
-                        detail: !narrow || isChild
-                            ? null
-                            : folderLabel(
-                                ref.watch(
-                                  sessionsProvider.select(
-                                    (s) => s.value?.where((session) => session.sessionId == sessionId).firstOrNull?.cwd,
+                      // Safe mode sits under the title bar so it stays visible while
+                      // scrolling chat (not only above the composer / in the drawer).
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ChatHeader(
+                            scrolledUnder: sessionId == null ? null : _scrolledUnder,
+                            title: title,
+                            status: status,
+                            detail: !narrow || isChild
+                                ? null
+                                : folderLabel(
+                                    ref.watch(
+                                      sessionsProvider.select(
+                                        (s) =>
+                                            s.value?.where((session) => session.sessionId == sessionId).firstOrNull?.cwd,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                        onOpenDrawer: widget.onOpenDrawer,
-                        onNewChat: sessionId == null || isChild
-                            ? null
-                            : () {
-                                HapticFeedback.selectionClick();
-                                ref.read(currentSessionProvider.notifier).select(null);
-                              },
-                        // The title pill opens the whole session's details (on a
-                        // wide window it folds and unfolds the panel beside us).
-                        onTitleTap: sessionId == null
-                            ? null
-                            : () => SessionDetailPage.open(context, sessionId, toggle: true),
-                        // A phone's conversation has no room for it beside its title: the
-                        // model is shown and picked at the composer's foot while typing.
-                        // A new chat's title is only 「新对话」, so the model takes the
-                        // header's right like on a wide window — picked before typing,
-                        // once there is an engine to send to.
-                        trailing: narrow && (sessionId != null || !connected)
-                            ? null
-                            : ModelChip(
-                                selection: sessionId == null ? pendingModel : chat?.model,
-                                onSelected: _modelTarget(),
-                                grouped: true,
-                              ),
+                            onOpenDrawer: widget.onOpenDrawer,
+                            onNewChat: sessionId == null || isChild
+                                ? null
+                                : () {
+                                    HapticFeedback.selectionClick();
+                                    ref.read(currentSessionProvider.notifier).select(null);
+                                  },
+                            // The title pill opens the whole session's details (on a
+                            // wide window it folds and unfolds the panel beside us).
+                            onTitleTap: sessionId == null
+                                ? null
+                                : () => SessionDetailPage.open(context, sessionId, toggle: true),
+                            // A phone's conversation has no room for it beside its title: the
+                            // model is shown and picked at the composer's foot while typing.
+                            // A new chat's title is only 「新对话」, so the model takes the
+                            // header's right like on a wide window — picked before typing,
+                            // once there is an engine to send to.
+                            trailing: narrow && (sessionId != null || !connected)
+                                ? null
+                                : ModelChip(
+                                    selection: sessionId == null ? pendingModel : chat?.model,
+                                    onSelected: _modelTarget(),
+                                    grouped: true,
+                                  ),
+                          ),
+                          if (local)
+                            const Padding(
+                              padding: EdgeInsets.fromLTRB(12, 0, 12, 8),
+                              child: SafeModeBanner(),
+                            ),
+                        ],
                       ),
                     ),
                   ),
@@ -1820,11 +1821,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                         ? const _BalanceBannerSlot()
                                         : const SizedBox(width: double.infinity),
                                   ),
-                                ),
-                                // Safe mode / trial banner; draws nothing otherwise.
-                                const PetPerch(
-                                  kind: PerchKind.banner,
-                                  child: SafeModeBanner(padding: EdgeInsets.only(bottom: 8)),
                                 ),
                                 SmoothSize(
                                   duration: AppMotion.of(context, AppMotion.standard),

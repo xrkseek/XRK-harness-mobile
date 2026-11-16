@@ -133,4 +133,53 @@ class RuntimeUpgradeTest {
             root.deleteRecursively()
         }
     }
+
+    @Test
+    fun `clearWriterLocks drops sessions write lock under carried home`() {
+        val root = Files.createTempDirectory("clear-locks").toFile()
+        try {
+            val sessions = File(root, "root/.xrk/sessions")
+            sessions.mkdirs()
+            val lock = File(sessions, "sessions.write.lock")
+            lock.writeText("31191\n")
+            File(root, "root/.xrk/settings.yaml").writeText("keep")
+            // Sibling plugin inventory locks must survive (LastKnownGood).
+            val plugins = File(root, "root/.xrk/plugins")
+            plugins.mkdirs()
+            val pluginLock = File(plugins, ".xrk-plugins.json.lock")
+            pluginLock.writeText("1\n")
+            // needInstall/carry restores /root without softHeal — start path
+            // still calls clearWriterLocks unconditionally.
+            val notes = RuntimeUpgrade.clearWriterLocks(root)
+            assertFalse(lock.exists())
+            assertTrue(pluginLock.exists())
+            assertTrue(notes.any { it.contains("sessions.write.lock") })
+            assertEquals("keep", File(root, "root/.xrk/settings.yaml").readText())
+        } finally {
+            root.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `needInstall plan skips softHeal so clearWriterLocks must run separately`() {
+        val p = RuntimeUpgrade.plan(
+            snap(installed = "r15", bundled = "r17", stampedApp = 16, currentApp = 17),
+        )
+        assertTrue(p.needInstall)
+        assertFalse(p.softHeal)
+    }
+
+    @Test
+    fun `softHealGuest also clears writer locks`() {
+        val root = Files.createTempDirectory("soft-heal-lock").toFile()
+        try {
+            File(root, "root/.xrk/sessions").mkdirs()
+            File(root, "root/.xrk/sessions/sessions.write.lock").writeText("1\n")
+            val notes = RuntimeUpgrade.softHealGuest(root)
+            assertFalse(File(root, "root/.xrk/sessions/sessions.write.lock").exists())
+            assertTrue(notes.any { it.contains("sessions.write.lock") })
+        } finally {
+            root.deleteRecursively()
+        }
+    }
 }

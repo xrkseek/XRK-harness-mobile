@@ -437,6 +437,11 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
                 noteDns(GuestSetup.writeResolvConf(app, installer.rootfs), DnsConfigSource.START)
                 // Shell-only APK bumps land here with the same runtimeVersion; heal volatiles.
                 applyOverlayUpgrade()
+                // Single-Host phone: always drop writer locks before spawn (needInstall/carry
+                // restores /root without softHeal and would otherwise leave sessions.write.lock).
+                RuntimeUpgrade.clearWriterLocks(installer.rootfs).forEach {
+                    log("[xrkh-app] clear writer lock: $it", "system")
+                }
                 // Prefs are the single SoT (same gate as SAF / listOutputs). Flutter start()
                 // args only seed pending*; crash → restartNow may skip Flutter entirely.
                 pendingPhoneStorage = PhoneStorage.settingEnabled(app)
@@ -461,6 +466,8 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
                 }
                 val env = LinkedHashMap<String, String>()
                 env["TZ"] = java.util.TimeZone.getDefault().id
+                // Dual-insurance with clearWriterLocks: Host may reclaim a leftover PID lock once.
+                env["XRK_SESSIONS_LOCK_RECLAIM"] = "1"
                 env.putAll(pendingEnv)
                 workspaceRecovery.applyEnvironment(env)
                 PerformancePolicy.applyEngineEnvironment(app, env, manifest.launchArgv, manifest.launchEnv)
@@ -1122,6 +1129,11 @@ class RuntimeController private constructor(private val app: Context) : XrkProce
         if (sha.isNullOrEmpty()) edit.remove(RuntimeUpgrade.K_INSTALLED_ROOTFS_SHA)
         else edit.putString(RuntimeUpgrade.K_INSTALLED_ROOTFS_SHA, sha)
         edit.apply()
+        // activateRootfs may have restored /root (and a stale sessions.write.lock)
+        // via home.carry; softHeal is false on needInstall, so clear here too.
+        RuntimeUpgrade.clearWriterLocks(installer.rootfs).forEach {
+            log("[xrkh-app] clear writer lock after install: $it", "system")
+        }
     }
 
     private fun overlaySnapshot(): RuntimeUpgrade.Snapshot {

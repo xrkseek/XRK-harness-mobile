@@ -7,15 +7,17 @@
 
 ### 中文
 
-- 远程 HTTP 手机桥：App「在线」与 Host Settings 对齐（不再空等首轮 long-poll）
-- 远程 Host 不会误重启本机引擎；桥接 poll/报到加固
-- 配合 Host 插件 `@xrkseek/xrk-phone-bridge@0.7.23`（机内 guest 仍可为 0.7.22 runtime）
+- 选机页不预启动本机 Host：选本机才起、选远程保持关闭；本机起来后再切远程可共存
+- 停本机引擎：通知栏 / 引擎页 / 切换主机「停止本机引擎」
+- 切换主机远程绿点表示可探测/已连接，切回本机不丢
+- 远程 HTTP 手机桥：App「在线」与 Host Settings 对齐；配合 `@xrkseek/xrk-phone-bridge@0.7.23`
 
 ### English
 
-- Remote HTTP phone bridge: App “online” aligns with Host Settings (no wait for first long-poll return)
-- Remote Host no longer restarts the on-device engine by mistake; bridge poll/announce hardened
-- Pairs with Host plugin `@xrkseek/xrk-phone-bridge@0.7.23` (on-device guest runtime may remain 0.7.22)
+- Entry pick does not pre-start the on-device Host; local only on local pick; remote stays off; local can keep running after switching to remote
+- Stop local engine via notification / engine page / host switcher
+- Remote green in the host switcher means reachable/connected and survives switching back to local
+- Remote HTTP phone bridge online status aligns with Host Settings; pairs with `@xrkseek/xrk-phone-bridge@0.7.23`
 
 ## 0.7.19 · 2026-11-12
 

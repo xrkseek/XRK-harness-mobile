@@ -9358,7 +9358,7 @@ class L10nZh extends L10n {
   String get phoneControlSafeModeNotLoaded => '安全模式下不加载';
 
   @override
-  String get phoneControlLocalOnly => '只在本机引擎可用';
+  String get phoneControlLocalOnly => '本机引擎与远程桥均可操控';
 
   @override
   String get phoneControlAfterEngineStarts => '引擎启动后生效';
@@ -9778,10 +9778,13 @@ class L10nZh extends L10n {
   String get phoneSafeBannerProbationHint => '2 分钟内不再出错就算恢复，否则自动回到安全模式';
 
   @override
-  String get phoneSafeBannerRunningHint => '对话都在，修好配置后恢复正常模式';
+  String get phoneSafeBannerRunningHint => '对话还在。点「帮我修复」会把错误填进输入框，确认后再发送';
 
   @override
   String get phoneSafeBannerFailedHint => '安全模式也没能启动，去引擎页查看';
+
+  @override
+  String get phoneSafeRepairComposerHint => '已填入修复说明，确认后发送';
 
   @override
   String get phoneSafeBannerStoppedHint => '引擎已停止，下次启动仍是安全模式';
@@ -9925,7 +9928,7 @@ class L10nZh extends L10n {
 
   @override
   String phoneControlRemoteHint(String host) {
-    return '「$host」上的 XRK 操作不了这台手机，切回「本机」后可用';
+    return '当前连着「$host」。打开手机操控 + 无障碍后，远程 Host 经「远程手机桥」用 phone_* 操控本机';
   }
 
   @override
@@ -17050,7 +17053,12 @@ class L10nZh extends L10n {
 
   @override
   String stateSafeRepairPrompt(String what) {
-    return '我的 XRK 正常模式出了问题（$what）。请按「安全模式」说明排查原因，先用可逆的办法修好 web 配置，修完用 xrkh plugins trial 试启动验证，再告诉我改了什么。';
+    return '我的 XRK 已进入安全模式。问题：$what。\n请按「安全模式」说明排查：先看引擎页诊断与失败日志，再用可逆改动修好 web 配置；修完用 xrkh plugins trial 试启动验证，再告诉我改了什么。不要直接执行危险命令。';
+  }
+
+  @override
+  String stateSafeRepairPromptWithDetail(String what, String detail) {
+    return '我的 XRK 已进入安全模式。问题：$what。\n失败摘要：$detail\n请按「安全模式」说明排查：先看引擎页诊断与失败日志，再用可逆改动修好 web 配置；修完用 xrkh plugins trial 试启动验证，再告诉我改了什么。不要直接执行危险命令。';
   }
 
   @override

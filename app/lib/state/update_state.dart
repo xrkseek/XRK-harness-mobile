@@ -15,6 +15,7 @@ import '../update/update_config.dart';
 import '../update/update_http.dart';
 import '../update/version.dart';
 import 'app_info.dart';
+import 'engine_control.dart';
 
 /// In-app updates: daily check of our release copy and GitHub Releases (with
 /// mirror fallback), a delta patch or the whole APK with resume, SHA-256
@@ -789,6 +790,12 @@ class AppUpdateController extends Notifier<AppUpdateState> {
       if (!apk.isVersion(inspection)) return await fail(UpdateProblem.checksum, discard: true);
       // Last look before the handoff: the digest the bytes were checked
       // against is still the one the offer on screen names.
+      if (!bound()) return await conflict();
+      // Best-effort stop so Host can release sessions.write.lock. A timeout
+      // still proceeds: next boot clears that lock and guest sets
+      // XRK_SESSIONS_LOCK_RECLAIM=1. Blocking install on stop would strand updates.
+      await EngineControl.stopAndWait(ref.container);
+      if (!owns()) return;
       if (!bound()) return await conflict();
       final result = await _installer.install(apk.file.path);
       if (!owns() || state.task != UpdateTaskPhase.installing) return;

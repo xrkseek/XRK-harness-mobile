@@ -151,6 +151,28 @@ enum DshWebRightbar {
   final String key;
 }
 
+/// Face conversation selection from `XrkAppState` (`xrk_web_state.js`).
+class DshWebState {
+  const DshWebState(this.sessionId);
+
+  /// Null [sessionId] means the Face cleared selection (new chat).
+  /// Returns null when the message is not ours.
+  static DshWebState? parse(String message) {
+    try {
+      final json = jsonDecode(message);
+      if (json is! Map || !json.containsKey('session')) return null;
+      final id = json['session'];
+      if (id == null) return const DshWebState(null);
+      if (id is! String || id.isEmpty || id.length > 200) return null;
+      return DshWebState(id);
+    } on FormatException {
+      return null;
+    }
+  }
+
+  final String? sessionId;
+}
+
 /// What the bridge reported back (`XrkAppOpen` channel): [step] names the
 /// part that didn't land when [ok] is false.
 class DshWebOpenResult {

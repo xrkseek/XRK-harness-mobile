@@ -1,5 +1,6 @@
 # XRK Harness 0.7.23
 
-- 远程 HTTP 手机桥：与 Host Settings「在线」状态对齐（不再空等首轮 long-poll）
-- 远程 Host 不再误重启本机引擎；报到/poll 走 POST
-- 配合 Host 插件 `@xrkseek/xrk-phone-bridge@0.7.23`
+- 选机页不预启动本机 Host：选本机才起、选远程保持关闭
+- 本机起来后再切远程可共存（不停引擎）；停机走通知栏 / 引擎页 / 切换主机
+- 切换主机里远程绿点=可探测/已连接，切回本机不丢
+- 远程 HTTP 手机桥：与 Host Settings「在线」对齐；配合 `@xrkseek/xrk-phone-bridge@0.7.23`

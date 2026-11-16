@@ -18125,7 +18125,7 @@ abstract class L10n {
   /// No description provided for @phoneSafeBannerRunningHint.
   ///
   /// In zh, this message translates to:
-  /// **'对话都在，修好配置后恢复正常模式'**
+  /// **'对话还在。点「帮我修复」会把错误填进输入框，确认后再发送'**
   String get phoneSafeBannerRunningHint;
 
   /// No description provided for @phoneSafeBannerFailedHint.
@@ -18133,6 +18133,12 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'安全模式也没能启动，去引擎页查看'**
   String get phoneSafeBannerFailedHint;
+
+  /// No description provided for @phoneSafeRepairComposerHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'已填入修复说明，确认后发送'**
+  String get phoneSafeRepairComposerHint;
 
   /// No description provided for @phoneSafeBannerStoppedHint.
   ///
@@ -31049,8 +31055,14 @@ abstract class L10n {
   /// No description provided for @stateSafeRepairPrompt.
   ///
   /// In zh, this message translates to:
-  /// **'我的 XRK 正常模式出了问题（{what}）。请按「安全模式」说明排查原因，先用可逆的办法修好 web 配置，修完用 xrkh plugins trial 试启动验证，再告诉我改了什么。'**
+  /// **'我的 XRK 已进入安全模式。问题：{what}。\n请按「安全模式」说明排查：先看引擎页诊断与失败日志，再用可逆改动修好 web 配置；修完用 xrkh plugins trial 试启动验证，再告诉我改了什么。不要直接执行危险命令。'**
   String stateSafeRepairPrompt(String what);
+
+  /// No description provided for @stateSafeRepairPromptWithDetail.
+  ///
+  /// In zh, this message translates to:
+  /// **'我的 XRK 已进入安全模式。问题：{what}。\n失败摘要：{detail}\n请按「安全模式」说明排查：先看引擎页诊断与失败日志，再用可逆改动修好 web 配置；修完用 xrkh plugins trial 试启动验证，再告诉我改了什么。不要直接执行危险命令。'**
+  String stateSafeRepairPromptWithDetail(String what, String detail);
 
   /// No description provided for @stateScheduleCreatePrompt.
   ///
