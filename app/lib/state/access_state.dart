@@ -29,6 +29,7 @@ import '../runtime/runtime_bridge.dart' show RuntimePhase;
 import '../runtime/runtime_state.dart';
 import '../ui/chat/voice/voice_bridge.dart' show VoicePermission;
 import 'engine_control.dart';
+import 'hosts_state.dart';
 import 'notify_state.dart';
 import 'phone_files.dart';
 import 'phone_state.dart';
@@ -550,7 +551,11 @@ class AccessSetupController extends Notifier<AccessSetup> {
       await attempt(ref.read(phoneProvider.notifier).applyPendingConfirmMode);
     }
     final phase = ref.read(localRuntimeProvider).status.phase;
-    if (restart && !restarting && (phase == RuntimePhase.running || phase == RuntimePhase.starting)) {
+    final onHttp = ref.read(activeHostProvider).kind == HostKind.http;
+    if (!onHttp &&
+        restart &&
+        !restarting &&
+        (phase == RuntimePhase.running || phase == RuntimePhase.starting)) {
       unawaited(EngineControl.restart(ref.container));
     }
     if (features.contains(AccessFeature.pet)) {

@@ -33,8 +33,10 @@ import 'phone_disclosure_sheet.dart';
 import 'phone_background_guide.dart';
 import 'phone_unlock_page.dart';
 import 'phone_skill_section.dart';
+import '../../remote/bridge/remote_bridge_status.dart';
 import 'phone_self_check_panel.dart';
 import 'phone_widgets.dart';
+import 'remote_bridge_card.dart';
 import 'restricted_settings_guide.dart';
 import 'screen_text_sheet.dart';
 
@@ -94,7 +96,10 @@ class _PhoneControlScreenState extends ConsumerState<PhoneControlScreen> {
     _lifecycle = AppLifecycleListener(onResume: _onResume);
     // A fresh read each time the page opens (the provider may be older).
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) unawaited(_phone.refresh());
+      if (!mounted) return;
+      unawaited(_phone.refresh());
+      // Re-harvest Face PIN cookies and announce to Host bridge.
+      requestRemoteBridgeResync();
     });
   }
 
@@ -106,6 +111,8 @@ class _PhoneControlScreenState extends ConsumerState<PhoneControlScreen> {
 
   Future<void> _onResume() async {
     await _phone.refreshStatus();
+    // Local a11y / 操控 flips and remote Host PIN remints both need a nudge.
+    requestRemoteBridgeResync();
     if (!mounted || !_awaitingA11y) return;
     final on = ref.read(phoneProvider).status.a11y.enabled;
     setState(() {
@@ -336,6 +343,8 @@ class _PhoneControlScreenState extends ConsumerState<PhoneControlScreen> {
                 )
               : Switch(value: status.enabled, onChanged: toggle),
         ),
+        const SizedBox(height: 10),
+        const RemoteBridgeCard(),
         if (state.policies?.unlocks.isNotEmpty ?? false)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -497,9 +506,13 @@ class _PhoneControlScreenState extends ConsumerState<PhoneControlScreen> {
     if (blocker == PhoneBlocker.notReady) return context.l10n.phoneControlNotReady;
     if (!s.enabled) return context.l10n.phoneControlNotEnabled;
     if (blocker == PhoneBlocker.safeMode) return context.l10n.phoneControlSafeModeNotLoaded;
-    if (blocker == PhoneBlocker.remoteHost) return context.l10n.phoneControlLocalOnly;
-    if (runtime.runtimeMissing) return context.l10n.localEnvPhoneNeedsRuntime;
-    if (runtime.phase != RuntimePhase.running) return context.l10n.phoneControlAfterEngineStarts;
+    // Remote HTTP Face uses the phone bridge — a11y/操控 do not need the
+    // on-device engine. Local Host still waits for the engine to load plugins.
+    final remoteHttp = ref.read(activeHostProvider).kind == HostKind.http;
+    if (!remoteHttp) {
+      if (runtime.runtimeMissing) return context.l10n.localEnvPhoneNeedsRuntime;
+      if (runtime.phase != RuntimePhase.running) return context.l10n.phoneControlAfterEngineStarts;
+    }
     if (!s.a11y.enabled) return context.l10n.phoneControlNeedsAccessibility;
     return context.l10n.phoneControlReady;
   }
@@ -697,8 +710,6 @@ class _BlockerNote extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final host = ref.watch(activeHostProvider);
-    final hostName = ref.watch(hostNameProvider(host));
     return switch (blocker) {
       PhoneBlocker.notReady => PhoneNote(
         tone: NoteTone.warn,
@@ -710,11 +721,6 @@ class _BlockerNote extends ConsumerWidget {
         icon: AppIcons.safeMode,
         title: l10n.phoneControlSafeModeUnavailable,
         text: l10n.phoneControlSafeModeHint,
-      ),
-      PhoneBlocker.remoteHost => PhoneNote(
-        icon: AppIcons.remoteHost,
-        title: l10n.phoneControlRemoteHost,
-        text: l10n.phoneControlRemoteHint(hostName ?? l10n.commonRemoteHost),
       ),
     };
   }

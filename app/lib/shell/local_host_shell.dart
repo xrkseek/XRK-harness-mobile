@@ -8,12 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 import '../l10n/l10n.dart';
 import '../links/launcher_entries.dart';
 import '../links/share_intake.dart';
+import '../phone/phone_channel.dart';
+import '../remote/bridge/phone_bridge_client.dart';
+import '../remote/bridge/remote_bridge_status.dart';
+import '../remote/http/http_host_config.dart';
+import '../remote/http/http_host_link.dart';
+import '../remote/http/http_webview_cookies.dart';
 import '../runtime/local_footprint.dart';
 import '../runtime/runtime_bridge.dart';
 import '../runtime/runtime_state.dart';
@@ -21,6 +28,7 @@ import '../state/app_info.dart';
 import '../state/attachments.dart';
 import '../state/chat_reveal.dart';
 import '../state/compose_inbox.dart';
+import '../state/connection_state.dart';
 import '../state/engine_control.dart';
 import '../state/host_settings_opener.dart';
 import '../state/hosts_state.dart';
@@ -31,13 +39,19 @@ import '../ui/engine/engine_screen.dart';
 import '../ui/notify/chat_alert_host.dart';
 import '../ui/phone/phone_control_screen.dart';
 import '../ui/phone/phone_stop_watcher.dart';
+import '../ui/remote/host_status.dart';
+import '../ui/remote/host_switcher.dart';
+import '../ui/remote/link_progress.dart';
+import '../ui/remote/remote_screen.dart';
 import '../ui/settings/settings_screen.dart';
 import '../ui/shell/brand_mark.dart';
 import '../ui/web/local_web_screen.dart';
 import '../pets/overlay_channel.dart';
 import '../ui/web/web_file_chooser.dart';
 import '../ui/web/web_keyboard.dart';
+import '../ui/web/web_navigation.dart';
 import '../ui/web/web_target.dart';
+import 'session_entry_page.dart';
 import 'shell_ball.dart';
 import 'shell_ball_visibility.dart';
 import 'shell_host_download.dart';
@@ -67,6 +81,10 @@ class LocalHostShell extends ConsumerStatefulWidget {
 class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   var _bootStarted = false;
   var _a11yGuideShown = false;
+  /// Per-launch: after splash, pick 本机 Host vs remote before auto-start.
+  var _entryResolved = false;
+  /// Entry chose 本机 this launch — switching to remote later keeps the engine.
+  var _localChosenThisLaunch = false;
 
   /// Notification / stop left the Host idle — do not auto-start again.
   var _userStopped = false;
@@ -91,6 +109,16 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   Future<void>? _insetFlight;
   var _insetQueued = false;
   var _ackBusy = false;
+  /// Last HTTP Face URL whose cookies were injected into the WebView jar.
+  String? _httpCookieOrigin;
+  /// Main-frame WebView load failure (cleartext / refused / DNS).
+  String? _webError;
+  final _phoneBridge = PhoneBridgeController();
+  /// Cookies harvested from the Face WebView after PIN (for outbound bridge).
+  HttpHostSession? _bridgeSession;
+  /// Last Face / native conversation id — skip re-open when Face reports it back.
+  String? _faceSessionId;
+  AppLifecycleListener? _lifecycle;
 
   @override
   void initState() {
@@ -114,6 +142,15 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       if (sectionId == 'phone') return _openNativePhoneSettings();
       return _openNativeAppSettings();
     });
+    remoteBridgeResyncTick.addListener(_onRemoteBridgeResync);
+    // Resume from background: re-harvest PIN cookies and wake poll if 操控 is on.
+    _lifecycle = AppLifecycleListener(
+      onResume: () => unawaited(_syncPhoneBridge(harvestCookies: true)),
+    );
+  }
+
+  void _onRemoteBridgeResync() {
+    unawaited(_syncPhoneBridge(harvestCookies: true));
   }
 
   @override
@@ -124,9 +161,12 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
 
   @override
   void dispose() {
+    _lifecycle?.dispose();
+    remoteBridgeResyncTick.removeListener(_onRemoteBridgeResync);
     _keyboardRest?.cancel();
     unawaited(_shares?.cancel());
     unawaited(_launcherEntries?.cancel());
+    unawaited(_phoneBridge.dispose());
     _files.dispose();
     super.dispose();
   }
@@ -205,7 +245,14 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
         if (host.kind == HostKind.ssh && hosts.loaded && hosts.sshById(host.id) == null) {
           return;
         }
+        if (host.kind == HostKind.http && hosts.loaded && hosts.httpById(host.id) == null) {
+          return;
+        }
         Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+        // Notification / task reopen already named a host — skip the entry pick.
+        if (!_entryResolved) {
+          await _finishEntryPick(choseLocal: host.kind != HostKind.http);
+        }
         ref.read(activeHostProvider.notifier).select(host);
         ref.read(currentSessionProvider.notifier).select(sessionId);
         await _openWebSession(sessionId);
@@ -218,12 +265,48 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
 
   @override
   Widget build(BuildContext context) {
+    final activeHost = ref.watch(activeHostProvider);
+    final isHttp = activeHost.kind == HostKind.http;
     final runtime = ref.watch(localRuntimeProvider);
     final status = runtime.status;
     final mq = MediaQuery.of(context);
     _syncSafePadding();
 
+    ref.listen(activeHostProvider, (prev, next) {
+      if (prev == next) return;
+      // Tear down the WebView when switching hosts so cookies / URL cannot leak.
+      _files.invalidate();
+      _controller = null;
+      _loadedUrl = null;
+      _pageReady = false;
+      _appliedInsetKey = null;
+      _httpCookieOrigin = null;
+      _webError = null;
+      _bridgeSession = null;
+      unawaited(_phoneBridge.dispose());
+      // Mid-session 本机→远程 after a local entry pick keeps the engine.
+      // Remote-first launches already stopped it in [_finishEntryPick].
+      if (next.kind == HostKind.http && !_localChosenThisLaunch) {
+        final st = ref.read(localRuntimeProvider).status;
+        if (st.isRunning || st.phase == RuntimePhase.starting) {
+          _userStopped = true;
+          unawaited(ref.read(localRuntimeProvider.notifier).stop());
+        }
+      }
+      if (mounted) setState(() {});
+      unawaited(_syncPhoneBridge());
+    });
+
+    // Remote phone bridge: PIN session → announce 待批准; 操控+无障碍 → poll.
+    ref.listen(
+      phoneProvider.select((s) => (s.status.enabled, s.status.a11y.ok)),
+      (_, __) => unawaited(_syncPhoneBridge()),
+    );
+
     ref.listen(localRuntimeProvider.select((s) => s.status.phase), (prev, next) {
+      // Wait for splash entry pick; remote HTTP must never auto-start.
+      if (!_entryResolved) return;
+      if (ref.read(activeHostProvider).kind == HostKind.http) return;
       // User stop / intentional teardown: running|stopping → installed.
       // Do NOT treat crash→error the same way — and never auto-start from error
       // (that + native SafePolicy auto-restart = 启动失败循环).
@@ -272,27 +355,51 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       if (id != null) unawaited(_openWebSession(id));
     });
     ref.listen(currentSessionProvider, (prev, next) {
-      if (next != null && next != prev) unawaited(_openWebSession(next));
+      if (next != null && next != prev) {
+        // Face already shows this chat (XrkAppState) — do not hop/reload.
+        if (next != _faceSessionId) {
+          unawaited(_openWebSession(next));
+        }
+        _faceSessionId = next;
+        // Remote Host: bind Face session so phone_* tools know which phone.
+        if (ref.read(activeHostProvider).kind == HostKind.http) {
+          unawaited(_syncPhoneBridge());
+        }
+      } else if (next == null) {
+        _faceSessionId = null;
+      }
     });
 
-    if (!_bootStarted) {
+    if (_entryResolved && !isHttp && !_bootStarted) {
       _bootStarted = true;
       WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_ensureBoot()));
     }
 
-    if (!status.isRunning) {
+    if (_entryResolved && !isHttp && !status.isRunning) {
       _files.invalidate();
       _controller = null;
       _loadedUrl = null;
       _pageReady = false;
       _appliedInsetKey = null;
+      _webError = null;
     }
 
     // Settings ball = native escape hatch (see shell_ball_visibility.dart).
     // One Stack for boot + Host so visibility rules stay in one place.
-    final showBall = shellBallVisible(keyboardOpen: shellBallKeyboardOpen(_keyboard));
+    // Hide the settings ball on the per-launch host pick.
+    final showBall =
+        _entryResolved && shellBallVisible(keyboardOpen: shellBallKeyboardOpen(_keyboard));
     final Widget surface;
-    if (status.isRunning && status.baseUrl != null) {
+    if (!_entryResolved) {
+      surface = SessionEntryPage(
+        onPicked: (choseLocal) {
+          if (!mounted) return;
+          unawaited(_finishEntryPick(choseLocal: choseLocal));
+        },
+      );
+    } else if (isHttp) {
+      surface = _buildHttpSurface(context, activeHost, mq);
+    } else if (status.isRunning && status.baseUrl != null) {
       final url = localWebUri(status.baseUrl!, status.token ?? '').toString();
       _ensureWebView(url);
       final interruption = ref.watch(phoneProvider.select((s) => s.status.taskInterruption));
@@ -302,7 +409,17 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
         fit: StackFit.expand,
         children: [
           const ColoredBox(color: Color(0xFF0B0B0C)),
-          WebViewWidget(controller: _controller!),
+          if (_controller != null) WebViewWidget(controller: _controller!),
+          if (_webError != null)
+            _WebLoadErrorOverlay(
+              detail: _webError!,
+              onRetry: () {
+                final u = _loadedUrl;
+                if (u == null) return;
+                setState(() => _webError = null);
+                unawaited(_controller?.loadRequest(Uri.parse(u)));
+              },
+            ),
           if (interruption.visible)
             Positioned(
               top: mq.padding.top + 8,
@@ -382,7 +499,86 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     }
   }
 
+  Widget _buildHttpSurface(BuildContext context, HostRef host, MediaQueryData mq) {
+    final config = ref.watch(hostsProvider.select((s) => s.httpById(host.id)));
+    final link = ref.watch(httpHostLinkProvider(host));
+    final linkStatus = ref.watch(hostLinkStatusProvider(host)).value ?? link?.status ?? HostLinkStatus.idle;
+    if (config == null) {
+      return _HttpLinkScaffold(
+        status: HostLinkStatus(
+          HostLinkPhase.failed,
+          error: HostLinkError(HostLinkErrorKind.other, context.l10n.commonConnectionFailed, detail: 'host removed'),
+        ),
+        onRetry: () => ref.read(activeHostProvider.notifier).select(HostRef.local),
+        onBackLocal: () => ref.read(activeHostProvider.notifier).select(HostRef.local),
+      );
+    }
+    final session = link?.session;
+    // Connected after probe: open Face. With a full session inject cookies;
+    // without (PIN / first visit) load origin and let mobile-access gate handle it.
+    if (linkStatus.isConnected && session != null) {
+      final url = '${config.origin}/';
+      unawaited(_ensureHttpWebView(config, session, url));
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          const ColoredBox(color: Color(0xFF0B0B0C)),
+          if (_controller != null) WebViewWidget(controller: _controller!),
+          if (_webError != null)
+            _WebLoadErrorOverlay(
+              detail: _webError!,
+              onRetry: () {
+                final u = _loadedUrl;
+                if (u == null) return;
+                setState(() => _webError = null);
+                unawaited(_controller?.loadRequest(Uri.parse(u)));
+              },
+            ),
+        ],
+      );
+    }
+    return _HttpLinkScaffold(
+      status: linkStatus,
+      hostName: config.name,
+      onRetry: () => link?.retry(),
+      onBackLocal: () => ref.read(activeHostProvider.notifier).select(HostRef.local),
+    );
+  }
+
+  Future<void> _ensureHttpWebView(HttpHostConfig config, HttpHostSession session, String url) async {
+    if (session.isReady && _httpCookieOrigin != config.origin) {
+      await injectHttpHostCookies(config, session);
+      _httpCookieOrigin = config.origin;
+    }
+    if (!mounted) return;
+    _ensureWebView(url);
+  }
+
+  /// Splash entry settled: boot 本机, or stop any leftover local Host for remote.
+  Future<void> _finishEntryPick({required bool choseLocal}) async {
+    _localChosenThisLaunch = choseLocal;
+    _entryResolved = true;
+    _bootStarted = false;
+    if (!choseLocal) {
+      // Remote-first: never keep a leftover engine from a prior launch / race.
+      _userStopped = true;
+      final status = ref.read(localRuntimeProvider).status;
+      if (status.isRunning || status.phase == RuntimePhase.starting) {
+        try {
+          await ref.read(localRuntimeProvider.notifier).stop();
+        } catch (_) {}
+      }
+    }
+    if (mounted) setState(() {});
+  }
+
   Future<void> _ensureBoot({bool force = false}) async {
+    // Pure remote / pre-entry: never start the on-device engine.
+    // Mid-session switch 本机→远程 after a local pick keeps a running engine
+    // (see [_localChosenThisLaunch]); remote-first entry stops it in
+    // [_finishEntryPick].
+    if (!_entryResolved && !force) return;
+    if (ref.read(activeHostProvider).kind == HostKind.http) return;
     if (force) {
       _userStopped = false;
       _bootError = null;
@@ -433,6 +629,7 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     _loadedUrl = url;
     _pageReady = false;
     _appliedInsetKey = null;
+    _webError = null;
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFF0B0B0C))
@@ -440,20 +637,68 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
         NavigationDelegate(
           // DownloadListener is forwarded as a main-frame navigation; without
           // this callback webview_flutter drops session.export ZIP saves.
+          // blob:/data: main-frame hops become Chromium 「网页无法打开」.
           onNavigationRequest: (request) {
-            if (isHostSessionExportUrl(request.url)) {
-              unawaited(_onHostDownload(url: request.url));
+            final url = request.url;
+            if (isHostSessionExportUrl(url) || isHostWorkspaceFileDownloadUrl(url)) {
+              unawaited(_onHostDownload(url: url));
               return NavigationDecision.prevent;
+            }
+            if (isObjectDownloadUrl(url)) {
+              return NavigationDecision.prevent;
+            }
+            if (request.isMainFrame) {
+              final face = Uri.tryParse(_loadedUrl ?? '');
+              if (face != null && face.hasScheme) {
+                final decision = dshWebNavigation(face, url, true);
+                if (decision == DshWebNavigation.external) {
+                  unawaited(
+                    launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication).catchError((_) => false),
+                  );
+                  return NavigationDecision.prevent;
+                }
+                if (decision == DshWebNavigation.block) {
+                  return NavigationDecision.prevent;
+                }
+              }
             }
             return NavigationDecision.navigate;
           },
-          onPageStarted: (_) => _files.invalidate(),
+          onPageStarted: (_) {
+            _files.invalidate();
+            if (_webError != null && mounted) setState(() => _webError = null);
+          },
           onPageFinished: (_) => unawaited(_onPageFinished()),
+          onWebResourceError: (error) {
+            if (!(error.isForMainFrame ?? true)) return;
+            // Only recover object-URL main-frame failures — plain FILE_NOT_FOUND
+            // on real Host assets must surface, not silently reload Face.
+            final failedUrl = (error.url ?? '').trim();
+            final blobNav = isObjectDownloadUrl(failedUrl) ||
+                failedUrl.startsWith('blob:') ||
+                (error.description.contains('ERR_FILE_NOT_FOUND') &&
+                    (error.description.contains('blob:') || failedUrl.isEmpty));
+            if (blobNav) {
+              final face = _loadedUrl;
+              final c = _controller;
+              if (face != null && c != null) {
+                unawaited(c.loadRequest(Uri.parse(face)));
+                if (mounted && _webError != null) setState(() => _webError = null);
+                return;
+              }
+            }
+            if (!mounted) return;
+            setState(() => _webError = error.description);
+          },
         ),
       )
       ..addJavaScriptChannel(
         'XrkShell',
         onMessageReceived: (message) => unawaited(_onShellMessage(message.message)),
+      )
+      ..addJavaScriptChannel(
+        'XrkAppState',
+        onMessageReceived: (message) => _onFaceSession(message.message),
       );
     // TTS / <audio> bars in Host UI must play on tap without the Android
     // WebView default "requires user gesture" gate swallowing play().
@@ -481,15 +726,27 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       );
       if (uris.isEmpty) return uris;
       final bridge = ref.read(runtimeBridgeProvider);
+      final isRemoteHttp = ref.read(activeHostProvider).kind == HostKind.http;
       final teamImport = _isTeamImportAccept(params.acceptTypes);
       final pass = <String>[];
       final notes = <String>[];
       final stagedPacks = <StagedInboxFile>[];
+      final budgetMb = _webAttachBudgetBytes ~/ (1024 * 1024);
       for (final uri in uris) {
         final probe = await bridge.probeContentUri(uri);
         final bytes = probe?.bytes ?? -1;
         final name = probe?.name ?? 'file';
         if (bytes > _webAttachBudgetBytes) {
+          // Guest inbox only exists for the on-device Host. Remote HTTP Face
+          // uploads must stay under the WebView/Face byte budget.
+          if (isRemoteHttp) {
+            // No resumable paperclip upload over WAN; Face base64 budget is hard.
+            notes.add(
+              '远程 Host 上「$name」超过 ${budgetMb}MB：纸夹不能直传（无断点续传）。'
+              '请先放到 Host 工作区再用 @ 引用，或改用本机 Host。',
+            );
+            continue;
+          }
           final staged = await bridge.stageInboxUri(uri: uri, name: name);
           if (staged == null) {
             notes.add('复制进机内工作区失败：$name');
@@ -573,6 +830,11 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     }
     final op = payload?['op']?.toString();
     if (op == 'restartEngine') {
+      // Remote HTTP Face has no on-device engine to bounce.
+      if (ref.read(activeHostProvider).kind == HostKind.http) {
+        _toast('远程 Host 无需重启本机引擎');
+        return;
+      }
       _toast('正在重启引擎以使手机工具生效…');
       final ok = await EngineControl.restart(ref.container);
       if (!mounted) return;
@@ -628,12 +890,30 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     );
   }
 
+  /// Face WebView selection → [currentSessionProvider] → phone bridge bind.
+  void _onFaceSession(String message) {
+    final state = DshWebState.parse(message);
+    if (state == null || !mounted) return;
+    final id = state.sessionId;
+    _faceSessionId = id;
+    if (ref.read(currentSessionProvider) == id) {
+      if (id != null && ref.read(activeHostProvider).kind == HostKind.http) {
+        unawaited(_syncPhoneBridge());
+      }
+      return;
+    }
+    ref.read(currentSessionProvider.notifier).select(id);
+  }
+
   Future<void> _onPageFinished() async {
     final js = _openBridgeJs ?? await rootBundle.loadString('assets/web/xrk_web_open.js');
     _openBridgeJs = js;
     final controller = _controller;
     if (controller == null) return;
     await controller.runJavaScript(js);
+    // Report Face session selection so remote phone_* can bindSession.
+    final stateJs = await rootBundle.loadString('assets/web/xrk_web_state.js');
+    await controller.runJavaScript(stateJs);
     // Host Settings › phone can request an engine restart after enable/disable.
     await controller.runJavaScript(r'''
 (function(){
@@ -658,6 +938,39 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       _pendingCompose = null;
       await _composeIntoWeb(pending);
     }
+    // After PIN the Face WebView holds device/session cookies — harvest for bridge.
+    if (ref.read(activeHostProvider).kind == HostKind.http) {
+      unawaited(_syncPhoneBridge(harvestCookies: true));
+    }
+  }
+
+  Future<void> _syncPhoneBridge({bool harvestCookies = false}) async {
+    final host = ref.read(activeHostProvider);
+    final isHttp = host.kind == HostKind.http;
+    final config = isHttp ? ref.read(hostsProvider).httpById(host.id) : null;
+    final link = isHttp ? ref.read(httpHostLinkProvider(host)) : null;
+    var session = _bridgeSession ?? link?.session;
+    // Force harvest on resume / Settings resync (Host may have reminted PIN).
+    // Otherwise harvest when we still lack operator proof (PIN-only Face).
+    final needHarvest =
+        harvestCookies || (isHttp && config != null && !(session?.hasOperatorProof ?? false));
+    if (needHarvest && config != null) {
+      final fromWeb = await readBridgeCookiesFromWebView(config);
+      if (fromWeb != null) {
+        _bridgeSession = fromWeb.asSession;
+        session = fromWeb.asSession;
+      }
+    }
+    final phone = ref.read(phoneProvider).status;
+    await _phoneBridge.sync(
+      isHttp: isHttp,
+      config: config,
+      session: session,
+      phoneEnabled: phone.enabled,
+      a11yOk: phone.a11y.ok,
+      phone: ref.read(phoneChannelProvider),
+      bindSessionId: ref.read(currentSessionProvider),
+    );
   }
 
   Future<void> _applyInsets({bool force = false}) async {
@@ -692,10 +1005,11 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     // Snap height only ([WebKeyboard]) — never mid-slide raw.
     final kb = _keyboard;
     final open = shellBallKeyboardOpen(kb);
+    final isHttp = ref.read(activeHostProvider).kind == HostKind.http;
     // While the IME covers the gesture bar, zero safe-bottom so InputBar /
     // AppFrame do not stack a second band above the keys.
     final safeBottom = open ? 0.0 : gesture;
-    final key = '$top|$right|$safeBottom|$left|$kb|root-pin';
+    final key = '$top|$right|$safeBottom|$left|$kb|$isHttp|root-pin';
     if (!force && key == _appliedInsetKey) return;
     _appliedInsetKey = key;
     // XRK path: WebView full-bleed; pin #root bottom to the keyboard top so
@@ -759,6 +1073,9 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   r.setAttribute("data-xrk-shell-keyboard","");
   if (${open}) r.setAttribute("data-xrk-keyboard","");
   else r.removeAttribute("data-xrk-keyboard");
+  // Face InputBar: remote HTTP cannot stage oversized into guest inbox.
+  if (${isHttp}) r.setAttribute("data-xrk-host-http","");
+  else r.removeAttribute("data-xrk-host-http");
   // Kill residual document scroll from WebView focus-pan.
   if (window.scrollY || window.scrollX) window.scrollTo(0, 0);
   if (root) root.scrollTop = 0;
@@ -803,10 +1120,29 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   Future<void> _openShellMenu() async {
     if (!mounted) return;
     // Host conversation settings need a finished WebView; otherwise engine status.
-    final hostReady = ref.read(localRuntimeProvider).status.isRunning && _pageReady;
-    final choice = await showShellQuickPanel(context, hostReady: hostReady);
+    final active = ref.read(activeHostProvider);
+    final hostReady = active.kind == HostKind.http
+        ? _pageReady
+        : ref.read(localRuntimeProvider).status.isRunning && _pageReady;
+    final hostName = ref.read(hostNameProvider(active));
+    final choice = await showShellQuickPanel(
+      context,
+      hostReady: hostReady,
+      activeHostLabel: hostLabel(active.kind, hostName),
+    );
     if (!mounted || choice == null) return;
     switch (choice) {
+      case ShellQuickAction.switchHost:
+        await showHostSheet(
+          context,
+          onManage: () {
+            unawaited(
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(builder: (_) => const RemoteScreen()),
+              ),
+            );
+          },
+        );
       case ShellQuickAction.phoneControl:
         await _openNativePhoneSettings();
       case ShellQuickAction.appSettings:
@@ -1040,6 +1376,109 @@ class _ShareOutcome {
   const _ShareOutcome({this.request, this.message});
   final ComposeRequest? request;
   final String? message;
+}
+
+/// Full-bleed overlay when the Face WebView fails to load (HTTP cleartext, refused, DNS).
+class _WebLoadErrorOverlay extends StatelessWidget {
+  const _WebLoadErrorOverlay({required this.detail, required this.onRetry});
+
+  final String detail;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return ColoredBox(
+      color: const Color(0xFF0B0B0C),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const BrandMark(size: 40),
+              const SizedBox(height: 24),
+              Text(
+                l10n.webPageNotOpened,
+                style: const TextStyle(color: Color(0xFFE8E8E6), fontSize: 20, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.webCheckConnection,
+                style: const TextStyle(color: Color(0xFFB8B8B4), fontSize: 14),
+              ),
+              if (detail.trim().isNotEmpty) ...[
+                const SizedBox(height: 16),
+                SelectableText(
+                  detail,
+                  style: const TextStyle(color: Color(0xFF8A8A86), fontSize: 12, fontFamily: 'monospace'),
+                ),
+              ],
+              const Spacer(),
+              FilledButton(
+                onPressed: onRetry,
+                child: Text(l10n.commonRetry),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Empty state while an HTTP Face host is connecting / failed.
+class _HttpLinkScaffold extends StatelessWidget {
+  const _HttpLinkScaffold({
+    required this.status,
+    this.hostName,
+    this.onRetry,
+    this.onBackLocal,
+  });
+
+  final HostLinkStatus status;
+  final String? hostName;
+  final VoidCallback? onRetry;
+  final VoidCallback? onBackLocal;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final view = HostStatusView.ofLink(status);
+    return ColoredBox(
+      color: const Color(0xFF0B0B0C),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const BrandMark(size: 40),
+              const SizedBox(height: 24),
+              Text(
+                hostName ?? l10n.commonRemoteHost,
+                style: const TextStyle(color: Color(0xFFE8E8E6), fontSize: 20, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Text(view.label, style: const TextStyle(color: Color(0xFFB8B8B4), fontSize: 14)),
+              const SizedBox(height: 20),
+              LinkProgressCard(
+                status: status,
+                steps: const [HostLinkStep.connect, HostLinkStep.login],
+                onRetry: onRetry,
+              ),
+              const Spacer(),
+              if (onBackLocal != null)
+                TextButton(
+                  onPressed: onBackLocal,
+                  child: Text(l10n.commonThisPhone, style: const TextStyle(color: Color(0xFFE8E8E6))),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _InterruptBanner extends StatelessWidget {

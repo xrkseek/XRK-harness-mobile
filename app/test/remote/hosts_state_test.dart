@@ -70,7 +70,12 @@ void main() {
 
   group('HostRef', () {
     test('round-trips and compares by kind + id', () {
-      for (final ref in [HostRef.local, const HostRef.ssh('ssh-1'), const HostRef.relay('mac', name: '家里的 Mac')]) {
+      for (final ref in [
+        HostRef.local,
+        const HostRef.ssh('ssh-1'),
+        const HostRef.relay('mac', name: '家里的 Mac'),
+        const HostRef.http('http-1'),
+      ]) {
         expect(HostRef.decode(ref.encode()), ref);
       }
       expect(HostRef.decode(const HostRef.relay('mac', name: 'A').encode()).name, 'A');

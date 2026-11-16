@@ -189,8 +189,11 @@ class PhoneController extends Notifier<PhoneState> {
       if (!out.ok) return const PhoneToggleResult(ok: false);
       state = state.copyWith(status: state.status.copyWith(enabled: out.enabled));
       if (out.needsRestart) {
+        // HTTP Face does not own the on-device engine — never bounce it for remount.
+        final onHttp = ref.read(activeHostProvider).kind == HostKind.http;
         final now = ref.read(localRuntimeProvider).status;
-        if (!now.inSafeMode &&
+        if (!onHttp &&
+            !now.inSafeMode &&
             (now.phase == RuntimePhase.running || now.phase == RuntimePhase.starting)) {
           restarting = true;
           unawaited(EngineControl.restart(ref.container));
@@ -414,9 +417,6 @@ enum PhoneBlocker {
 
   /// The local engine runs (or will start) the rescue profile, which loads no plugins.
   safeMode,
-
-  /// The chat is on a remote host; phone tools exist only in the local engine.
-  remoteHost,
 }
 
 final phoneBlockerProvider = Provider<PhoneBlocker?>((ref) {
@@ -425,7 +425,8 @@ final phoneBlockerProvider = Provider<PhoneBlocker?>((ref) {
   if (ref.watch(localRuntimeProvider.select((s) => s.status.inSafeMode))) {
     return PhoneBlocker.safeMode;
   }
-  if (!ref.watch(activeHostProvider).isLocal) return PhoneBlocker.remoteHost;
+  // HTTP remote Face drives phone_* through the phone bridge; a11y stays
+  // on-device. Never treat "active Host ≠ local" as a phone-control blocker.
   return null;
 });
 

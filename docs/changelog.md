@@ -3,6 +3,32 @@
 > **读者**：终端用户 · 维护者  
 > 产品名：**XRK Harness 手机版**。版本号与主仓 `@xrkseek/harness-cli` 同号。
 
+## 0.7.23 · 2026-11-16
+
+### 中文
+
+- 远程 HTTP 手机桥：App「在线」与 Host Settings 对齐（不再空等首轮 long-poll）
+- 远程 Host 不会误重启本机引擎；桥接 poll/报到加固
+- 配合 Host 插件 `@xrkseek/xrk-phone-bridge@0.7.23`（机内 guest 仍可为 0.7.22 runtime）
+
+### English
+
+- Remote HTTP phone bridge: App “online” aligns with Host Settings (no wait for first long-poll return)
+- Remote Host no longer restarts the on-device engine by mistake; bridge poll/announce hardened
+- Pairs with Host plugin `@xrkseek/xrk-phone-bridge@0.7.23` (on-device guest runtime may remain 0.7.22)
+
+## 0.7.19 · 2026-11-12
+
+### 中文
+
+- 机内 `@xrkseek/harness-cli@0.7.19`（概况打开位 · 手机侧栏互斥 · 插件/cwd 围栏）
+- 壳版本对齐主仓同号；runtime `r17-xrk0.7.19-…`
+
+### English
+
+- On-device `@xrkseek/harness-cli@0.7.19` (Overview-open bit · phone sidebar exclusion · plugin/cwd fence)
+- App version aligned with harness-cli; runtime `r17-xrk0.7.19-…`
+
 ## 0.7.18 · 2026-11-12
 
 ### 中文

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../runtime/runtime_bridge.dart';
 import '../runtime/runtime_state.dart';
 import 'engine_control.dart';
+import 'hosts_state.dart';
 import 'settings_state.dart';
 
 /// Cascade for Settings →「访问手机文件」:
@@ -44,7 +45,7 @@ abstract final class PhoneFilesControl {
     // SAF roots follow the preference even when the engine is stopped.
     await bridge.refreshDocumentRoots();
 
-    if (restartEngine) {
+    if (restartEngine && container.read(activeHostProvider).kind != HostKind.http) {
       final phase = container.read(localRuntimeProvider).status.phase;
       if (phase == RuntimePhase.running || phase == RuntimePhase.starting) {
         unawaited(EngineControl.restart(container));
