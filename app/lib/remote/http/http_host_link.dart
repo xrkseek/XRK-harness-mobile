@@ -77,6 +77,7 @@ class HttpHostLink {
   final _delay = InterruptibleDelay();
   final _backoff = Backoff();
   StreamSubscription<void>? _kickSub;
+  Timer? _keepAlive;
   HostLinkStatus _status = HostLinkStatus.idle;
   HttpHostSession? _session;
   Future<HttpHostSession>? _opening;
@@ -84,6 +85,9 @@ class HttpHostLink {
   bool _recovering = false;
   /// Reused across probe / pair / renew — WAN TLS handshakes are expensive.
   http.Client? _ownedClient;
+
+  /// Re-probe while green so the switcher does not stick on「已连接」after the tunnel dies.
+  static const keepAliveInterval = Duration(seconds: 20);
 
   static const deviceCookie = 'dsh_ma_device';
   static const sessionCookie = 'dsh_ma_session';
@@ -163,7 +167,27 @@ class HttpHostLink {
     final session = await _ensureSession();
     _session = session;
     _emit(const HostLinkStatus(HostLinkPhase.connected));
+    _startKeepAlive();
     return session;
+  }
+
+  /// WebView main-frame load failed after probe — demote「已连接」so the switcher refreshes.
+  void reportFaceFailure(String detail) {
+    if (_closed) return;
+    if (_status.phase != HostLinkPhase.connected && _status.phase != HostLinkPhase.reconnecting) {
+      return;
+    }
+    _stopKeepAlive();
+    _session = null;
+    _opening = null;
+    _fail(
+      HostLinkError(
+        HostLinkErrorKind.unreachable,
+        appL10n.commonConnectionFailed,
+        detail: detail,
+        retryable: true,
+      ),
+    );
   }
 
   Future<void> _probe() async {
@@ -450,7 +474,10 @@ class HttpHostLink {
     }
   }
 
-  void kick() => _delay.skip();
+  void kick() {
+    _delay.skip();
+    if (_status.isConnected) unawaited(_keepAliveTick());
+  }
 
   void retry() {
     if (_closed) return;
@@ -461,7 +488,36 @@ class HttpHostLink {
     if (_status.phase == HostLinkPhase.failed) {
       _opening = null;
       _session = null;
+      _backoff.reset();
       unawaited(open().catchError((_) => const HttpHostSession(deviceToken: '', sessionToken: '')));
+    }
+  }
+
+  void _startKeepAlive() {
+    _keepAlive?.cancel();
+    _keepAlive = Timer.periodic(keepAliveInterval, (_) => unawaited(_keepAliveTick()));
+  }
+
+  void _stopKeepAlive() {
+    _keepAlive?.cancel();
+    _keepAlive = null;
+  }
+
+  Future<void> _keepAliveTick() async {
+    if (_closed || !_status.isConnected || _recovering) return;
+    try {
+      await _probeHealth(_config.origin);
+    } on HostLinkError catch (e) {
+      _stopKeepAlive();
+      _session = null;
+      if (!e.retryable || !retryFirstOpen) {
+        _fail(e);
+        return;
+      }
+      _opening = null;
+      unawaited(
+        _recover(e).catchError((_) => const HttpHostSession(deviceToken: '', sessionToken: '')),
+      );
     }
   }
 
@@ -470,6 +526,7 @@ class HttpHostLink {
     _closed = true;
     await _kickSub?.cancel();
     _kickSub = null;
+    _stopKeepAlive();
     _delay.cancel();
     _session = null;
     final owned = _ownedClient;

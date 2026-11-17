@@ -134,4 +134,54 @@ void main() {
     expect(link.config.origin, 'https://tunnel.example:12345');
     expect(link.status.phase, HostLinkPhase.connected);
   });
+
+  test('reportFaceFailure demotes connected to failed', () async {
+    final client = MockClient((request) async {
+      if (request.url.path.endsWith('/mobile-access/health')) {
+        return http.Response(jsonEncode({'ok': true}), 200);
+      }
+      return http.Response('nope', 404);
+    });
+    final link = HttpHostLink(
+      config: config(),
+      secrets: secrets,
+      httpClient: client,
+      retryFirstOpen: false,
+    );
+    addTearDown(link.close);
+
+    await link.open();
+    expect(link.status.phase, HostLinkPhase.connected);
+    link.reportFaceFailure('net::ERR_CONNECTION_REFUSED');
+    expect(link.status.phase, HostLinkPhase.failed);
+    expect(link.session, isNull);
+    expect(link.status.error?.detail, contains('ERR_CONNECTION_REFUSED'));
+  });
+
+  test('keepalive health failure marks failed when retry disabled', () async {
+    var healthCalls = 0;
+    final client = MockClient((request) async {
+      if (request.url.path.endsWith('/mobile-access/health')) {
+        healthCalls++;
+        if (healthCalls == 1) {
+          return http.Response(jsonEncode({'ok': true}), 200);
+        }
+        throw const SocketException('unreachable');
+      }
+      return http.Response('nope', 404);
+    });
+    final link = HttpHostLink(
+      config: config(),
+      secrets: secrets,
+      httpClient: client,
+      retryFirstOpen: false,
+    );
+    addTearDown(link.close);
+
+    await link.open();
+    expect(link.status.phase, HostLinkPhase.connected);
+    link.kick(); // immediate keepalive tick
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(link.status.phase, HostLinkPhase.failed);
+  });
 }

@@ -307,6 +307,26 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       unawaited(_syncPhoneBridge());
     });
 
+    // HTTP Face dropped (WebView error / health keepalive): leave「已连接」and drop the WebView.
+    if (isHttp) {
+      ref.listen(hostLinkStatusProvider(activeHost), (prev, next) {
+        final phase = next.asData?.value.phase;
+        if (phase == null) return;
+        if (phase == HostLinkPhase.connected || phase == HostLinkPhase.connecting) return;
+        if (_controller == null && _webError == null) return;
+        _files.invalidate();
+        _controller = null;
+        _loadedUrl = null;
+        _pageReady = false;
+        _appliedInsetKey = null;
+        _httpCookieOrigin = null;
+        _webError = null;
+        _bridgeSession = null;
+        unawaited(_phoneBridge.dispose());
+        if (mounted) setState(() {});
+      });
+    }
+
     // Remote phone bridge: PIN session → announce 待批准; 操控+无障碍 → poll.
     ref.listen(
       phoneProvider.select((s) => (s.status.enabled, s.status.a11y.ok)),
@@ -747,6 +767,11 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
             }
             if (!mounted) return;
             setState(() => _webError = error.description);
+            // Probe can stay green while Face fails — demote link so 切换主机 refreshes.
+            final active = ref.read(activeHostProvider);
+            if (active.kind == HostKind.http) {
+              ref.read(httpHostLinkProvider(active))?.reportFaceFailure(error.description);
+            }
           },
         ),
       )
@@ -1192,6 +1217,8 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     );
     if (!mounted || choice == null) return;
     switch (choice) {
+      case ShellQuickAction.refresh:
+        await _refreshHostSurface();
       case ShellQuickAction.leaveSafeMode:
         await SafeModeActions.leave(context);
       case ShellQuickAction.switchHost:
@@ -1220,6 +1247,106 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
             MaterialPageRoute<void>(builder: (_) => const EngineScreen()),
           );
         }
+    }
+  }
+
+  /// Ball menu「刷新」: reload Face when live; otherwise re-probe / restart boot.
+  Future<void> _refreshHostSurface() async {
+    final active = ref.read(activeHostProvider);
+    if (active.kind == HostKind.http) {
+      final link = ref.read(httpHostLinkProvider(active));
+      if (link == null) {
+        _toast('主机未就绪');
+        return;
+      }
+      final phase = link.status.phase;
+      if (phase == HostLinkPhase.failed || phase == HostLinkPhase.idle) {
+        if (mounted) {
+          setState(() {
+            _files.invalidate();
+            _controller = null;
+            _loadedUrl = null;
+            _pageReady = false;
+            _appliedInsetKey = null;
+            _httpCookieOrigin = null;
+            _webError = null;
+            _bridgeSession = null;
+          });
+        }
+        unawaited(_phoneBridge.dispose());
+        if (phase == HostLinkPhase.failed) {
+          link.retry();
+        } else {
+          unawaited(
+            link.open().catchError((_) => const HttpHostSession(deviceToken: '', sessionToken: '')),
+          );
+        }
+        _toast('正在重新连接…');
+        return;
+      }
+      if (phase == HostLinkPhase.connecting || phase == HostLinkPhase.reconnecting) {
+        link.retry();
+        _toast('正在连接…');
+        return;
+      }
+      link.kick();
+    } else {
+      final status = ref.read(localRuntimeProvider).status;
+      if (!status.isRunning || status.baseUrl == null) {
+        if (mounted) {
+          setState(() {
+            _bootError = null;
+            _userStopped = false;
+            _bootStarted = false;
+          });
+        }
+        unawaited(_ensureBoot(force: true));
+        _toast('正在启动引擎…');
+        return;
+      }
+    }
+
+    String? url = _loadedUrl;
+    if (url == null) {
+      if (active.kind == HostKind.http) {
+        final origin = ref.read(hostsProvider).httpById(active.id)?.origin;
+        if (origin != null) url = '$origin/';
+      } else {
+        final status = ref.read(localRuntimeProvider).status;
+        final base = status.baseUrl;
+        if (base != null) url = localWebUri(base, status.token ?? '').toString();
+      }
+    }
+
+    final controller = _controller;
+    if (controller != null && url != null) {
+      if (mounted) {
+        setState(() {
+          _webError = null;
+          _pageReady = false;
+        });
+      }
+      try {
+        await controller.loadRequest(Uri.parse(url));
+        if (mounted) _toast('已刷新');
+      } catch (e) {
+        if (mounted) _toast('刷新失败：$e');
+      }
+      return;
+    }
+
+    // No live WebView — clear so the next build remounts Face.
+    if (mounted) {
+      setState(() {
+        _files.invalidate();
+        _controller = null;
+        _loadedUrl = null;
+        _pageReady = false;
+        _appliedInsetKey = null;
+        _httpCookieOrigin = null;
+        _webError = null;
+      });
+      _toast('已刷新');
     }
   }
 

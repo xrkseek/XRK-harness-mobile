@@ -4,12 +4,15 @@ import '../l10n/l10n.dart';
 
 /// Destinations offered by the settings-ball quick panel.
 ///
+/// [refresh] reloads the current Face (local WebView or remote HTTP).
 /// [hostSettings] requires a live Host WebView. [engineStatus] is the
 /// fallback when Host is down so the person can still open logs / start / stop.
 /// [switchHost] opens the device sheet (本机 / HTTP / SSH / relay).
 /// [leaveSafeMode] is offered only while the local engine is in safe mode so
 /// the person can leave without digging into Settings → 引擎.
 enum ShellQuickAction {
+  /// Always first in the panel — local or remote Face reload / reconnect.
+  refresh,
   leaveSafeMode,
   phoneControl,
   appSettings,
@@ -81,6 +84,12 @@ Future<ShellQuickAction?> showShellQuickPanel(
                     style: const TextStyle(color: Color(0xFFE8E8E6), fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
+              ),
+              tile(
+                icon: Icons.refresh,
+                title: l10n.webRefresh,
+                subtitle: '重新加载当前页面；连不上则重试连接',
+                value: ShellQuickAction.refresh,
               ),
               if (inSafeMode)
                 tile(

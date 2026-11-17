@@ -23,9 +23,10 @@ void main() {
     });
   });
 
-  group('ShellQuickAction.leaveSafeMode', () {
-    test('enum stays first so panel can surface leave ahead of other tiles', () {
-      expect(ShellQuickAction.values.first, ShellQuickAction.leaveSafeMode);
+  group('ShellQuickAction ordering', () {
+    test('refresh is first so the panel can pin it above other tiles', () {
+      expect(ShellQuickAction.values.first, ShellQuickAction.refresh);
+      expect(ShellQuickAction.values[1], ShellQuickAction.leaveSafeMode);
     });
   });
 }
