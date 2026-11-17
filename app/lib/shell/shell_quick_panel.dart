@@ -5,11 +5,12 @@ import '../l10n/l10n.dart';
 /// Destinations offered by the settings-ball quick panel.
 ///
 /// [refresh] reloads the current Face (local WebView or remote HTTP).
-/// [hostSettings] requires a live Host WebView. [engineStatus] is the
-/// fallback when Host is down so the person can still open logs / start / stop.
+/// [hostSettings] opens Host settings in the live WebView; omitted when Host
+/// is not ready (no engine-status fallback tile).
 /// [switchHost] opens the device sheet (本机 / HTTP / SSH / relay).
 /// [leaveSafeMode] is offered only while the local engine is in safe mode so
 /// the person can leave without digging into Settings → 引擎.
+/// [engineStatus] remains for callers that open the engine screen directly.
 enum ShellQuickAction {
   /// Always first in the panel — local or remote Face reload / reconnect.
   refresh,
@@ -21,9 +22,9 @@ enum ShellQuickAction {
   switchHost,
 }
 
-/// Which third tile the panel should offer for the current Host surface.
-ShellQuickAction shellQuickThirdAction({required bool hostReady}) =>
-    hostReady ? ShellQuickAction.hostSettings : ShellQuickAction.engineStatus;
+/// Host settings tile when Face is ready; otherwise null (hide the row).
+ShellQuickAction? shellQuickHostSettingsAction({required bool hostReady}) =>
+    hostReady ? ShellQuickAction.hostSettings : null;
 
 /// Bottom sheet opened by the settings ball. Returns null if dismissed.
 Future<ShellQuickAction?> showShellQuickPanel(
@@ -33,7 +34,7 @@ Future<ShellQuickAction?> showShellQuickPanel(
   bool inSafeMode = false,
 }) {
   final l10n = context.l10n;
-  final third = shellQuickThirdAction(hostReady: hostReady);
+  final hostTile = shellQuickHostSettingsAction(hostReady: hostReady);
   return showModalBottomSheet<ShellQuickAction>(
     context: context,
     backgroundColor: const Color(0xFF161618),
@@ -117,21 +118,13 @@ Future<ShellQuickAction?> showShellQuickPanel(
                 subtitle: '引擎 · 保活 · 外观 · 关于 · 更新',
                 value: ShellQuickAction.appSettings,
               ),
-              switch (third) {
-                ShellQuickAction.hostSettings => tile(
-                    icon: Icons.tune_outlined,
-                    title: '对话设置',
-                    subtitle: '模型 · 权限 · 插件 · Host 面板',
-                    value: ShellQuickAction.hostSettings,
-                  ),
-                ShellQuickAction.engineStatus => tile(
-                    icon: Icons.memory_outlined,
-                    title: '引擎状态',
-                    subtitle: '日志 · 启停 · 诊断（Host 未就绪）',
-                    value: ShellQuickAction.engineStatus,
-                  ),
-                _ => const SizedBox.shrink(),
-              },
+              if (hostTile == ShellQuickAction.hostSettings)
+                tile(
+                  icon: Icons.tune_outlined,
+                  title: 'Host 设置',
+                  subtitle: '模型 · 权限 · 插件 · Host 面板',
+                  value: ShellQuickAction.hostSettings,
+                ),
               const SizedBox(height: 8),
             ],
           ),

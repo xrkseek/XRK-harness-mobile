@@ -16,10 +16,10 @@ void main() {
     });
   });
 
-  group('shellQuickThirdAction', () {
-    test('Host ready → conversation settings; Host down → engine status', () {
-      expect(shellQuickThirdAction(hostReady: true), ShellQuickAction.hostSettings);
-      expect(shellQuickThirdAction(hostReady: false), ShellQuickAction.engineStatus);
+  group('shellQuickHostSettingsAction', () {
+    test('Host ready → Host settings; Host down → hidden', () {
+      expect(shellQuickHostSettingsAction(hostReady: true), ShellQuickAction.hostSettings);
+      expect(shellQuickHostSettingsAction(hostReady: false), isNull);
     });
   });
 

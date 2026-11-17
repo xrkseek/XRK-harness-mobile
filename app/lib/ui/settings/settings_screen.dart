@@ -43,7 +43,7 @@ abstract final class SettingsHues {
 /// Thin phone-shell settings hub for [LocalHostShell].
 ///
 /// Models / plugins / account / Host YAML live in the in-guest Web Settings
-/// (ball → 对话设置). This screen only lists shell-owned pages.
+/// (ball → Host 设置). This screen only lists shell-owned pages.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
