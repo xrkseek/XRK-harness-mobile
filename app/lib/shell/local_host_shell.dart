@@ -56,17 +56,14 @@ import '../ui/web/web_target.dart';
 import 'session_entry_page.dart';
 import 'shell_ball.dart';
 import 'shell_ball_visibility.dart';
+import 'share_file_lane.dart';
 import 'shell_host_download.dart';
 import 'shell_quick_panel.dart';
 import 'shell_toast.dart';
 
-/// Flutter→JS compose bridge base64 ceiling (WebView string OOM below Face's
-/// ~20 MiB). Share / open-with that land via this bridge use this limit.
-const _composeBase64BudgetBytes = 3 * 1024 * 1024;
-
 /// Face / Web paperclip byte-attachment ceiling (same order as Desktop).
 /// Larger picks: Desktop → `@path`; mobile local Host → copy into guest inbox.
-const _webAttachBudgetBytes = 20 * 1024 * 1024;
+const _webAttachBudgetBytes = shareFaceAttachBudgetBytes;
 
 /// Thin product shell: full-bleed WebView of xrkh UI after first-run setup.
 ///
@@ -814,7 +811,6 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       final pass = <String>[];
       final notes = <String>[];
       final stagedPacks = <StagedInboxFile>[];
-      final budgetMb = _webAttachBudgetBytes ~/ (1024 * 1024);
       for (final uri in uris) {
         final probe = await bridge.probeContentUri(uri);
         final bytes = probe?.bytes ?? -1;
@@ -823,11 +819,7 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
           // Guest inbox only exists for the on-device Host. Remote HTTP Face
           // uploads must stay under the WebView/Face byte budget.
           if (isRemoteHttp) {
-            // No resumable paperclip upload over WAN; Face base64 budget is hard.
-            notes.add(
-              '远程 Host 上「$name」超过 ${budgetMb}MB：纸夹不能直传（无断点续传）。'
-              '请先放到 Host 工作区再用 @ 引用，或改用本机 Host。',
-            );
+            notes.add(remoteShareTooLargeMessage(name, budgetBytes: _webAttachBudgetBytes));
             continue;
           }
           final staged = await bridge.stageInboxUri(uri: uri, name: name);
@@ -1406,31 +1398,51 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     }
   }
 
-  /// Attachment lanes (local Host):
-  /// - small → base64 into composer
-  /// - large / agent-pack zip → guest `$XRK_HOME/inbox/` + path text
-  /// Agent-pack import stays in the roster UI — no special prompt text here.
+  /// Attachment lanes:
+  /// - local small → base64 into composer
+  /// - local large / agent-pack → guest `$XRK_HOME/inbox/` + path text
+  /// - remote ≤ Face budget → base64 into composer (real upload via Face)
+  /// - remote over budget → refuse (no guest inbox on WAN)
   Future<_ShareOutcome> _ingestShare(IncomingShare share) async {
     final problems = <String>[for (final s in share.skipped) skippedText(s)];
     final attachments = <DraftAttachment>[];
     final pathNotes = <String>[];
     final bridge = ref.read(runtimeBridgeProvider);
+    final isRemoteHttp = ref.read(activeHostProvider).kind == HostKind.http;
+    final attachLimit =
+        isRemoteHttp ? shareFaceAttachBudgetBytes : shareComposeBridgeBudgetBytes;
 
     for (final file in share.files) {
       final length = _fileLength(file.path) ?? file.size;
-      // Packs always stage so roster import can see a guest path (even if small).
-      final forceStage = await _isAgentPack(file.path, file.name, length);
-      final pasteSafe = !forceStage && length != null && length <= _composeBase64BudgetBytes;
+      // Packs stage on local Host so roster import sees a guest path.
+      final forceStage =
+          !isRemoteHttp && await _isAgentPack(file.path, file.name, length);
+      final lane = shareFileLane(
+        isRemoteHttp: isRemoteHttp,
+        lengthBytes: length,
+        forceStagePack: forceStage,
+      );
 
-      if (pasteSafe) {
+      if (lane == ShareFileLane.rejectRemoteTooLarge) {
+        problems.add(remoteShareTooLargeMessage(file.name));
+        _discard(file.path);
+        continue;
+      }
+
+      if (lane == ShareFileLane.attachBytes) {
         try {
           final bytes = await File(file.path).readAsBytes();
-          if (bytes.length > _composeBase64BudgetBytes) {
-            // Unexpected growth — fall through to stage while the cache file still exists.
+          if (bytes.length > attachLimit) {
+            // Unexpected growth — local may still stage; remote must refuse.
+            if (isRemoteHttp) {
+              problems.add(remoteShareTooLargeMessage(file.name));
+              _discard(file.path);
+              continue;
+            }
           } else {
             final attachment = DraftAttachment.sniff(file.name, bytes);
             final problem = attachmentProblem(attachment) ??
-                attachmentBudgetProblem(0, attachment, limit: _composeBase64BudgetBytes);
+                attachmentBudgetProblem(0, attachment, limit: attachLimit);
             if (problem != null) {
               problems.add(problem);
             } else {
@@ -1544,7 +1556,7 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     if (lower.endsWith('.xrk-agent-pack')) return true;
     if (!lower.endsWith('.zip') && !lower.endsWith('.xrk-agent-pack')) return false;
     // Huge zips: skip full decode (RAM); only the dedicated extension counts as pack.
-    if (length != null && length > _composeBase64BudgetBytes) return false;
+    if (length != null && length > shareComposeBridgeBudgetBytes) return false;
     try {
       final input = InputFileStream(path);
       try {
