@@ -11,10 +11,10 @@
 //             the official modal layer and menus close on
 //   'popup'   a popover that closes on a touch elsewhere (the composer's
 //             suggestions, pickers, the Cordis panel) got one
-//   'drawer'  the sidebar as a drawer closed: the app's (phone layout) or
-//             XRK Web's own (official layout, phone widths)
-//   'panel'   the right panel covering the conversation (files, terminal)
-//             folded away
+//   'drawer'  a drawer closed: better-sidebar phone sheet, Face left rail,
+//             or legacy DSH / XRK Web sidebar drawer
+//   'panel'   Face Overview / Status sheet, or the right panel covering the
+//             conversation (files, terminal) folded away
 //   'page'    the main area went up a level: a plugin's page to the list, a
 //             subagent's conversation to its parent's
 //   'chat'    a full page (plugins, automations…) gave way to the
@@ -134,7 +134,29 @@
       }
     }
 
-    // 3. The sidebar as a drawer: the app's with the phone layout, XRK Web's
+    // 3. Face / XRK-Harness phone chrome (LocalHostShell product path).
+    //    better-sidebar drawer first (X / data-drawer-collapse), then AppFrame
+    //    Escape order: left session drawer → Overview / Status sheet.
+    var betterClose = lastShown(
+      '[data-dsh-panel-host][data-drawer-open] [data-drawer-collapse]'
+    );
+    if (betterClose) {
+      betterClose.click();
+      return 'drawer';
+    }
+    var face = document.querySelector('[data-dsh-frame][data-phone]');
+    if (face) {
+      if (!face.hasAttribute('data-sidebar-collapsed')) {
+        escape();
+        return 'drawer';
+      }
+      if (!face.hasAttribute('data-details-collapsed')) {
+        escape();
+        return 'panel';
+      }
+    }
+
+    // 4. Legacy DSH sidebar drawer: the app's with the phone layout, XRK Web's
     //    own in the official layout at phone widths (its toggle in the
     //    sidebar's logo row is the way a person folds it). Only the official
     //    layout: with the phone layout the frame is a drawer too, and its
@@ -154,7 +176,7 @@
       }
     }
 
-    // 4. The right panel covering the conversation.
+    // 5. The right panel covering the conversation.
     if (f && f.getAttribute('data-rightbar-fullscreen') === 'true') {
       var fold = lastShown('[data-slot="rightbar"] button[data-sidebar-right-toggle]');
       if (fold) {
@@ -166,7 +188,7 @@
     var main = document.querySelector('[data-slot="main"]');
     if (!main) return 'none';
 
-    // 5. Up a level inside the main area: a page's crumb (a plugin's page
+    // 6. Up a level inside the main area: a page's crumb (a plugin's page
     //    to the list), or the conversation's parent (a subagent's).
     var crumb =
       lastShown(':scope > section button[class*="_crumb"]', main) ||
@@ -176,7 +198,7 @@
       return 'page';
     }
 
-    // 6. A full page (plugins, automations…) in the conversation's place:
+    // 7. A full page (plugins, automations…) in the conversation's place:
     //    back to the conversation it covers (the client's stored selection;
     //    the sidebar marks none while a page is up), through its row in the
     //    sidebar. An archived one doesn't open.

@@ -12,8 +12,12 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 String? _node() {
-  for (final dir in (Platform.environment['PATH'] ?? '').split(':')) {
-    if (dir.isNotEmpty && File('$dir/node').existsSync()) return '$dir/node';
+  final sep = Platform.isWindows ? ';' : ':';
+  final exe = Platform.isWindows ? 'node.exe' : 'node';
+  for (final dir in (Platform.environment['PATH'] ?? '').split(sep)) {
+    if (dir.isNotEmpty && File('$dir${Platform.pathSeparator}$exe').existsSync()) {
+      return '$dir${Platform.pathSeparator}$exe';
+    }
   }
   return null;
 }
@@ -93,5 +97,14 @@ void main() {
     expect(out['reports'], [
       {'ok': true, 'step': null},
     ]);
+  }, skip: skip);
+
+  test('__xrkAppCompose and __dshAppCompose stay the same Lexical paste path', () async {
+    final out = await page({
+      'href': withFragment,
+      'stored': 's1',
+      'shown': true,
+    });
+    expect(out['composeAliasesSame'], isTrue);
   }, skip: skip);
 }

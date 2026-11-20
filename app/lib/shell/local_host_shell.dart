@@ -49,10 +49,12 @@ import '../ui/settings/settings_screen.dart';
 import '../ui/shell/brand_mark.dart';
 import '../ui/web/local_web_screen.dart';
 import '../pets/overlay_channel.dart';
+import '../ui/web/web_back.dart';
 import '../ui/web/web_file_chooser.dart';
 import '../ui/web/web_keyboard.dart';
 import '../ui/web/web_navigation.dart';
 import '../ui/web/web_target.dart';
+import '../ui/web/web_view_page.dart' show WebComposeResult;
 import 'session_entry_page.dart';
 import 'shell_ball.dart';
 import 'shell_ball_visibility.dart';
@@ -99,6 +101,8 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   StreamSubscription<IncomingShare>? _shares;
   StreamSubscription<LauncherEntry>? _launcherEntries;
   ComposeRequest? _pendingCompose;
+  /// Completes when the Face page reports via `XrkAppCompose` (share / open-with).
+  Completer<WebComposeResult>? _composing;
   final _files = WebFileChooser();
   EdgeInsets _padding = EdgeInsets.zero;
   /// Layout keyboard height from [WebKeyboard] (snap once per open/close).
@@ -122,6 +126,30 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   /// Last Face / native conversation id — skip re-open when Face reports it back.
   String? _faceSessionId;
   AppLifecycleListener? _lifecycle;
+
+  /// System back: Face overlays first (`xrk_web_back.js`), then WebView history,
+  /// then leave the app — same contract as [WebViewPage], wired for product home.
+  late final _backs = WebBackDispatcher(
+    askPage: () => _pageReady && _controller != null && _webError == null
+        ? _controller!.runJavaScriptReturningResult(WebBack.script)
+        : null,
+    canGoBack: () async {
+      final c = _controller;
+      if (c == null || _webError != null) return false;
+      try {
+        return await c.canGoBack();
+      } catch (_) {
+        return false;
+      }
+    },
+    goBack: () async {
+      final c = _controller;
+      if (c == null) return;
+      await c.goBack();
+    },
+    leave: _leaveApp,
+    isActive: () => mounted,
+  );
 
   @override
   void initState() {
@@ -513,11 +541,26 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
     // Safe-mode notices used to mount only under retired HomeShell — without
     // this wrapper, auto-entry after update/crash never surfaced a toast.
     // Keep phone turn-end / stop / confirm watchers + chat alerts alive too.
-    return SafeModeNoticeListener(
-      child: PhoneStopWatcher(
-        child: ChatAlertHost(child: body),
+    // PopScope: Android back closes Face layers first; only then leaves the app.
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) unawaited(_onSystemBack());
+      },
+      child: SafeModeNoticeListener(
+        child: PhoneStopWatcher(
+          child: ChatAlertHost(child: body),
+        ),
       ),
     );
+  }
+
+  Future<void> _onSystemBack() => _backs.press();
+
+  /// Background the task when nothing in Face remains to dismiss.
+  Future<void> _leaveApp() async {
+    if (!mounted) return;
+    await SystemNavigator.pop();
   }
 
   Future<void> _ackInterruption(String? batchToken) async {
@@ -779,6 +822,10 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       ..addJavaScriptChannel(
         'XrkAppState',
         onMessageReceived: (message) => _onFaceSession(message.message),
+      )
+      ..addJavaScriptChannel(
+        'XrkAppCompose',
+        onMessageReceived: (message) => _onComposeResult(message.message),
       );
     // TTS / <audio> bars in Host UI must play on tap without the Android
     // WebView default "requires user gesture" gate swallowing play().
@@ -1004,6 +1051,14 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
 })();''');
     // Session log / `<a download>` → XrkShell (Android WebView otherwise no-ops).
     await controller.runJavaScript(hostDownloadBridgeJs);
+    // System back inside Face (modals → better-sidebar → Overview → leave).
+    try {
+      await controller.runJavaScript(
+        await rootBundle.loadString('assets/web/xrk_web_back.js', cache: false),
+      );
+    } catch (_) {
+      // Error / blank document: next load injects again.
+    }
     // Page finished: host settings / insets need [_pageReady]. The settings
     // ball itself does not wait on this (see shell_ball_visibility.dart).
     if (mounted) setState(() => _pageReady = true);
@@ -1389,8 +1444,10 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
   Future<void> _onShare(IncomingShare share) async {
     final outcome = await _ingestShare(share);
     if (!mounted) return;
-    if (outcome.message != null) _toast(outcome.message!);
-    if (outcome.request == null) return;
+    if (outcome.request == null) {
+      if (outcome.refuse != null) _toast(outcome.refuse!);
+      return;
+    }
     if (_pageReady) {
       await _composeIntoWeb(outcome.request!);
     } else {
@@ -1414,7 +1471,6 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
 
     for (final file in share.files) {
       final length = _fileLength(file.path) ?? file.size;
-      // Packs stage on local Host so roster import sees a guest path.
       final forceStage =
           !isRemoteHttp && await _isAgentPack(file.path, file.name, length);
       final lane = shareFileLane(
@@ -1433,23 +1489,29 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
         try {
           final bytes = await File(file.path).readAsBytes();
           if (bytes.length > attachLimit) {
-            // Unexpected growth — local may still stage; remote must refuse.
             if (isRemoteHttp) {
               problems.add(remoteShareTooLargeMessage(file.name));
               _discard(file.path);
               continue;
             }
+            // Local oversize: fall through to guest inbox staging.
           } else {
             final attachment = DraftAttachment.sniff(file.name, bytes);
-            final problem = attachmentProblem(attachment) ??
-                attachmentBudgetProblem(0, attachment, limit: attachLimit);
-            if (problem != null) {
-              problems.add(problem);
+            // Face PASTE only reliably intakes images. Non-images (pdf/doc/…)
+            // looked like a dead hero composer — stage a guest path instead.
+            if (!attachment.isImage && !isRemoteHttp) {
+              // fall through to stageInbox (keep cache file on disk)
             } else {
-              attachments.add(attachment);
+              final problem = attachmentProblem(attachment) ??
+                  attachmentBudgetProblem(0, attachment, limit: attachLimit);
+              if (problem != null) {
+                problems.add(problem);
+              } else {
+                attachments.add(attachment);
+              }
+              _discard(file.path);
+              continue;
             }
-            _discard(file.path);
-            continue;
           }
         } catch (_) {
           problems.add(appL10n.stateShareReadFailed(file.name));
@@ -1472,59 +1534,95 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
       ...pathNotes,
     ];
     final text = textParts.join('\n\n');
-    if (attachments.isEmpty && text.isEmpty && problems.isEmpty) {
-      return const _ShareOutcome(message: '没有可导入的内容');
-    }
     if (attachments.isEmpty && text.isEmpty) {
-      return _ShareOutcome(message: problems.first);
+      return _ShareOutcome(refuse: problems.isEmpty ? '没有可导入的内容' : problems.first);
     }
-    final request = ComposeRequest(
-      text: text,
-      attachments: attachments,
-      problems: problems,
+    return _ShareOutcome(
+      request: ComposeRequest(text: text, attachments: attachments, problems: problems),
     );
-    final okMsg = pathNotes.isNotEmpty
-        ? (pathNotes.length == 1 ? pathNotes.first.split('\n').first : '已复制 ${pathNotes.length} 个文件进机内工作区')
-        : (attachments.isNotEmpty ? '已加入附件 ${attachments.length} 个' : null);
-    final warn = problems.isNotEmpty ? problems.first : null;
-    return _ShareOutcome(request: request, message: warn ?? okMsg);
   }
 
   static String _stagedPathNote(StagedInboxFile staged) {
     final mb = staged.bytes > 0 ? '（${(staged.bytes / (1024 * 1024)).toStringAsFixed(1)} MB）' : '';
+    // Path for the agent — not a user-facing success toast.
     return '已复制进机内工作区：${staged.guestPath}$mb';
   }
 
+  void _onComposeResult(String message) {
+    final done = _composing;
+    if (done == null || done.isCompleted) return;
+    done.complete(WebComposeResult.parse(message));
+  }
+
+  /// Drop share / open-with / shortcut draft into Face composer.
+  ///
+  /// Bridge: hero empty chat and multi-turn bar share the same input; phone
+  /// sidebar / settings leave the composer `inert` — then copy text to clipboard.
   Future<void> _composeIntoWeb(ComposeRequest request) async {
     final controller = _controller;
-    if (controller == null) {
+    if (controller == null || !_pageReady) {
       _pendingCompose = request;
       return;
     }
-    if (request.problems.isNotEmpty && request.attachments.isEmpty && request.text.trim().isEmpty) {
-      _toast(request.problems.first);
-      return;
-    }
+    final problems = [...request.problems];
+    final text = request.text.trim();
+    // Only images ride the paperclip paste path; docs already became path text.
     final files = [
       for (final a in request.attachments)
-        {
-          'name': a.name,
-          'type': a.mediaType ?? 'application/octet-stream',
-          'data': base64Encode(a.bytes),
-        },
+        if ((a.mediaType ?? '').toLowerCase().startsWith('image/'))
+          {
+            'name': a.name,
+            'type': a.mediaType ?? 'application/octet-stream',
+            'data': base64Encode(a.bytes),
+          },
     ];
-    final draft = {'text': request.text, 'files': files};
-    try {
-      await controller.runJavaScript(
-        'var _c=window.__xrkAppCompose||window.__dshAppCompose; _c && _c(${jsonEncode(draft)});',
-      );
-    } catch (_) {
-      _toast('写入对话失败，请重试');
+    if (text.isEmpty && files.isEmpty) {
+      if (problems.isNotEmpty) _toast(problems.first);
       return;
     }
-    if (request.problems.isNotEmpty) {
-      _toast(request.problems.first);
+
+    final prev = _composing;
+    if (prev != null && !prev.isCompleted) {
+      prev.complete(const WebComposeResult(reason: 'superseded'));
     }
+    final done = _composing = Completer<WebComposeResult>();
+    final draft = {'text': text, 'files': files};
+    try {
+      await controller.runJavaScript(
+        'var _c=window.__dshAppCompose||window.__xrkAppCompose; _c && _c(${jsonEncode(draft)});',
+      );
+    } catch (_) {
+      if (!done.isCompleted) done.complete(const WebComposeResult(reason: 'js_error'));
+    }
+
+    final result = await done.future.timeout(
+      const Duration(seconds: 18),
+      onTimeout: () => const WebComposeResult(reason: 'timeout'),
+    );
+    if (identical(_composing, done)) _composing = null;
+    if (result.reason == 'superseded') return;
+
+    final blocked = result.reason == 'sidebar' ||
+        result.reason == 'settings' ||
+        result.reason == 'no_composer';
+    final textMissed = text.isNotEmpty && !result.text;
+    final filesMissed = files.length > result.files;
+
+    // Sidebar / settings / missing composer: clipboard real text (WebHome).
+    String? toast;
+    if (textMissed || (blocked && text.isNotEmpty)) {
+      try {
+        await Clipboard.setData(ClipboardData(text: text));
+        toast = appL10n.webTextCopied;
+      } catch (_) {
+        toast = '写入对话失败，请重试';
+      }
+    } else if (filesMissed) {
+      toast = appL10n.webAttachmentFailed;
+    } else if (problems.isNotEmpty) {
+      toast = problems.first;
+    }
+    if (toast != null) _toast(toast);
   }
 
   void _toast(String message, {String? actionLabel, VoidCallback? onAction}) {
@@ -1574,9 +1672,10 @@ class _LocalHostShellState extends ConsumerState<LocalHostShell> {
 }
 
 class _ShareOutcome {
-  const _ShareOutcome({this.request, this.message});
+  const _ShareOutcome({this.request, this.refuse});
   final ComposeRequest? request;
-  final String? message;
+  /// Set only when [request] is null (nothing to compose).
+  final String? refuse;
 }
 
 /// Full-bleed overlay when the Face WebView fails to load (HTTP cleartext, refused, DNS).

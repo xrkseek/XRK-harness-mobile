@@ -3,6 +3,44 @@
 > **读者**：终端用户 · 维护者  
 > 产品名：**XRK Harness 手机版**。版本号与主仓 `@xrkseek/harness-cli` 同号。
 
+## 0.8.2 · 2026-11-20
+
+### 中文
+
+- 产品主页系统返回与 WebViewPage 同契约：先关 Face 浮层 / better-sidebar / 概况，再 history，最后退应用
+- 打开方式 / 分享经 `XrkAppCompose` 写入 Lexical；`__xrkAppCompose` 与 `__dshAppCompose` 双别名同步（修空输入框假成功）
+- VIEW 打开可从 `intent.data` 取 `file:`；分享页仍拒裸 file URI
+- 下载桥补 Office MIME（ppt/doc/xls），便于系统打开
+- 机内 guest 对齐主仓 `@xrkseek/harness-cli@0.8.2`
+
+### English
+
+- Product-home system back matches WebViewPage: dismiss Face overlays / better-sidebar / Overview, then history, then leave
+- Open-with / share land via `XrkAppCompose` into Lexical; `__xrkAppCompose` and `__dshAppCompose` stay in sync (fixes empty-composer false success)
+- VIEW open-with may read `file:` from `intent.data`; share sheet still rejects bare file URIs
+- Download bridge adds Office MIME (ppt/doc/xls) for system openers
+- Guest engine aligns to `@xrkseek/harness-cli@0.8.2`
+
+## 0.8.1 · 2026-11-20
+
+### 中文
+
+- 壳与 guest 对齐主仓 `0.8.1`（present 画廊 · 停止全部 · 展开保锚 · admit 复用）
+
+### English
+
+- App + guest align to harness-cli `0.8.1` (present gallery · Stop all · expand-anchor · admit reuse)
+
+## 0.8.0 · 2026-11-19
+
+### 中文
+
+- 壳与 guest 对齐主仓 `0.8.0`；远程分享走 Face 附件；自签 HTTPS / 裸 host:port 升级等见主仓发行说明
+
+### English
+
+- App + guest align to harness-cli `0.8.0`; remote shares via Face attachments; self-signed HTTPS / bare host:port upgrades — see main-repo release notes
+
 ## 0.7.23 · 2026-11-16
 
 ### 中文

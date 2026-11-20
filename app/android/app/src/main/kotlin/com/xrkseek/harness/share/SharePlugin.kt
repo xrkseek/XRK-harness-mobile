@@ -100,11 +100,20 @@ class SharePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
     /** Starts reading what [intent] shares; false when it isn't a share. */
     private fun take(intent: Intent): Boolean {
         if (intent.action != ACTION_SHARE) return false
+        // Open-with (LinkTrampoline remaps ACTION_VIEW → ACTION_SHARE) may leave
+        // the URI only on intent.data; share-sheet SEND always uses EXTRA_STREAM.
+        val sentAs = intent.getStringExtra(EXTRA_SENT_AS)
+        val openWithView = sentAs == Intent.ACTION_VIEW
+        var streams = streamsOf(intent)
+        if (streams.isEmpty() && openWithView) {
+            intent.data?.let { streams = listOf(it) }
+        }
         val share = Received(
             text = textOf(intent),
             subject = intent.getStringExtra(Intent.EXTRA_SUBJECT)?.trim()?.takeIf { it.isNotEmpty() },
-            streams = streamsOf(intent),
+            streams = streams,
             type = intent.type,
+            allowFileUri = openWithView,
         )
         if (share.text == null && share.streams.isEmpty()) return true
         worker.execute {
@@ -119,7 +128,14 @@ class SharePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
         return true
     }
 
-    private class Received(val text: String?, val subject: String?, val streams: List<Uri>, val type: String?)
+    private class Received(
+        val text: String?,
+        val subject: String?,
+        val streams: List<Uri>,
+        val type: String?,
+        /** `file:` only for open-with VIEW — never for the share sheet. */
+        val allowFileUri: Boolean = false,
+    )
 
     // Reading
 
@@ -136,7 +152,12 @@ class SharePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
                     skipped += skip(null, "too_many")
                     continue
                 }
-                val item = readOne(uri, slot, if (share.streams.size == 1) share.type else null)
+                val item = readOne(
+                    uri,
+                    slot,
+                    if (share.streams.size == 1) share.type else null,
+                    allowFileUri = share.allowFileUri,
+                )
                 if (item.file == null) {
                     skipped += skip(item.name, item.problem ?: "unreadable")
                     continue
@@ -161,25 +182,42 @@ class SharePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
 
     private class Item(val file: File?, val name: String?, val mime: String?, val problem: String? = null)
 
-    private fun readOne(uri: Uri, slot: File, fallbackType: String?): Item {
-        if (!readable(uri)) return Item(null, null, null, "unreadable")
+    private fun readOne(uri: Uri, slot: File, fallbackType: String?, allowFileUri: Boolean = false): Item {
+        if (!readable(uri, allowFileUri = allowFileUri)) return Item(null, null, null, "unreadable")
         val resolver = context.contentResolver
+        val scheme = uri.scheme?.lowercase()
         var name: String? = null
         var size = -1L
-        try {
-            resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null)?.use {
-                if (it.moveToFirst()) {
-                    val n = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    val s = it.getColumnIndex(OpenableColumns.SIZE)
-                    if (n >= 0 && !it.isNull(n)) name = it.getString(n)
-                    if (s >= 0 && !it.isNull(s)) size = it.getLong(s)
-                }
+        if (scheme == "file") {
+            val path = uri.path
+            val source = if (path.isNullOrEmpty()) null else File(path)
+            if (source == null || !source.isFile || !source.canRead()) {
+                return Item(null, uri.lastPathSegment, null, "unreadable")
             }
-        } catch (_: Exception) {
-            // Some providers answer only openInputStream.
+            name = source.name
+            size = source.length()
+        } else {
+            try {
+                resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null)?.use {
+                    if (it.moveToFirst()) {
+                        val n = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        val s = it.getColumnIndex(OpenableColumns.SIZE)
+                        if (n >= 0 && !it.isNull(n)) name = it.getString(n)
+                        if (s >= 0 && !it.isNull(s)) size = it.getLong(s)
+                    }
+                }
+            } catch (_: Exception) {
+                // Some providers answer only openInputStream.
+            }
         }
-        val mime = (try { resolver.getType(uri) } catch (_: Exception) { null })
-            ?: fallbackType?.takeUnless { it.contains('*') }
+        val mime = when (scheme) {
+            "file" -> fallbackType?.takeUnless { it.contains('*') }
+                ?: MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    (name ?: uri.lastPathSegment)?.substringAfterLast('.', "")?.lowercase().orEmpty(),
+                )
+            else -> (try { resolver.getType(uri) } catch (_: Exception) { null })
+                ?: fallbackType?.takeUnless { it.contains('*') }
+        }
         val shown = ShareNames.withExtension(
             ShareNames.safeName(name ?: uri.lastPathSegment ?: ShareNames.fallbackName(mime,
                 AppStrings.get(context, R.string.share_file), AppStrings.get(context, R.string.share_image),
@@ -189,7 +227,7 @@ class SharePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
         )
         val target = ShareNames.unique(slot, shown)
 
-        if (ShareImages.scalable(mime)) {
+        if (scheme != "file" && ShareImages.scalable(mime)) {
             try {
                 ShareImages.prepare(resolver, uri, target)?.let { return Item(it, shown, ShareImages.mimeOf(it), null) }
             } catch (_: Throwable) {
@@ -198,7 +236,12 @@ class SharePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
         }
         if (size > MAX_FILE_BYTES) return Item(null, shown, mime, "too_large")
         val input = try {
-            resolver.openInputStream(uri)
+            if (scheme == "file") {
+                val path = uri.path ?: return Item(null, shown, mime, "unreadable")
+                java.io.FileInputStream(File(path))
+            } else {
+                resolver.openInputStream(uri)
+            }
         } catch (_: Exception) {
             null
         } ?: return Item(null, shown, mime, "unreadable")
@@ -233,12 +276,26 @@ class SharePlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHandle
         else -> MimeTypeMap.getSingleton().getExtensionFromMimeType(mime)
     }
 
-    /** Another app's `content:` URI. */
-    private fun readable(uri: Uri): Boolean {
-        if (uri.scheme?.lowercase() != "content") return false
-        val authority = uri.authority ?: return false
-        val own = context.packageName
-        return authority.split(';').none { it == own || it.startsWith("$own.") }
+    /**
+     * Readable intake URI: another app's `content:`, or (open-with only) a
+     * world-readable `file:` path. Share-sheet SEND never accepts `file:` —
+     * that would let a sender point at this app's private files.
+     */
+    private fun readable(uri: Uri, allowFileUri: Boolean = false): Boolean {
+        when (uri.scheme?.lowercase()) {
+            "content" -> {
+                val authority = uri.authority ?: return false
+                val own = context.packageName
+                return authority.split(';').none { it == own || it.startsWith("$own.") }
+            }
+            "file" -> {
+                if (!allowFileUri) return false
+                val path = uri.path ?: return false
+                val file = File(path)
+                return file.isFile && file.canRead()
+            }
+            else -> return false
+        }
     }
 
     private fun skip(name: String?, reason: String): Map<String, Any?> = mapOf("name" to name, "reason" to reason)

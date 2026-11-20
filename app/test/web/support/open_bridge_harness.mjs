@@ -73,4 +73,8 @@ await new Promise((r) => setTimeout(r, 200));
 out.stored = localStorage.dump()['dsh.sessions.current'] || null;
 out.pending = sessionStorage.dump()['dsh-app-open-pending'] || null;
 out.href = href;
+// LocalHostShell prefers __xrkAppCompose; it must be the Lexical paste path.
+out.composeAliasesSame =
+  typeof window.__dshAppCompose === 'function' &&
+  window.__xrkAppCompose === window.__dshAppCompose;
 process.stdout.write(JSON.stringify(out));

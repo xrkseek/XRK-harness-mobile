@@ -32,81 +32,15 @@
 // that ran out of time or found nothing says which step, and the page stays
 // where it got to (the Plugins page for a card it couldn't find).
 (function () {
-  // Share / "open with" from Android: drop text + files onto the composer.
-  // files: [{name, type, data: base64}]. Reports via XrkAppCompose when present.
-  if (!window.__xrkAppCompose && !window.__dshAppCompose) {
-    window.__xrkAppCompose = window.__dshAppCompose = function (draft) {
-      draft = draft || {};
-      var text = typeof draft.text === 'string' ? draft.text : '';
-      var files = Array.isArray(draft.files) ? draft.files : [];
-      function b64ToBlob(b64, type) {
-        var bin = atob(b64);
-        var bytes = new Uint8Array(bin.length);
-        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        return new Blob([bytes], { type: type || 'application/octet-stream' });
-      }
-      function composer() {
-        return document.querySelector('[data-composer-input]')
-          || document.querySelector('[contenteditable="true"]')
-          || document.querySelector('textarea')
-          || document.querySelector('[role="textbox"]');
-      }
-      function report(okText, nFiles) {
-        try {
-          if (window.XrkAppCompose) window.XrkAppCompose.postMessage(JSON.stringify({ text: !!okText, files: nFiles || 0 }));
-        } catch (e) {}
-      }
-      function insertText(el, value) {
-        if (!value) return false;
-        el.focus();
-        if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
-          var start = el.selectionStart || el.value.length;
-          el.value = el.value.slice(0, start) + value + el.value.slice(el.selectionEnd || start);
-          el.dispatchEvent(new Event('input', { bubbles: true }));
-          return true;
-        }
-        try {
-          return document.execCommand('insertText', false, value);
-        } catch (e) {
-          el.textContent = (el.textContent || '') + value;
-          el.dispatchEvent(new Event('input', { bubbles: true }));
-          return true;
-        }
-      }
-      function dropFiles(el, list) {
-        if (!list.length) return 0;
-        var dt = new DataTransfer();
-        for (var i = 0; i < list.length; i++) {
-          var spec = list[i];
-          if (!spec || !spec.data) continue;
-          var blob = b64ToBlob(spec.data, spec.type);
-          var file = new File([blob], spec.name || ('file-' + i), { type: spec.type || blob.type });
-          dt.items.add(file);
-        }
-        if (!dt.files.length) return 0;
-        var evInit = { bubbles: true, cancelable: true, dataTransfer: dt };
-        el.dispatchEvent(new DragEvent('dragenter', evInit));
-        el.dispatchEvent(new DragEvent('dragover', evInit));
-        el.dispatchEvent(new DragEvent('drop', evInit));
-        return dt.files.length;
-      }
-      var started = Date.now();
-      function tryOnce() {
-        var el = composer();
-        if (!el) {
-          if (Date.now() - started < 8000) return setTimeout(tryOnce, 200);
-          return report(false, 0);
-        }
-        var textOk = insertText(el, text);
-        var n = 0;
-        try { n = dropFiles(el, files); } catch (e) { n = 0; }
-        report(textOk, n);
-      }
-      tryOnce();
-    };
+  // Share / "open with": LocalHostShell prefers __xrkAppCompose; the Lexical
+  // paste path below must own *both* aliases. An earlier drag/drop stub left
+  // __xrkAppCompose stale while only __dshAppCompose was upgraded — open-with
+  // then looked like a successful launch with an empty composer.
+  function syncComposeAliases() {
+    if (window.__dshAppCompose) window.__xrkAppCompose = window.__dshAppCompose;
+    else if (window.__xrkAppCompose) window.__dshAppCompose = window.__xrkAppCompose;
   }
-  if (window.__dshAppCompose && !window.__xrkAppCompose) window.__xrkAppCompose = window.__dshAppCompose;
-  if (window.__xrkAppCompose && !window.__dshAppCompose) window.__dshAppCompose = window.__xrkAppCompose;
+  syncComposeAliases();
   if (window.__dshAppOpen) return;
 
   var PENDING = 'dsh-app-open-pending';
@@ -378,12 +312,33 @@
     return true;
   }
 
-  // The composer's editor (Lexical: one contenteditable root) that is on
-  // screen, the last one if several are mounted.
+  function settingsModalOpen() {
+    return !!document.querySelector('[data-shortcut-modal="settings"]');
+  }
+
+  // Phone sidebar drawer sets CenterColumn `inert` — composer still has layout
+  // rects but cannot take focus/paste. Treat as blocked → shell clipboards.
+  function phoneSidebarOpen() {
+    var frame = document.querySelector('[data-dsh-frame][data-phone]');
+    return !!(frame && !frame.hasAttribute('data-sidebar-collapsed'));
+  }
+
+  function composeBlockedReason() {
+    if (settingsModalOpen()) return 'settings';
+    if (phoneSidebarOpen()) return 'sidebar';
+    return null;
+  }
+
+  // Face composer: prefer data-composer-input; skip inert ancestors (drawer).
   function composerEditor() {
-    var editors = document.querySelectorAll('[data-lexical-editor="true"][contenteditable="true"]');
-    for (var i = editors.length - 1; i >= 0; i--) {
-      if (editors[i].getClientRects().length) return editors[i];
+    var nodes = document.querySelectorAll(
+      '[data-composer-input][contenteditable="true"], [data-lexical-editor="true"][contenteditable="true"]',
+    );
+    for (var i = nodes.length - 1; i >= 0; i--) {
+      var el = nodes[i];
+      if (!el.getClientRects().length) continue;
+      if (el.closest('[inert]')) continue;
+      return el;
     }
     return null;
   }
@@ -394,42 +349,121 @@
     } catch (e) {}
   }
 
+  // Draft attachment thumbnails live under the composer card (no stable
+  // data-attachment-id in Face today).
   function attachmentCount() {
-    return document.querySelectorAll('[data-attachment-id], [data-file-reference], [data-lexical-decorator="true"]').length;
+    var card = document.querySelector('[data-composer-card]');
+    if (!card) return 0;
+    return card.querySelectorAll('img[src^="blob:"], img[src^="data:"], [data-composer-attachment]').length;
   }
 
-  window.__dshAppCompose = async function (draft) {
-    var result = { text: false, files: 0 };
-    // After whatever the app opened just before (a new conversation).
-    try { await window.__dshAppOpening; } catch (e) {}
-    var editor = await waitFor(composerEditor, 10000);
-    if (!editor) return post('XrkAppCompose', result);
-    var text = (draft && draft.text) || '';
-    var files = (draft && draft.files) || [];
-    editor.focus();
+  function fileFromSpec(spec, index) {
+    var raw = atob(spec.data || '');
+    var bytes = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    return new File([bytes], spec.name || ('file-' + index), {
+      type: spec.type || 'application/octet-stream',
+    });
+  }
+
+  async function pastePlainText(editor, text) {
+    if (!text) return false;
     var before = editor.textContent || '';
-    var beforeFiles = attachmentCount();
+    var probe = text.trim().slice(0, 24);
     try {
       var data = new DataTransfer();
-      if (text) data.setData('text/plain', text);
-      files.forEach(function (f) {
-        var raw = atob(f.data || '');
-        var bytes = new Uint8Array(raw.length);
-        for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-        data.items.add(new File([bytes], f.name, { type: f.type || 'application/octet-stream' }));
-      });
-      editor.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+      data.setData('text/plain', text);
+      editor.dispatchEvent(new ClipboardEvent('paste', {
+        clipboardData: data, bubbles: true, cancelable: true,
+      }));
     } catch (e) {}
-    await sleep(400);
-    var probe = text.trim().slice(0, 24);
-    var landed = function () { return !probe || (editor.textContent || '').indexOf(probe) >= 0; };
-    if (text && !landed() && (editor.textContent || '') === before) {
-      // No paste handling for text: type it in instead.
+    await sleep(300);
+    var landed = !probe || (editor.textContent || '').indexOf(probe) >= 0;
+    if (!landed && (editor.textContent || '') === before) {
       try { document.execCommand('insertText', false, text); } catch (e) {}
       await sleep(200);
+      landed = !probe || (editor.textContent || '').indexOf(probe) >= 0;
     }
-    result.text = !!text && landed();
-    result.files = Math.max(0, attachmentCount() - beforeFiles);
+    return landed;
+  }
+
+  async function pasteFiles(editor, files) {
+    if (!files.length) return 0;
+    var before = attachmentCount();
+    try {
+      var data = new DataTransfer();
+      for (var i = 0; i < files.length; i++) data.items.add(files[i]);
+      if (!data.files.length) return 0;
+      editor.dispatchEvent(new ClipboardEvent('paste', {
+        clipboardData: data, bubbles: true, cancelable: true,
+      }));
+    } catch (e) {
+      return 0;
+    }
+    await sleep(450);
+    return Math.max(0, attachmentCount() - before);
+  }
+
+  async function waitComposer(ms) {
+    var until = Date.now() + (ms || 8000);
+    while (Date.now() <= until) {
+      if (composeBlockedReason()) return null;
+      var el = composerEditor();
+      if (el) return el;
+      await sleep(120);
+    }
+    return null;
+  }
+
+  // Usable composer, or null (settings / phone sidebar / no editable field).
+  // Hero empty chat (向阳而生) and multi-turn bottom bar share data-composer-input.
+  async function ensureComposerForShare() {
+    if (composeBlockedReason()) return null;
+    var editor = await waitComposer(2500);
+    if (editor) return editor;
+    if (composeBlockedReason()) return null;
+    // No session mounted at all — open 新会话 once, then wait.
+    if (!document.querySelector('[data-conversation-session]')) {
+      try {
+        window.__dshAppOpen({ newSession: true });
+        if (window.__dshAppOpening) await window.__dshAppOpening;
+      } catch (e) {}
+      return waitComposer(12000);
+    }
+    return waitComposer(6000);
+  }
+
+  // Paste text and files as SEPARATE events. Face's PASTE_COMMAND returns
+  // early on files and never inserts text/plain from the same clipboard —
+  // combining them made open-with look like a dead hero composer.
+  window.__dshAppCompose = window.__xrkAppCompose = async function (draft) {
+    var result = { text: false, files: 0, reason: null };
+    try { await window.__dshAppOpening; } catch (e) {}
+    var blocked = composeBlockedReason();
+    if (blocked) {
+      result.reason = blocked;
+      return post('XrkAppCompose', result);
+    }
+    var editor = await ensureComposerForShare();
+    if (!editor) {
+      result.reason = composeBlockedReason() || 'no_composer';
+      return post('XrkAppCompose', result);
+    }
+    var text = (draft && draft.text) || '';
+    var fileSpecs = (draft && draft.files) || [];
+    var files = [];
+    for (var i = 0; i < fileSpecs.length; i++) {
+      try { files.push(fileFromSpec(fileSpecs[i], i)); } catch (e) {}
+    }
+    try { editor.focus(); } catch (e) {}
+    await sleep(40);
+    if (text) result.text = await pastePlainText(editor, text);
+    if (files.length) result.files = await pasteFiles(editor, files);
+    if ((!text || result.text) && files.length > result.files && !result.reason) {
+      result.reason = 'files_partial';
+    } else if (text && !result.text && !result.reason) {
+      result.reason = 'text_missed';
+    }
     post('XrkAppCompose', result);
   };
 

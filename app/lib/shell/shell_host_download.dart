@@ -335,6 +335,17 @@ String _mimeFor(String name) {
   if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
   if (lower.endsWith('.pdf')) return 'application/pdf';
   if (lower.endsWith('.md') || lower.endsWith('.txt')) return 'text/plain';
+  // Office deliverables from Host chat / sidebar — SharePlus + open-with
+  // need a real MIME so Android chooser lists PowerPoint / Word / Excel.
+  if (lower.endsWith('.pptx') || lower.endsWith('.ppt')) {
+    return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+  }
+  if (lower.endsWith('.docx') || lower.endsWith('.doc')) {
+    return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  }
+  if (lower.endsWith('.xlsx') || lower.endsWith('.xls')) {
+    return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  }
   return 'application/octet-stream';
 }
 

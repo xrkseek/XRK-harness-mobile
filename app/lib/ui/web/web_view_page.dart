@@ -1395,14 +1395,19 @@ class DshWebLink {
 
 /// What [DshWebLink.compose] put in the composer.
 class WebComposeResult {
-  const WebComposeResult({this.text = false, this.files = 0});
+  const WebComposeResult({this.text = false, this.files = 0, this.reason});
 
   static WebComposeResult parse(String message) {
     try {
       final json = jsonDecode(message);
       if (json is! Map) return const WebComposeResult();
       final files = json['files'];
-      return WebComposeResult(text: json['text'] == true, files: files is int ? files : 0);
+      final reason = json['reason'];
+      return WebComposeResult(
+        text: json['text'] == true,
+        files: files is int ? files : 0,
+        reason: reason is String && reason.isNotEmpty ? reason : null,
+      );
     } on FormatException {
       return const WebComposeResult();
     }
@@ -1413,6 +1418,9 @@ class WebComposeResult {
 
   /// How many files the composer took.
   final int files;
+
+  /// Bridge hint when something missed (`no_composer`, `text_missed`, …).
+  final String? reason;
 }
 
 // DshWebState lives in web_target.dart (shared with LocalHostShell).
