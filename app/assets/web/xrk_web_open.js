@@ -69,7 +69,8 @@
     settings: {
       general: ['通用设置', 'General'],
       models: ['模型', 'Models'],
-      plugins: ['内置插件', 'Built-in plugins'],
+      // Current Face nav is 插件 / Plugins; keep legacy 内置插件 for older Web dist.
+      plugins: ['插件', 'Plugins', '内置插件', 'Built-in plugins'],
       'agent-presets': ['Agent 预设', 'Agent presets'],
       account: ['账号与余额', 'Account'],
       phone: ['手机操控', 'Phone control'],
