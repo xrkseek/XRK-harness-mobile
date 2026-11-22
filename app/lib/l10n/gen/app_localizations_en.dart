@@ -7216,6 +7216,12 @@ class L10nEn extends L10n {
   String get featuresExportSavedTitle => 'Log saved';
 
   @override
+  String get featuresFileSaving => 'Saving file';
+
+  @override
+  String get featuresFileSavedTitle => 'File saved';
+
+  @override
   String get featuresExportOpenOther => 'Open with another app';
 
   @override

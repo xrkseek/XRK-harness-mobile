@@ -25,6 +25,27 @@ void main() {
     );
   });
 
+  test('session-log vs workspace file copy routing', () {
+    expect(
+      isHostSessionExportDownload(
+        url: 'http://h/api/session.export?sessionId=s1',
+        filename: 'xrk-session-s1.zip',
+      ),
+      isTrue,
+    );
+    expect(
+      isHostSessionExportDownload(
+        url: 'http://h/sidebar/file?path=/a.pptx&download=1',
+        filename: '随机演示.pptx',
+      ),
+      isFalse,
+    );
+    expect(
+      isHostSessionExportDownload(url: '', filename: 'xrk-session-sess_x.zip'),
+      isTrue,
+    );
+  });
+
   test('blob/data and download routes are shell-intercepted', () {
     expect(isObjectDownloadUrl('blob:http://host/uuid'), isTrue);
     expect(isObjectDownloadUrl('data:text/plain,hi'), isTrue);

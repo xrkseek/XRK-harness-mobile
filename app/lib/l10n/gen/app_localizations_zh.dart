@@ -6855,6 +6855,12 @@ class L10nZh extends L10n {
   String get featuresExportSavedTitle => '日志已保存';
 
   @override
+  String get featuresFileSaving => '正在保存文件';
+
+  @override
+  String get featuresFileSavedTitle => '文件已保存';
+
+  @override
   String get featuresExportOpenOther => '用其他应用打开';
 
   @override

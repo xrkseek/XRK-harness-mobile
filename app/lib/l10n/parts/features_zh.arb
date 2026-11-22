@@ -664,6 +664,8 @@
   "featuresExportDownloadsHint": "存进 下载/XRK-Harness；可再用其他应用打开",
   "featuresExportContents": "含这个对话和子代理的全部记录与附件",
   "featuresExportSavedTitle": "日志已保存",
+  "featuresFileSaving": "正在保存文件",
+  "featuresFileSavedTitle": "文件已保存",
   "featuresExportOpenOther": "用其他应用打开",
   "featuresExportOpenHint": "系统文件管理或解压软件；本应用不内置资源管理器",
   "featuresExportOpenFailed": "没有能打开 ZIP 的应用，可改用分享",

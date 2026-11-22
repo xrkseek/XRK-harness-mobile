@@ -12614,6 +12614,18 @@ abstract class L10n {
   /// **'日志已保存'**
   String get featuresExportSavedTitle;
 
+  /// No description provided for @featuresFileSaving.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在保存文件'**
+  String get featuresFileSaving;
+
+  /// No description provided for @featuresFileSavedTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'文件已保存'**
+  String get featuresFileSavedTitle;
+
   /// No description provided for @featuresExportOpenOther.
   ///
   /// In zh, this message translates to:
@@ -17285,7 +17297,7 @@ abstract class L10n {
   /// No description provided for @phoneControlLocalOnly.
   ///
   /// In zh, this message translates to:
-  /// **'只在本机引擎可用'**
+  /// **'本机引擎与远程桥均可操控'**
   String get phoneControlLocalOnly;
 
   /// No description provided for @phoneControlAfterEngineStarts.
@@ -18335,7 +18347,7 @@ abstract class L10n {
   /// No description provided for @phoneControlRemoteHint.
   ///
   /// In zh, this message translates to:
-  /// **'「{host}」上的 XRK 操作不了这台手机，切回「本机」后可用'**
+  /// **'当前连着「{host}」。打开手机操控 + 无障碍后，远程 Host 经「远程手机桥」用 phone_* 操控本机'**
   String phoneControlRemoteHint(String host);
 
   /// No description provided for @phoneRestrictedSubtitle.

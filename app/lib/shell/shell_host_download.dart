@@ -189,6 +189,13 @@ const hostDownloadBridgeJs = r'''
 
 enum _AfterHostDownload { open, share }
 
+/// Session-log ZIP vs workspace / chat file — drives sheet + toast copy.
+bool isHostSessionExportDownload({required String url, required String filename}) {
+  if (isHostSessionExportUrl(url)) return true;
+  final name = filename.trim().toLowerCase();
+  return name.startsWith('xrk-session-') && name.endsWith('.zip');
+}
+
 /// Fetch [url] with WebView cookies → Downloads → optional open/share.
 Future<void> handleHostShellDownload(
   BuildContext context, {
@@ -198,12 +205,22 @@ Future<void> handleHostShellDownload(
   FilesChannel files = const FilesChannel(),
 }) async {
   final l10n = context.l10n;
-  showBriefNotice(context, l10n.featuresExportTitle);
   try {
     final uri = resolveHostDownloadUri(url, pageUrl: pageUrl);
     final name = hostDownloadFilename(uri.toString(), filename);
+    final sessionLog = isHostSessionExportDownload(url: uri.toString(), filename: name);
+    showBriefNotice(
+      context,
+      sessionLog ? l10n.featuresExportTitle : l10n.featuresFileSaving,
+    );
     final bytes = await _fetchWithWebViewCookies(uri);
-    await _finishHostDownload(context, bytes: bytes, name: name, files: files);
+    await _finishHostDownload(
+      context,
+      bytes: bytes,
+      name: name,
+      files: files,
+      sessionLog: sessionLog,
+    );
   } catch (error) {
     if (context.mounted) {
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(
@@ -222,10 +239,21 @@ Future<void> handleHostShellDownloadBytes(
   FilesChannel files = const FilesChannel(),
 }) async {
   final l10n = context.l10n;
-  showBriefNotice(context, l10n.featuresExportTitle);
+  final name = hostDownloadFilename('', filename);
+  final sessionLog = isHostSessionExportDownload(url: '', filename: name);
+  showBriefNotice(
+    context,
+    sessionLog ? l10n.featuresExportTitle : l10n.featuresFileSaving,
+  );
   try {
-    final name = hostDownloadFilename('', filename);
-    await _finishHostDownload(context, bytes: bytes, name: name, files: files, mime: mime);
+    await _finishHostDownload(
+      context,
+      bytes: bytes,
+      name: name,
+      files: files,
+      mime: mime,
+      sessionLog: sessionLog,
+    );
   } catch (error) {
     if (context.mounted) {
       ScaffoldMessenger.maybeOf(context)?.showSnackBar(
@@ -241,6 +269,7 @@ Future<void> _finishHostDownload(
   required String name,
   required FilesChannel files,
   String? mime,
+  bool sessionLog = false,
 }) async {
   final l10n = context.l10n;
   final cache = await getTemporaryDirectory();
@@ -251,6 +280,7 @@ Future<void> _finishHostDownload(
   final resolvedMime = (mime != null && mime.trim().isNotEmpty) ? mime.trim() : _mimeFor(name);
   final where = await files.saveToDownloads(file.path, name: name, mime: resolvedMime);
   if (!context.mounted) return;
+  final savedTitle = sessionLog ? l10n.featuresExportSavedTitle : l10n.featuresFileSavedTitle;
   final next = await showAppSheet<_AfterHostDownload>(
     context,
     builder: (sheet) => SafeArea(
@@ -258,7 +288,7 @@ Future<void> _finishHostDownload(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SheetHeader(l10n.featuresExportSavedTitle),
+          SheetHeader(savedTitle),
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
             child: Text(l10n.featuresExportSavedTo(where), style: Theme.of(sheet).textTheme.bodyMedium),
