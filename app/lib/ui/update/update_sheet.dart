@@ -24,11 +24,16 @@ import '../common/brief_notice.dart';
 Future<void> showUpdateSheet(BuildContext context) =>
     showAppSheet<void>(context, isScrollControlled: true, builder: (_) => const UpdateSheet());
 
-/// Looks for an update on request (设置 → 关于): opens the sheet when there is
-/// one, otherwise says so in a snack bar.
+/// Looks for an update on request (设置 → 关于): always rechecks the feed unless
+/// a download/install is in flight, so a cached offer (e.g. 0.8.12) can still
+/// become a newer release (0.8.13). Opens the sheet when there is one.
 Future<void> checkForUpdates(BuildContext context, WidgetRef ref) async {
   final controller = ref.read(appUpdateProvider.notifier);
-  if (ref.read(appUpdateProvider).hasUpdate) return showUpdateSheet(context);
+  final current = ref.read(appUpdateProvider);
+  if (current.busy) {
+    if (current.hasUpdate) return showUpdateSheet(context);
+    return;
+  }
   final messenger = ScaffoldMessenger.maybeOf(context);
   final phase = await controller.check();
   if (!context.mounted) return;
